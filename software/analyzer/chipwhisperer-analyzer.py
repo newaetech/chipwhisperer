@@ -30,12 +30,13 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-import tracereader_dpacontestv3
 import sys
 from PySide.QtCore import *
 from PySide.QtGui import *
 import os.path
+sys.path.append('../common')
 import pysidegraph
+import tracereader_dpacontestv3
 
 class MainChip(QMainWindow):
     def __init__(self):
