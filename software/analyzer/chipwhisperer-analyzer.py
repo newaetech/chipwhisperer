@@ -37,21 +37,161 @@ import os.path
 sys.path.append('../common')
 import pysidegraph
 import tracereader_dpacontestv3
+import attack_dpav1
+
+
+class DPATab(QWidget):
+    def __init__(self, previewtab):
+        QWidget.__init__(self)
+        layout = QVBoxLayout()
+
+        self.dpa = attack_dpav1.attack_DPAAESv1()
+
+        setupGB = QGroupBox("Analysis Options")
+        setupLayout = QGridLayout()
+        setupGB.setLayout(setupLayout)
+
+        pbAttack = QPushButton("Attack!")
+        pbAttack.clicked.connect(self.attackPushed)
+        setupLayout.addWidget(pbAttack, 0, 0)
+
+        self.startTracePrint = QSpinBox()        
+        self.startTracePrint.setMinimum(0)
+        self.endTracePrint = QSpinBox()        
+        self.endTracePrint.setMinimum(0)
+        self.startPointPrint = QSpinBox()        
+        self.startPointPrint.setMinimum(0)
+        self.endPointPrint = QSpinBox()        
+        self.endPointPrint.setMinimum(0)
+
+        setupLayout.addWidget(QLabel("Traces: "), 1, 0)
+        setupLayout.addWidget(self.startTracePrint, 1, 1)
+        setupLayout.addWidget(QLabel(" to "), 1, 2)
+        setupLayout.addWidget(self.endTracePrint, 1, 3)
+        
+        setupLayout.addWidget(QLabel("Points: "), 2, 0)
+        setupLayout.addWidget(self.startPointPrint, 2, 1)
+        setupLayout.addWidget(QLabel(" to "), 2, 2)
+        setupLayout.addWidget(self.endPointPrint, 2, 3)
+        
+        layout.addWidget(setupGB)
+
+        self.preview = pysidegraph.pysideGraph("Diff View")
+        layout.addWidget(self.preview.getWidget())
+        self.setLayout(layout)
+
+    def passTrace(self, trace):
+        self.trace = trace
+        self.startTracePrint.setMaximum(trace.NumTrace)
+        self.endTracePrint.setMaximum(trace.NumTrace)
+        self.endTracePrint.setValue(trace.NumTrace)
+
+        self.startPointPrint.setMaximum(trace.NumPoint)
+        self.endPointPrint.setMaximum(trace.NumPoint)
+        self.endPointPrint.setValue(trace.NumPoint)
+
+    def loadPushed(self):
+        return
+    #self.preview
+
+    def attackPushed(self):
+        data = []
+        texts = []
+
+        for i in range(self.startTracePrint.value(), self.endTracePrint.value()):
+            data.append(self.trace.getTrace(i)[self.startPointPrint.value():self.endPointPrint.value()])
+            texts.append(self.trace.getTextin(i))          
+        
+        progress = QProgressDialog("Analyzing", "Abort", 0, 100)
+        progress.setWindowModality(Qt.WindowModal)
+        progress.setMinimumDuration(1000)
+        self.dpa.doDPA(0, range(0,16), data, texts, progress)
+
+class PreviewTab(QWidget):
+    def __init__(self):
+        QWidget.__init__(self)
+        layout = QVBoxLayout()
+
+        setupGB = QGroupBox("Load Options")
+        setupLayout = QGridLayout()
+        setupGB.setLayout(setupLayout)
+
+        pbLoad = QPushButton("Load All")
+        pbLoad.clicked.connect(self.loadPushed)
+        setupLayout.addWidget(pbLoad, 0, 0)
+
+        pbRedraw = QPushButton("Redraw")
+        pbRedraw.clicked.connect(self.redrawPushed)
+        setupLayout.addWidget(pbRedraw, 0, 1)
+
+        self.startTracePrint = QSpinBox()        
+        self.startTracePrint.setMinimum(0)
+        self.endTracePrint = QSpinBox()        
+        self.endTracePrint.setMinimum(0)
+        self.startPointPrint = QSpinBox()        
+        self.startPointPrint.setMinimum(0)
+        self.endPointPrint = QSpinBox()        
+        self.endPointPrint.setMinimum(0)
+
+        setupLayout.addWidget(QLabel("Traces: "), 1, 0)
+        setupLayout.addWidget(self.startTracePrint, 1, 1)
+        setupLayout.addWidget(QLabel(" to "), 1, 2)
+        setupLayout.addWidget(self.endTracePrint, 1, 3)
+        
+        setupLayout.addWidget(QLabel("Points: "), 2, 0)
+        setupLayout.addWidget(self.startPointPrint, 2, 1)
+        setupLayout.addWidget(QLabel(" to "), 2, 2)
+        setupLayout.addWidget(self.endPointPrint, 2, 3)
+        
+        layout.addWidget(setupGB)
+
+        self.preview = pysidegraph.pysideGraph("Trace View")
+        layout.addWidget(self.preview.getWidget())
+        self.setLayout(layout)
+
+    def passTrace(self, trace):
+        self.trace = trace
+        self.startTracePrint.setMaximum(trace.NumTrace)
+        self.endTracePrint.setMaximum(trace.NumTrace)
+        self.endTracePrint.setValue(trace.NumTrace)
+
+        self.startPointPrint.setMaximum(trace.NumPoint)
+        self.endPointPrint.setMaximum(trace.NumPoint)
+        self.endPointPrint.setValue(trace.NumPoint)
+
+    def loadPushed(self):
+        self.trace.loadAllTraces()
+
+    def redrawPushed(self):
+        hold=False
+
+        progress = QProgressDialog("Redrawing", "Abort", 0, 100)
+        progress.setWindowModality(Qt.WindowModal)
+        progress.setMinimumDuration(1000)
+        progress.setMinimum(self.startTracePrint.value())
+        progress.setMaximum(self.endTracePrint.value())
+        
+        for i in range(self.startTracePrint.value(), self.endTracePrint.value()):
+            data = self.trace.getTrace(i)
+            self.preview.updateData(data[self.startPointPrint.value():self.endPointPrint.value()], holdOn=hold)
+            hold=True
+            progress.setValue(i)
+            if progress.wasCanceled():
+                break
 
 class MainChip(QMainWindow):
     def __init__(self):
         super(MainChip, self).__init__()        
-        self.trace = tracereader_dpacontestv3.tracereader_dpacontestv3()
-        self.preview = pysidegraph.pysideGraph("Trace View")
+        self.trace = tracereader_dpacontestv3.tracereader_dpacontestv3()        
         self.initUI()
         
     def initUI(self):
-        self.setCentralWidget(self.preview.getWidget())
         self.statusBar()
+        self.setWindowTitle("Chip Whisperer: Analyzer")
 
-        openFile = QAction(QIcon('open.png'), 'Open', self)
+        openFile = QAction(QIcon('open.png'), 'Open Input Files', self)
         openFile.setShortcut('Ctrl+O')
-        openFile.setStatusTip('Open new File')
+        openFile.setStatusTip('Open Input Files (waveform, etc)')
         openFile.triggered.connect(self.showDialog)
 
         menubar = self.menuBar()
@@ -61,14 +201,35 @@ class MainChip(QMainWindow):
         self.setGeometry(300, 300, 350, 300)
         self.setWindowTitle('File dialog')
         self.show()
+
+        #Preview Tab Setup
+        self.preview = PreviewTab()
+
+        #DPA Tab Setup
+        self.dpa = DPATab(self.preview)
+
+        #Tab Widget Setup
+        self.tw = QTabWidget()
+        self.tw.currentChanged.connect(self.curTabChange) 
+        self.tw.addTab(self.preview, "&Trace View")
+        self.tw.addTab(self.dpa, "&DPA")
+        self.curTabChange(0)
+
+        self.setCentralWidget(self.tw)
         
     def showDialog(self):
         fname, _ = QFileDialog.getOpenFileName(self, 'Open file','.','info.xml')
         self.trace.loadInfo(os.path.dirname(fname))
+        self.preview.passTrace(self.trace)
+        self.dpa.passTrace(self.trace)
 
-        self.trace.loadAllTraces()
-        self.preview.updateData(self.trace.getTrace(0))
-                                       
+    def curTabChange(self, index):
+        for i in range(self.tw.count()):
+            if i == index:
+                self.tw.widget(i).setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+            else:
+                self.tw.widget(i).setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+                                                   
         
 def main():
     
