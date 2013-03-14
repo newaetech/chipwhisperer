@@ -11272,7 +11272,7 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="SUPPLY3" library="adc_microboard" deviceset="AGND" device=""/>
 <part name="SUPPLY8" library="adc_microboard" deviceset="AGND" device=""/>
 <part name="C4" library="rcl" deviceset="C-EU" device="C0603" value="10nF"/>
-<part name="C7" library="rcl" deviceset="C-EU" device="C0603" value="10nF"/>
+<part name="C7" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="SUPPLY9" library="adc_microboard" deviceset="AGND" device=""/>
 <part name="SUPPLY10" library="adc_microboard" deviceset="AGND" device=""/>
 <part name="C6" library="rcl" deviceset="C-EU" device="C0805" value="10u"/>

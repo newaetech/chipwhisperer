@@ -2794,7 +2794,7 @@ design rules under a new name.</description>
 <element name="C3" library="rcl" package="C0603" value="100nF" x="15.875" y="27.94"/>
 <element name="D1" library="adafruit" package="SOD-123" value="" x="13.335" y="17.78" rot="MR270"/>
 <element name="C4" library="rcl" package="C0603" value="10nF" x="19.685" y="27.305" rot="MR180"/>
-<element name="C7" library="rcl" package="C0603" value="10nF" x="18.727421875" y="27.305"/>
+<element name="C7" library="rcl" package="C0603" value="100nF" x="18.727421875" y="27.305"/>
 <element name="C6" library="rcl" package="C0805" value="10u" x="14.605" y="23.495" rot="MR180"/>
 <element name="C8" library="rcl" package="C0805" value="10u" x="18.415" y="23.495" rot="MR0"/>
 <element name="R3" library="resistor" package="RTRIM3224J" value="5k" x="15.24" y="23.495" rot="R90"/>
