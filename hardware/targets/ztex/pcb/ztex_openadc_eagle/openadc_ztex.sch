@@ -328,13 +328,6 @@
 <text x="-2.54" y="-5.08" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
 <pin name="+5V" x="0" y="-2.54" visible="off" length="short" direction="sup" rot="R90"/>
 </symbol>
-<symbol name="VCCIO">
-<wire x1="1.27" y1="-1.905" x2="0" y2="0" width="0.254" layer="94"/>
-<wire x1="0" y1="0" x2="-1.27" y2="-1.905" width="0.254" layer="94"/>
-<text x="-2.54" y="-2.54" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
-<text x="-0.508" y="0.254" size="0.8128" layer="94">IO</text>
-<pin name="VCCIO" x="0" y="-2.54" visible="off" length="short" direction="sup" rot="R90"/>
-</symbol>
 </symbols>
 <devicesets>
 <deviceset name="GND" prefix="GND">
@@ -367,19 +360,6 @@
 <description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
 <gates>
 <gate name="1" symbol="+5V" x="0" y="0"/>
-</gates>
-<devices>
-<device name="">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="VCCIO" prefix="VCC">
-<description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
-<gates>
-<gate name="G$1" symbol="VCCIO" x="0" y="0"/>
 </gates>
 <devices>
 <device name="">
@@ -22407,13 +22387,6 @@ Source: AVX .. aphvc.pdf</description>
 <packages>
 </packages>
 <symbols>
-<symbol name="AGND">
-<wire x1="-1.27" y1="0" x2="1.27" y2="0" width="0.254" layer="94"/>
-<wire x1="1.27" y1="0" x2="0" y2="-1.27" width="0.254" layer="94"/>
-<wire x1="0" y1="-1.27" x2="-1.27" y2="0" width="0.254" layer="94"/>
-<text x="-2.667" y="-3.175" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="AGND" x="0" y="2.54" visible="off" length="short" direction="sup" rot="R270"/>
-</symbol>
 <symbol name="GND">
 <wire x1="-1.27" y1="0" x2="1.27" y2="0" width="0.254" layer="94"/>
 <wire x1="1.27" y1="0" x2="0" y2="-1.27" width="0.254" layer="94"/>
@@ -22427,13 +22400,6 @@ Source: AVX .. aphvc.pdf</description>
 <circle x="0" y="1.27" radius="1.27" width="0.254" layer="94"/>
 <text x="-3.81" y="3.175" size="1.778" layer="96">&gt;VALUE</text>
 <pin name="+5V/2" x="0" y="-2.54" visible="off" length="short" direction="sup" rot="R90"/>
-</symbol>
-<symbol name="DGND">
-<wire x1="-1.27" y1="0" x2="1.27" y2="0" width="0.254" layer="94"/>
-<wire x1="1.27" y1="0" x2="0" y2="-1.27" width="0.254" layer="94"/>
-<wire x1="0" y1="-1.27" x2="-1.27" y2="0" width="0.254" layer="94"/>
-<text x="-2.667" y="-3.175" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="DGND" x="0" y="2.54" visible="off" length="short" direction="sup" rot="R270"/>
 </symbol>
 <symbol name="+09V">
 <wire x1="-0.635" y1="1.27" x2="0.635" y2="1.27" width="0.1524" layer="94"/>
@@ -22450,19 +22416,6 @@ Source: AVX .. aphvc.pdf</description>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="AGND" prefix="SUPPLY">
-<description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
-<gates>
-<gate name="G$1" symbol="AGND" x="0" y="0"/>
-</gates>
-<devices>
-<device name="">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
 <deviceset name="GND" prefix="SUPPLY">
 <description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
 <gates>
@@ -22480,19 +22433,6 @@ Source: AVX .. aphvc.pdf</description>
 <description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
 <gates>
 <gate name="G$1" symbol="+05V/2" x="0" y="0"/>
-</gates>
-<devices>
-<device name="">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="DGND" prefix="SUPPLY">
-<description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
-<gates>
-<gate name="G$1" symbol="DGND" x="0" y="0"/>
 </gates>
 <devices>
 <device name="">
@@ -34066,7 +34006,6 @@ http://dangerousprototypes.com</description>
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
 </part>
-<part name="SUPPLY35" library="supply2" deviceset="AGND" device=""/>
 <part name="L7" library="SparkFun" deviceset="INDUCTOR" device="0603" value="120nH"/>
 <part name="C46" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
 <part name="+3V7" library="supply1" deviceset="+3V3" device=""/>
@@ -34105,7 +34044,6 @@ http://dangerousprototypes.com</description>
 </part>
 <part name="FRAME5" library="frames" deviceset="LETTER_L" device=""/>
 <part name="R31" library="adafruit" deviceset="R-US_" device="R0805"/>
-<part name="SUPPLY51" library="supply2" deviceset="AGND" device=""/>
 <part name="C59" library="rcl" deviceset="C-EU" device="C0402" value="1u">
 <attribute name="DIGIKEY#" value="490-1543-1-ND"/>
 <attribute name="PART#" value="GRM188R61A105KA61D"/>
@@ -34118,7 +34056,6 @@ http://dangerousprototypes.com</description>
 <part name="D3" library="zetex" deviceset="D_ACAC" device="SOT23" value="BAV99-7-F"/>
 <part name="+3V11" library="supply1" deviceset="+3V3" device=""/>
 <part name="C62" library="adc_microboard" deviceset="C-EU" device="C0603"/>
-<part name="SUPPLY56" library="supply2" deviceset="AGND" device=""/>
 <part name="D4" library="zetex" deviceset="D_ACAC" device="SOT23" value="BAV99-7-F"/>
 <part name="FRAME6" library="frames" deviceset="LETTER_L" device=""/>
 <part name="U5" library="Texas Instruments_By_element14_Batch_1" deviceset="CDCE906PW" device=""/>
@@ -34171,7 +34108,6 @@ http://dangerousprototypes.com</description>
 <part name="SUPPLY59" library="supply2" deviceset="GND" device=""/>
 <part name="C72" library="rcl" deviceset="C-EU" device="C0603"/>
 <part name="SUPPLY60" library="supply2" deviceset="GND" device=""/>
-<part name="VCC1" library="supply1" deviceset="VCCIO" device=""/>
 <part name="SUPPLY61" library="supply2" deviceset="+5V/2" device=""/>
 <part name="SUPPLY62" library="supply2" deviceset="+5V/2" device=""/>
 <part name="R39" library="resistor" deviceset="R-US_" device="R0603"/>
@@ -34182,7 +34118,6 @@ http://dangerousprototypes.com</description>
 <part name="R41" library="resistor" deviceset="R-US_" device="R0603"/>
 <part name="R42" library="resistor" deviceset="R-US_" device="R0603"/>
 <part name="FRAME8" library="frames" deviceset="LETTER_L" device=""/>
-<part name="SUPPLY38" library="supply2" deviceset="DGND" device=""/>
 <part name="X4" library="con-coax" deviceset="SMA-" device="142-0711-821/826"/>
 <part name="+3V8" library="supply1" deviceset="+3V3" device=""/>
 <part name="SUPPLY65" library="supply2" deviceset="GND" device=""/>
@@ -34337,6 +34272,28 @@ http://dangerousprototypes.com</description>
 <part name="SUPPLY105" library="supply2" deviceset="GND" device=""/>
 <part name="SJ1" library="jumper" deviceset="SJ" device=""/>
 <part name="SJ2" library="jumper" deviceset="SJ" device=""/>
+<part name="SUPPLY35" library="supply2" deviceset="GND" device=""/>
+<part name="SUPPLY51" library="supply2" deviceset="GND" device=""/>
+<part name="SUPPLY56" library="supply2" deviceset="GND" device=""/>
+<part name="+3V28" library="supply1" deviceset="+3V3" device=""/>
+<part name="C81" library="rcl" deviceset="C-EU" device="C0603"/>
+<part name="C82" library="rcl" deviceset="C-EU" device="C0603"/>
+<part name="C83" library="rcl" deviceset="C-EU" device="C0603"/>
+<part name="SUPPLY106" library="supply2" deviceset="GND" device=""/>
+<part name="SUPPLY107" library="supply2" deviceset="GND" device=""/>
+<part name="SUPPLY108" library="supply2" deviceset="GND" device=""/>
+<part name="+3V29" library="supply1" deviceset="+3V3" device=""/>
+<part name="+3V30" library="supply1" deviceset="+3V3" device=""/>
+<part name="+3V31" library="supply1" deviceset="+3V3" device=""/>
+<part name="SUPPLY109" library="supply2" deviceset="GND" device=""/>
+<part name="SUPPLY110" library="supply2" deviceset="GND" device=""/>
+<part name="SUPPLY111" library="supply2" deviceset="GND" device=""/>
+<part name="SUPPLY112" library="supply2" deviceset="GND" device=""/>
+<part name="P+7" library="supply1" deviceset="+5V" device=""/>
+<part name="P+8" library="supply1" deviceset="+5V" device=""/>
+<part name="+3V32" library="supply1" deviceset="+3V3" device=""/>
+<part name="+3V33" library="supply1" deviceset="+3V3" device=""/>
+<part name="SUPPLY38" library="supply2" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -36278,7 +36235,6 @@ http://dangerousprototypes.com</description>
 <attribute name="DIGIKEY#" x="165.1" y="134.62" size="1.778" layer="96" display="off"/>
 <attribute name="PART#" x="165.1" y="134.62" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="SUPPLY35" gate="G$1" x="172.72" y="134.62" rot="R90"/>
 <instance part="L7" gate="G$1" x="20.32" y="50.8" rot="R90"/>
 <instance part="C46" gate="G$1" x="35.56" y="50.8" rot="R270"/>
 <instance part="+3V7" gate="G$1" x="55.88" y="180.34"/>
@@ -36366,6 +36322,7 @@ http://dangerousprototypes.com</description>
 <instance part="SUPPLY26" gate="GND" x="109.22" y="127"/>
 <instance part="SUPPLY21" gate="GND" x="81.28" y="157.48"/>
 <instance part="SUPPLY36" gate="GND" x="149.86" y="91.44"/>
+<instance part="SUPPLY35" gate="GND" x="172.72" y="134.62" rot="R90"/>
 </instances>
 <busses>
 <bus name="ADC[0..9],ADC_OR">
@@ -36444,12 +36401,6 @@ http://dangerousprototypes.com</description>
 <wire x1="127" y1="53.34" x2="127" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="U2" gate="G$1" pin="VOH"/>
 <pinref part="C12" gate="G$1" pin="1"/>
-</segment>
-</net>
-<net name="AGND" class="0">
-<segment>
-<pinref part="C45" gate="G$1" pin="2"/>
-<pinref part="SUPPLY35" gate="G$1" pin="AGND"/>
 </segment>
 </net>
 <net name="OA_ADCOR" class="0">
@@ -37225,6 +37176,10 @@ http://dangerousprototypes.com</description>
 <wire x1="149.86" y1="93.98" x2="152.4" y2="93.98" width="0.1524" layer="91"/>
 <junction x="149.86" y="93.98"/>
 </segment>
+<segment>
+<pinref part="C45" gate="G$1" pin="2"/>
+<pinref part="SUPPLY35" gate="GND" pin="GND"/>
+</segment>
 </net>
 </nets>
 </sheet>
@@ -37238,18 +37193,18 @@ http://dangerousprototypes.com</description>
 <instance part="FRAME5" gate="G$1" x="0" y="0"/>
 <instance part="FRAME5" gate="G$2" x="147.32" y="0"/>
 <instance part="R31" gate="G$1" x="106.68" y="142.24"/>
-<instance part="SUPPLY51" gate="G$1" x="109.22" y="152.4"/>
 <instance part="H1" gate="G$1" x="50.8" y="66.04"/>
 <instance part="D3" gate="A" x="132.08" y="147.32" rot="MR270"/>
 <instance part="+3V11" gate="G$1" x="165.1" y="152.4" rot="R270"/>
 <instance part="C62" gate="G$1" x="152.4" y="147.32" rot="R90"/>
-<instance part="SUPPLY56" gate="G$1" x="160.02" y="147.32" rot="R90"/>
 <instance part="X4" gate="G1" x="83.82" y="142.24"/>
 <instance part="R47" gate="G$1" x="116.84" y="137.16" rot="R90"/>
 <instance part="R34" gate="G$1" x="101.6" y="137.16" rot="R90"/>
 <instance part="SUPPLY70" gate="GND" x="116.84" y="129.54"/>
 <instance part="SUPPLY33" gate="GND" x="101.6" y="129.54"/>
 <instance part="SUPPLY34" gate="GND" x="86.36" y="129.54"/>
+<instance part="SUPPLY51" gate="GND" x="160.02" y="147.32" rot="R90"/>
+<instance part="SUPPLY56" gate="GND" x="109.22" y="152.4"/>
 </instances>
 <busses>
 </busses>
@@ -37289,20 +37244,6 @@ http://dangerousprototypes.com</description>
 <junction x="101.6" y="142.24"/>
 </segment>
 </net>
-<net name="AGND" class="0">
-<segment>
-<wire x1="109.22" y1="157.48" x2="109.22" y2="154.94" width="0.1524" layer="91"/>
-<pinref part="SUPPLY51" gate="G$1" pin="AGND"/>
-<pinref part="D3" gate="A" pin="A"/>
-<wire x1="129.54" y1="149.86" x2="116.84" y2="149.86" width="0.1524" layer="91"/>
-<wire x1="116.84" y1="149.86" x2="116.84" y2="157.48" width="0.1524" layer="91"/>
-<wire x1="116.84" y1="157.48" x2="109.22" y2="157.48" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="SUPPLY56" gate="G$1" pin="AGND"/>
-<pinref part="C62" gate="G$1" pin="2"/>
-</segment>
-</net>
 <net name="GND" class="2">
 <segment>
 <pinref part="X4" gate="G1" pin="2"/>
@@ -37316,6 +37257,18 @@ http://dangerousprototypes.com</description>
 <segment>
 <pinref part="R34" gate="G$1" pin="1"/>
 <pinref part="SUPPLY33" gate="GND" pin="GND"/>
+</segment>
+<segment>
+<pinref part="C62" gate="G$1" pin="2"/>
+<pinref part="SUPPLY51" gate="GND" pin="GND"/>
+</segment>
+<segment>
+<wire x1="109.22" y1="157.48" x2="109.22" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="D3" gate="A" pin="A"/>
+<wire x1="129.54" y1="149.86" x2="116.84" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="149.86" x2="116.84" y2="157.48" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="157.48" x2="109.22" y2="157.48" width="0.1524" layer="91"/>
+<pinref part="SUPPLY56" gate="GND" pin="GND"/>
 </segment>
 </net>
 </nets>
@@ -37358,9 +37311,7 @@ http://dangerousprototypes.com</description>
 <instance part="SUPPLY59" gate="GND" x="119.38" y="50.8"/>
 <instance part="C72" gate="G$1" x="124.46" y="91.44" rot="R180"/>
 <instance part="SUPPLY60" gate="GND" x="124.46" y="99.06" rot="R180"/>
-<instance part="VCC1" gate="G$1" x="241.3" y="170.18"/>
 <instance part="SUPPLY61" gate="G$1" x="116.84" y="111.76"/>
-<instance part="SUPPLY38" gate="G$1" x="15.24" y="162.56"/>
 <instance part="+3V8" gate="G$1" x="66.04" y="177.8"/>
 <instance part="SUPPLY65" gate="GND" x="66.04" y="129.54"/>
 <instance part="R32" gate="G$1" x="38.1" y="154.94"/>
@@ -37392,6 +37343,17 @@ http://dangerousprototypes.com</description>
 <instance part="SUPPLY86" gate="GND" x="35.56" y="104.14"/>
 <instance part="SUPPLY87" gate="GND" x="35.56" y="83.82"/>
 <instance part="+3V27" gate="G$1" x="33.02" y="121.92"/>
+<instance part="+3V28" gate="G$1" x="241.3" y="162.56"/>
+<instance part="C81" gate="G$1" x="193.04" y="175.26"/>
+<instance part="C82" gate="G$1" x="200.66" y="175.26"/>
+<instance part="C83" gate="G$1" x="210.82" y="175.26"/>
+<instance part="SUPPLY106" gate="GND" x="193.04" y="167.64"/>
+<instance part="SUPPLY107" gate="GND" x="200.66" y="167.64"/>
+<instance part="SUPPLY108" gate="GND" x="210.82" y="167.64"/>
+<instance part="+3V29" gate="G$1" x="210.82" y="180.34"/>
+<instance part="+3V30" gate="G$1" x="200.66" y="180.34"/>
+<instance part="+3V31" gate="G$1" x="193.04" y="180.34"/>
+<instance part="SUPPLY38" gate="GND" x="15.24" y="162.56"/>
 </instances>
 <busses>
 </busses>
@@ -37532,6 +37494,23 @@ http://dangerousprototypes.com</description>
 <wire x1="35.56" y1="91.44" x2="27.94" y2="91.44" width="0.1524" layer="91"/>
 <pinref part="SUPPLY87" gate="GND" pin="GND"/>
 <junction x="35.56" y="86.36"/>
+</segment>
+<segment>
+<pinref part="C81" gate="G$1" pin="2"/>
+<pinref part="SUPPLY106" gate="GND" pin="GND"/>
+</segment>
+<segment>
+<pinref part="C82" gate="G$1" pin="2"/>
+<pinref part="SUPPLY107" gate="GND" pin="GND"/>
+</segment>
+<segment>
+<pinref part="C83" gate="G$1" pin="2"/>
+<pinref part="SUPPLY108" gate="GND" pin="GND"/>
+</segment>
+<segment>
+<pinref part="X3" gate="G1" pin="2"/>
+<wire x1="15.24" y1="172.72" x2="15.24" y2="165.1" width="0.1524" layer="91"/>
+<pinref part="SUPPLY38" gate="GND" pin="GND"/>
 </segment>
 </net>
 <net name="N$93" class="0">
@@ -37685,6 +37664,31 @@ http://dangerousprototypes.com</description>
 <wire x1="33.02" y1="88.9" x2="33.02" y2="109.22" width="0.1524" layer="91"/>
 <junction x="33.02" y="109.22"/>
 </segment>
+<segment>
+<pinref part="U6" gate="A" pin="VCCA"/>
+<wire x1="236.22" y1="83.82" x2="241.3" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="241.3" y1="83.82" x2="241.3" y2="121.92" width="0.1524" layer="91"/>
+<pinref part="U9" gate="A" pin="VCCA"/>
+<wire x1="241.3" y1="121.92" x2="241.3" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="236.22" y1="121.92" x2="241.3" y2="121.92" width="0.1524" layer="91"/>
+<junction x="241.3" y="121.92"/>
+<pinref part="U8" gate="A" pin="VCCA"/>
+<wire x1="236.22" y1="160.02" x2="241.3" y2="160.02" width="0.1524" layer="91"/>
+<pinref part="+3V28" gate="G$1" pin="+3V3"/>
+<junction x="241.3" y="160.02"/>
+</segment>
+<segment>
+<pinref part="C83" gate="G$1" pin="1"/>
+<pinref part="+3V29" gate="G$1" pin="+3V3"/>
+</segment>
+<segment>
+<pinref part="C82" gate="G$1" pin="1"/>
+<pinref part="+3V30" gate="G$1" pin="+3V3"/>
+</segment>
+<segment>
+<pinref part="C81" gate="G$1" pin="1"/>
+<pinref part="+3V31" gate="G$1" pin="+3V3"/>
+</segment>
 </net>
 <net name="N$89" class="0">
 <segment>
@@ -37730,22 +37734,6 @@ http://dangerousprototypes.com</description>
 <wire x1="185.42" y1="78.74" x2="185.42" y2="160.02" width="0.1524" layer="91"/>
 <pinref part="U8" gate="A" pin="B"/>
 <wire x1="185.42" y1="160.02" x2="200.66" y2="160.02" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="VCCIO" class="0">
-<segment>
-<pinref part="U6" gate="A" pin="VCCA"/>
-<wire x1="236.22" y1="83.82" x2="241.3" y2="83.82" width="0.1524" layer="91"/>
-<wire x1="241.3" y1="83.82" x2="241.3" y2="121.92" width="0.1524" layer="91"/>
-<pinref part="U9" gate="A" pin="VCCA"/>
-<wire x1="241.3" y1="121.92" x2="241.3" y2="160.02" width="0.1524" layer="91"/>
-<wire x1="241.3" y1="160.02" x2="241.3" y2="167.64" width="0.1524" layer="91"/>
-<wire x1="236.22" y1="121.92" x2="241.3" y2="121.92" width="0.1524" layer="91"/>
-<junction x="241.3" y="121.92"/>
-<pinref part="U8" gate="A" pin="VCCA"/>
-<wire x1="236.22" y1="160.02" x2="241.3" y2="160.02" width="0.1524" layer="91"/>
-<junction x="241.3" y="160.02"/>
-<pinref part="VCC1" gate="G$1" pin="VCCIO"/>
 </segment>
 </net>
 <net name="+5V/2" class="0">
@@ -37888,13 +37876,6 @@ http://dangerousprototypes.com</description>
 <wire x1="12.7" y1="134.62" x2="12.7" y2="154.94" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="DGND" class="0">
-<segment>
-<pinref part="X3" gate="G1" pin="2"/>
-<wire x1="15.24" y1="172.72" x2="15.24" y2="165.1" width="0.1524" layer="91"/>
-<pinref part="SUPPLY38" gate="G$1" pin="DGND"/>
-</segment>
-</net>
 <net name="N$77" class="0">
 <segment>
 <pinref part="U5" gate="A" pin="CLK_IN1"/>
@@ -38006,6 +37987,14 @@ http://dangerousprototypes.com</description>
 <instance part="FRAME8" gate="G$2" x="147.32" y="0"/>
 <instance part="CON6" gate="_ABE-FPGA" x="170.18" y="111.76"/>
 <instance part="JP5" gate="A" x="106.68" y="99.06"/>
+<instance part="SUPPLY109" gate="GND" x="96.52" y="66.04"/>
+<instance part="SUPPLY110" gate="GND" x="119.38" y="129.54" rot="R180"/>
+<instance part="SUPPLY111" gate="GND" x="116.84" y="99.06" rot="R90"/>
+<instance part="SUPPLY112" gate="GND" x="99.06" y="96.52" rot="R270"/>
+<instance part="P+7" gate="1" x="119.38" y="71.12"/>
+<instance part="P+8" gate="1" x="101.6" y="129.54"/>
+<instance part="+3V32" gate="G$1" x="119.38" y="78.74"/>
+<instance part="+3V33" gate="G$1" x="106.68" y="129.54"/>
 </instances>
 <busses>
 </busses>
@@ -38064,6 +38053,349 @@ http://dangerousprototypes.com</description>
 <pinref part="CON6" gate="_ABE-FPGA" pin="B14~C17~IO_L64P_SCP5_0"/>
 <wire x1="165.1" y1="152.4" x2="144.78" y2="152.4" width="0.1524" layer="91"/>
 <label x="144.78" y="152.4" size="1.778" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="GND" class="2">
+<segment>
+<pinref part="JP5" gate="A" pin="2"/>
+<pinref part="SUPPLY110" gate="GND" pin="GND"/>
+<wire x1="111.76" y1="121.92" x2="119.38" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="119.38" y1="121.92" x2="119.38" y2="127" width="0.1524" layer="91"/>
+<pinref part="JP5" gate="A" pin="4"/>
+<wire x1="111.76" y1="119.38" x2="119.38" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="119.38" y1="119.38" x2="119.38" y2="121.92" width="0.1524" layer="91"/>
+<junction x="119.38" y="121.92"/>
+</segment>
+<segment>
+<pinref part="JP5" gate="A" pin="39"/>
+<pinref part="SUPPLY109" gate="GND" pin="GND"/>
+<wire x1="104.14" y1="73.66" x2="96.52" y2="73.66" width="0.1524" layer="91"/>
+<wire x1="96.52" y1="73.66" x2="96.52" y2="68.58" width="0.1524" layer="91"/>
+<pinref part="JP5" gate="A" pin="37"/>
+<wire x1="104.14" y1="76.2" x2="96.52" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="96.52" y1="76.2" x2="96.52" y2="73.66" width="0.1524" layer="91"/>
+<junction x="96.52" y="73.66"/>
+</segment>
+<segment>
+<pinref part="SUPPLY111" gate="GND" pin="GND"/>
+<pinref part="JP5" gate="A" pin="20"/>
+<wire x1="114.3" y1="99.06" x2="111.76" y2="99.06" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="JP5" gate="A" pin="21"/>
+<pinref part="SUPPLY112" gate="GND" pin="GND"/>
+<wire x1="104.14" y1="96.52" x2="101.6" y2="96.52" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$66" class="0">
+<segment>
+<pinref part="CON6" gate="_ABE-FPGA" pin="A17~A11~IO_L35N_GCLK16_0"/>
+<wire x1="165.1" y1="137.16" x2="88.9" y2="137.16" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="137.16" x2="88.9" y2="78.74" width="0.1524" layer="91"/>
+<pinref part="JP5" gate="A" pin="35"/>
+<wire x1="88.9" y1="78.74" x2="104.14" y2="78.74" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$119" class="0">
+<segment>
+<pinref part="JP5" gate="A" pin="36"/>
+<wire x1="111.76" y1="78.74" x2="124.46" y2="78.74" width="0.1524" layer="91"/>
+<wire x1="124.46" y1="78.74" x2="124.46" y2="134.62" width="0.1524" layer="91"/>
+<pinref part="CON6" gate="_ABE-FPGA" pin="B17~C11~IO_L35P_GCLK17_0"/>
+<wire x1="124.46" y1="134.62" x2="165.1" y2="134.62" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$120" class="0">
+<segment>
+<pinref part="CON6" gate="_ABE-FPGA" pin="E17~A12~IO_L36N_GCLK14_0"/>
+<wire x1="165.1" y1="132.08" x2="86.36" y2="132.08" width="0.1524" layer="91"/>
+<wire x1="86.36" y1="132.08" x2="86.36" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="JP5" gate="A" pin="33"/>
+<wire x1="86.36" y1="81.28" x2="104.14" y2="81.28" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$121" class="0">
+<segment>
+<pinref part="JP5" gate="A" pin="34"/>
+<wire x1="111.76" y1="81.28" x2="127" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="127" y1="81.28" x2="127" y2="129.54" width="0.1524" layer="91"/>
+<pinref part="CON6" gate="_ABE-FPGA" pin="A18~C13~IO_L48P_0"/>
+<wire x1="127" y1="129.54" x2="165.1" y2="129.54" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$124" class="0">
+<segment>
+<pinref part="CON6" gate="_ABE-FPGA" pin="B18~A13~IO_L48N_0"/>
+<wire x1="165.1" y1="127" x2="121.92" y2="127" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="127" x2="121.92" y2="134.62" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="134.62" x2="86.36" y2="134.62" width="0.1524" layer="91"/>
+<wire x1="86.36" y1="134.62" x2="86.36" y2="83.82" width="0.1524" layer="91"/>
+<pinref part="JP5" gate="A" pin="31"/>
+<wire x1="86.36" y1="83.82" x2="104.14" y2="83.82" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$125" class="0">
+<segment>
+<pinref part="JP5" gate="A" pin="32"/>
+<wire x1="111.76" y1="83.82" x2="129.54" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="129.54" y1="83.82" x2="129.54" y2="124.46" width="0.1524" layer="91"/>
+<pinref part="CON6" gate="_ABE-FPGA" pin="E18~B14~IO_L50P_0"/>
+<wire x1="129.54" y1="124.46" x2="165.1" y2="124.46" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$126" class="0">
+<segment>
+<pinref part="CON6" gate="_ABE-FPGA" pin="A19~C12~IO_L37N_GCLK12_0"/>
+<wire x1="165.1" y1="121.92" x2="132.08" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="132.08" y1="121.92" x2="132.08" y2="139.7" width="0.1524" layer="91"/>
+<wire x1="132.08" y1="139.7" x2="88.9" y2="139.7" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="139.7" x2="88.9" y2="86.36" width="0.1524" layer="91"/>
+<pinref part="JP5" gate="A" pin="29"/>
+<wire x1="88.9" y1="86.36" x2="104.14" y2="86.36" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$127" class="0">
+<segment>
+<pinref part="JP5" gate="A" pin="30"/>
+<wire x1="111.76" y1="86.36" x2="132.08" y2="86.36" width="0.1524" layer="91"/>
+<wire x1="132.08" y1="86.36" x2="132.08" y2="119.38" width="0.1524" layer="91"/>
+<pinref part="CON6" gate="_ABE-FPGA" pin="B19~D11~IO_L37P_GCLK13_0"/>
+<wire x1="132.08" y1="119.38" x2="165.1" y2="119.38" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$128" class="0">
+<segment>
+<pinref part="CON6" gate="_ABE-FPGA" pin="E19~A14~IO_L50N_0"/>
+<wire x1="165.1" y1="116.84" x2="134.62" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="134.62" y1="116.84" x2="134.62" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="134.62" y1="142.24" x2="88.9" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="142.24" x2="88.9" y2="88.9" width="0.1524" layer="91"/>
+<pinref part="JP5" gate="A" pin="27"/>
+<wire x1="88.9" y1="88.9" x2="104.14" y2="88.9" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$129" class="0">
+<segment>
+<pinref part="JP5" gate="A" pin="28"/>
+<wire x1="111.76" y1="88.9" x2="134.62" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="134.62" y1="88.9" x2="134.62" y2="114.3" width="0.1524" layer="91"/>
+<pinref part="CON6" gate="_ABE-FPGA" pin="A20~C15~IO_L62P_0"/>
+<wire x1="134.62" y1="114.3" x2="165.1" y2="114.3" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$130" class="0">
+<segment>
+<pinref part="CON6" gate="_ABE-FPGA" pin="B20~F10~IO_L38P_0"/>
+<wire x1="165.1" y1="111.76" x2="137.16" y2="111.76" width="0.1524" layer="91"/>
+<wire x1="137.16" y1="111.76" x2="137.16" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="137.16" y1="144.78" x2="86.36" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="86.36" y1="144.78" x2="86.36" y2="91.44" width="0.1524" layer="91"/>
+<pinref part="JP5" gate="A" pin="25"/>
+<wire x1="86.36" y1="91.44" x2="104.14" y2="91.44" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$131" class="0">
+<segment>
+<pinref part="JP5" gate="A" pin="26"/>
+<wire x1="111.76" y1="91.44" x2="137.16" y2="91.44" width="0.1524" layer="91"/>
+<wire x1="137.16" y1="91.44" x2="137.16" y2="109.22" width="0.1524" layer="91"/>
+<pinref part="CON6" gate="_ABE-FPGA" pin="E20~D12~IO_L47N_0_NC45"/>
+<wire x1="137.16" y1="109.22" x2="165.1" y2="109.22" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$132" class="0">
+<segment>
+<pinref part="CON6" gate="_ABE-FPGA" pin="E21~D13~IO_L47P_0_NC45"/>
+<wire x1="165.1" y1="106.68" x2="139.7" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="139.7" y1="106.68" x2="139.7" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="139.7" y1="142.24" x2="91.44" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="142.24" x2="91.44" y2="93.98" width="0.1524" layer="91"/>
+<pinref part="JP5" gate="A" pin="23"/>
+<wire x1="91.44" y1="93.98" x2="104.14" y2="93.98" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$133" class="0">
+<segment>
+<pinref part="JP5" gate="A" pin="24"/>
+<wire x1="111.76" y1="93.98" x2="139.7" y2="93.98" width="0.1524" layer="91"/>
+<wire x1="139.7" y1="93.98" x2="139.7" y2="104.14" width="0.1524" layer="91"/>
+<pinref part="CON6" gate="_ABE-FPGA" pin="E22~A10~IO_L34N_GCLK18_0"/>
+<wire x1="139.7" y1="104.14" x2="165.1" y2="104.14" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$134" class="0">
+<segment>
+<pinref part="JP5" gate="A" pin="22"/>
+<wire x1="111.76" y1="96.52" x2="142.24" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="96.52" x2="142.24" y2="101.6" width="0.1524" layer="91"/>
+<pinref part="CON6" gate="_ABE-FPGA" pin="E23~B10~IO_L34P_GCLK19_0"/>
+<wire x1="142.24" y1="101.6" x2="165.1" y2="101.6" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$135" class="0">
+<segment>
+<pinref part="CON6" gate="_ABE-FPGA" pin="A24~C10~IO_L33N_0"/>
+<wire x1="165.1" y1="99.06" x2="142.24" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="99.06" x2="142.24" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="142.24" x2="93.98" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="93.98" y1="142.24" x2="93.98" y2="99.06" width="0.1524" layer="91"/>
+<pinref part="JP5" gate="A" pin="19"/>
+<wire x1="93.98" y1="99.06" x2="104.14" y2="99.06" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$136" class="0">
+<segment>
+<pinref part="JP5" gate="A" pin="18"/>
+<wire x1="111.76" y1="101.6" x2="144.78" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="144.78" y1="101.6" x2="144.78" y2="96.52" width="0.1524" layer="91"/>
+<pinref part="CON6" gate="_ABE-FPGA" pin="B24~D10~IO_L33P_0"/>
+<wire x1="144.78" y1="96.52" x2="165.1" y2="96.52" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$137" class="0">
+<segment>
+<pinref part="CON6" gate="_ABE-FPGA" pin="E24~C9~IO_L8P_0"/>
+<wire x1="165.1" y1="93.98" x2="144.78" y2="93.98" width="0.1524" layer="91"/>
+<wire x1="144.78" y1="93.98" x2="144.78" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="144.78" y1="142.24" x2="96.52" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="96.52" y1="142.24" x2="96.52" y2="101.6" width="0.1524" layer="91"/>
+<pinref part="JP5" gate="A" pin="17"/>
+<wire x1="96.52" y1="101.6" x2="104.14" y2="101.6" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$138" class="0">
+<segment>
+<pinref part="JP5" gate="A" pin="16"/>
+<wire x1="111.76" y1="104.14" x2="152.4" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="152.4" y1="104.14" x2="152.4" y2="91.44" width="0.1524" layer="91"/>
+<pinref part="CON6" gate="_ABE-FPGA" pin="A25~D8~IO_L32N_0"/>
+<wire x1="152.4" y1="91.44" x2="165.1" y2="91.44" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$139" class="0">
+<segment>
+<pinref part="CON6" gate="_ABE-FPGA" pin="B25~D9~IO_L32P_0"/>
+<wire x1="165.1" y1="88.9" x2="121.92" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="88.9" x2="121.92" y2="147.32" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="147.32" x2="99.06" y2="147.32" width="0.1524" layer="91"/>
+<wire x1="99.06" y1="147.32" x2="99.06" y2="104.14" width="0.1524" layer="91"/>
+<pinref part="JP5" gate="A" pin="15"/>
+<wire x1="99.06" y1="104.14" x2="104.14" y2="104.14" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$140" class="0">
+<segment>
+<pinref part="JP5" gate="A" pin="14"/>
+<wire x1="111.76" y1="106.68" x2="152.4" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="152.4" y1="106.68" x2="152.4" y2="86.36" width="0.1524" layer="91"/>
+<pinref part="CON6" gate="_ABE-FPGA" pin="E25~C7~IO_L5P_0"/>
+<wire x1="152.4" y1="86.36" x2="165.1" y2="86.36" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$141" class="0">
+<segment>
+<pinref part="CON6" gate="_ABE-FPGA" pin="A26~A8~IO_L6N_0"/>
+<wire x1="165.1" y1="83.82" x2="121.92" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="83.82" x2="121.92" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="149.86" x2="90.424" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="90.424" y1="149.86" x2="90.424" y2="107.442" width="0.1524" layer="91"/>
+<pinref part="JP5" gate="A" pin="13"/>
+<wire x1="90.424" y1="107.442" x2="104.14" y2="107.442" width="0.1524" layer="91"/>
+<wire x1="104.14" y1="107.442" x2="104.14" y2="106.68" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$142" class="0">
+<segment>
+<pinref part="JP5" gate="A" pin="12"/>
+<wire x1="111.76" y1="109.22" x2="152.4" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="152.4" y1="109.22" x2="152.4" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="CON6" gate="_ABE-FPGA" pin="B26~B8~IO_L6P_0"/>
+<wire x1="152.4" y1="81.28" x2="165.1" y2="81.28" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$143" class="0">
+<segment>
+<pinref part="CON6" gate="_ABE-FPGA" pin="E26~A7~IO_L5N_0"/>
+<pinref part="JP5" gate="A" pin="11"/>
+<wire x1="165.1" y1="78.74" x2="134.62" y2="78.74" width="0.1524" layer="91"/>
+<wire x1="134.62" y1="78.74" x2="104.14" y2="109.22" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$144" class="0">
+<segment>
+<pinref part="JP5" gate="A" pin="10"/>
+<wire x1="111.76" y1="111.76" x2="119.38" y2="111.76" width="0.1524" layer="91"/>
+<wire x1="119.38" y1="111.76" x2="154.94" y2="76.2" width="0.1524" layer="91"/>
+<pinref part="CON6" gate="_ABE-FPGA" pin="A27~C8~IO_L7N_0"/>
+<wire x1="154.94" y1="76.2" x2="165.1" y2="76.2" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$145" class="0">
+<segment>
+<pinref part="CON6" gate="_ABE-FPGA" pin="B27~D7~IO_L7P_0"/>
+<pinref part="JP5" gate="A" pin="9"/>
+<wire x1="165.1" y1="73.66" x2="142.24" y2="73.66" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="73.66" x2="104.14" y2="111.76" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$146" class="0">
+<segment>
+<pinref part="JP5" gate="A" pin="8"/>
+<wire x1="111.76" y1="114.3" x2="116.84" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="114.3" x2="160.02" y2="71.12" width="0.1524" layer="91"/>
+<pinref part="CON6" gate="_ABE-FPGA" pin="E27~B6~IO_L4P_0"/>
+<wire x1="160.02" y1="71.12" x2="165.1" y2="71.12" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$147" class="0">
+<segment>
+<pinref part="CON6" gate="_ABE-FPGA" pin="A28~C6~IO_L3N_0"/>
+<pinref part="JP5" gate="A" pin="7"/>
+<wire x1="165.1" y1="68.58" x2="149.86" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="149.86" y1="68.58" x2="104.14" y2="114.3" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$148" class="0">
+<segment>
+<pinref part="JP5" gate="A" pin="6"/>
+<wire x1="111.76" y1="116.84" x2="162.56" y2="66.04" width="0.1524" layer="91"/>
+<pinref part="CON6" gate="_ABE-FPGA" pin="B28~D6~IO_L3P_0"/>
+<wire x1="162.56" y1="66.04" x2="165.1" y2="66.04" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$149" class="0">
+<segment>
+<pinref part="CON6" gate="_ABE-FPGA" pin="A29~A5~IO_L2N_0"/>
+<pinref part="JP5" gate="A" pin="5"/>
+<wire x1="165.1" y1="63.5" x2="157.48" y2="63.5" width="0.1524" layer="91"/>
+<wire x1="157.48" y1="63.5" x2="104.14" y2="116.84" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="+5V" class="0">
+<segment>
+<pinref part="P+8" gate="1" pin="+5V"/>
+<pinref part="JP5" gate="A" pin="1"/>
+<wire x1="101.6" y1="127" x2="101.6" y2="124.46" width="0.1524" layer="91"/>
+<wire x1="101.6" y1="124.46" x2="104.14" y2="121.92" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="P+7" gate="1" pin="+5V"/>
+<pinref part="JP5" gate="A" pin="40"/>
+<wire x1="119.38" y1="68.58" x2="116.84" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="68.58" x2="111.76" y2="73.66" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="+3V3" class="2">
+<segment>
+<pinref part="+3V33" gate="G$1" pin="+3V3"/>
+<pinref part="JP5" gate="A" pin="3"/>
+<wire x1="106.68" y1="127" x2="106.68" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="106.68" y1="121.92" x2="104.14" y2="119.38" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="JP5" gate="A" pin="38"/>
+<pinref part="+3V32" gate="G$1" pin="+3V3"/>
+<wire x1="111.76" y1="76.2" x2="119.38" y2="76.2" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
