@@ -34289,6 +34289,7 @@ http://dangerousprototypes.com</description>
 <attributes>
 </attributes>
 <variantdefs>
+<variantdef name="no-adc"/>
 </variantdefs>
 <classes>
 <class number="0" name="default" width="0" drill="0">
@@ -34323,7 +34324,7 @@ http://dangerousprototypes.com</description>
 </part>
 <part name="C6" library="myrcl" deviceset="C-EU" device="C0805K" value="22µ"/>
 <part name="C4" library="myrcl" deviceset="C-EU" device="C1206" value="10µ"/>
-<part name="R7" library="myrcl" deviceset="R-EU_" device="R0805K" value="5K4"/>
+<part name="R7" library="myrcl" deviceset="R-EU_" device="R0805K" value="5K36"/>
 <part name="R8" library="myrcl" deviceset="R-EU_" device="R0805K" value="2K4"/>
 <part name="R5" library="myrcl" deviceset="R-EU_" device="R0805K" value="7K5"/>
 <part name="R6" library="myrcl" deviceset="R-EU_" device="R0805K" value="7K5"/>
@@ -34365,216 +34366,322 @@ http://dangerousprototypes.com</description>
 <part name="FRAME4" library="frames" deviceset="LETTER_L" device=""/>
 <part name="U1" library="customs" deviceset="AD9215BRUZ" device="">
 <attribute name="DIGIKEY#" value="AD9215BRUZ-105-ND"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="R13" library="adafruit" deviceset="R-US_" device="R0603" value="33R, 0.5%">
 <attribute name="DIGIKEY#" value="RR08Q33DCT-ND"/>
+<variant name="no-adc" populate="no"/>
 </part>
-<part name="R14" library="adafruit" deviceset="R-US_" device="R0603" value="33R, 0.5%"/>
-<part name="R15" library="adafruit" deviceset="R-US_" device="R0603" value="33R"/>
-<part name="R16" library="adafruit" deviceset="R-US_" device="R0603" value="33R"/>
+<part name="R14" library="adafruit" deviceset="R-US_" device="R0603" value="33R, 0.5%">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="R15" library="adafruit" deviceset="R-US_" device="R0603" value="33R">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="R16" library="adafruit" deviceset="R-US_" device="R0603" value="33R">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="R17" library="adafruit" deviceset="R-US_" device="R0402" value="1K">
 <attribute name="DIGIKEY#" value="RHM1.00KCDCT-ND"/>
+<variant name="no-adc" populate="no"/>
 </part>
-<part name="R18" library="adafruit" deviceset="R-US_" device="R0402" value="1K"/>
-<part name="R19" library="adafruit" deviceset="R-US_" device="R0402" value="1K"/>
-<part name="R20" library="adafruit" deviceset="R-US_" device="R0402" value="1K"/>
+<part name="R18" library="adafruit" deviceset="R-US_" device="R0402" value="1K">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="R19" library="adafruit" deviceset="R-US_" device="R0402" value="1K">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="R20" library="adafruit" deviceset="R-US_" device="R0402" value="1K">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="U2" library="customs" deviceset="AD8331" device="">
 <attribute name="DIGIKEY#" value="AD8331ARQZ-ND"/>
 <attribute name="PART#" value="AD8331ARQZ"/>
+<variant name="no-adc" populate="no"/>
 </part>
-<part name="C12" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
-<part name="C15" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
-<part name="C16" library="rcl" deviceset="C-EU" device="C0402" value="100nF"/>
-<part name="C17" library="rcl" deviceset="C-EU" device="C0402" value="100nF"/>
+<part name="C12" library="rcl" deviceset="C-EU" device="C0603K" value="100nF">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="C15" library="rcl" deviceset="C-EU" device="C0603K" value="100nF">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="C16" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="C17" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="C18" library="rcl" deviceset="C-EU" device="C0402" value="1nF">
 <attribute name="DIGIKEY#" value="445-4924-1-ND"/>
 <attribute name="PART#" value="C1005X7R1E102K"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C19" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C20" library="rcl" deviceset="C-EU" device="C0402" value="1nF">
 <attribute name="DIGIKEY#" value="445-4924-1-ND"/>
 <attribute name="PART#" value="C1005X7R1E102K"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C21" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
-<part name="R21" library="adafruit" deviceset="R-US_" device="R0603" value="10K"/>
+<part name="R21" library="adafruit" deviceset="R-US_" device="R0603" value="10K">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="C22" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="R22" library="adafruit" deviceset="R-US_" device="R0603" value="274R">
 <attribute name="DIGIKEY#" value="RR08P274DCT-ND"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C23" library="rcl" deviceset="C-EU" device="C0603" value="18nF">
 <attribute name="DIGIKEY#" value="587-1099-1-ND"/>
 <attribute name="MANF#" value="LMK107SD183JA-T"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="JP3" library="SparkFun" deviceset="JUMPER-2" device="SMD-NC"/>
 <part name="L2" library="SparkFun" deviceset="INDUCTOR" device="0603" value="120nH">
 <attribute name="DIGIKEY#" value="445-6234-1-ND"/>
 <attribute name="PART#" value="MLF1608DR12M"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="P+2" library="supply1" deviceset="+5V" device=""/>
 <part name="C24" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C25" library="rcl" deviceset="C-EU" device="C0402" value="1nF">
 <attribute name="DIGIKEY#" value="445-4924-1-ND"/>
 <attribute name="PART#" value="C1005X7R1E102K"/>
+<variant name="no-adc" populate="no"/>
 </part>
-<part name="L5" library="SparkFun" deviceset="INDUCTOR" device="0603" value="120nH"/>
-<part name="L6" library="SparkFun" deviceset="INDUCTOR" device="0603" value="120nH"/>
+<part name="L5" library="SparkFun" deviceset="INDUCTOR" device="0603" value="120nH">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="L6" library="SparkFun" deviceset="INDUCTOR" device="0603" value="120nH">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="C26" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C27" library="rcl" deviceset="C-EU" device="C0402" value="1nF">
 <attribute name="DIGIKEY#" value="445-4924-1-ND"/>
 <attribute name="PART#" value="C1005X7R1E102K"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C28" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C29" library="rcl" deviceset="C-EU" device="C0402" value="10nF">
 <attribute name="DIGIKEY#" value="490-1312-1-ND"/>
 <attribute name="MANF#" value="GRM155R71E103KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="+3V2" library="supply1" deviceset="+3V3" device=""/>
 <part name="U3" library="SparkFun" deviceset="V_REG_LDO" device="SMD" value="LP3985IM5-3.0">
 <attribute name="DIGIKEY#" value="LP3985IM5-3.0CT-ND"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C30" library="rcl" deviceset="C-EU" device="C0402" value="10nF, COG">
 <attribute name="DIGIKEY#" value="445-2664-1-ND"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C31" library="rcl" deviceset="C-EU" device="C0402" value="10nF">
 <attribute name="DIGIKEY#" value="490-1312-1-ND"/>
 <attribute name="DIIGKEY#" value="490-1312-1-ND"/>
 <attribute name="MANF#" value="GRM155R71E103KA01D"/>
 <attribute name="PART#" value="GRM155R71E103KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C32" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C33" library="rcl" deviceset="C-EU" device="C0603" value="1u">
 <attribute name="DIGIKEY#" value="490-1543-1-ND"/>
 <attribute name="PART#" value="GRM188R61A105KA61D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C34" library="rcl" deviceset="C-EU" device="C0603" value="1u">
 <attribute name="DIGIKEY#" value="490-1543-1-ND"/>
 <attribute name="PART#" value="GRM188R61A105KA61D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C35" library="rcl" deviceset="C-EU" device="C0402" value="10nF">
 <attribute name="DIGIKEY#" value="490-1312-1-ND"/>
 <attribute name="DIIGKEY#" value="490-1312-1-ND"/>
 <attribute name="MANF#" value="GRM155R71E103KA01D"/>
 <attribute name="PART#" value="GRM155R71E103KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C36" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C37" library="rcl" deviceset="C-EU" device="C0603" value="10u">
 <attribute name="DIGIKEY#" value="C1608X5R0J106K"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C38" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C39" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C40" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
-<part name="C41" library="rcl" deviceset="C-EU" device="C0603" value="10u"/>
+<part name="C41" library="rcl" deviceset="C-EU" device="C0603" value="10u">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="C42" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
-<part name="JP4" library="SparkFun" deviceset="JUMPER-3" device="PTH"/>
-<part name="R23" library="adafruit" deviceset="R-US_" device="R0402" value="1K"/>
-<part name="R24" library="adafruit" deviceset="R-US_" device="R0603" value="2K"/>
-<part name="C43" library="rcl" deviceset="C-EU" device="C0402"/>
-<part name="C44" library="rcl" deviceset="C-EU" device="C0402"/>
+<part name="JP4" library="SparkFun" deviceset="JUMPER-3" device="PTH">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="R23" library="adafruit" deviceset="R-US_" device="R0402" value="1K">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="R24" library="adafruit" deviceset="R-US_" device="R0603" value="2K">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="C43" library="rcl" deviceset="C-EU" device="C0402">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="C44" library="rcl" deviceset="C-EU" device="C0402">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="U$6" library="customs" deviceset="ADC_VCC" device=""/>
 <part name="U$9" library="customs" deviceset="ADC_VCC" device=""/>
 <part name="U$10" library="customs" deviceset="ADC_VCC" device=""/>
-<part name="R25" library="adafruit" deviceset="R-US_" device="R0603"/>
+<part name="R25" library="adafruit" deviceset="R-US_" device="R0603">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="R26" library="customs" deviceset="TRIM_US-" device="3361P" value="20k">
 <attribute name="DIGIKEY#" value="3361P-203GLFCT-ND"/>
 <attribute name="PART#" value="3361P-1-203GLF"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C45" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
-<part name="L7" library="SparkFun" deviceset="INDUCTOR" device="0603" value="120nH"/>
-<part name="C46" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
+<part name="L7" library="SparkFun" deviceset="INDUCTOR" device="0603" value="120nH">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="C46" library="rcl" deviceset="C-EU" device="C0603K" value="100nF">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="+3V7" library="supply1" deviceset="+3V3" device=""/>
 <part name="C50" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
-<part name="R27" library="adafruit" deviceset="R-US_" device="R0603" value="2k2"/>
-<part name="C51" library="rcl" deviceset="C-EU" device="C0603" value="1uF"/>
-<part name="C52" library="rcl" deviceset="C-EU" device="C0603" value="1uF"/>
-<part name="R28" library="adafruit" deviceset="R-US_" device="R0603" value="2k2"/>
-<part name="T1" library="customs" deviceset="TC1-1T" device=""/>
-<part name="L8" library="SparkFun" deviceset="INDUCTOR" device="0603"/>
-<part name="C53" library="rcl" deviceset="C-EU" device="C0603K"/>
+<part name="R27" library="adafruit" deviceset="R-US_" device="R0603" value="2k2">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="C51" library="rcl" deviceset="C-EU" device="C0603" value="1uF">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="C52" library="rcl" deviceset="C-EU" device="C0603" value="1uF">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="R28" library="adafruit" deviceset="R-US_" device="R0603" value="2k2">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="T1" library="customs" deviceset="TC1-1T" device="">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="L8" library="SparkFun" deviceset="INDUCTOR" device="0603">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="C53" library="rcl" deviceset="C-EU" device="C0603K">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="R29" library="adafruit" deviceset="R-US_" device="R0603" value="36R, 0.5%">
 <attribute name="DIGIKEY#" value="RR08Q36DCT-ND"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="R30" library="adafruit" deviceset="R-US_" device="R0603" value="36R, 0.5%">
 <attribute name="DIGIKEY#" value="RR08Q36DCT-ND"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C54" library="rcl" deviceset="C-EU" device="C0402" value="1nF">
 <attribute name="DIGIKEY#" value="445-4924-1-ND"/>
 <attribute name="PART#" value="C1005X7R1E102K"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C55" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C56" library="rcl" deviceset="C-EU" device="C0402" value="1nF">
 <attribute name="DIGIKEY#" value="445-4924-1-ND"/>
 <attribute name="PART#" value="C1005X7R1E102K"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C57" library="rcl" deviceset="C-EU" device="C0402" value="100nF">
 <attribute name="DIGIKEY#" value="490-1318-1-ND"/>
 <attribute name="PART#" value="GRM155R61A104KA01D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="FRAME5" library="frames" deviceset="LETTER_L" device=""/>
-<part name="R31" library="adafruit" deviceset="R-US_" device="R0805"/>
+<part name="R31" library="adafruit" deviceset="R-US_" device="R0805" value="50R"/>
 <part name="C59" library="rcl" deviceset="C-EU" device="C0402" value="1u">
 <attribute name="DIGIKEY#" value="490-1543-1-ND"/>
 <attribute name="PART#" value="GRM188R61A105KA61D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="H1" library="holes" deviceset="MOUNT-PAD-ROUND" device="2.8"/>
 <part name="C61" library="rcl" deviceset="C-EU" device="C0603" value="22pF">
 <attribute name="DIGIKEY#" value="587-1099-1-ND"/>
 <attribute name="MANF#" value="LMK107SD183JA-T"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="D3" library="zetex" deviceset="D_ACAC" device="SOT23" value="BAV99-7-F"/>
 <part name="+3V11" library="supply1" deviceset="+3V3" device=""/>
-<part name="C62" library="adc_microboard" deviceset="C-EU" device="C0603"/>
-<part name="D4" library="zetex" deviceset="D_ACAC" device="SOT23" value="BAV99-7-F"/>
+<part name="C62" library="adc_microboard" deviceset="C-EU" device="C0603" value="100nF"/>
+<part name="D4" library="zetex" deviceset="D_ACAC" device="SOT23" value="BAV99-7-F">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="FRAME6" library="frames" deviceset="LETTER_L" device=""/>
 <part name="U5" library="Texas Instruments_By_element14_Batch_1" deviceset="CDCE906PW" device=""/>
 <part name="JP2" library="pinhead" deviceset="PINHD-2X3" device="/90" value="EXP-MINI"/>
 <part name="JP9" library="pinhead" deviceset="PINHD-2X4" device="/90" value="PLL_INPUT"/>
-<part name="X1" library="con-coax" deviceset="SMA-" device="142-0711-821/826"/>
-<part name="X2" library="con-coax" deviceset="SMA-" device="142-0711-821/826"/>
+<part name="X1" library="con-coax" deviceset="SMA-" device="142-0711-821/826">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="X2" library="con-coax" deviceset="SMA-" device="142-0711-821/826">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="X3" library="con-coax" deviceset="SMA-" device="142-0711-821/826"/>
 <part name="JP14" library="pinhead" deviceset="PINHD-2X3" device="/90" value="EXP-MINI"/>
 <part name="JP13" library="pinhead" deviceset="PINHD-2X10" device="/90" value="TARGET"/>
@@ -34584,8 +34691,8 @@ http://dangerousprototypes.com</description>
 </part>
 <part name="C63" library="myrcl" deviceset="C-EU" device="C0805K" value="22µ"/>
 <part name="C64" library="myrcl" deviceset="C-EU" device="C1206" value="10µ"/>
-<part name="R35" library="myrcl" deviceset="R-EU_" device="R0805K" value="?"/>
-<part name="R36" library="myrcl" deviceset="R-EU_" device="R0805K" value="?"/>
+<part name="R35" library="myrcl" deviceset="R-EU_" device="R0805K" value="52k3"/>
+<part name="R36" library="myrcl" deviceset="R-EU_" device="R0805K" value="10k"/>
 <part name="R37" library="myrcl" deviceset="R-EU_" device="R0805K" value="7K5"/>
 <part name="R38" library="myrcl" deviceset="R-EU_" device="R0805K" value="7K5"/>
 <part name="C65" library="myrcl" deviceset="C-EU" device="C0805K" value="2n2"/>
@@ -34607,42 +34714,50 @@ http://dangerousprototypes.com</description>
 <part name="U9" library="Texas Instruments_By_element14_Batch_1" deviceset="SN74LVC1T45DBVT" device=""/>
 <part name="SUPPLY18" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY46" library="supply2" deviceset="GND" device=""/>
-<part name="C66" library="rcl" deviceset="C-EU" device="C0603"/>
-<part name="C67" library="rcl" deviceset="C-EU" device="C0603"/>
-<part name="C68" library="rcl" deviceset="C-EU" device="C0603"/>
-<part name="C69" library="rcl" deviceset="C-EU" device="C0603"/>
-<part name="C70" library="rcl" deviceset="C-EU" device="C0603"/>
-<part name="C71" library="rcl" deviceset="C-EU" device="C0603"/>
+<part name="C66" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
+<part name="C67" library="rcl" deviceset="C-EU" device="C0603" value="22nF"/>
+<part name="C68" library="rcl" deviceset="C-EU" device="C0603" value="22nF"/>
+<part name="C69" library="rcl" deviceset="C-EU" device="C0603" value="22nF"/>
+<part name="C70" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
+<part name="C71" library="rcl" deviceset="C-EU" device="C0603" value="1uF"/>
 <part name="SUPPLY47" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY48" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY49" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY58" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY59" library="supply2" deviceset="GND" device=""/>
-<part name="C72" library="rcl" deviceset="C-EU" device="C0603"/>
+<part name="C72" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="SUPPLY60" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY61" library="supply2" deviceset="+5V/2" device=""/>
 <part name="SUPPLY62" library="supply2" deviceset="+5V/2" device=""/>
-<part name="R39" library="resistor" deviceset="R-US_" device="R0603"/>
-<part name="R40" library="resistor" deviceset="R-US_" device="R0603"/>
+<part name="R39" library="resistor" deviceset="R-US_" device="R0603" value="27R"/>
+<part name="R40" library="resistor" deviceset="R-US_" device="R0603" value="27R"/>
 <part name="SUPPLY63" library="supply2" deviceset="GND" device=""/>
-<part name="C73" library="rcl" deviceset="C-EU" device="C0603"/>
+<part name="C73" library="rcl" deviceset="C-EU" device="C0603" value="1uF"/>
 <part name="SUPPLY64" library="supply2" deviceset="GND" device=""/>
-<part name="R41" library="resistor" deviceset="R-US_" device="R0603"/>
+<part name="R41" library="resistor" deviceset="R-US_" device="R0603" value="470R"/>
 <part name="R42" library="resistor" deviceset="R-US_" device="R0603"/>
 <part name="FRAME8" library="frames" deviceset="LETTER_L" device=""/>
 <part name="X4" library="con-coax" deviceset="SMA-" device="142-0711-821/826"/>
 <part name="+3V8" library="supply1" deviceset="+3V3" device=""/>
 <part name="SUPPLY65" library="supply2" deviceset="GND" device=""/>
-<part name="R32" library="resistor" deviceset="R-US_" device="R0603"/>
-<part name="R33" library="resistor" deviceset="R-US_" device="R0603"/>
+<part name="R32" library="resistor" deviceset="R-US_" device="R0603" value="100R"/>
+<part name="R33" library="resistor" deviceset="R-US_" device="R0603" value="100R"/>
 <part name="R43" library="resistor" deviceset="R-US_" device="R0603"/>
 <part name="R44" library="resistor" deviceset="R-US_" device="R0603"/>
 <part name="R45" library="resistor" deviceset="R-US_" device="R0603"/>
 <part name="R46" library="resistor" deviceset="R-US_" device="R0603"/>
-<part name="C13" library="rcl" deviceset="C-EU" device="C0603"/>
-<part name="C47" library="rcl" deviceset="C-EU" device="C0603"/>
-<part name="C48" library="rcl" deviceset="C-EU" device="C0603"/>
-<part name="C49" library="rcl" deviceset="C-EU" device="C0603"/>
+<part name="C13" library="rcl" deviceset="C-EU" device="C0603" value="100nF">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="C47" library="rcl" deviceset="C-EU" device="C0603" value="100nF">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="C48" library="rcl" deviceset="C-EU" device="C0603" value="100nF">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="C49" library="rcl" deviceset="C-EU" device="C0603" value="100nF">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="SUPPLY52" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY66" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY67" library="supply2" deviceset="GND" device=""/>
@@ -34742,18 +34857,18 @@ http://dangerousprototypes.com</description>
 <part name="SUPPLY85" library="supply2" deviceset="-9V" device=""/>
 <part name="SUPPLY86" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY87" library="supply2" deviceset="GND" device=""/>
-<part name="LED1" library="dp_devices" deviceset="LED" device="-3MM"/>
-<part name="LED2" library="dp_devices" deviceset="LED" device="-3MM"/>
-<part name="LED3" library="dp_devices" deviceset="LED" device="-3MM"/>
-<part name="LED4" library="dp_devices" deviceset="LED" device="-3MM"/>
-<part name="LED5" library="dp_devices" deviceset="LED" device="-3MM"/>
-<part name="LED6" library="dp_devices" deviceset="LED" device="-3MM"/>
-<part name="R52" library="resistor" deviceset="R-US_" device="R0603"/>
-<part name="R53" library="resistor" deviceset="R-US_" device="R0603"/>
-<part name="R54" library="resistor" deviceset="R-US_" device="R0603"/>
-<part name="R55" library="resistor" deviceset="R-US_" device="R0603"/>
-<part name="R56" library="resistor" deviceset="R-US_" device="R0603"/>
-<part name="R57" library="resistor" deviceset="R-US_" device="R0603"/>
+<part name="LED1" library="dp_devices" deviceset="LED" device="-3MM" value="RED"/>
+<part name="LED2" library="dp_devices" deviceset="LED" device="-3MM" value="YELLOW"/>
+<part name="LED3" library="dp_devices" deviceset="LED" device="-3MM" value="GREEN"/>
+<part name="LED4" library="dp_devices" deviceset="LED" device="-3MM" value="BLUE"/>
+<part name="LED5" library="dp_devices" deviceset="LED" device="-3MM" value="BLUE"/>
+<part name="LED6" library="dp_devices" deviceset="LED" device="-3MM" value="GREEN"/>
+<part name="R52" library="resistor" deviceset="R-US_" device="R0603" value="220R"/>
+<part name="R53" library="resistor" deviceset="R-US_" device="R0603" value="220R"/>
+<part name="R54" library="resistor" deviceset="R-US_" device="R0603" value="220R"/>
+<part name="R55" library="resistor" deviceset="R-US_" device="R0603" value="220R"/>
+<part name="R56" library="resistor" deviceset="R-US_" device="R0603" value="220R"/>
+<part name="R57" library="resistor" deviceset="R-US_" device="R0603" value="220R"/>
 <part name="SUPPLY88" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY89" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY90" library="supply2" deviceset="GND" device=""/>
@@ -34761,21 +34876,21 @@ http://dangerousprototypes.com</description>
 <part name="SUPPLY92" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY93" library="supply2" deviceset="GND" device=""/>
 <part name="JP5" library="pinhead" deviceset="PINHD-2X20" device="/90"/>
-<part name="XTAL1" library="dp_devices" deviceset="OSC-XTAL" device="-HC-49U-SMD"/>
-<part name="C76" library="rcl" deviceset="C-EU" device="C0603"/>
-<part name="C77" library="rcl" deviceset="C-EU" device="C0603"/>
+<part name="XTAL1" library="dp_devices" deviceset="OSC-XTAL" device="-HC-49U-SMD" value="16MHz"/>
+<part name="C76" library="rcl" deviceset="C-EU" device="C0603" value="22pF"/>
+<part name="C77" library="rcl" deviceset="C-EU" device="C0603" value="22pF"/>
 <part name="SUPPLY94" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY95" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY96" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY97" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY98" library="supply2" deviceset="+5V/2" device=""/>
 <part name="JP6" library="pinhead" deviceset="PINHD-1X2" device=""/>
-<part name="R58" library="resistor" deviceset="R-US_" device="R0603"/>
+<part name="R58" library="resistor" deviceset="R-US_" device="R0603" value="1K"/>
 <part name="SUPPLY99" library="supply2" deviceset="GND" device=""/>
 <part name="+3V27" library="supply1" deviceset="+3V3" device=""/>
-<part name="C78" library="rcl" deviceset="C-EU" device="C0603"/>
-<part name="C79" library="rcl" deviceset="C-EU" device="C0603"/>
-<part name="C80" library="rcl" deviceset="C-EU" device="C0603"/>
+<part name="C78" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
+<part name="C79" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
+<part name="C80" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="SUPPLY100" library="supply2" deviceset="+5V/2" device=""/>
 <part name="SUPPLY101" library="supply2" deviceset="+5V/2" device=""/>
 <part name="SUPPLY102" library="supply2" deviceset="+5V/2" device=""/>
@@ -34788,9 +34903,9 @@ http://dangerousprototypes.com</description>
 <part name="SUPPLY51" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY56" library="supply2" deviceset="GND" device=""/>
 <part name="+3V28" library="supply1" deviceset="+3V3" device=""/>
-<part name="C81" library="rcl" deviceset="C-EU" device="C0603"/>
-<part name="C82" library="rcl" deviceset="C-EU" device="C0603"/>
-<part name="C83" library="rcl" deviceset="C-EU" device="C0603"/>
+<part name="C81" library="rcl" deviceset="C-EU" device="C0603" value="22nF"/>
+<part name="C82" library="rcl" deviceset="C-EU" device="C0603" value="22nF"/>
+<part name="C83" library="rcl" deviceset="C-EU" device="C0603" value="22nF"/>
 <part name="SUPPLY106" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY107" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY108" library="supply2" deviceset="GND" device=""/>
@@ -34806,8 +34921,8 @@ http://dangerousprototypes.com</description>
 <part name="+3V32" library="supply1" deviceset="+3V3" device=""/>
 <part name="+3V33" library="supply1" deviceset="+3V3" device=""/>
 <part name="SUPPLY38" library="supply2" deviceset="GND" device=""/>
-<part name="R59" library="resistor" deviceset="R-US_" device="R0603"/>
-<part name="R60" library="resistor" deviceset="R-US_" device="R0603"/>
+<part name="R59" library="resistor" deviceset="R-US_" device="R0603" value="4k7"/>
+<part name="R60" library="resistor" deviceset="R-US_" device="R0603" value="4k7"/>
 <part name="+3V34" library="supply1" deviceset="+3V3" device=""/>
 <part name="+3V35" library="supply1" deviceset="+3V3" device=""/>
 <part name="JP7" library="pinhead" deviceset="PINHD-1X3" device=""/>

@@ -7325,6 +7325,7 @@ http://dangerousprototypes.com</description>
 <attributes>
 </attributes>
 <variantdefs>
+<variantdef name="no-adc"/>
 </variantdefs>
 <classes>
 <class number="0" name="default" width="0" drill="0">
@@ -7628,7 +7629,7 @@ einem neuen Namen ab.</description>
 <attribute name="NAME" x="63.0555" y="82.55" size="1.0668" layer="25" ratio="12" rot="R270"/>
 <attribute name="VALUE" x="63.119" y="79.8195" size="1.0668" layer="27" ratio="12" rot="R270"/>
 </element>
-<element name="R7" library="myrcl" package="R0805K" value="5K4" x="75.2475" y="84.1375" smashed="yes" rot="R90">
+<element name="R7" library="myrcl" package="R0805K" value="5K36" x="75.2475" y="84.1375" smashed="yes" rot="R90">
 <attribute name="NAME" x="74.1185" y="83.1375" size="1.0668" layer="25" ratio="12" rot="R90"/>
 <attribute name="VALUE" x="77.465" y="82.6295" size="1.0668" layer="27" ratio="12" rot="R90"/>
 </element>
@@ -7676,107 +7677,129 @@ einem neuen Namen ab.</description>
 <attribute name="NAME" x="118.7526" y="79.6544" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="125.0315" y="73.5965" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="AD9215BRUZ-105-ND" x="123.5075" y="77.1525" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R13" library="adafruit" package="R0603" value="33R, 0.5%" x="133.305" y="77.0922" smashed="yes" rot="R270">
 <attribute name="NAME" x="138.3875" y="78.9489" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="131.273" y="77.9812" size="1.27" layer="27" rot="R270"/>
 <attribute name="DIGIKEY#" value="RR08Q33DCT-ND" x="133.305" y="77.0922" size="1.778" layer="27" rot="R270" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R14" library="adafruit" package="R0603" value="33R, 0.5%" x="134.9578" y="77.8352" smashed="yes" rot="R270">
 <attribute name="NAME" x="139.7178" y="80.0145" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="132.9258" y="78.7242" size="1.27" layer="27" rot="R270"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R15" library="adafruit" package="R0603" value="33R" x="133.305" y="78.7775" smashed="yes" rot="R270">
 <attribute name="NAME" x="138.3876" y="80.6342" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="131.273" y="79.6665" size="1.27" layer="27" rot="R270"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R16" library="adafruit" package="R0603" value="33R" x="134.9579" y="79.5312" smashed="yes" rot="R270">
 <attribute name="NAME" x="139.7178" y="81.7105" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="132.9259" y="80.4202" size="1.27" layer="27" rot="R270"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R17" library="adafruit" package="R0402" value="1K" x="131.8095" y="79.69" smashed="yes" rot="R90">
 <attribute name="NAME" x="120.4023" y="84.8615" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="133.8415" y="79.055" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="RHM1.00KCDCT-ND" x="131.8095" y="79.69" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R18" library="adafruit" package="R0402" value="1K" x="136.8902" y="79.0448" smashed="yes">
 <attribute name="NAME" x="140.852" y="79.0811" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="136.2552" y="77.0128" size="1.27" layer="27"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R19" library="adafruit" package="R0402" value="1K" x="131.8096" y="77.1094" smashed="yes" rot="R90">
 <attribute name="NAME" x="120.4026" y="82.2809" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="133.8416" y="76.4744" size="1.27" layer="27" rot="R90"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R20" library="adafruit" package="R0402" value="1K" x="136.8902" y="77.8352" smashed="yes" rot="R180">
 <attribute name="NAME" x="142.6864" y="79.17" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="137.5252" y="79.8672" size="1.27" layer="27" rot="R180"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="U2" library="customs" package="QSOP20" value="AD8331" x="138.7475" y="88.5825" smashed="yes" rot="R90">
 <attribute name="NAME" x="140.423921875" y="94.122146875" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="139.9874" y="85.9775" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="AD8331ARQZ-ND" x="138.7475" y="88.5825" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="PART#" value="AD8331ARQZ" x="138.7475" y="88.5825" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C12" library="rcl" package="C0603K" value="100nF" x="131.4501" y="84.8512" smashed="yes" rot="R270">
 <attribute name="NAME" x="132.1001" y="85.6512" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="129.8001" y="85.6512" size="1.016" layer="27" rot="R270"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C15" library="rcl" package="C0603K" value="100nF" x="133.9901" y="84.8512" smashed="yes" rot="R270">
 <attribute name="NAME" x="134.6401" y="85.6512" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="132.3401" y="85.6512" size="1.016" layer="27" rot="R270"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C16" library="rcl" package="C0402" value="100nF" x="143.4224" y="90.3351" smashed="yes" rot="R180">
 <attribute name="NAME" x="146.3154" y="90.8291" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="144.0574" y="92.2401" size="1.27" layer="27" rot="R180"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C17" library="rcl" package="C0402" value="100nF" x="143.4224" y="89.2062" smashed="yes">
 <attribute name="NAME" x="144.4003" y="88.5509" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="142.7874" y="87.3012" size="1.27" layer="27"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C18" library="rcl" package="C0402" value="1nF" x="135.895" y="93.9851" smashed="yes" rot="R90">
 <attribute name="NAME" x="138.3245" y="92.8662" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="137.8" y="93.3501" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="445-4924-1-ND" x="135.895" y="93.9851" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="PART#" value="C1005X7R1E102K" x="135.895" y="93.9851" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C19" library="rcl" package="C0402" value="100nF" x="134.6251" y="93.9851" smashed="yes" rot="R90">
 <attribute name="NAME" x="137.3771" y="92.9469" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="136.5301" y="93.3501" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="134.6251" y="93.9851" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="134.6251" y="93.9851" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C20" library="rcl" package="C0402" value="1nF" x="133.0325" y="93.0376" smashed="yes" rot="R90">
 <attribute name="NAME" x="132.962" y="93.9349" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="134.9375" y="92.4026" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="445-4924-1-ND" x="133.0325" y="93.0376" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="PART#" value="C1005X7R1E102K" x="133.0325" y="93.0376" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C21" library="rcl" package="C0402" value="100nF" x="131.7625" y="93.0376" smashed="yes" rot="R90">
 <attribute name="NAME" x="131.934" y="93.9348" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="133.6675" y="92.4026" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="131.7625" y="93.0376" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="131.7625" y="93.0376" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R21" library="adafruit" package="R0603" value="10K" x="130.1801" y="93.0376" smashed="yes" rot="R90">
 <attribute name="NAME" x="130.6296" y="94.2822" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="132.2121" y="92.1486" size="1.27" layer="27" rot="R90"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C22" library="rcl" package="C0402" value="100nF" x="142.5372" y="83.3171" smashed="yes" rot="R90">
 <attribute name="NAME" x="143.0312" y="84.295" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="144.4422" y="82.6821" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="142.5372" y="83.3171" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="142.5372" y="83.3171" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R22" library="adafruit" package="R0603" value="274R" x="144.4726" y="87.3024" smashed="yes" rot="R180">
 <attribute name="NAME" x="152.5028" y="80.3378" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="145.3616" y="89.3344" size="1.27" layer="27" rot="R180"/>
 <attribute name="DIGIKEY#" value="RR08P274DCT-ND" x="144.4726" y="87.3024" size="1.778" layer="27" rot="R180" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C23" library="rcl" package="C0603" value="18nF" x="144.4727" y="86.0425" smashed="yes">
 <attribute name="NAME" x="149.79" y="77.9792" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="143.8377" y="84.1375" size="1.27" layer="27"/>
 <attribute name="DIGIKEY#" value="587-1099-1-ND" x="144.4727" y="86.0425" size="1.778" layer="27" display="off"/>
 <attribute name="MANF#" value="LMK107SD183JA-T" x="144.4727" y="86.0425" size="1.778" layer="27" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="JP3" library="SparkFun" package="SJ_2S" value="" x="147.033" y="86.9797" smashed="yes" rot="R90">
 <attribute name="NAME" x="149.2308" y="85.6266" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
@@ -7786,60 +7809,71 @@ einem neuen Namen ab.</description>
 <attribute name="VALUE" x="129.6767" y="92.7492" size="0.4064" layer="27" font="vector" rot="R90"/>
 <attribute name="DIGIKEY#" value="445-6234-1-ND" x="128.5337" y="93.7652" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="PART#" value="MLF1608DR12M" x="128.5337" y="93.7652" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C24" library="rcl" package="C0402" value="100nF" x="140.7541" y="82.4865" smashed="yes">
 <attribute name="NAME" x="136.5707" y="81.9118" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="140.1191" y="80.5815" size="1.27" layer="27"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="140.7541" y="82.4865" size="1.778" layer="27" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="140.7541" y="82.4865" size="1.778" layer="27" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C25" library="rcl" package="C0402" value="1nF" x="140.7541" y="83.4517" smashed="yes">
 <attribute name="NAME" x="136.5707" y="82.9577" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="140.1191" y="81.5467" size="1.27" layer="27"/>
 <attribute name="DIGIKEY#" value="445-4924-1-ND" x="140.7541" y="83.4517" size="1.778" layer="27" display="off"/>
 <attribute name="PART#" value="C1005X7R1E102K" x="140.7541" y="83.4517" size="1.778" layer="27" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="L5" library="SparkFun" package="0603" value="120nH" x="122.9385" y="90.9803" smashed="yes">
 <attribute name="NAME" x="119.1463" y="90.452" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="121.9225" y="89.8373" size="0.4064" layer="27" font="vector"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="L6" library="SparkFun" package="0603" value="120nH" x="128.5838" y="90.6576" smashed="yes" rot="R270">
 <attribute name="NAME" x="128.9642" y="90.4058" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="127.4408" y="91.6736" size="0.4064" layer="27" font="vector" rot="R270"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C26" library="rcl" package="C0402" value="100nF" x="132.8394" y="90.4024" smashed="yes" rot="R90">
 <attribute name="NAME" x="133.2509" y="86.3821" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="134.7444" y="89.7674" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="132.8394" y="90.4024" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="132.8394" y="90.4024" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C27" library="rcl" package="C0402" value="1nF" x="134.0078" y="90.4024" smashed="yes" rot="R90">
 <attribute name="NAME" x="134.4789" y="86.3823" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="135.9128" y="89.7674" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="445-4924-1-ND" x="134.0078" y="90.4024" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="PART#" value="C1005X7R1E102K" x="134.0078" y="90.4024" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C28" library="rcl" package="C0402" value="100nF" x="117.2934" y="75.4964" smashed="yes" rot="R90">
 <attribute name="NAME" x="117.7875" y="76.6356" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="119.1984" y="74.8614" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="117.2934" y="75.4964" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="117.2934" y="75.4964" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C29" library="rcl" package="C0402" value="10nF" x="116.1645" y="75.4964" smashed="yes" rot="R90">
 <attribute name="NAME" x="116.6586" y="76.6356" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="118.0695" y="74.8614" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="490-1312-1-ND" x="116.1645" y="75.4964" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MANF#" value="GRM155R71E103KA01D" x="116.1645" y="75.4964" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="U3" library="SparkFun" package="SOT23-5" value="LP3985IM5-3.0" x="126.8095" y="87.4319" smashed="yes" rot="R90">
 <attribute name="NAME" x="128.9056" y="87.021" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="127" y="86.4794" size="0.4064" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="LP3985IM5-3.0CT-ND" x="126.8095" y="87.4319" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C30" library="rcl" package="C0402" value="10nF, COG" x="123.9063" y="87.4319" smashed="yes" rot="R90">
 <attribute name="NAME" x="123.1906" y="85.8292" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="125.8113" y="86.7969" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="445-2664-1-ND" x="123.9063" y="87.4319" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C31" library="rcl" package="C0402" value="10nF" x="128.2611" y="80.335" smashed="yes" rot="R270">
 <attribute name="NAME" x="115.4284" y="87.9053" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
@@ -7848,24 +7882,28 @@ einem neuen Namen ab.</description>
 <attribute name="PART#" value="GRM155R71E103KA01D" x="128.2611" y="80.335" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="DIGIKEY#" value="490-1312-1-ND" x="128.2611" y="80.335" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="MANF#" value="GRM155R71E103KA01D" x="128.2611" y="80.335" size="1.778" layer="27" rot="R270" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C32" library="rcl" package="C0402" value="100nF" x="129.3787" y="76.6255" smashed="yes" rot="R90">
 <attribute name="NAME" x="117.4535" y="80.8292" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="131.2837" y="75.9905" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="129.3787" y="76.6255" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="129.3787" y="76.6255" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C33" library="rcl" package="C0603" value="1u" x="125.5191" y="89.69" smashed="yes" rot="R180">
 <attribute name="NAME" x="123.9767" y="90.184" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="126.1541" y="91.595" size="1.27" layer="27" rot="R180"/>
 <attribute name="DIGIKEY#" value="490-1543-1-ND" x="125.5191" y="89.69" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="PART#" value="GRM188R61A105KA61D" x="125.5191" y="89.69" size="1.778" layer="27" rot="R180" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C34" library="rcl" package="C0603" value="1u" x="126.8095" y="85.1738" smashed="yes">
 <attribute name="NAME" x="122.4648" y="84.7603" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="126.1745" y="83.2688" size="1.27" layer="27"/>
 <attribute name="DIGIKEY#" value="490-1543-1-ND" x="126.8095" y="85.1738" size="1.778" layer="27" display="off"/>
 <attribute name="PART#" value="GRM188R61A105KA61D" x="126.8095" y="85.1738" size="1.778" layer="27" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C35" library="rcl" package="C0402" value="10nF" x="128.2725" y="76.6254" smashed="yes" rot="R90">
 <attribute name="NAME" x="116.6698" y="80.8291" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
@@ -7874,153 +7912,185 @@ einem neuen Namen ab.</description>
 <attribute name="PART#" value="GRM155R71E103KA01D" x="128.2725" y="76.6254" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="DIGIKEY#" value="490-1312-1-ND" x="128.2725" y="76.6254" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MANF#" value="GRM155R71E103KA01D" x="128.2725" y="76.6254" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C36" library="rcl" package="C0402" value="100nF" x="129.3901" y="80.3351" smashed="yes" rot="R270">
 <attribute name="NAME" x="116.6379" y="87.9055" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="127.4851" y="80.9701" size="1.27" layer="27" rot="R270"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="129.3901" y="80.3351" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="129.3901" y="80.3351" size="1.778" layer="27" rot="R270" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C37" library="rcl" package="C0603" value="10u" x="123.2611" y="71.6255" smashed="yes" rot="R180">
 <attribute name="NAME" x="120.9928" y="71.9582" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="123.8961" y="73.5305" size="1.27" layer="27" rot="R180"/>
 <attribute name="DIGIKEY#" value="C1608X5R0J106K" x="123.2611" y="71.6255" size="1.778" layer="27" rot="R180" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C38" library="rcl" package="C0402" value="100nF" x="123.2611" y="70.3351" smashed="yes" rot="R180">
 <attribute name="NAME" x="120.9929" y="70.6678" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="123.8961" y="72.2401" size="1.27" layer="27" rot="R180"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="123.2611" y="70.3351" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="123.2611" y="70.3351" size="1.778" layer="27" rot="R180" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C39" library="rcl" package="C0402" value="100nF" x="124.2289" y="68.7222" smashed="yes" rot="R90">
 <attribute name="NAME" x="121.0133" y="66.7968" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="126.1339" y="68.0872" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="124.2289" y="68.7222" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="124.2289" y="68.7222" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C40" library="rcl" package="C0402" value="100nF" x="122.2935" y="68.7222" smashed="yes" rot="R90">
 <attribute name="NAME" x="119.723" y="66.7968" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="124.1985" y="68.0872" size="1.27" layer="27" rot="R90"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="122.2935" y="68.7222" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="122.2935" y="68.7222" size="1.778" layer="27" rot="R90" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C41" library="rcl" package="C0603" value="10u" x="130.0354" y="73.2383" smashed="yes" rot="R180">
 <attribute name="NAME" x="131.7188" y="72.6033" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="130.6704" y="75.1433" size="1.27" layer="27" rot="R180"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C42" library="rcl" package="C0402" value="100nF" x="129.3903" y="74.3674" smashed="yes" rot="R180">
 <attribute name="NAME" x="133.0898" y="74.8615" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="130.0253" y="76.2724" size="1.27" layer="27" rot="R180"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="129.3903" y="74.3674" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="129.3903" y="74.3674" size="1.778" layer="27" rot="R180" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="JP4" library="SparkFun" package="1X03" value="JUMPER-3PTH" x="127.4548" y="61.9481" smashed="yes" rot="R180">
 <attribute name="NAME" x="126.2204" y="64.958" size="1.27" layer="25" font="vector" ratio="10" rot="R180"/>
 <attribute name="VALUE" x="128.7248" y="65.1231" size="1.27" layer="27" rot="R180"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R23" library="adafruit" package="R0402" value="1K" x="126.4867" y="68.8836" smashed="yes" rot="R270">
 <attribute name="NAME" x="124.9101" y="70.0832" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="124.4547" y="69.5186" size="1.27" layer="27" rot="R270"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R24" library="adafruit" package="R0603" value="2K" x="127.4547" y="70.4963" smashed="yes">
 <attribute name="NAME" x="126.0012" y="71.2241" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="126.5657" y="68.4643" size="1.27" layer="27"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C43" library="rcl" package="C0402" value="" x="130.6805" y="79.69" smashed="yes" rot="R90">
 <attribute name="NAME" x="119.0778" y="84.8615" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="132.5855" y="79.055" size="1.27" layer="27" rot="R90"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C44" library="rcl" package="C0402" value="" x="130.6805" y="77.1093" smashed="yes" rot="R270">
 <attribute name="NAME" x="118.0897" y="84.196" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="128.7755" y="77.7443" size="1.27" layer="27" rot="R270"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R25" library="adafruit" package="R0603" value="" x="122.9386" y="82.72205" smashed="yes">
 <attribute name="NAME" x="123.8359" y="82.35505" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="122.3036" y="80.69005" size="1.27" layer="27"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R26" library="customs" package="3361P" value="20k" x="132.9387" y="69.3674" smashed="yes" rot="R180">
 <attribute name="NAME" x="134.1064" y="71.4222" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="128.1387" y="67.3674" size="1.27" layer="27" font="vector" rot="R180"/>
 <attribute name="DIGIKEY#" value="3361P-203GLFCT-ND" x="132.9387" y="69.3674" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="PART#" value="3361P-1-203GLF" x="132.9387" y="69.3674" size="1.778" layer="27" rot="R180" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C45" library="rcl" package="C0402" value="100nF" x="128.2611" y="68.0771" smashed="yes" rot="R270">
 <attribute name="NAME" x="127.767" y="66.8573" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="126.3561" y="68.7121" size="1.27" layer="27" rot="R270"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="128.2611" y="68.0771" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="128.2611" y="68.0771" size="1.778" layer="27" rot="R270" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="L7" library="SparkFun" package="0603" value="120nH" x="148.4224" y="84.8512" smashed="yes" rot="R204.4">
 <attribute name="NAME" x="149.9475" y="84.8339" size="0.8" layer="25" font="vector" ratio="16" rot="R204.4"/>
 <attribute name="VALUE" x="148.8755" y="86.3119" size="0.4064" layer="27" font="vector" rot="R204.4"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C46" library="rcl" package="C0603K" value="100nF" x="144.874" y="84.2061" smashed="yes">
 <attribute name="NAME" x="147.1489" y="82.7461" size="0.8" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="144.074" y="82.5561" size="1.016" layer="27"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C50" library="rcl" package="C0402" value="100nF" x="127.774" y="96.5995" smashed="yes" rot="R180">
 <attribute name="NAME" x="128.887" y="97.11" size="0.8382" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="128.409" y="98.5045" size="1.27" layer="27" rot="R180"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="127.774" y="96.5995" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="127.774" y="96.5995" size="1.778" layer="27" rot="R180" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R27" library="adafruit" package="R0603" value="2k2" x="116.487" y="90.0125" smashed="yes">
 <attribute name="NAME" x="114.9528" y="88.3208" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="115.598" y="87.9805" size="1.27" layer="27"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C51" library="rcl" package="C0603" value="1uF" x="116.487" y="91.6254" smashed="yes" rot="R180">
 <attribute name="NAME" x="117.7672" y="93.2485" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="117.122" y="93.5304" size="1.27" layer="27" rot="R180"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C52" library="rcl" package="C0603" value="1uF" x="142.53450625" y="92.674746875" smashed="yes">
 <attribute name="NAME" x="142.172378125" y="90.976746875" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="141.89950625" y="90.769746875" size="1.27" layer="27"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R28" library="adafruit" package="R0603" value="2k2" x="141.6482" y="95.591215625" smashed="yes" rot="R270">
 <attribute name="NAME" x="139.87431875" y="96.91576875" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="139.6162" y="96.480215625" size="1.27" layer="27" rot="R270"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="T1" library="customs" package="AT224-1A" value="TC1-1T" x="141.9707" y="72.5933" smashed="yes" rot="R70">
 <attribute name="NAME" x="144.7189" y="75.5395" size="1.27" layer="25" font="vector" ratio="16" rot="R160"/>
 <attribute name="VALUE" x="143.1786" y="69.4507" size="1.27" layer="27" font="vector" ratio="16" rot="R160"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="L8" library="SparkFun" package="0603" value="" x="145.5191" y="70.6577" smashed="yes" rot="R180">
 <attribute name="NAME" x="146.0855" y="69.5731" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="146.5351" y="71.8007" size="0.4064" layer="27" font="vector" rot="R180"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C53" library="rcl" package="C0603K" value="" x="148.4909" y="71.1657" smashed="yes" rot="R25">
 <attribute name="NAME" x="147.88501875" y="68.663946875" size="1.016" layer="25" font="vector" ratio="16" rot="R25"/>
 <attribute name="VALUE" x="148.463171875" y="69.332196875" size="1.016" layer="27" rot="R25"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R29" library="adafruit" package="R0603" value="36R, 0.5%" x="137.5353" y="71.6253" smashed="yes" rot="R110">
 <attribute name="VALUE" x="139.7489" y="71.4849" size="1.27" layer="27" rot="R110"/>
 <attribute name="DIGIKEY#" value="RR08Q36DCT-ND" x="137.5353" y="71.6253" size="1.778" layer="27" rot="R110" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R30" library="adafruit" package="R0603" value="36R, 0.5%" x="139.0675" y="76.1416" smashed="yes" rot="R30">
 <attribute name="VALUE" x="139.3137" y="73.9374" size="1.27" layer="27" rot="R30"/>
 <attribute name="DIGIKEY#" value="RR08Q36DCT-ND" x="139.0675" y="76.1416" size="1.778" layer="27" rot="R30" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C54" library="rcl" package="C0402" value="1nF" x="140.0353" y="69.3674" smashed="yes" rot="R270">
 <attribute name="VALUE" x="138.1303" y="70.0024" size="1.27" layer="27" rot="R270"/>
 <attribute name="DIGIKEY#" value="445-4924-1-ND" x="140.0353" y="69.3674" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="PART#" value="C1005X7R1E102K" x="140.0353" y="69.3674" size="1.778" layer="27" rot="R270" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C55" library="rcl" package="C0402" value="100nF" x="138.745" y="69.3674" smashed="yes" rot="R270">
 <attribute name="VALUE" x="136.84" y="70.0024" size="1.27" layer="27" rot="R270"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="138.745" y="69.3674" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="138.745" y="69.3674" size="1.778" layer="27" rot="R270" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C56" library="rcl" package="C0402" value="1nF" x="142.2933" y="76.7867" smashed="yes" rot="R270">
 <attribute name="VALUE" x="140.3883" y="77.4217" size="1.27" layer="27" rot="R270"/>
 <attribute name="DIGIKEY#" value="445-4924-1-ND" x="142.2933" y="76.7867" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="PART#" value="C1005X7R1E102K" x="142.2933" y="76.7867" size="1.778" layer="27" rot="R270" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="C57" library="rcl" package="C0402" value="100nF" x="141.0031" y="76.7867" smashed="yes" rot="R270">
 <attribute name="VALUE" x="139.0981" y="77.4217" size="1.27" layer="27" rot="R270"/>
 <attribute name="DIGIKEY#" value="490-1318-1-ND" x="141.0031" y="76.7867" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="PART#" value="GRM155R61A104KA01D" x="141.0031" y="76.7867" size="1.778" layer="27" rot="R270" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
-<element name="R31" library="adafruit" package="R0805" value="" x="141.2722" y="58.7223" smashed="yes" rot="R180">
+<element name="R31" library="adafruit" package="R0805" value="50R" x="141.2722" y="58.7223" smashed="yes" rot="R180">
 <attribute name="NAME" x="142.4838" y="60.76833125" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="142.1612" y="60.7543" size="1.27" layer="27" rot="R180"/>
 </element>
@@ -8029,6 +8099,7 @@ einem neuen Namen ab.</description>
 <attribute name="PART#" value="GRM188R61A105KA61D" x="127.7675" y="95.7141" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="128.8597" y="96.2475" size="0.8382" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="127.1325" y="93.8091" size="1.27" layer="27"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="H1" library="holes" package="2,8-PAD" value="MOUNT-PAD-ROUND2.8" x="146.1275" y="78.5581" rot="R180"/>
 <element name="C61" library="rcl" package="C0603" value="22pF" x="144.9475" y="82.6725" smashed="yes">
@@ -8036,6 +8107,7 @@ einem neuen Namen ab.</description>
 <attribute name="DIGIKEY#" value="587-1099-1-ND" x="144.9475" y="82.6725" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="149.3025" y="82.6775" size="0.8" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="144.3125" y="80.7675" size="1.27" layer="27"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="D3" library="zetex" package="SOT-23" value="BAV99-7-F" x="118.866925" y="60.3273125" smashed="yes">
 <attribute name="OC_NEWARK" value="unknown" x="118.866925" y="60.3273125" size="1.778" layer="27" display="off"/>
@@ -8045,7 +8117,7 @@ einem neuen Namen ab.</description>
 <attribute name="VALUE" x="117.469925" y="62.1053125" size="1.27" layer="27" ratio="10"/>
 <attribute name="NAME" x="117.3688" y="59.2524375" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 </element>
-<element name="C62" library="adc_microboard" package="C0603" value="" x="119.5111625" y="66.383171875" smashed="yes">
+<element name="C62" library="adc_microboard" package="C0603" value="100nF" x="119.5111625" y="66.383171875" smashed="yes">
 <attribute name="NAME" x="117.72656875" y="66.876515625" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="118.4316625" y="65.240171875" size="0.4064" layer="27"/>
 </element>
@@ -8056,6 +8128,7 @@ einem neuen Namen ab.</description>
 <attribute name="OC_FARNELL" value="unknown" x="144.21776875" y="94.987425" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="VALUE" x="145.61476875" y="93.209425" size="1.27" layer="27" ratio="10" rot="R180"/>
 <attribute name="NAME" x="147.772971875" y="94.971046875" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="U5" library="Texas Instruments_By_element14_Batch_1" package="SOP65P640X120-20N" value="CDCE906PW" x="130.396" y="33.396" smashed="yes" rot="R180">
 <attribute name="PACKAGE" value="TSSOP-20" x="130.396" y="33.396" size="1.778" layer="27" rot="R180" display="off"/>
@@ -8073,12 +8146,14 @@ einem neuen Namen ab.</description>
 <attribute name="MPN" value="142-0711-821" x="154.94" y="72.39" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MF" value="JOHNSON COMPONENTS" x="154.94" y="72.39" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="OC_FARNELL" value="1019328" x="154.94" y="72.39" size="1.778" layer="27" rot="R180" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="X2" library="con-coax" package="J502-ND-142-0711-821/826" value="SMA-142-0711-821/826" x="154.94" y="87.63" rot="R180">
 <attribute name="OC_NEWARK" value="16F3627" x="154.94" y="87.63" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="142-0711-821" x="154.94" y="87.63" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MF" value="JOHNSON COMPONENTS" x="154.94" y="87.63" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="OC_FARNELL" value="1019328" x="154.94" y="87.63" size="1.778" layer="27" rot="R180" display="off"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="X3" library="con-coax" package="J502-ND-142-0711-821/826" value="SMA-142-0711-821/826" x="154.686" y="44.45" rot="R180">
 <attribute name="OC_NEWARK" value="16F3627" x="154.686" y="44.45" size="1.778" layer="27" rot="R180" display="off"/>
@@ -8101,11 +8176,11 @@ einem neuen Namen ab.</description>
 <attribute name="NAME" x="67.818" y="36.449" size="1.27" layer="25"/>
 <attribute name="VALUE" x="67.818" y="32.639" size="1.27" layer="27"/>
 </element>
-<element name="R35" library="myrcl" package="R0805K" value="?" x="65.278" y="27.686" smashed="yes" rot="R270">
+<element name="R35" library="myrcl" package="R0805K" value="52k3" x="65.278" y="27.686" smashed="yes" rot="R270">
 <attribute name="NAME" x="62.851" y="28.94" size="1.016" layer="25" rot="R270"/>
 <attribute name="VALUE" x="63.378" y="28.686" size="1.016" layer="27" rot="R270"/>
 </element>
-<element name="R36" library="myrcl" package="R0805K" value="?" x="65.278" y="31.75" smashed="yes" rot="R270">
+<element name="R36" library="myrcl" package="R0805K" value="10k" x="65.278" y="31.75" smashed="yes" rot="R270">
 <attribute name="NAME" x="62.851" y="32.496" size="1.016" layer="25" rot="R270"/>
 <attribute name="VALUE" x="63.378" y="32.75" size="1.016" layer="27" rot="R270"/>
 </element>
@@ -8167,47 +8242,47 @@ einem neuen Namen ab.</description>
 <attribute name="NAME" x="17.526" y="77.7494" size="1.016" layer="25" font="vector" ratio="16" rot="SR270"/>
 <attribute name="VALUE" x="15.875" y="80.2894" size="2.0828" layer="27" ratio="10" rot="SR270"/>
 </element>
-<element name="C66" library="rcl" package="C0603" value="" x="25.4" y="86.106" smashed="yes" rot="R90">
+<element name="C66" library="rcl" package="C0603" value="100nF" x="25.4" y="86.106" smashed="yes" rot="R90">
 <attribute name="NAME" x="27.305" y="84.709" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="27.305" y="85.471" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="C67" library="rcl" package="C0603" value="" x="130.81" y="28.448" smashed="yes">
+<element name="C67" library="rcl" package="C0603" value="22nF" x="130.81" y="28.448" smashed="yes">
 <attribute name="NAME" x="129.413" y="26.543" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="130.175" y="26.543" size="1.27" layer="27"/>
 </element>
-<element name="C68" library="rcl" package="C0603" value="" x="22.6" y="76.7" smashed="yes" rot="R90">
+<element name="C68" library="rcl" package="C0603" value="22nF" x="22.6" y="76.7" smashed="yes" rot="R90">
 <attribute name="NAME" x="24.505" y="76.065" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="24.505" y="76.065" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="C69" library="rcl" package="C0603" value="" x="22.8" y="71.184" smashed="yes" rot="R90">
+<element name="C69" library="rcl" package="C0603" value="22nF" x="22.8" y="71.184" smashed="yes" rot="R90">
 <attribute name="NAME" x="24.451" y="69.787" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="24.705" y="70.549" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="C70" library="rcl" package="C0603" value="" x="20.4" y="88" smashed="yes">
+<element name="C70" library="rcl" package="C0603" value="100nF" x="20.4" y="88" smashed="yes">
 <attribute name="NAME" x="16.209" y="87.619" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="19.765" y="86.095" size="1.27" layer="27"/>
 </element>
-<element name="C71" library="rcl" package="C0603" value="" x="9.652" y="80.518" smashed="yes">
+<element name="C71" library="rcl" package="C0603" value="1uF" x="9.652" y="80.518" smashed="yes">
 <attribute name="NAME" x="9.017" y="81.153" size="1.27" layer="25"/>
 <attribute name="VALUE" x="9.017" y="78.613" size="1.27" layer="27"/>
 </element>
-<element name="C72" library="rcl" package="C0603" value="" x="20.4" y="86.6" smashed="yes">
+<element name="C72" library="rcl" package="C0603" value="100nF" x="20.4" y="86.6" smashed="yes">
 <attribute name="NAME" x="16.209" y="86.219" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="19.765" y="84.695" size="1.27" layer="27"/>
 </element>
-<element name="R39" library="resistor" package="R0603" value="" x="26.67" y="62.992" smashed="yes">
+<element name="R39" library="resistor" package="R0603" value="27R" x="26.67" y="62.992" smashed="yes">
 <attribute name="NAME" x="28.575" y="62.357" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="25.781" y="60.96" size="1.27" layer="27"/>
 </element>
-<element name="R40" library="resistor" package="R0603" value="" x="26.67" y="64.77" smashed="yes">
+<element name="R40" library="resistor" package="R0603" value="27R" x="26.67" y="64.77" smashed="yes">
 <attribute name="NAME" x="28.575" y="64.389" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="25.781" y="62.738" size="1.27" layer="27"/>
 </element>
-<element name="C73" library="rcl" package="C0603" value="" x="29.464" y="68.072" smashed="yes" rot="R180">
+<element name="C73" library="rcl" package="C0603" value="1uF" x="29.464" y="68.072" smashed="yes" rot="R180">
 <attribute name="NAME" x="30.861" y="67.183" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="30.099" y="69.977" size="1.27" layer="27" rot="R180"/>
 </element>
-<element name="R41" library="resistor" package="R0603" value="" x="39.37" y="80.645" smashed="yes" rot="R90">
+<element name="R41" library="resistor" package="R0603" value="470R" x="39.37" y="80.645" smashed="yes" rot="R90">
 <attribute name="NAME" x="39.751" y="82.55" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="41.402" y="79.756" size="1.27" layer="27" rot="R90"/>
 </element>
@@ -8221,11 +8296,11 @@ einem neuen Namen ab.</description>
 <attribute name="MF" value="JOHNSON COMPONENTS" x="154.686" y="58.42" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="OC_FARNELL" value="1019328" x="154.686" y="58.42" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
-<element name="R32" library="resistor" package="R0603" value="" x="143.002" y="32.512" smashed="yes" rot="R180">
+<element name="R32" library="resistor" package="R0603" value="100R" x="143.002" y="32.512" smashed="yes" rot="R180">
 <attribute name="NAME" x="144.653" y="31.623" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="143.891" y="34.544" size="1.27" layer="27" rot="R180"/>
 </element>
-<element name="R33" library="resistor" package="R0603" value="" x="143.002" y="34.29" smashed="yes" rot="R180">
+<element name="R33" library="resistor" package="R0603" value="100R" x="143.002" y="34.29" smashed="yes" rot="R180">
 <attribute name="NAME" x="144.653" y="36.195" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="143.891" y="36.322" size="1.27" layer="27" rot="R180"/>
 </element>
@@ -8245,21 +8320,25 @@ einem neuen Namen ab.</description>
 <attribute name="NAME" x="140.081" y="27.305" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="141.478" y="30.607" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="C13" library="rcl" package="C0603" value="" x="124.968" y="34.29" smashed="yes" rot="R90">
+<element name="C13" library="rcl" package="C0603" value="100nF" x="124.968" y="34.29" smashed="yes" rot="R90">
 <attribute name="NAME" x="124.079" y="33.147" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="126.873" y="33.655" size="1.27" layer="27" rot="R90"/>
+<variant name="no-adc" populate="no"/>
 </element>
-<element name="C47" library="rcl" package="C0603" value="" x="135.382" y="36.068" smashed="yes" rot="R90">
+<element name="C47" library="rcl" package="C0603" value="100nF" x="135.382" y="36.068" smashed="yes" rot="R90">
 <attribute name="NAME" x="136.525" y="38.989" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="137.287" y="35.433" size="1.27" layer="27" rot="R90"/>
+<variant name="no-adc" populate="no"/>
 </element>
-<element name="C48" library="rcl" package="C0603" value="" x="124.968" y="30.988" smashed="yes" rot="R270">
+<element name="C48" library="rcl" package="C0603" value="100nF" x="124.968" y="30.988" smashed="yes" rot="R270">
 <attribute name="NAME" x="123.063" y="32.385" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="123.063" y="31.623" size="1.27" layer="27" rot="R270"/>
+<variant name="no-adc" populate="no"/>
 </element>
-<element name="C49" library="rcl" package="C0603" value="" x="135.382" y="30.988" smashed="yes" rot="R270">
+<element name="C49" library="rcl" package="C0603" value="100nF" x="135.382" y="30.988" smashed="yes" rot="R270">
 <attribute name="NAME" x="135.001" y="29.337" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="133.477" y="31.623" size="1.27" layer="27" rot="R270"/>
+<variant name="no-adc" populate="no"/>
 </element>
 <element name="R47" library="adafruit" package="R0805" value="" x="136.144" y="59.69" smashed="yes" rot="R270">
 <attribute name="NAME" x="137.16" y="60.452" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
@@ -8323,75 +8402,75 @@ einem neuen Namen ab.</description>
 <element name="TP2" library="testpad" package="P1-13" value="TPSQPAD1-13" x="131.572" y="17.272">
 <attribute name="TP_SIGNAL_NAME" value="" x="131.572" y="17.272" size="1.778" layer="27" display="off"/>
 </element>
-<element name="LED1" library="dp_devices" package="LED-3MM" value="" x="121.92" y="50.8" smashed="yes" rot="R270">
+<element name="LED1" library="dp_devices" package="LED-3MM" value="RED" x="121.92" y="50.8" smashed="yes" rot="R270">
 <attribute name="NAME" x="122.301" y="48.895" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="120.269" y="48.895" size="1.27" layer="27" font="vector" ratio="10" rot="R270"/>
 </element>
-<element name="LED2" library="dp_devices" package="LED-3MM" value="" x="127" y="50.8" smashed="yes" rot="R270">
+<element name="LED2" library="dp_devices" package="LED-3MM" value="YELLOW" x="127" y="50.8" smashed="yes" rot="R270">
 <attribute name="NAME" x="127.381" y="48.895" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="125.349" y="48.895" size="1.27" layer="27" font="vector" ratio="10" rot="R270"/>
 </element>
-<element name="LED3" library="dp_devices" package="LED-3MM" value="" x="132.08" y="50.8" smashed="yes" rot="R270">
+<element name="LED3" library="dp_devices" package="LED-3MM" value="GREEN" x="132.08" y="50.8" smashed="yes" rot="R270">
 <attribute name="NAME" x="132.461" y="48.895" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="130.429" y="48.895" size="1.27" layer="27" font="vector" ratio="10" rot="R270"/>
 </element>
-<element name="LED4" library="dp_devices" package="LED-3MM" value="" x="137.16" y="50.8" smashed="yes" rot="R270">
+<element name="LED4" library="dp_devices" package="LED-3MM" value="BLUE" x="137.16" y="50.8" smashed="yes" rot="R270">
 <attribute name="NAME" x="137.541" y="48.895" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="135.509" y="48.895" size="1.27" layer="27" font="vector" ratio="10" rot="R270"/>
 </element>
-<element name="LED5" library="dp_devices" package="LED-3MM" value="" x="142.24" y="50.8" smashed="yes" rot="R270">
+<element name="LED5" library="dp_devices" package="LED-3MM" value="BLUE" x="142.24" y="50.8" smashed="yes" rot="R270">
 <attribute name="NAME" x="142.621" y="48.895" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="140.589" y="48.895" size="1.27" layer="27" font="vector" ratio="10" rot="R270"/>
 </element>
-<element name="LED6" library="dp_devices" package="LED-3MM" value="" x="147.32" y="50.8" smashed="yes" rot="R270">
+<element name="LED6" library="dp_devices" package="LED-3MM" value="GREEN" x="147.32" y="50.8" smashed="yes" rot="R270">
 <attribute name="NAME" x="147.701" y="48.895" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="145.669" y="48.895" size="1.27" layer="27" font="vector" ratio="10" rot="R270"/>
 </element>
-<element name="R52" library="resistor" package="R0603" value="" x="120.65" y="46.99" smashed="yes" rot="R270">
+<element name="R52" library="resistor" package="R0603" value="220R" x="120.65" y="46.99" smashed="yes" rot="R270">
 <attribute name="NAME" x="121.539" y="47.879" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="118.618" y="47.879" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="R53" library="resistor" package="R0603" value="" x="125.73" y="46.99" smashed="yes" rot="R270">
+<element name="R53" library="resistor" package="R0603" value="220R" x="125.73" y="46.99" smashed="yes" rot="R270">
 <attribute name="NAME" x="126.619" y="47.879" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="123.698" y="47.879" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="R54" library="resistor" package="R0603" value="" x="130.81" y="46.99" smashed="yes" rot="R270">
+<element name="R54" library="resistor" package="R0603" value="220R" x="130.81" y="46.99" smashed="yes" rot="R270">
 <attribute name="NAME" x="131.699" y="47.879" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="128.778" y="47.879" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="R55" library="resistor" package="R0603" value="" x="135.89" y="46.99" smashed="yes" rot="R270">
+<element name="R55" library="resistor" package="R0603" value="220R" x="135.89" y="46.99" smashed="yes" rot="R270">
 <attribute name="NAME" x="136.779" y="47.879" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="133.858" y="47.879" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="R56" library="resistor" package="R0603" value="" x="140.97" y="46.99" smashed="yes" rot="R270">
+<element name="R56" library="resistor" package="R0603" value="220R" x="140.97" y="46.99" smashed="yes" rot="R270">
 <attribute name="NAME" x="141.859" y="47.879" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="138.938" y="47.879" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="R57" library="resistor" package="R0603" value="" x="146.05" y="46.99" smashed="yes" rot="R270">
+<element name="R57" library="resistor" package="R0603" value="220R" x="146.05" y="46.99" smashed="yes" rot="R270">
 <attribute name="NAME" x="146.939" y="47.879" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="144.018" y="47.879" size="1.27" layer="27" rot="R270"/>
 </element>
 <element name="JP5" library="pinhead" package="2X20/90" value="" x="0" y="27.94" rot="R90"/>
-<element name="XTAL1" library="dp_devices" package="HC-49U" value="" x="41.656" y="70.866" rot="R270"/>
-<element name="C76" library="rcl" package="C0603" value="" x="44.45" y="63.246" smashed="yes" rot="R270">
+<element name="XTAL1" library="dp_devices" package="HC-49U" value="16MHz" x="41.656" y="70.866" rot="R270"/>
+<element name="C76" library="rcl" package="C0603" value="22pF" x="44.45" y="63.246" smashed="yes" rot="R270">
 <attribute name="NAME" x="45.339" y="64.135" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="42.545" y="63.881" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="C77" library="rcl" package="C0603" value="" x="44.704" y="79.248" smashed="yes" rot="R90">
+<element name="C77" library="rcl" package="C0603" value="22pF" x="44.704" y="79.248" smashed="yes" rot="R90">
 <attribute name="NAME" x="46.609" y="78.105" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="46.609" y="78.613" size="1.27" layer="27" rot="R90"/>
 </element>
 <element name="JP6" library="pinhead" package="1X02" value="" x="46.228" y="95.504"/>
-<element name="R58" library="resistor" package="R0603" value="" x="26.162" y="70.612" smashed="yes" rot="R180">
+<element name="R58" library="resistor" package="R0603" value="1K" x="26.162" y="70.612" smashed="yes" rot="R180">
 <attribute name="NAME" x="27.051" y="69.723" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="27.051" y="72.644" size="1.27" layer="27" rot="R180"/>
 </element>
-<element name="C78" library="rcl" package="C0603" value="" x="34.544" y="67.818" rot="R270"/>
-<element name="C79" library="rcl" package="C0603" value="" x="38.1" y="75.438" smashed="yes" rot="R90">
+<element name="C78" library="rcl" package="C0603" value="100nF" x="34.544" y="67.818" rot="R270"/>
+<element name="C79" library="rcl" package="C0603" value="100nF" x="38.1" y="75.438" smashed="yes" rot="R90">
 <attribute name="NAME" x="38.735" y="71.247" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="40.005" y="74.803" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="C80" library="rcl" package="C0603" value="" x="38.354" y="67.818" smashed="yes" rot="R270">
+<element name="C80" library="rcl" package="C0603" value="100nF" x="38.354" y="67.818" smashed="yes" rot="R270">
 <attribute name="NAME" x="36.703" y="68.961" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="36.449" y="68.453" size="1.27" layer="27" rot="R270"/>
 </element>
@@ -8403,23 +8482,23 @@ einem neuen Namen ab.</description>
 <attribute name="NAME" x="24.511" y="73.025" size="1.016" layer="25" font="vector" ratio="10" rot="R90"/>
 <attribute name="VALUE" x="25.4" y="74.8221" size="0.02" layer="27" rot="R90"/>
 </element>
-<element name="C81" library="rcl" package="C0603" value="" x="20.574" y="78.232" smashed="yes" rot="MR0">
+<element name="C81" library="rcl" package="C0603" value="22nF" x="20.574" y="78.232" smashed="yes" rot="MR0">
 <attribute name="NAME" x="21.209" y="78.867" size="1.016" layer="26" font="vector" ratio="16" rot="MR0"/>
 <attribute name="VALUE" x="21.209" y="76.327" size="1.27" layer="28" rot="MR0"/>
 </element>
-<element name="C82" library="rcl" package="C0603" value="" x="20.32" y="74.168" smashed="yes" rot="MR0">
+<element name="C82" library="rcl" package="C0603" value="22nF" x="20.32" y="74.168" smashed="yes" rot="MR0">
 <attribute name="NAME" x="21.463" y="75.057" size="1.016" layer="26" font="vector" ratio="16" rot="MR0"/>
 <attribute name="VALUE" x="20.955" y="72.263" size="1.27" layer="28" rot="MR0"/>
 </element>
-<element name="C83" library="rcl" package="C0603" value="" x="25.654" y="88.646" smashed="yes">
+<element name="C83" library="rcl" package="C0603" value="22nF" x="25.654" y="88.646" smashed="yes">
 <attribute name="NAME" x="27.559" y="88.265" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="25.019" y="86.741" size="1.27" layer="27"/>
 </element>
-<element name="R59" library="resistor" package="R0603" value="" x="129.54" y="38.1" smashed="yes" rot="R180">
+<element name="R59" library="resistor" package="R0603" value="4k7" x="129.54" y="38.1" smashed="yes" rot="R180">
 <attribute name="NAME" x="127.889" y="38.735" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="130.429" y="40.132" size="1.27" layer="27" rot="R180"/>
 </element>
-<element name="R60" library="resistor" package="R0603" value="" x="132.08" y="38.1" smashed="yes">
+<element name="R60" library="resistor" package="R0603" value="4k7" x="132.08" y="38.1" smashed="yes">
 <attribute name="NAME" x="133.731" y="37.719" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="131.191" y="36.068" size="1.27" layer="27"/>
 </element>
