@@ -23012,10 +23012,6 @@ Source: http://www.osram.convergy.de/</description>
 <wire x1="121.92" y1="93.98" x2="124.46" y2="93.98" width="0.1524" layer="91"/>
 <wire x1="124.46" y1="93.98" x2="129.54" y2="93.98" width="0.1524" layer="91"/>
 <wire x1="129.54" y1="93.98" x2="129.54" y2="99.06" width="0.1524" layer="91"/>
-<pinref part="JP9" gate="A" pin="8"/>
-<wire x1="114.3" y1="119.38" x2="121.92" y2="119.38" width="0.1524" layer="91"/>
-<wire x1="121.92" y1="119.38" x2="121.92" y2="106.68" width="0.1524" layer="91"/>
-<junction x="121.92" y="106.68"/>
 <pinref part="LED1" gate="G$1" pin="A"/>
 <wire x1="124.46" y1="86.36" x2="124.46" y2="93.98" width="0.1524" layer="91"/>
 <junction x="124.46" y="93.98"/>
@@ -23223,6 +23219,13 @@ Source: http://www.osram.convergy.de/</description>
 <pinref part="JP26" gate="G$1" pin="1"/>
 <wire x1="198.12" y1="137.16" x2="175.26" y2="137.16" width="0.1524" layer="91"/>
 <label x="175.26" y="137.16" size="1.778" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="VREF" class="0">
+<segment>
+<pinref part="JP9" gate="A" pin="8"/>
+<wire x1="114.3" y1="119.38" x2="124.46" y2="119.38" width="0.1524" layer="91"/>
+<label x="124.46" y="119.38" size="1.778" layer="95" xref="yes"/>
 </segment>
 </net>
 </nets>
@@ -23482,7 +23485,7 @@ Source: http://www.osram.convergy.de/</description>
 <label x="38.1" y="88.9" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="N$9" class="0">
+<net name="VREF" class="0">
 <segment>
 <pinref part="JP7" gate="A" pin="6"/>
 <wire x1="58.42" y1="121.92" x2="50.8" y2="121.92" width="0.1524" layer="91"/>
@@ -23500,6 +23503,9 @@ Source: http://www.osram.convergy.de/</description>
 <junction x="43.18" y="139.7"/>
 <pinref part="JP20" gate="A" pin="2"/>
 <wire x1="43.18" y1="139.7" x2="43.18" y2="147.32" width="0.1524" layer="91"/>
+<wire x1="50.8" y1="139.7" x2="63.5" y2="139.7" width="0.1524" layer="91"/>
+<junction x="50.8" y="139.7"/>
+<label x="63.5" y="139.7" size="1.778" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="N$32" class="0">
