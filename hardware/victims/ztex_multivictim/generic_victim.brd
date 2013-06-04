@@ -3769,6 +3769,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="15.5702" y="61.5442" size="1.27" layer="25" font="vector" ratio="10" rot="R180"/>
 <attribute name="VALUE" x="13.081" y="55.626" size="1.27" layer="27"/>
 </element>
+<element name="C31" library="rcl" package="C0805" value="100nF" x="83.693" y="87.249" rot="R270"/>
 </elements>
 <signals>
 <signal name="GND">
@@ -4180,6 +4181,7 @@ design rules under a new name.</description>
 <via x="120.396" y="57.023" extent="1-16" drill="0.4318"/>
 <via x="120.396" y="60.706" extent="1-16" drill="0.4318"/>
 <via x="120.396" y="64.008" extent="1-16" drill="0.4318"/>
+<contactref element="C31" pad="2"/>
 </signal>
 <signal name="N$1">
 <contactref element="JP1" pad="5"/>
@@ -4735,7 +4737,7 @@ design rules under a new name.</description>
 <wire x1="77.343" y1="88.646" x2="102.362" y2="88.646" width="1.27" layer="16"/>
 <wire x1="102.362" y1="88.646" x2="102.616" y2="88.392" width="1.27" layer="16"/>
 <wire x1="102.616" y1="88.392" x2="102.616" y2="87.884" width="1.27" layer="16"/>
-<wire x1="102.616" y1="88.392" x2="102.616" y2="88.646" width="0" layer="19" extent="1-16"/>
+<wire x1="102.616" y1="87.884" x2="102.616" y2="85.852" width="1.27" layer="16"/>
 </signal>
 <signal name="N$24">
 <contactref element="IC3" pad="40"/>
@@ -5213,7 +5215,8 @@ design rules under a new name.</description>
 <wire x1="64.008" y1="86.36" x2="64.008" y2="87.503" width="0.8128" layer="1"/>
 <wire x1="64.008" y1="87.503" x2="65.024" y2="88.519" width="0.8128" layer="1"/>
 <wire x1="65.024" y1="88.519" x2="81.026" y2="88.519" width="0.8128" layer="1"/>
-<wire x1="81.026" y1="88.519" x2="82.169" y2="87.376" width="0.8128" layer="1"/>
+<wire x1="81.026" y1="88.519" x2="81.788" y2="87.757" width="0.8128" layer="1"/>
+<wire x1="81.788" y1="87.757" x2="82.169" y2="87.376" width="0.8128" layer="1"/>
 <wire x1="82.169" y1="87.376" x2="82.169" y2="83.82" width="0.8128" layer="1"/>
 <wire x1="82.169" y1="83.82" x2="79.248" y2="80.899" width="0.8128" layer="1"/>
 <wire x1="79.248" y1="80.899" x2="79.248" y2="72.644" width="0.8128" layer="1"/>
@@ -5221,6 +5224,9 @@ design rules under a new name.</description>
 <via x="81.026" y="70.866" extent="1-16" drill="0.6"/>
 <wire x1="81.026" y1="70.866" x2="81.026" y2="63.5" width="0.8128" layer="16"/>
 <wire x1="81.026" y1="63.5" x2="79.502" y2="61.976" width="0.8128" layer="16"/>
+<contactref element="C31" pad="1"/>
+<wire x1="83.693" y1="88.199" x2="81.788" y2="88.199" width="0.6096" layer="1"/>
+<wire x1="81.788" y1="88.199" x2="81.788" y2="87.757" width="0.6096" layer="1"/>
 </signal>
 </signals>
 </board>

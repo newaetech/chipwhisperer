@@ -22521,6 +22521,8 @@ Source: http://www.osram.convergy.de/</description>
 <part name="LED1" library="adafruit" deviceset="LED" device="3MM"/>
 <part name="R10" library="resistor" deviceset="R-US_" device="R0805" value="220R"/>
 <part name="JP26" library="pinhead" deviceset="PINHD-1X1" device=""/>
+<part name="SUPPLY35" library="supply2" deviceset="GND" device=""/>
+<part name="C31" library="rcl" deviceset="C-EU" device="C0805" value="100nF"/>
 </parts>
 <sheets>
 <sheet>
@@ -22895,6 +22897,8 @@ Source: http://www.osram.convergy.de/</description>
 <instance part="LED1" gate="G$1" x="124.46" y="83.82"/>
 <instance part="R10" gate="G$1" x="129.54" y="78.74"/>
 <instance part="JP26" gate="G$1" x="200.66" y="137.16"/>
+<instance part="SUPPLY35" gate="GND" x="182.88" y="149.86"/>
+<instance part="C31" gate="G$1" x="182.88" y="157.48"/>
 </instances>
 <busses>
 </busses>
@@ -22980,6 +22984,10 @@ Source: http://www.osram.convergy.de/</description>
 <segment>
 <pinref part="C30" gate="G$1" pin="-"/>
 <pinref part="SUPPLY33" gate="GND" pin="GND"/>
+</segment>
+<segment>
+<pinref part="C31" gate="G$1" pin="2"/>
+<pinref part="SUPPLY35" gate="GND" pin="GND"/>
 </segment>
 </net>
 <net name="N$6" class="0">
@@ -23226,6 +23234,12 @@ Source: http://www.osram.convergy.de/</description>
 <pinref part="JP9" gate="A" pin="8"/>
 <wire x1="114.3" y1="119.38" x2="124.46" y2="119.38" width="0.1524" layer="91"/>
 <label x="124.46" y="119.38" size="1.778" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="C31" gate="G$1" pin="1"/>
+<wire x1="182.88" y1="160.02" x2="182.88" y2="165.1" width="0.1524" layer="91"/>
+<wire x1="182.88" y1="165.1" x2="172.72" y2="165.1" width="0.1524" layer="91"/>
+<label x="172.72" y="165.1" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 </nets>
