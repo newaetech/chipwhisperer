@@ -34611,7 +34611,6 @@ http://dangerousprototypes.com</description>
 <variant name="no-adc" populate="no"/>
 </part>
 <part name="X3" library="con-coax" deviceset="SMA-" device="142-0711-821/826"/>
-<part name="JP14" library="pinhead" deviceset="PINHD-2X3" device="/90" value="EXP-MINI"/>
 <part name="JP13" library="pinhead" deviceset="PINHD-2X10" device="/90" value="TARGET"/>
 <part name="C63" library="myrcl" deviceset="C-EU" device="C0805K" value="22µ"/>
 <part name="C64" library="myrcl" deviceset="C-EU" device="C1206" value="10µ"/>
@@ -34774,7 +34773,6 @@ http://dangerousprototypes.com</description>
 <part name="TP2" library="testpad" deviceset="TPSQ" device="PAD1-13"/>
 <part name="SUPPLY84" library="supply2" deviceset="+9V" device=""/>
 <part name="SUPPLY85" library="supply2" deviceset="-9V" device=""/>
-<part name="SUPPLY86" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY87" library="supply2" deviceset="GND" device=""/>
 <part name="LED1" library="dp_devices" deviceset="LED" device="-3MM" value="RED"/>
 <part name="LED2" library="dp_devices" deviceset="LED" device="-3MM" value="YELLOW"/>
@@ -37977,7 +37975,6 @@ http://dangerousprototypes.com</description>
 <instance part="JP2" gate="A" x="22.86" y="88.9"/>
 <instance part="JP9" gate="A" x="22.86" y="134.62"/>
 <instance part="X3" gate="G1" x="12.7" y="175.26"/>
-<instance part="JP14" gate="A" x="22.86" y="109.22"/>
 <instance part="JP13" gate="A" x="152.4" y="71.12"/>
 <instance part="SUPPLY15" gate="GND" x="142.24" y="48.26"/>
 <instance part="+3V9" gate="G$1" x="160.02" y="48.26"/>
@@ -38032,11 +38029,10 @@ http://dangerousprototypes.com</description>
 <instance part="P+6" gate="1" x="35.56" y="132.08"/>
 <instance part="+3V25" gate="G$1" x="152.4" y="157.48"/>
 <instance part="+3V26" gate="G$1" x="152.4" y="154.94"/>
-<instance part="SUPPLY84" gate="G$1" x="10.16" y="114.3"/>
+<instance part="SUPPLY84" gate="G$1" x="12.7" y="96.52"/>
 <instance part="SUPPLY85" gate="G$1" x="12.7" y="81.28"/>
-<instance part="SUPPLY86" gate="GND" x="35.56" y="104.14"/>
 <instance part="SUPPLY87" gate="GND" x="35.56" y="83.82"/>
-<instance part="+3V27" gate="G$1" x="33.02" y="121.92"/>
+<instance part="+3V27" gate="G$1" x="33.02" y="99.06"/>
 <instance part="+3V28" gate="G$1" x="241.3" y="162.56"/>
 <instance part="C81" gate="G$1" x="193.04" y="175.26"/>
 <instance part="C82" gate="G$1" x="200.66" y="175.26"/>
@@ -38179,15 +38175,6 @@ http://dangerousprototypes.com</description>
 <segment>
 <pinref part="C13" gate="G$1" pin="2"/>
 <pinref part="SUPPLY69" gate="GND" pin="GND"/>
-</segment>
-<segment>
-<pinref part="JP14" gate="A" pin="6"/>
-<wire x1="27.94" y1="106.68" x2="35.56" y2="106.68" width="0.1524" layer="91"/>
-<wire x1="35.56" y1="106.68" x2="35.56" y2="111.76" width="0.1524" layer="91"/>
-<wire x1="35.56" y1="111.76" x2="27.94" y2="111.76" width="0.1524" layer="91"/>
-<pinref part="JP14" gate="A" pin="2"/>
-<pinref part="SUPPLY86" gate="GND" pin="GND"/>
-<junction x="35.56" y="106.68"/>
 </segment>
 <segment>
 <pinref part="JP2" gate="A" pin="6"/>
@@ -38371,14 +38358,10 @@ http://dangerousprototypes.com</description>
 <pinref part="+3V26" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
-<pinref part="JP14" gate="A" pin="4"/>
-<wire x1="27.94" y1="109.22" x2="33.02" y2="109.22" width="0.1524" layer="91"/>
-<wire x1="33.02" y1="109.22" x2="33.02" y2="119.38" width="0.1524" layer="91"/>
 <pinref part="+3V27" gate="G$1" pin="+3V3"/>
 <pinref part="JP2" gate="A" pin="4"/>
 <wire x1="27.94" y1="88.9" x2="33.02" y2="88.9" width="0.1524" layer="91"/>
-<wire x1="33.02" y1="88.9" x2="33.02" y2="109.22" width="0.1524" layer="91"/>
-<junction x="33.02" y="109.22"/>
+<wire x1="33.02" y1="88.9" x2="33.02" y2="96.52" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U6" gate="A" pin="VCCA"/>
@@ -38655,13 +38638,10 @@ http://dangerousprototypes.com</description>
 </net>
 <net name="+9V" class="0">
 <segment>
-<pinref part="JP14" gate="A" pin="1"/>
-<wire x1="20.32" y1="111.76" x2="10.16" y2="111.76" width="0.1524" layer="91"/>
-<wire x1="10.16" y1="111.76" x2="10.16" y2="91.44" width="0.1524" layer="91"/>
+<wire x1="12.7" y1="93.98" x2="12.7" y2="91.44" width="0.1524" layer="91"/>
 <pinref part="JP2" gate="A" pin="1"/>
-<wire x1="10.16" y1="91.44" x2="20.32" y2="91.44" width="0.1524" layer="91"/>
+<wire x1="12.7" y1="91.44" x2="20.32" y2="91.44" width="0.1524" layer="91"/>
 <pinref part="SUPPLY84" gate="G$1" pin="+9V"/>
-<junction x="10.16" y="111.76"/>
 </segment>
 </net>
 <net name="-9V" class="0">
@@ -38670,10 +38650,6 @@ http://dangerousprototypes.com</description>
 <wire x1="20.32" y1="86.36" x2="12.7" y2="86.36" width="0.1524" layer="91"/>
 <pinref part="SUPPLY85" gate="G$1" pin="-9V"/>
 <wire x1="12.7" y1="86.36" x2="12.7" y2="83.82" width="0.1524" layer="91"/>
-<pinref part="JP14" gate="A" pin="5"/>
-<wire x1="20.32" y1="106.68" x2="12.7" y2="106.68" width="0.1524" layer="91"/>
-<wire x1="12.7" y1="106.68" x2="12.7" y2="86.36" width="0.1524" layer="91"/>
-<junction x="12.7" y="86.36"/>
 </segment>
 </net>
 <net name="HS1" class="0">
