@@ -32,7 +32,7 @@
 <layer number="22" name="bPlace" color="7" fill="1" visible="no" active="yes"/>
 <layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="yes"/>
 <layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="yes"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="yes"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="26" name="bNames" color="7" fill="1" visible="no" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="no" active="yes"/>
@@ -7559,7 +7559,7 @@ einem neuen Namen ab.</description>
 <attribute name="VALUE" x="91.805" y="89.911" size="1.0668" layer="27" ratio="12" rot="R180"/>
 </element>
 <element name="C2" library="myrcl" package="C0805K" value="2n2" x="91.7575" y="91.7575" smashed="yes" rot="R270">
-<attribute name="NAME" x="93.232" y="93.8055" size="1.0668" layer="25" ratio="12" rot="R90"/>
+<attribute name="NAME" x="93.994" y="90.7575" size="1.0668" layer="25" ratio="12" rot="R90"/>
 <attribute name="VALUE" x="90.7465" y="96.631" size="1.0668" layer="27" ratio="12" rot="R270"/>
 </element>
 <element name="C11" library="myrcl" package="C0805K" value="22µ" x="72.0725" y="58.1025" smashed="yes" rot="R270">
@@ -7574,7 +7574,7 @@ einem neuen Namen ab.</description>
 <attribute name="NAME" x="81.04" y="41.164" size="1.0668" layer="25" ratio="12" rot="R90"/>
 <attribute name="VALUE" x="85.7835" y="41.418" size="1.0668" layer="27" ratio="12" rot="R90"/>
 </element>
-<element name="R9" library="myrcl" package="R0805K" value="25K" x="81.28" y="48.5775" smashed="yes" rot="R180">
+<element name="R9" library="myrcl" package="R0805K" value="24k9,1%" x="81.28" y="48.5775" smashed="yes" rot="R180">
 <attribute name="NAME" x="79.9625" y="49.8335" size="1.0668" layer="25" ratio="12"/>
 <attribute name="VALUE" x="79.899" y="51.186" size="1.0668" layer="27" ratio="12"/>
 </element>
@@ -7627,7 +7627,7 @@ einem neuen Namen ab.</description>
 <attribute name="NAME" x="76.2" y="35.8775" size="1.0668" layer="25" ratio="12" rot="R180"/>
 <attribute name="VALUE" x="74.9935" y="34.4805" size="1.0668" layer="27" ratio="12" rot="R270"/>
 </element>
-<element name="C14" library="myrcl" package="E2,5-6" value="560µ" x="67.945" y="58.1025" smashed="yes" rot="R90">
+<element name="C14" library="myrcl" package="E2,5-6" value="470u" x="67.945" y="58.1025" smashed="yes" rot="R90">
 <attribute name="NAME" x="66.5735" y="61.722" size="1.0668" layer="25" ratio="12" rot="R90"/>
 <attribute name="VALUE" x="64.5795" y="56.642" size="1.0668" layer="27" ratio="12" rot="R90"/>
 </element>
@@ -8226,7 +8226,7 @@ einem neuen Namen ab.</description>
 <attribute name="NAME" x="39.751" y="82.55" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="41.402" y="79.756" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="R42" library="resistor" package="R0603" value="" x="37.465" y="80.645" smashed="yes" rot="R90">
+<element name="R42" library="resistor" package="R0603" value="470" x="37.465" y="80.645" smashed="yes" rot="R90">
 <attribute name="NAME" x="37.846" y="82.55" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="39.497" y="79.756" size="1.27" layer="27" rot="R90"/>
 </element>
@@ -8244,19 +8244,19 @@ einem neuen Namen ab.</description>
 <attribute name="NAME" x="144.653" y="36.195" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="143.891" y="36.322" size="1.27" layer="27" rot="R180"/>
 </element>
-<element name="R43" library="resistor" package="R0603" value="" x="137.16" y="35.306" smashed="yes" rot="R90">
+<element name="R43" library="resistor" package="R0603" value="1k,1%" x="137.16" y="35.306" smashed="yes" rot="R90">
 <attribute name="NAME" x="137.541" y="36.957" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="139.192" y="34.417" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="R44" library="resistor" package="R0603" value="" x="137.16" y="31.496" smashed="yes" rot="R270">
+<element name="R44" library="resistor" package="R0603" value="1k,1%" x="137.16" y="31.496" smashed="yes" rot="R270">
 <attribute name="NAME" x="136.779" y="30.099" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="135.128" y="32.385" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="R45" library="resistor" package="R0603" value="" x="139.446" y="35.306" smashed="yes" rot="R270">
+<element name="R45" library="resistor" package="R0603" value="1k,1%" x="139.446" y="35.306" smashed="yes" rot="R270">
 <attribute name="NAME" x="138.811" y="40.005" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="137.414" y="36.195" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="R46" library="resistor" package="R0603" value="" x="139.446" y="31.496" smashed="yes" rot="R90">
+<element name="R46" library="resistor" package="R0603" value="1k,1%" x="139.446" y="31.496" smashed="yes" rot="R90">
 <attribute name="NAME" x="140.081" y="27.305" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="141.478" y="30.607" size="1.27" layer="27" rot="R90"/>
 </element>
@@ -8304,35 +8304,35 @@ einem neuen Namen ab.</description>
 <attribute name="NAME" x="142.875" y="16.637" size="1.27" layer="25" font="vector" ratio="10" rot="R270"/>
 <attribute name="VALUE" x="140.462" y="14.351" size="1.27" layer="27" ratio="10" rot="R270"/>
 </element>
-<element name="R48" library="resistor" package="R0603" value="" x="142.494" y="21.082" smashed="yes">
+<element name="R48" library="resistor" package="R0603" value="200R,1%" x="142.494" y="21.082" smashed="yes">
 <attribute name="NAME" x="141.605" y="21.971" size="1.27" layer="25" font="vector"/>
 <attribute name="VALUE" x="141.605" y="19.05" size="1.27" layer="27"/>
 </element>
-<element name="R49" library="resistor" package="R0603" value="" x="138.684" y="21.082" smashed="yes">
+<element name="R49" library="resistor" package="R0603" value="1k,1%" x="138.684" y="21.082" smashed="yes">
 <attribute name="NAME" x="137.795" y="21.971" size="1.27" layer="25" font="vector"/>
 <attribute name="VALUE" x="137.795" y="19.05" size="1.27" layer="27"/>
 </element>
-<element name="R50" library="resistor" package="R0603" value="" x="134.874" y="21.082" smashed="yes">
+<element name="R50" library="resistor" package="R0603" value="200R,1%" x="134.874" y="21.082" smashed="yes">
 <attribute name="NAME" x="133.985" y="21.971" size="1.27" layer="25" font="vector"/>
 <attribute name="VALUE" x="133.985" y="19.05" size="1.27" layer="27"/>
 </element>
-<element name="R51" library="resistor" package="R0603" value="" x="131.064" y="21.082" smashed="yes">
+<element name="R51" library="resistor" package="R0603" value="1k,1%" x="131.064" y="21.082" smashed="yes">
 <attribute name="NAME" x="130.175" y="21.971" size="1.27" layer="25" font="vector"/>
 <attribute name="VALUE" x="130.175" y="19.05" size="1.27" layer="27"/>
 </element>
-<element name="C58" library="resistor" package="C0603" value="" x="145.796" y="21.082" smashed="yes" rot="R90">
+<element name="C58" library="resistor" package="C0603" value="100nF" x="145.796" y="21.082" smashed="yes" rot="R90">
 <attribute name="NAME" x="147.828" y="19.685" size="1.27" layer="25" font="vector" rot="R90"/>
 <attribute name="VALUE" x="147.828" y="20.193" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="C60" library="resistor" package="C0603" value="" x="129.286" y="18.034" smashed="yes" rot="R90">
+<element name="C60" library="resistor" package="C0603" value="100nF" x="129.286" y="18.034" smashed="yes" rot="R90">
 <attribute name="NAME" x="128.27" y="16.383" size="1.27" layer="25" font="vector" rot="R90"/>
 <attribute name="VALUE" x="131.318" y="17.145" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="C74" library="resistor" package="C0603" value="" x="139.192" y="17.272" smashed="yes" rot="R90">
+<element name="C74" library="resistor" package="C0603" value="100nF" x="139.192" y="17.272" smashed="yes" rot="R90">
 <attribute name="NAME" x="140.97" y="15.621" size="1.27" layer="25" font="vector" rot="R90"/>
 <attribute name="VALUE" x="141.224" y="16.383" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="C75" library="resistor" package="C0603" value="" x="131.572" y="14.732" smashed="yes">
+<element name="C75" library="resistor" package="C0603" value="100nF" x="131.572" y="14.732" smashed="yes">
 <attribute name="NAME" x="129.921" y="12.7" size="1.27" layer="25" font="vector"/>
 <attribute name="VALUE" x="130.683" y="12.7" size="1.27" layer="27"/>
 </element>
