@@ -3867,7 +3867,7 @@ design rules under a new name.</description>
 </element>
 <element name="C31" library="rcl" package="C0805" value="100nF" x="83.693" y="87.249" rot="R270"/>
 <element name="R11" library="resistor" package="R0805" value="10k" x="0.635" y="0.889"/>
-<element name="R12" library="resistor" package="R0805" value="680R" x="0.635" y="-4.699"/>
+<element name="R12" library="resistor" package="R0805" value="68k" x="0.635" y="-4.699"/>
 </elements>
 <signals>
 <signal name="GND">

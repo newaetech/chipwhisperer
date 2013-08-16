@@ -22524,7 +22524,7 @@ Source: http://www.osram.convergy.de/</description>
 <part name="SUPPLY35" library="supply2" deviceset="GND" device=""/>
 <part name="C31" library="rcl" deviceset="C-EU" device="C0805" value="100nF"/>
 <part name="R11" library="resistor" deviceset="R-US_" device="R0805" value="10k"/>
-<part name="R12" library="resistor" deviceset="R-US_" device="R0805" value="680R"/>
+<part name="R12" library="resistor" deviceset="R-US_" device="R0805" value="68k"/>
 </parts>
 <sheets>
 <sheet>
