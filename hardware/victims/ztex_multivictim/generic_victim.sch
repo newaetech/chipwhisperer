@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.4">
+<eagle version="6.5.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -22524,7 +22524,7 @@ Source: http://www.osram.convergy.de/</description>
 <part name="SUPPLY35" library="supply2" deviceset="GND" device=""/>
 <part name="C31" library="rcl" deviceset="C-EU" device="C0805" value="100nF"/>
 <part name="R11" library="resistor" deviceset="R-US_" device="R0805" value="10k"/>
-<part name="R12" library="resistor" deviceset="R-US_" device="R0805" value="68k"/>
+<part name="R12" library="resistor" deviceset="R-US_" device="R0805" value="680R"/>
 </parts>
 <sheets>
 <sheet>
@@ -23443,17 +23443,18 @@ Source: http://www.osram.convergy.de/</description>
 <wire x1="167.64" y1="116.84" x2="167.64" y2="96.52" width="0.1524" layer="91"/>
 <pinref part="JP23" gate="A" pin="1"/>
 <wire x1="167.64" y1="96.52" x2="180.34" y2="96.52" width="0.1524" layer="91"/>
-<pinref part="R12" gate="G$1" pin="1"/>
-<wire x1="111.76" y1="48.26" x2="83.82" y2="48.26" width="0.1524" layer="91"/>
-<wire x1="83.82" y1="48.26" x2="83.82" y2="63.5" width="0.1524" layer="91"/>
-<junction x="83.82" y="63.5"/>
 </segment>
 </net>
 <net name="MISO" class="0">
 <segment>
 <pinref part="JP8" gate="A" pin="8"/>
-<wire x1="101.6" y1="63.5" x2="114.3" y2="63.5" width="0.1524" layer="91"/>
+<wire x1="101.6" y1="63.5" x2="106.68" y2="63.5" width="0.1524" layer="91"/>
 <label x="114.3" y="63.5" size="1.778" layer="95" xref="yes"/>
+<pinref part="R12" gate="G$1" pin="1"/>
+<wire x1="106.68" y1="63.5" x2="114.3" y2="63.5" width="0.1524" layer="91"/>
+<wire x1="111.76" y1="48.26" x2="106.68" y2="48.26" width="0.1524" layer="91"/>
+<wire x1="106.68" y1="48.26" x2="106.68" y2="63.5" width="0.1524" layer="91"/>
+<junction x="106.68" y="63.5"/>
 </segment>
 </net>
 <net name="N$30" class="0">
