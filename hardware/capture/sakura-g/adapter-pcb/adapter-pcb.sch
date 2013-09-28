@@ -4456,6 +4456,7 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="JP1" gate="A" pin="28"/>
 <wire x1="88.9" y1="60.96" x2="88.9" y2="71.12" width="0.1524" layer="91"/>
+<label x="88.9" y="68.58" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="ADCOR" class="0">
@@ -4467,6 +4468,7 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="JP1" gate="A" pin="27"/>
 <wire x1="88.9" y1="53.34" x2="88.9" y2="45.72" width="0.1524" layer="91"/>
+<label x="88.9" y="40.64" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="ADC7" class="0">
@@ -4478,6 +4480,7 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="JP1" gate="A" pin="26"/>
 <wire x1="86.36" y1="60.96" x2="86.36" y2="71.12" width="0.1524" layer="91"/>
+<label x="86.36" y="68.58" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="ADC8" class="0">
@@ -4489,6 +4492,7 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="JP1" gate="A" pin="25"/>
 <wire x1="86.36" y1="53.34" x2="86.36" y2="45.72" width="0.1524" layer="91"/>
+<label x="86.36" y="40.64" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="ADC5" class="0">
@@ -4500,6 +4504,7 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="JP1" gate="A" pin="24"/>
 <wire x1="83.82" y1="60.96" x2="83.82" y2="71.12" width="0.1524" layer="91"/>
+<label x="83.82" y="68.58" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="ADC6" class="0">
@@ -4511,6 +4516,7 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="JP1" gate="A" pin="23"/>
 <wire x1="83.82" y1="53.34" x2="83.82" y2="45.72" width="0.1524" layer="91"/>
+<label x="83.82" y="40.64" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="ADC3" class="0">
@@ -4522,7 +4528,7 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="JP1" gate="A" pin="18"/>
 <wire x1="76.2" y1="60.96" x2="76.2" y2="68.58" width="0.1524" layer="91"/>
-<label x="73.66" y="68.58" size="1.778" layer="95" rot="R270"/>
+<label x="74.422" y="75.184" size="1.778" layer="95" rot="R270"/>
 </segment>
 </net>
 <net name="ADC4" class="0">
@@ -4534,7 +4540,7 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="JP1" gate="A" pin="17"/>
 <wire x1="76.2" y1="53.34" x2="76.2" y2="45.72" width="0.1524" layer="91"/>
-<label x="76.2" y="45.72" size="1.778" layer="95" rot="R90"/>
+<label x="76.2" y="40.64" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="ADC1" class="0">
@@ -4546,6 +4552,7 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="JP1" gate="A" pin="16"/>
 <wire x1="73.66" y1="60.96" x2="73.66" y2="68.58" width="0.1524" layer="91"/>
+<label x="73.66" y="68.58" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="ADC2" class="0">
@@ -4557,7 +4564,7 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="JP1" gate="A" pin="15"/>
 <wire x1="73.66" y1="53.34" x2="73.66" y2="45.72" width="0.1524" layer="91"/>
-<label x="73.66" y="45.72" size="1.778" layer="95" rot="R90"/>
+<label x="73.66" y="40.64" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="CLKADC" class="0">
@@ -4569,6 +4576,7 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="JP1" gate="A" pin="14"/>
 <wire x1="71.12" y1="60.96" x2="71.12" y2="68.58" width="0.1524" layer="91"/>
+<label x="71.12" y="68.58" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="ADC0" class="0">
@@ -4580,7 +4588,7 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="JP1" gate="A" pin="13"/>
 <wire x1="71.12" y1="53.34" x2="71.12" y2="45.72" width="0.1524" layer="91"/>
-<label x="71.12" y="45.72" size="1.778" layer="95" rot="R90"/>
+<label x="71.12" y="40.64" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="GAIN" class="0">
@@ -4592,6 +4600,7 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="JP1" gate="A" pin="12"/>
 <wire x1="68.58" y1="60.96" x2="68.58" y2="68.58" width="0.1524" layer="91"/>
+<label x="68.58" y="68.58" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="HILO" class="0">
@@ -4603,7 +4612,7 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="JP1" gate="A" pin="11"/>
 <wire x1="68.58" y1="53.34" x2="68.58" y2="45.72" width="0.1524" layer="91"/>
-<label x="68.58" y="45.72" size="1.778" layer="95" rot="R90"/>
+<label x="68.58" y="40.64" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="N$3" class="0">
@@ -4628,10 +4637,10 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <pinref part="U$1" gate="G$1" pin="NC@4"/>
 <wire x1="30.48" y1="43.18" x2="48.26" y2="43.18" width="0.1524" layer="91"/>
-<wire x1="48.26" y1="43.18" x2="48.26" y2="73.66" width="0.1524" layer="91"/>
+<wire x1="48.26" y1="43.18" x2="48.26" y2="78.74" width="0.1524" layer="91"/>
 <pinref part="JP1" gate="A" pin="22"/>
-<wire x1="48.26" y1="73.66" x2="81.28" y2="73.66" width="0.1524" layer="91"/>
-<wire x1="81.28" y1="73.66" x2="81.28" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="48.26" y1="78.74" x2="81.28" y2="78.74" width="0.1524" layer="91"/>
+<wire x1="81.28" y1="78.74" x2="81.28" y2="60.96" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
