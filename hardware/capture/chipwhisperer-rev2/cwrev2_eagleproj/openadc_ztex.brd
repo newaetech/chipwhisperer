@@ -33,7 +33,7 @@
 <layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="yes"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
@@ -130,8 +130,6 @@
 <wire x1="101.9175" y1="98.1075" x2="53.6575" y2="98.1075" width="0.254" layer="21"/>
 <wire x1="85.725" y1="14.2875" x2="85.725" y2="26.3525" width="0.1524" layer="22"/>
 <wire x1="77.47" y1="28.2575" x2="77.47" y2="26.9875" width="0.2032" layer="22"/>
-<text x="20.8415" y="37.354" size="1.6764" layer="26" ratio="12" rot="MR90">Power Supply Module 1.1</text>
-<text x="18.327" y="37.354" size="1.6764" layer="26" ratio="12" rot="MR90">for ZTEX FPGA Modules</text>
 <wire x1="111.3511" y1="63.279" x2="108.1253" y2="63.279" width="0.4064" layer="41"/>
 <wire x1="111.3511" y1="63.279" x2="108.1253" y2="63.279" width="0.4064" layer="42"/>
 <wire x1="124.874" y1="60.6577" x2="124.874" y2="58.3997" width="0.254" layer="21"/>
@@ -4123,10 +4121,164 @@
 <text x="34.798" y="10.668" size="1.016" layer="21" font="vector" ratio="16">GND</text>
 <text x="111.252" y="10.16" size="1.016" layer="21" font="vector" ratio="16">GND</text>
 <text x="40.132" y="83.82" size="1.016" layer="21" font="vector" ratio="16">GND</text>
-<text x="10.414" y="4.826" size="2.54" layer="21" font="vector" ratio="16">Colin O'Flynn</text>
-<text x="42.164" y="7.874" size="1.778" layer="21" font="vector" ratio="16">REV: 1SEPT2013</text>
-<text x="41.91" y="5.842" size="1.778" layer="21" font="vector" ratio="16">coflynn@newae.com</text>
+<text x="48.768" y="6.858" size="1.778" layer="21" font="vector" ratio="16">REV: 1SEPT2013</text>
 <text x="88.138" y="39.624" size="1.016" layer="21" font="vector" ratio="16">1.2V</text>
+<text x="17.526" y="0.508" size="3.81" layer="21" ratio="16" rot="R19">ChipWhisperer</text>
+<text x="49.022" y="4.318" size="1.6764" layer="21" font="vector" ratio="16">www.ChipWhisperer.com</text>
+<text x="10.414" y="68.58" size="1.016" layer="21" font="vector" ratio="16">1</text>
+<text x="10.414" y="71.12" size="1.016" layer="21" font="vector" ratio="16">3</text>
+<text x="10.414" y="73.66" size="1.016" layer="21" font="vector" ratio="16">5</text>
+<text x="10.668" y="76.2" size="1.016" layer="21" font="vector" ratio="16">7</text>
+<text x="10.668" y="78.74" size="1.016" layer="21" font="vector" ratio="16">9</text>
+<text x="10.414" y="81.28" size="1.016" layer="21" font="vector" ratio="16">11</text>
+<text x="10.414" y="83.82" size="1.016" layer="21" font="vector" ratio="16">13</text>
+<text x="10.414" y="86.36" size="1.016" layer="21" font="vector" ratio="16">15</text>
+<text x="10.16" y="88.9" size="1.016" layer="21" font="vector" ratio="16">17</text>
+<text x="10.16" y="91.44" size="1.016" layer="21" font="vector" ratio="16">19</text>
+<text x="5.842" y="93.218" size="1.016" layer="21" font="vector" ratio="16">20</text>
+<text x="6.604" y="66.802" size="1.016" layer="21" font="vector" ratio="16">2</text>
+<text x="28.448" y="57.658" size="1.016" layer="21" font="vector" ratio="16">JP13 (TARGET) Pinout:</text>
+<text x="29.464" y="55.626" size="1.016" layer="21" font="vector" ratio="16">1,20</text>
+<text x="34.798" y="55.626" size="1.016" layer="21" font="vector" ratio="16">+VUSB (5V)</text>
+<text x="29.464" y="54.102" size="1.016" layer="21" font="vector" ratio="16">3,18</text>
+<text x="34.798" y="54.102" size="1.016" layer="21" font="vector" ratio="16">3.3V</text>
+<text x="29.464" y="52.324" size="1.016" layer="21" font="vector" ratio="16">17,19,2</text>
+<text x="36.83" y="52.324" size="1.016" layer="21" font="vector" ratio="16">GND</text>
+<text x="29.21" y="32.512" size="1.016" layer="21" font="vector" ratio="16">4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16</text>
+<text x="34.798" y="32.258" size="1.016" layer="21" font="vector" ratio="16">FPGA-HS1
+PROG-RESET
+FPGA-HS2
+PROG-MISO
+VTarget (IN)
+PROG-MOSI
+FPGA-TARG1(TX)
+PROG-SCK
+FPGA-TARG2(RX)
+PROG-PDIC
+FPGA-TARG3(SCARD)
+PROG-PDIC
+FPGA-TARG4(TRIG)</text>
+<wire x1="27.94" y1="59.182" x2="27.94" y2="56.896" width="0.254" layer="21"/>
+<wire x1="27.94" y1="56.896" x2="27.94" y2="31.496" width="0.254" layer="21"/>
+<wire x1="27.94" y1="31.496" x2="50.8" y2="31.496" width="0.254" layer="21"/>
+<wire x1="50.8" y1="31.496" x2="50.8" y2="56.896" width="0.254" layer="21"/>
+<wire x1="50.8" y1="56.896" x2="50.8" y2="59.182" width="0.254" layer="21"/>
+<wire x1="50.8" y1="59.182" x2="27.94" y2="59.182" width="0.254" layer="21"/>
+<wire x1="27.94" y1="56.896" x2="50.8" y2="56.896" width="0.254" layer="21"/>
+<text x="11.7475" y="23.114" size="1.016" layer="21" font="vector" ratio="16" rot="R90">JP5 Pinout</text>
+<text x="12.192" y="6.35" size="1.016" layer="21" font="vector" ratio="16">5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28</text>
+<text x="8.89" y="5.588" size="1.016" layer="21" font="vector" ratio="16">1</text>
+<text x="6.096" y="5.588" size="1.016" layer="21" font="vector" ratio="16">2</text>
+<text x="8.382" y="44.958" size="1.016" layer="21" font="vector" ratio="16">29</text>
+<text x="5.588" y="44.958" size="1.016" layer="21" font="vector" ratio="16">30</text>
+<text x="26.416" y="28.448" size="1.016" layer="21" font="vector" ratio="16">+VUSB (5V)</text>
+<text x="32.766" y="26.924" size="1.016" layer="21" font="vector" ratio="16">GND</text>
+<text x="26.416" y="25.4" size="1.016" layer="21" font="vector" ratio="16">+3.3V</text>
+<text x="15.494" y="6.35" size="1.016" layer="21" font="vector" ratio="16">A27
+B26
+A26
+A25
+B25
+E25
+A24
+B24
+E24
+E23
+E22
+E21
+E20
+B20
+A20
+E19
+B19
+A19
+A18
+B18
+E18
+B17
+A17
+E17</text>
+<text x="11.684" y="43.18" size="1.016" layer="21" font="vector" ratio="16">PIN</text>
+<text x="15.24" y="43.18" size="1.016" layer="21" font="vector" ratio="16">ZTEX</text>
+<text x="20.066" y="43.18" size="1.016" layer="21" font="vector" ratio="16">LX25FPGA</text>
+<text x="20.066" y="6.35" size="1.016" layer="21" font="vector" ratio="16">A6
+D6
+C6
+E6
+F7
+NC
+A7
+C7
+NC
+E7
+E8
+B8
+A8
+D8
+C8
+D9
+C9
+A9
+B12
+A12
+F9
+E10
+C10
+A10</text>
+<text x="24.384" y="25.4" size="1.016" layer="21" font="vector" ratio="16">1
+2,4,29,30
+3</text>
+<wire x1="10.414" y1="44.45" x2="10.414" y2="5.334" width="0.254" layer="21"/>
+<wire x1="10.414" y1="5.334" x2="23.114" y2="5.334" width="0.254" layer="21"/>
+<wire x1="23.114" y1="5.334" x2="23.114" y2="24.384" width="0.254" layer="21"/>
+<wire x1="23.114" y1="24.384" x2="23.368" y2="24.638" width="0.254" layer="21"/>
+<wire x1="23.368" y1="24.638" x2="36.068" y2="24.638" width="0.254" layer="21"/>
+<wire x1="36.068" y1="24.638" x2="36.068" y2="30.226" width="0.254" layer="21"/>
+<wire x1="36.068" y1="30.226" x2="27.178" y2="30.226" width="0.254" layer="21"/>
+<wire x1="27.178" y1="30.226" x2="27.178" y2="44.704" width="0.254" layer="21"/>
+<wire x1="27.178" y1="44.704" x2="10.668" y2="44.704" width="0.254" layer="21"/>
+<wire x1="10.668" y1="44.704" x2="10.414" y2="44.45" width="0.254" layer="21"/>
+<circle x="37.592" y="24.892" radius="0.359209375" width="0.254" layer="21"/>
+<wire x1="36.576" y1="24.384" x2="38.862" y2="24.384" width="0.254" layer="21"/>
+<wire x1="38.862" y1="24.384" x2="40.64" y2="24.384" width="0.254" layer="21"/>
+<wire x1="40.64" y1="24.384" x2="42.672" y2="24.384" width="0.254" layer="21"/>
+<wire x1="36.576" y1="18.796" x2="42.926" y2="18.796" width="0.254" layer="21"/>
+<wire x1="38.862" y1="24.384" x2="40.64" y2="24.384" width="0.254" layer="21" curve="180"/>
 </plain>
 <libraries>
 <library name="mystuff">
@@ -8503,7 +8655,10 @@ einem neuen Namen ab.</description>
 <attribute name="TP_SIGNAL_NAME" value="" x="41.402" y="86.36" size="1.016" layer="27" font="vector" ratio="16" display="off"/>
 </element>
 <element name="R61" library="resistor" package="R0603" value="470R" x="25.4" y="82.296" rot="MR90"/>
-<element name="JP5" library="pinhead" package="2X15/90" value="" x="2.794" y="25.908" rot="R90"/>
+<element name="JP5" library="pinhead" package="2X15/90" value="" x="2.794" y="25.908" smashed="yes" rot="R90">
+<attribute name="NAME" x="9.144" y="4.699" size="1.27" layer="25" ratio="10" rot="R180"/>
+<attribute name="VALUE" x="6.604" y="46.863" size="1.27" layer="27" rot="R180"/>
+</element>
 <element name="C65" library="rcl" package="C0603" value="100nF" x="14.478" y="94.742" smashed="yes" rot="R180">
 <attribute name="NAME" x="15.621" y="93.853" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="15.113" y="96.647" size="1.27" layer="27" rot="R180"/>
@@ -12413,4 +12568,10 @@ einem neuen Namen ab.</description>
 </signals>
 </board>
 </drawing>
+<compatibility>
+<note version="6.3" minversion="6.2.2" severity="warning">
+Since Version 6.2.2 text objects can contain more than one line,
+which will not be processed correctly with this version.
+</note>
+</compatibility>
 </eagle>

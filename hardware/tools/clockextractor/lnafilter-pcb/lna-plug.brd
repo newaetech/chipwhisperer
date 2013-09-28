@@ -2985,23 +2985,23 @@ design rules under a new name.</description>
 <attribute name="NAME" x="121.8565" y="41.656" size="1.27" layer="25" rot="R180"/>
 <attribute name="VALUE" x="121.539" y="41.402" size="1.016" layer="27" font="vector" rot="R180"/>
 </element>
-<element name="C1" library="resistor" package="C0603" value="" x="137.16" y="41.275" smashed="yes" rot="R270">
+<element name="C1" library="resistor" package="C0603" value="100n" x="137.16" y="41.275" smashed="yes" rot="R270">
 <attribute name="NAME" x="137.922" y="42.164" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="135.128" y="42.164" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="C2" library="resistor" package="C0603" value="" x="126.365" y="43.815" smashed="yes" rot="R180">
+<element name="C2" library="resistor" package="C0603" value="100n" x="126.365" y="43.815" smashed="yes" rot="R180">
 <attribute name="NAME" x="127.254" y="45.9105" size="1.27" layer="25" rot="R180"/>
 <attribute name="VALUE" x="127.254" y="45.847" size="1.27" layer="27" rot="R180"/>
 </element>
-<element name="C3" library="resistor" package="C0603" value="" x="133.35" y="41.91" smashed="yes" rot="R270">
+<element name="C3" library="resistor" package="C0603" value="100n" x="133.35" y="41.91" smashed="yes" rot="R270">
 <attribute name="NAME" x="134.112" y="42.799" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="131.318" y="42.799" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="C4" library="resistor" package="C0603" value="" x="137.16" y="45.72" smashed="yes" rot="R270">
+<element name="C4" library="resistor" package="C0603" value="100n" x="137.16" y="45.72" smashed="yes" rot="R270">
 <attribute name="NAME" x="136.652" y="49.149" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="135.128" y="46.609" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="C5" library="resistor" package="C0603" value="" x="128.27" y="53.34" smashed="yes" rot="R90">
+<element name="C5" library="resistor" package="C0603" value="100n" x="128.27" y="53.34" smashed="yes" rot="R90">
 <attribute name="NAME" x="128.778" y="54.991" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="130.302" y="52.451" size="1.27" layer="27" rot="R90"/>
 </element>
@@ -3009,11 +3009,11 @@ design rules under a new name.</description>
 <attribute name="NAME" x="131.318" y="55.9435" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="132.842" y="53.4035" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="C7" library="resistor" package="C0603" value="" x="127" y="47.625" smashed="yes" rot="R90">
+<element name="C7" library="resistor" package="C0603" value="100n" x="127" y="47.625" smashed="yes" rot="R90">
 <attribute name="NAME" x="126.238" y="46.736" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="129.032" y="46.736" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="C8" library="resistor" package="C0603" value="" x="124.46" y="47.625" smashed="yes" rot="R270">
+<element name="C8" library="resistor" package="C0603" value="100n" x="124.46" y="47.625" smashed="yes" rot="R270">
 <attribute name="NAME" x="122.682" y="48.514" size="1.016" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="122.428" y="48.514" size="1.27" layer="27" rot="R270"/>
 </element>
@@ -3025,11 +3025,11 @@ design rules under a new name.</description>
 <attribute name="NAME" x="113.2205" y="48.641" size="1.27" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="113.157" y="49.276" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="C11" library="resistor" package="C0603" value="" x="144.145" y="46.99" smashed="yes">
+<element name="C11" library="resistor" package="C0603" value="100n" x="144.145" y="46.99" smashed="yes">
 <attribute name="NAME" x="142.9385" y="45.212" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="143.256" y="44.958" size="1.27" layer="27"/>
 </element>
-<element name="C12" library="resistor" package="C0603" value="" x="144.145" y="49.53" smashed="yes">
+<element name="C12" library="resistor" package="C0603" value="100n" x="144.145" y="49.53" smashed="yes">
 <attribute name="NAME" x="142.9385" y="50.292" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="143.256" y="47.498" size="1.27" layer="27"/>
 </element>
@@ -3197,15 +3197,15 @@ design rules under a new name.</description>
 <attribute name="NAME" x="21.336" y="51.562" size="1.27" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="21.971" y="48.768" size="1.27" layer="27"/>
 </element>
-<element name="C32" library="resistor" package="C0603" value="" x="26.035" y="48.26" smashed="yes">
+<element name="C32" library="resistor" package="C0603" value="22nF" x="26.035" y="48.26" smashed="yes">
 <attribute name="NAME" x="24.1935" y="45.847" size="1.27" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="25.146" y="46.228" size="1.27" layer="27"/>
 </element>
-<element name="C33" library="resistor" package="C0603" value="" x="29.21" y="48.26" smashed="yes" rot="R180">
+<element name="C33" library="resistor" package="C0603" value="100n" x="29.21" y="48.26" smashed="yes" rot="R180">
 <attribute name="NAME" x="31.369" y="47.1805" size="1.27" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="30.099" y="50.292" size="1.27" layer="27" rot="R180"/>
 </element>
-<element name="C34" library="resistor" package="C0603" value="" x="29.21" y="48.26" smashed="yes" rot="MR0">
+<element name="C34" library="resistor" package="C0603" value="1u" x="29.21" y="48.26" smashed="yes" rot="MR0">
 <attribute name="NAME" x="30.099" y="49.022" size="1.27" layer="26" font="vector" ratio="16" rot="MR0"/>
 <attribute name="VALUE" x="30.099" y="46.228" size="1.27" layer="28" rot="MR0"/>
 </element>
@@ -3228,7 +3228,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="31.1785" y="43.6245" size="1.27" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="32.131" y="43.688" size="1.27" layer="27"/>
 </element>
-<element name="C36" library="resistor" package="C0603" value="" x="132.715" y="54.2925" smashed="yes" rot="R90">
+<element name="C36" library="resistor" package="C0603" value="100n" x="132.715" y="54.2925" smashed="yes" rot="R90">
 <attribute name="NAME" x="133.223" y="55.9435" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="134.747" y="53.4035" size="1.27" layer="27" rot="R90"/>
 </element>
@@ -3288,11 +3288,11 @@ design rules under a new name.</description>
 <element name="JP11" library="pinhead" package="1X01" value="" x="121.285" y="43.815" smashed="yes">
 <attribute name="VALUE" x="120.015" y="40.64" size="1.27" layer="27"/>
 </element>
-<element name="C42" library="resistor" package="C0603" value="" x="149.86" y="50.165" smashed="yes" rot="R90">
+<element name="C42" library="resistor" package="C0603" value="330pF" x="149.86" y="50.165" smashed="yes" rot="R90">
 <attribute name="NAME" x="148.7805" y="48.9585" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="151.892" y="49.276" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="C43" library="resistor" package="C0603" value="" x="149.86" y="46.0375" smashed="yes" rot="R90">
+<element name="C43" library="resistor" package="C0603" value="330pF" x="149.86" y="46.0375" smashed="yes" rot="R90">
 <attribute name="NAME" x="148.7805" y="44.831" size="1.016" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="151.892" y="45.1485" size="1.27" layer="27" rot="R90"/>
 </element>
