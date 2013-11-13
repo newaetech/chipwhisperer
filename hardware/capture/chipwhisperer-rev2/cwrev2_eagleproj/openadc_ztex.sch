@@ -34709,7 +34709,7 @@ http://dangerousprototypes.com</description>
 <part name="SUPPLY15" library="supply2" deviceset="GND" device=""/>
 <part name="+3V9" library="supply1" deviceset="+3V3" device=""/>
 <part name="P+4" library="supply1" deviceset="+5V" device=""/>
-<part name="U6" library="Texas Instruments_By_element14_Batch_1" deviceset="TXB0104PWR" device=""/>
+<part name="U6" library="Texas Instruments_By_element14_Batch_1" deviceset="TXB0104PWR" device="" value="TXS0104EPWR"/>
 <part name="SUPPLY16" library="supply2" deviceset="GND" device=""/>
 <part name="U7" library="Texas Instruments_By_element14_Batch_1" deviceset="TXB0108PWR" device=""/>
 <part name="SUPPLY17" library="supply2" deviceset="GND" device=""/>

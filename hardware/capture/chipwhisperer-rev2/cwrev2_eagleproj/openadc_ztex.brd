@@ -8333,7 +8333,7 @@ einem neuen Namen ab.</description>
 <attribute name="NAME" x="38.0746" y="71.374" size="1.016" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="34.7726" y="76.2" size="0.8128" layer="27" rot="R180"/>
 </element>
-<element name="U6" library="Texas Instruments_By_element14_Batch_1" package="SOP65P640X120-14N" value="TXB0104PWR" x="20.32" y="91.44" smashed="yes" rot="R180">
+<element name="U6" library="Texas Instruments_By_element14_Batch_1" package="SOP65P640X120-14N" value="TXS0104EPWR" x="20.32" y="91.44" smashed="yes" rot="R180">
 <attribute name="PACKAGE" value="TSSOP-14" x="20.32" y="91.44" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="OC_NEWARK" value="99K4466" x="20.32" y="91.44" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="TXB0104PWR" x="20.32" y="91.44" size="1.778" layer="27" rot="R180" display="off"/>
