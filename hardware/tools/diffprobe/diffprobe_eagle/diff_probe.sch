@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.4">
+<eagle version="6.5.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -8,24 +8,24 @@
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
-<layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
-<layer number="3" name="Route3" color="4" fill="3" visible="no" active="no"/>
-<layer number="14" name="Route14" color="1" fill="6" visible="no" active="no"/>
-<layer number="15" name="Route15" color="4" fill="6" visible="no" active="no"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
-<layer number="17" name="Pads" color="2" fill="1" visible="no" active="no"/>
-<layer number="18" name="Vias" color="2" fill="1" visible="no" active="no"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="no"/>
-<layer number="20" name="Dimension" color="15" fill="1" visible="no" active="no"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="no" active="no"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="no" active="no"/>
+<layer number="1" name="Top" color="4" fill="1" visible="yes" active="no"/>
+<layer number="2" name="Route2" color="1" fill="3" visible="yes" active="no"/>
+<layer number="3" name="Route3" color="4" fill="3" visible="yes" active="no"/>
+<layer number="14" name="Route14" color="1" fill="6" visible="yes" active="no"/>
+<layer number="15" name="Route15" color="4" fill="6" visible="yes" active="no"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="no"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="no"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="no"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="no"/>
+<layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="no"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="no"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="no"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="no"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="no"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="no"/>
@@ -34,8 +34,8 @@
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="no"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="no"/>
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="no"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="no" active="no"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="no" active="no"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="no"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="no"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="no"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="no"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="no"/>
@@ -43,16 +43,16 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="no"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="no"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="no"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="no"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="no"/>
-<layer number="48" name="Document" color="7" fill="1" visible="no" active="no"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="no" active="no"/>
-<layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="no"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="no"/>
-<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
-<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
-<layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="no"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="no"/>
+<layer number="48" name="Document" color="7" fill="1" visible="yes" active="no"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="no"/>
+<layer number="50" name="dxf" color="7" fill="1" visible="yes" active="no"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="no"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="no"/>
+<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="yes" active="no"/>
+<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="yes" active="no"/>
+<layer number="56" name="wert" color="7" fill="1" visible="yes" active="no"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="93" name="Pins" color="2" fill="1" visible="no" active="yes"/>
@@ -11257,8 +11257,8 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="U1" library="customs" deviceset="AD8129" device=""/>
 <part name="C1" library="rcl" deviceset="C-EU" device="C0603" value="10nF"/>
 <part name="C2" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
-<part name="R1" library="resistor" deviceset="R-US_" device="R0603" value="10k"/>
-<part name="R2" library="resistor" deviceset="R-US_" device="R0603" value="2K"/>
+<part name="R1" library="resistor" deviceset="R-US_" device="R0603" value="2k, 1%"/>
+<part name="R2" library="resistor" deviceset="R-US_" device="R0603" value="221R"/>
 <part name="C5" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="SUPPLY1" library="adc_microboard" deviceset="AGND" device=""/>
 <part name="SUPPLY4" library="adc_microboard" deviceset="AGND" device=""/>
@@ -11289,6 +11289,15 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <part name="SUPPLY7" library="adc_microboard" deviceset="AGND" device=""/>
 <part name="JP5" library="pinhead" deviceset="PINHD-1X1" device=""/>
 <part name="JP6" library="pinhead" deviceset="PINHD-1X1" device=""/>
+<part name="R5" library="resistor" deviceset="R-US_" device="R0603" value="49.9R"/>
+<part name="C9" library="rcl" deviceset="C-EU" device="C0603" value="0R"/>
+<part name="C10" library="rcl" deviceset="C-EU" device="C0603" value="0R"/>
+<part name="R6" library="resistor" deviceset="R-US_" device="M0805" value="DNM"/>
+<part name="R7" library="resistor" deviceset="R-US_" device="R0603" value="DNM"/>
+<part name="R8" library="resistor" deviceset="R-US_" device="R0603" value="DNM"/>
+<part name="R9" library="resistor" deviceset="R-US_" device="R0603" value="DNM"/>
+<part name="R10" library="resistor" deviceset="R-US_" device="R0603" value="1K, 1%"/>
+<part name="SUPPLY12" library="adc_microboard" deviceset="AGND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -11312,10 +11321,10 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <instance part="SUPPLY1" gate="G$1" x="68.58" y="106.68"/>
 <instance part="SUPPLY4" gate="G$1" x="116.84" y="134.62" rot="R90"/>
 <instance part="SUPPLY5" gate="G$1" x="116.84" y="142.24" rot="R90"/>
-<instance part="X1" gate="G1" x="149.86" y="119.38" rot="R180"/>
+<instance part="X1" gate="G1" x="157.48" y="119.38" rot="R180"/>
 <instance part="SUPPLY6" gate="G$1" x="144.78" y="121.92" rot="R270"/>
-<instance part="JP1" gate="G$1" x="78.74" y="121.92" rot="MR0"/>
-<instance part="X1" gate="G" x="149.86" y="129.54" rot="R180"/>
+<instance part="JP1" gate="G$1" x="15.24" y="149.86" rot="MR0"/>
+<instance part="X1" gate="G" x="157.48" y="129.54" rot="R180"/>
 <instance part="SUPPLY2" gate="G$1" x="167.64" y="88.9"/>
 <instance part="C3" gate="G$1" x="129.54" y="149.86"/>
 <instance part="D1" gate="G$1" x="154.94" y="152.4" rot="R180"/>
@@ -11345,6 +11354,15 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <instance part="SUPPLY7" gate="G$1" x="139.7" y="58.42"/>
 <instance part="JP5" gate="G$1" x="175.26" y="55.88"/>
 <instance part="JP6" gate="G$1" x="175.26" y="48.26"/>
+<instance part="R5" gate="G$1" x="132.08" y="119.38"/>
+<instance part="C9" gate="G$1" x="40.64" y="154.94" rot="R270"/>
+<instance part="C10" gate="G$1" x="40.64" y="144.78" rot="R270"/>
+<instance part="R6" gate="G$1" x="58.42" y="149.86" rot="R270"/>
+<instance part="R7" gate="G$1" x="63.5" y="144.78"/>
+<instance part="R8" gate="G$1" x="63.5" y="154.94"/>
+<instance part="R9" gate="G$1" x="101.6" y="152.4" rot="R180"/>
+<instance part="R10" gate="G$1" x="83.82" y="142.24" rot="R270"/>
+<instance part="SUPPLY12" gate="G$1" x="83.82" y="134.62"/>
 </instances>
 <busses>
 </busses>
@@ -11376,6 +11394,8 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <wire x1="144.78" y1="152.4" x2="129.54" y2="152.4" width="0.1524" layer="91"/>
 <junction x="144.78" y="152.4"/>
 <pinref part="R3" gate="G$1" pin="A"/>
+<pinref part="R9" gate="G$1" pin="1"/>
+<junction x="106.68" y="152.4"/>
 </segment>
 </net>
 <net name="N$3" class="0">
@@ -11413,18 +11433,11 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <net name="N$5" class="0">
 <segment>
 <pinref part="R1" gate="G$1" pin="2"/>
-<wire x1="116.84" y1="88.9" x2="132.08" y2="88.9" width="0.1524" layer="91"/>
-<wire x1="132.08" y1="88.9" x2="132.08" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="88.9" x2="127" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="127" y1="88.9" x2="127" y2="119.38" width="0.1524" layer="91"/>
 <pinref part="U1" gate="G$1" pin="OUT"/>
-<wire x1="132.08" y1="119.38" x2="127" y2="119.38" width="0.1524" layer="91"/>
-<pinref part="X1" gate="G1" pin="1"/>
-<wire x1="147.32" y1="119.38" x2="137.16" y2="119.38" width="0.1524" layer="91"/>
-<junction x="132.08" y="119.38"/>
-<pinref part="JP2" gate="G$1" pin="1"/>
-<wire x1="137.16" y1="119.38" x2="132.08" y2="119.38" width="0.1524" layer="91"/>
-<wire x1="149.86" y1="111.76" x2="137.16" y2="111.76" width="0.1524" layer="91"/>
-<wire x1="137.16" y1="111.76" x2="137.16" y2="119.38" width="0.1524" layer="91"/>
-<junction x="137.16" y="119.38"/>
+<pinref part="R5" gate="G$1" pin="1"/>
+<junction x="127" y="119.38"/>
 </segment>
 </net>
 <net name="AGND" class="0">
@@ -11444,15 +11457,16 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <pinref part="X1" gate="G1" pin="GND"/>
 <pinref part="SUPPLY6" gate="G$1" pin="AGND"/>
 <pinref part="X1" gate="G" pin="GND@1"/>
-<junction x="147.32" y="129.54"/>
+<junction x="154.94" y="129.54"/>
 <pinref part="X1" gate="G" pin="GND@1"/>
-<wire x1="147.32" y1="129.54" x2="147.32" y2="121.92" width="0.1524" layer="91"/>
-<junction x="147.32" y="121.92"/>
+<wire x1="154.94" y1="129.54" x2="154.94" y2="121.92" width="0.1524" layer="91"/>
+<junction x="154.94" y="121.92"/>
 <pinref part="X1" gate="G" pin="GND@2"/>
-<wire x1="147.32" y1="129.54" x2="147.32" y2="132.08" width="0.1524" layer="91"/>
+<wire x1="154.94" y1="129.54" x2="154.94" y2="132.08" width="0.1524" layer="91"/>
 <pinref part="X1" gate="G" pin="GND@3"/>
-<wire x1="147.32" y1="134.62" x2="147.32" y2="132.08" width="0.1524" layer="91"/>
-<junction x="147.32" y="132.08"/>
+<wire x1="154.94" y1="134.62" x2="154.94" y2="132.08" width="0.1524" layer="91"/>
+<junction x="154.94" y="132.08"/>
+<wire x1="154.94" y1="121.92" x2="147.32" y2="121.92" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="C3" gate="G$1" pin="2"/>
@@ -11505,19 +11519,9 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <wire x1="144.78" y1="48.26" x2="144.78" y2="55.88" width="0.1524" layer="91"/>
 <junction x="144.78" y="55.88"/>
 </segment>
-</net>
-<net name="N$6" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="VIN+"/>
-<pinref part="JP1" gate="G$1" pin="1"/>
-<wire x1="81.28" y1="124.46" x2="96.52" y2="124.46" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$7" class="0">
-<segment>
-<pinref part="U1" gate="G$1" pin="VIN-"/>
-<pinref part="JP1" gate="G$1" pin="2"/>
-<wire x1="81.28" y1="121.92" x2="96.52" y2="121.92" width="0.1524" layer="91"/>
+<pinref part="R10" gate="G$1" pin="2"/>
+<pinref part="SUPPLY12" gate="G$1" pin="AGND"/>
 </segment>
 </net>
 <net name="N$1" class="0">
@@ -11577,6 +11581,81 @@ Standard SMD solder jumper. Used to automate production. Two varients : Normally
 <pinref part="JP4" gate="G$1" pin="1"/>
 <pinref part="R4" gate="G$1" pin="2"/>
 <wire x1="172.72" y1="63.5" x2="157.48" y2="63.5" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$12" class="0">
+<segment>
+<pinref part="X1" gate="G1" pin="1"/>
+<wire x1="154.94" y1="119.38" x2="144.78" y2="119.38" width="0.1524" layer="91"/>
+<pinref part="JP2" gate="G$1" pin="1"/>
+<wire x1="149.86" y1="111.76" x2="144.78" y2="111.76" width="0.1524" layer="91"/>
+<wire x1="144.78" y1="111.76" x2="144.78" y2="119.38" width="0.1524" layer="91"/>
+<pinref part="R5" gate="G$1" pin="2"/>
+<wire x1="137.16" y1="119.38" x2="144.78" y2="119.38" width="0.1524" layer="91"/>
+<junction x="144.78" y="119.38"/>
+</segment>
+</net>
+<net name="N$6" class="0">
+<segment>
+<pinref part="JP1" gate="G$1" pin="1"/>
+<wire x1="17.78" y1="152.4" x2="33.02" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="33.02" y1="152.4" x2="33.02" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="C9" gate="G$1" pin="2"/>
+<wire x1="33.02" y1="154.94" x2="35.56" y2="154.94" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$7" class="0">
+<segment>
+<pinref part="C9" gate="G$1" pin="1"/>
+<pinref part="R6" gate="G$1" pin="1"/>
+<wire x1="43.18" y1="154.94" x2="50.8" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="R8" gate="G$1" pin="1"/>
+<junction x="58.42" y="154.94"/>
+<pinref part="U1" gate="G$1" pin="VIN+"/>
+<wire x1="50.8" y1="154.94" x2="58.42" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="96.52" y1="124.46" x2="50.8" y2="124.46" width="0.1524" layer="91"/>
+<wire x1="50.8" y1="124.46" x2="50.8" y2="154.94" width="0.1524" layer="91"/>
+<junction x="50.8" y="154.94"/>
+</segment>
+</net>
+<net name="N$13" class="0">
+<segment>
+<pinref part="R6" gate="G$1" pin="2"/>
+<pinref part="C10" gate="G$1" pin="1"/>
+<wire x1="58.42" y1="144.78" x2="48.26" y2="144.78" width="0.1524" layer="91"/>
+<pinref part="R7" gate="G$1" pin="1"/>
+<junction x="58.42" y="144.78"/>
+<pinref part="U1" gate="G$1" pin="VIN-"/>
+<wire x1="48.26" y1="144.78" x2="43.18" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="96.52" y1="121.92" x2="48.26" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="48.26" y1="121.92" x2="48.26" y2="144.78" width="0.1524" layer="91"/>
+<junction x="48.26" y="144.78"/>
+</segment>
+</net>
+<net name="N$14" class="0">
+<segment>
+<pinref part="C10" gate="G$1" pin="2"/>
+<wire x1="35.56" y1="144.78" x2="33.02" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="33.02" y1="144.78" x2="33.02" y2="149.86" width="0.1524" layer="91"/>
+<pinref part="JP1" gate="G$1" pin="2"/>
+<wire x1="33.02" y1="149.86" x2="17.78" y2="149.86" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$15" class="0">
+<segment>
+<pinref part="R8" gate="G$1" pin="2"/>
+<wire x1="68.58" y1="154.94" x2="71.12" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="71.12" y1="154.94" x2="71.12" y2="152.4" width="0.1524" layer="91"/>
+<pinref part="R7" gate="G$1" pin="2"/>
+<wire x1="71.12" y1="152.4" x2="71.12" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="71.12" y1="144.78" x2="68.58" y2="144.78" width="0.1524" layer="91"/>
+<pinref part="R9" gate="G$1" pin="2"/>
+<wire x1="96.52" y1="152.4" x2="83.82" y2="152.4" width="0.1524" layer="91"/>
+<junction x="71.12" y="152.4"/>
+<pinref part="R10" gate="G$1" pin="1"/>
+<wire x1="83.82" y1="152.4" x2="71.12" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="83.82" y1="147.32" x2="83.82" y2="152.4" width="0.1524" layer="91"/>
+<junction x="83.82" y="152.4"/>
 </segment>
 </net>
 </nets>
