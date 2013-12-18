@@ -4121,7 +4121,7 @@
 <text x="34.798" y="10.668" size="1.016" layer="21" font="vector" ratio="16">GND</text>
 <text x="111.252" y="10.16" size="1.016" layer="21" font="vector" ratio="16">GND</text>
 <text x="40.132" y="83.82" size="1.016" layer="21" font="vector" ratio="16">GND</text>
-<text x="48.768" y="6.858" size="1.778" layer="21" font="vector" ratio="16">REV: 1SEPT2013</text>
+<text x="48.768" y="6.858" size="1.778" layer="21" font="vector" ratio="16">REV: 17DEC2013</text>
 <text x="88.138" y="39.624" size="1.016" layer="21" font="vector" ratio="16">1.2V</text>
 <text x="17.526" y="0.508" size="3.81" layer="21" ratio="16" rot="R19">ChipWhisperer</text>
 <text x="49.022" y="4.318" size="1.6764" layer="21" font="vector" ratio="16">www.ChipWhisperer.com</text>
