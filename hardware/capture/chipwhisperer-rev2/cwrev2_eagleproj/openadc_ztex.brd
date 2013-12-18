@@ -7746,9 +7746,9 @@ einem neuen Namen ab.</description>
 <attribute name="NAME" x="93.994" y="90.7575" size="1.0668" layer="25" ratio="12" rot="R90"/>
 <attribute name="VALUE" x="90.7465" y="96.631" size="1.0668" layer="27" ratio="12" rot="R270"/>
 </element>
-<element name="C11" library="myrcl" package="C0805K" value="22µ" x="72.0725" y="58.1025" smashed="yes" rot="R270">
-<attribute name="NAME" x="72.658" y="60.214" size="1.0668" layer="25" ratio="12" rot="R90"/>
-<attribute name="VALUE" x="70.988" y="56.404" size="1.0668" layer="27" ratio="12" rot="R90"/>
+<element name="C11" library="myrcl" package="C0805K" value="22µ" x="72.0725" y="58.3565" smashed="yes" rot="R270">
+<attribute name="NAME" x="72.658" y="60.468" size="1.0668" layer="25" ratio="12" rot="R90"/>
+<attribute name="VALUE" x="70.988" y="56.658" size="1.0668" layer="27" ratio="12" rot="R90"/>
 </element>
 <element name="R10" library="myrcl" package="R0805K" value="1K2" x="82.8675" y="39.6875" smashed="yes">
 <attribute name="NAME" x="87.614" y="40.0825" size="1.0668" layer="25" ratio="12" rot="R180"/>
@@ -7821,11 +7821,11 @@ einem neuen Namen ab.</description>
 <element name="L3" library="inductors" package="DR1030MOD.PAC" value="2.2uF" x="66.9925" y="48.641" rot="R180">
 <attribute name="MPN" value="CDRH104RNP-2R5NC" x="66.9925" y="48.641" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
-<element name="C9" library="myrcl" package="C0805K" value="22µ" x="74.295" y="58.1025" smashed="yes" rot="R270">
-<attribute name="NAME" x="73.9" y="62.1505" size="1.016" layer="25" rot="R270"/>
-<attribute name="VALUE" x="72.395" y="59.1025" size="1.016" layer="27" rot="R270"/>
+<element name="C9" library="myrcl" package="C0805K" value="22µ" x="74.041" y="58.3565" smashed="yes" rot="R270">
+<attribute name="NAME" x="73.646" y="62.4045" size="1.016" layer="25" rot="R270"/>
+<attribute name="VALUE" x="72.141" y="59.3565" size="1.016" layer="27" rot="R270"/>
 </element>
-<element name="D1" library="diode" package="MELF-MLL41" value="" x="74.803" y="52.578" rot="R90"/>
+<element name="D1" library="diode" package="MELF-MLL41" value="" x="74.549" y="52.324" rot="R90"/>
 <element name="JP1" library="pinhead" package="1X02" value="" x="91.44" y="95.5675"/>
 <element name="U$3" library="openadc_footprint" package="OPENADCREV1" value="OPENADC" x="113.3475" y="77.1525" rot="R180"/>
 <element name="U$5" library="openadc_footprint" package="OPENADCREV1" value="OPENADC" x="113.3475" y="33.9725" rot="R180"/>
@@ -9932,7 +9932,7 @@ einem neuen Namen ab.</description>
 <contactref element="CON6" pad="C19"/>
 <contactref element="CON6" pad="D28"/>
 <contactref element="CON6" pad="C28"/>
-<wire x1="74.295" y1="57.1025" x2="72.0725" y2="57.1025" width="1.524" layer="1"/>
+<wire x1="74.041" y1="57.3565" x2="72.0725" y2="57.3565" width="1.524" layer="1"/>
 <contactref element="TP4" pad="TP"/>
 <wire x1="89.408" y1="42.164" x2="86.614" y2="42.164" width="1.27" layer="1"/>
 <wire x1="86.614" y1="42.164" x2="86.36" y2="41.91" width="1.27" layer="1"/>
