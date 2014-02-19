@@ -8,34 +8,34 @@
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="12" fill="1" visible="no" active="no"/>
-<layer number="2" name="Route2" color="16" fill="1" visible="no" active="no"/>
-<layer number="3" name="Route3" color="4" fill="3" visible="no" active="no"/>
-<layer number="4" name="Route4" color="1" fill="4" visible="no" active="no"/>
-<layer number="5" name="Route5" color="4" fill="4" visible="no" active="no"/>
-<layer number="6" name="Route6" color="1" fill="8" visible="no" active="no"/>
-<layer number="7" name="Route7" color="4" fill="8" visible="no" active="no"/>
-<layer number="8" name="Route8" color="1" fill="2" visible="no" active="no"/>
-<layer number="9" name="Route9" color="4" fill="2" visible="no" active="no"/>
-<layer number="10" name="Route10" color="1" fill="7" visible="no" active="no"/>
-<layer number="11" name="Route11" color="4" fill="7" visible="no" active="no"/>
-<layer number="12" name="Route12" color="1" fill="5" visible="no" active="no"/>
-<layer number="13" name="Route13" color="4" fill="5" visible="no" active="no"/>
-<layer number="14" name="Route14" color="1" fill="6" visible="no" active="no"/>
-<layer number="15" name="Route15" color="17" fill="1" visible="no" active="no"/>
-<layer number="16" name="Bottom" color="9" fill="1" visible="no" active="no"/>
-<layer number="17" name="Pads" color="2" fill="1" visible="no" active="no"/>
-<layer number="18" name="Vias" color="2" fill="1" visible="no" active="no"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="no"/>
-<layer number="20" name="Dimension" color="15" fill="1" visible="no" active="no"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="no" active="no"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="no" active="no"/>
+<layer number="1" name="Top" color="12" fill="1" visible="yes" active="no"/>
+<layer number="2" name="Route2" color="16" fill="1" visible="yes" active="no"/>
+<layer number="3" name="Route3" color="4" fill="3" visible="yes" active="no"/>
+<layer number="4" name="Route4" color="1" fill="4" visible="yes" active="no"/>
+<layer number="5" name="Route5" color="4" fill="4" visible="yes" active="no"/>
+<layer number="6" name="Route6" color="1" fill="8" visible="yes" active="no"/>
+<layer number="7" name="Route7" color="4" fill="8" visible="yes" active="no"/>
+<layer number="8" name="Route8" color="1" fill="2" visible="yes" active="no"/>
+<layer number="9" name="Route9" color="4" fill="2" visible="yes" active="no"/>
+<layer number="10" name="Route10" color="1" fill="7" visible="yes" active="no"/>
+<layer number="11" name="Route11" color="4" fill="7" visible="yes" active="no"/>
+<layer number="12" name="Route12" color="1" fill="5" visible="yes" active="no"/>
+<layer number="13" name="Route13" color="4" fill="5" visible="yes" active="no"/>
+<layer number="14" name="Route14" color="1" fill="6" visible="yes" active="no"/>
+<layer number="15" name="Route15" color="17" fill="1" visible="yes" active="no"/>
+<layer number="16" name="Bottom" color="9" fill="1" visible="yes" active="no"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="no"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="no"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="no"/>
+<layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="no"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="no"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="no"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="no"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="no"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="no"/>
@@ -44,8 +44,8 @@
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="no"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="no"/>
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="no"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="no" active="no"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="no" active="no"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="no"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="no"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="no"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="no"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="no"/>
@@ -53,16 +53,16 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="no"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="no"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="no"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="no"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="no"/>
-<layer number="48" name="Document" color="7" fill="1" visible="no" active="no"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="no" active="no"/>
-<layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
-<layer number="51" name="tDocu" color="14" fill="1" visible="no" active="no"/>
-<layer number="52" name="bDocu" color="14" fill="1" visible="no" active="no"/>
-<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
-<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
-<layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="no"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="no"/>
+<layer number="48" name="Document" color="7" fill="1" visible="yes" active="no"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="no"/>
+<layer number="50" name="dxf" color="7" fill="1" visible="yes" active="no"/>
+<layer number="51" name="tDocu" color="14" fill="1" visible="yes" active="no"/>
+<layer number="52" name="bDocu" color="14" fill="1" visible="yes" active="no"/>
+<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="yes" active="no"/>
+<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="yes" active="no"/>
+<layer number="56" name="wert" color="7" fill="1" visible="yes" active="no"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="93" name="Pins" color="2" fill="1" visible="no" active="yes"/>
@@ -34861,12 +34861,12 @@ http://dangerousprototypes.com</description>
 <part name="SUPPLY84" library="supply2" deviceset="+9V" device=""/>
 <part name="SUPPLY85" library="supply2" deviceset="-9V" device=""/>
 <part name="SUPPLY87" library="supply2" deviceset="GND" device=""/>
-<part name="LED1" library="dp_devices" deviceset="LED" device="-3MM" value="RED"/>
-<part name="LED2" library="dp_devices" deviceset="LED" device="-3MM" value="YELLOW"/>
-<part name="LED3" library="dp_devices" deviceset="LED" device="-3MM" value="GREEN"/>
-<part name="LED4" library="dp_devices" deviceset="LED" device="-3MM" value="BLUE"/>
-<part name="LED5" library="dp_devices" deviceset="LED" device="-3MM" value="BLUE"/>
-<part name="LED6" library="dp_devices" deviceset="LED" device="-3MM" value="GREEN"/>
+<part name="LED1" library="dp_devices" deviceset="LED" device="-0805" value="RED"/>
+<part name="LED2" library="dp_devices" deviceset="LED" device="-0805" value="YELLOW"/>
+<part name="LED3" library="dp_devices" deviceset="LED" device="-0805" value="GREEN"/>
+<part name="LED4" library="dp_devices" deviceset="LED" device="-0805" value="BLUE"/>
+<part name="LED5" library="dp_devices" deviceset="LED" device="-0805" value="BLUE"/>
+<part name="LED6" library="dp_devices" deviceset="LED" device="-0805" value="GREEN"/>
 <part name="R52" library="resistor" deviceset="R-US_" device="R0603" value="220R"/>
 <part name="R53" library="resistor" deviceset="R-US_" device="R0603" value="220R"/>
 <part name="R54" library="resistor" deviceset="R-US_" device="R0603" value="220R"/>
@@ -34976,12 +34976,19 @@ http://dangerousprototypes.com</description>
 <part name="C91" library="resistor" deviceset="C-EU" device="C0603"/>
 <part name="SUPPLY116" library="supply2" deviceset="GND" device=""/>
 <part name="P+2" library="supply1" deviceset="+5V" device=""/>
+<part name="LED7" library="dp_devices" deviceset="LED" device="-0805" value="RED"/>
+<part name="LED8" library="dp_devices" deviceset="LED" device="-0805" value="YELLOW"/>
+<part name="LED9" library="dp_devices" deviceset="LED" device="-0805" value="GREEN"/>
+<part name="LED10" library="dp_devices" deviceset="LED" device="-0805" value="BLUE"/>
+<part name="LED11" library="dp_devices" deviceset="LED" device="-0805" value="BLUE"/>
+<part name="LED12" library="dp_devices" deviceset="LED" device="-0805" value="GREEN"/>
 </parts>
 <sheets>
 <sheet>
 <plain>
 <text x="91.44" y="165.1" size="1.778" layer="94">3.3V/2.2A</text>
 <text x="167.64" y="165.1" size="1.778" layer="94">2.6V/2.2A</text>
+<text x="170.18" y="109.22" size="1.778" layer="94">1.2V/6A</text>
 </plain>
 <instances>
 <instance part="IC1" gate="G$1" x="81.28" y="149.86"/>
@@ -35930,24 +35937,30 @@ http://dangerousprototypes.com</description>
 <instance part="+3V22" gate="G$1" x="116.84" y="38.1" rot="R90"/>
 <instance part="+3V23" gate="G$1" x="116.84" y="81.28" rot="R90"/>
 <instance part="+3V24" gate="G$1" x="116.84" y="83.82" rot="R90"/>
-<instance part="LED1" gate="LED" x="205.74" y="111.76" rot="R90"/>
-<instance part="LED2" gate="LED" x="205.74" y="104.14" rot="R90"/>
-<instance part="LED3" gate="LED" x="205.74" y="96.52" rot="R90"/>
-<instance part="LED4" gate="LED" x="205.74" y="88.9" rot="R90"/>
-<instance part="LED5" gate="LED" x="205.74" y="81.28" rot="R90"/>
+<instance part="LED1" gate="LED" x="205.74" y="137.16" rot="R90"/>
+<instance part="LED2" gate="LED" x="205.74" y="124.46" rot="R90"/>
+<instance part="LED3" gate="LED" x="205.74" y="111.76" rot="R90"/>
+<instance part="LED4" gate="LED" x="205.74" y="99.06" rot="R90"/>
+<instance part="LED5" gate="LED" x="205.74" y="86.36" rot="R90"/>
 <instance part="LED6" gate="LED" x="205.74" y="73.66" rot="R90"/>
-<instance part="R52" gate="G$1" x="218.44" y="111.76"/>
-<instance part="R53" gate="G$1" x="218.44" y="104.14"/>
-<instance part="R54" gate="G$1" x="218.44" y="96.52"/>
-<instance part="R55" gate="G$1" x="218.44" y="88.9"/>
-<instance part="R56" gate="G$1" x="218.44" y="81.28"/>
+<instance part="R52" gate="G$1" x="218.44" y="137.16"/>
+<instance part="R53" gate="G$1" x="218.44" y="124.46"/>
+<instance part="R54" gate="G$1" x="218.44" y="111.76"/>
+<instance part="R55" gate="G$1" x="218.44" y="99.06"/>
+<instance part="R56" gate="G$1" x="218.44" y="86.36"/>
 <instance part="R57" gate="G$1" x="218.44" y="73.66"/>
-<instance part="SUPPLY88" gate="GND" x="226.06" y="111.76" rot="R90"/>
-<instance part="SUPPLY89" gate="GND" x="226.06" y="104.14" rot="R90"/>
-<instance part="SUPPLY90" gate="GND" x="226.06" y="96.52" rot="R90"/>
-<instance part="SUPPLY91" gate="GND" x="226.06" y="88.9" rot="R90"/>
-<instance part="SUPPLY92" gate="GND" x="226.06" y="81.28" rot="R90"/>
+<instance part="SUPPLY88" gate="GND" x="226.06" y="137.16" rot="R90"/>
+<instance part="SUPPLY89" gate="GND" x="226.06" y="124.46" rot="R90"/>
+<instance part="SUPPLY90" gate="GND" x="226.06" y="111.76" rot="R90"/>
+<instance part="SUPPLY91" gate="GND" x="226.06" y="99.06" rot="R90"/>
+<instance part="SUPPLY92" gate="GND" x="226.06" y="86.36" rot="R90"/>
 <instance part="SUPPLY93" gate="GND" x="226.06" y="73.66" rot="R90"/>
+<instance part="LED7" gate="LED" x="205.74" y="142.24" rot="R90"/>
+<instance part="LED8" gate="LED" x="205.74" y="129.54" rot="R90"/>
+<instance part="LED9" gate="LED" x="205.74" y="116.84" rot="R90"/>
+<instance part="LED10" gate="LED" x="205.74" y="104.14" rot="R90"/>
+<instance part="LED11" gate="LED" x="205.74" y="91.44" rot="R90"/>
+<instance part="LED12" gate="LED" x="205.74" y="78.74" rot="R90"/>
 </instances>
 <busses>
 </busses>
@@ -36355,35 +36368,50 @@ http://dangerousprototypes.com</description>
 <segment>
 <pinref part="R52" gate="G$1" pin="1"/>
 <pinref part="LED1" gate="LED" pin="C"/>
-<wire x1="213.36" y1="111.76" x2="210.82" y2="111.76" width="0.1524" layer="91"/>
+<wire x1="213.36" y1="137.16" x2="210.82" y2="137.16" width="0.1524" layer="91"/>
+<pinref part="LED7" gate="LED" pin="C"/>
+<wire x1="210.82" y1="142.24" x2="210.82" y2="137.16" width="0.1524" layer="91"/>
+<junction x="210.82" y="137.16"/>
 </segment>
 </net>
 <net name="N$111" class="0">
 <segment>
 <pinref part="R53" gate="G$1" pin="1"/>
 <pinref part="LED2" gate="LED" pin="C"/>
-<wire x1="213.36" y1="104.14" x2="210.82" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="213.36" y1="124.46" x2="210.82" y2="124.46" width="0.1524" layer="91"/>
+<pinref part="LED8" gate="LED" pin="C"/>
+<wire x1="210.82" y1="129.54" x2="210.82" y2="124.46" width="0.1524" layer="91"/>
+<junction x="210.82" y="124.46"/>
 </segment>
 </net>
 <net name="N$112" class="0">
 <segment>
 <pinref part="R54" gate="G$1" pin="1"/>
-<wire x1="213.36" y1="96.52" x2="210.82" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="213.36" y1="111.76" x2="210.82" y2="111.76" width="0.1524" layer="91"/>
 <pinref part="LED3" gate="LED" pin="C"/>
+<pinref part="LED9" gate="LED" pin="C"/>
+<wire x1="210.82" y1="116.84" x2="210.82" y2="111.76" width="0.1524" layer="91"/>
+<junction x="210.82" y="111.76"/>
 </segment>
 </net>
 <net name="N$113" class="0">
 <segment>
 <pinref part="R55" gate="G$1" pin="1"/>
 <pinref part="LED4" gate="LED" pin="C"/>
-<wire x1="213.36" y1="88.9" x2="210.82" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="213.36" y1="99.06" x2="210.82" y2="99.06" width="0.1524" layer="91"/>
+<pinref part="LED10" gate="LED" pin="C"/>
+<wire x1="210.82" y1="104.14" x2="210.82" y2="99.06" width="0.1524" layer="91"/>
+<junction x="210.82" y="99.06"/>
 </segment>
 </net>
 <net name="N$114" class="0">
 <segment>
 <pinref part="LED5" gate="LED" pin="C"/>
-<wire x1="213.36" y1="81.28" x2="210.82" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="213.36" y1="86.36" x2="210.82" y2="86.36" width="0.1524" layer="91"/>
 <pinref part="R56" gate="G$1" pin="1"/>
+<pinref part="LED11" gate="LED" pin="C"/>
+<wire x1="210.82" y1="91.44" x2="210.82" y2="86.36" width="0.1524" layer="91"/>
+<junction x="210.82" y="86.36"/>
 </segment>
 </net>
 <net name="N$115" class="0">
@@ -36391,12 +36419,19 @@ http://dangerousprototypes.com</description>
 <pinref part="R57" gate="G$1" pin="1"/>
 <pinref part="LED6" gate="LED" pin="C"/>
 <wire x1="213.36" y1="73.66" x2="210.82" y2="73.66" width="0.1524" layer="91"/>
+<pinref part="LED12" gate="LED" pin="C"/>
+<wire x1="210.82" y1="78.74" x2="210.82" y2="73.66" width="0.1524" layer="91"/>
+<junction x="210.82" y="73.66"/>
 </segment>
 </net>
 <net name="LED1" class="0">
 <segment>
 <pinref part="LED1" gate="LED" pin="A"/>
-<wire x1="193.04" y1="111.76" x2="203.2" y2="111.76" width="0.1524" layer="91"/>
+<wire x1="193.04" y1="137.16" x2="203.2" y2="137.16" width="0.1524" layer="91"/>
+<pinref part="LED7" gate="LED" pin="A"/>
+<wire x1="203.2" y1="142.24" x2="203.2" y2="137.16" width="0.1524" layer="91"/>
+<junction x="203.2" y="137.16"/>
+<label x="193.04" y="137.16" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F16~AA18~IO_L2P_CMPCLK_2"/>
@@ -36407,7 +36442,11 @@ http://dangerousprototypes.com</description>
 <net name="LED2" class="0">
 <segment>
 <pinref part="LED2" gate="LED" pin="A"/>
-<wire x1="203.2" y1="104.14" x2="193.04" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="203.2" y1="124.46" x2="193.04" y2="124.46" width="0.1524" layer="91"/>
+<pinref part="LED8" gate="LED" pin="A"/>
+<wire x1="203.2" y1="129.54" x2="203.2" y2="124.46" width="0.1524" layer="91"/>
+<junction x="203.2" y="124.46"/>
+<label x="193.04" y="124.46" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D17~Y15~IO_L5P_2"/>
@@ -36418,7 +36457,11 @@ http://dangerousprototypes.com</description>
 <net name="LED3" class="0">
 <segment>
 <pinref part="LED3" gate="LED" pin="A"/>
-<wire x1="203.2" y1="96.52" x2="193.04" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="203.2" y1="111.76" x2="193.04" y2="111.76" width="0.1524" layer="91"/>
+<pinref part="LED9" gate="LED" pin="A"/>
+<wire x1="203.2" y1="116.84" x2="203.2" y2="111.76" width="0.1524" layer="91"/>
+<junction x="203.2" y="111.76"/>
+<label x="193.04" y="111.76" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F17~AA16~IO_L4P_2"/>
@@ -36429,7 +36472,11 @@ http://dangerousprototypes.com</description>
 <net name="LED4" class="0">
 <segment>
 <pinref part="LED4" gate="LED" pin="A"/>
-<wire x1="203.2" y1="88.9" x2="193.04" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="203.2" y1="99.06" x2="193.04" y2="99.06" width="0.1524" layer="91"/>
+<pinref part="LED10" gate="LED" pin="A"/>
+<wire x1="203.2" y1="104.14" x2="203.2" y2="99.06" width="0.1524" layer="91"/>
+<junction x="203.2" y="99.06"/>
+<label x="193.04" y="99.06" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F18~AB15~IO_L5N_2"/>
@@ -36440,7 +36487,11 @@ http://dangerousprototypes.com</description>
 <net name="LED5" class="0">
 <segment>
 <pinref part="LED5" gate="LED" pin="A"/>
-<wire x1="203.2" y1="81.28" x2="193.04" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="203.2" y1="86.36" x2="193.04" y2="86.36" width="0.1524" layer="91"/>
+<pinref part="LED11" gate="LED" pin="A"/>
+<wire x1="203.2" y1="91.44" x2="203.2" y2="86.36" width="0.1524" layer="91"/>
+<junction x="203.2" y="86.36"/>
+<label x="193.04" y="86.36" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D19~V15~IO_L13N_D10_2"/>
@@ -36452,6 +36503,10 @@ http://dangerousprototypes.com</description>
 <segment>
 <pinref part="LED6" gate="LED" pin="A"/>
 <wire x1="203.2" y1="73.66" x2="193.04" y2="73.66" width="0.1524" layer="91"/>
+<pinref part="LED12" gate="LED" pin="A"/>
+<wire x1="203.2" y1="78.74" x2="203.2" y2="73.66" width="0.1524" layer="91"/>
+<junction x="203.2" y="73.66"/>
+<label x="193.04" y="73.66" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F19~W14~IO_L16P_2"/>
