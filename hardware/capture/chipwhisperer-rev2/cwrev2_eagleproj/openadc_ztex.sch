@@ -123,7 +123,7 @@
 <layer number="253" name="NotesToFab" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="254" name="cooling" color="7" fill="1" visible="yes" active="yes"/>
 </layers>
-<schematic>
+<schematic xreflabel="%F%N/%S.%C%R" xrefpart="/%S.%C%R">
 <libraries>
 <library name="mystuff">
 <packages>
@@ -34411,7 +34411,7 @@ http://dangerousprototypes.com</description>
 <attributes>
 </attributes>
 <variantdefs>
-<variantdef name="no-adc"/>
+<variantdef name="no-adc" current="yes"/>
 </variantdefs>
 <classes>
 <class number="0" name="default" width="0" drill="0">
@@ -34483,8 +34483,8 @@ http://dangerousprototypes.com</description>
 <part name="FRAME1" library="frames" deviceset="LETTER_L" device=""/>
 <part name="FRAME2" library="frames" deviceset="LETTER_L" device=""/>
 <part name="FRAME3" library="frames" deviceset="LETTER_L" device=""/>
-<part name="U$3" library="openadc_footprint" deviceset="OPENADC" device=""/>
-<part name="U$5" library="openadc_footprint" deviceset="OPENADC" device=""/>
+<part name="CHANNEL2" library="openadc_footprint" deviceset="OPENADC" device=""/>
+<part name="CHANNEL1" library="openadc_footprint" deviceset="OPENADC" device=""/>
 <part name="FRAME4" library="frames" deviceset="LETTER_L" device=""/>
 <part name="U1" library="customs" deviceset="AD9215BRUZ" device="">
 <attribute name="DIGIKEY#" value="AD9215BRUZ-105-ND"/>
@@ -34570,7 +34570,9 @@ http://dangerousprototypes.com</description>
 <attribute name="MANF#" value="LMK107SD183JA-T"/>
 <variant name="no-adc" populate="no"/>
 </part>
-<part name="JP3" library="SparkFun" deviceset="JUMPER-2" device="SMD-NC"/>
+<part name="JP3" library="SparkFun" deviceset="JUMPER-2" device="SMD-NC">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="L2" library="SparkFun" deviceset="INDUCTOR" device="0603" value="120nH">
 <attribute name="DIGIKEY#" value="445-6234-1-ND"/>
 <attribute name="PART#" value="MLF1608DR12M"/>
@@ -34775,13 +34777,15 @@ http://dangerousprototypes.com</description>
 <variant name="no-adc" populate="no"/>
 </part>
 <part name="FRAME5" library="frames" deviceset="LETTER_L" device=""/>
-<part name="R31" library="adafruit" deviceset="R-US_" device="R0805" value="50R"/>
+<part name="R31" library="adafruit" deviceset="R-US_" device="R0805" value="100R"/>
 <part name="C59" library="rcl" deviceset="C-EU" device="C0402" value="1u">
 <attribute name="DIGIKEY#" value="490-1543-1-ND"/>
 <attribute name="PART#" value="GRM188R61A105KA61D"/>
 <variant name="no-adc" populate="no"/>
 </part>
-<part name="H1" library="holes" deviceset="MOUNT-PAD-ROUND" device="2.8"/>
+<part name="H1" library="holes" deviceset="MOUNT-PAD-ROUND" device="2.8">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="C61" library="rcl" deviceset="C-EU" device="C0603" value="22pF">
 <attribute name="DIGIKEY#" value="587-1099-1-ND"/>
 <attribute name="MANF#" value="LMK107SD183JA-T"/>
@@ -34855,18 +34859,10 @@ http://dangerousprototypes.com</description>
 <part name="R44" library="resistor" deviceset="R-US_" device="R0603" value="1k,1%"/>
 <part name="R45" library="resistor" deviceset="R-US_" device="R0603" value="1k,1%"/>
 <part name="R46" library="resistor" deviceset="R-US_" device="R0603" value="1k,1%"/>
-<part name="C13" library="rcl" deviceset="C-EU" device="C0603" value="100nF">
-<variant name="no-adc" populate="no"/>
-</part>
-<part name="C47" library="rcl" deviceset="C-EU" device="C0603" value="100nF">
-<variant name="no-adc" populate="no"/>
-</part>
-<part name="C48" library="rcl" deviceset="C-EU" device="C0603" value="100nF">
-<variant name="no-adc" populate="no"/>
-</part>
-<part name="C49" library="rcl" deviceset="C-EU" device="C0603" value="100nF">
-<variant name="no-adc" populate="no"/>
-</part>
+<part name="C13" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
+<part name="C47" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
+<part name="C48" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
+<part name="C49" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="SUPPLY52" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY66" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY67" library="supply2" deviceset="GND" device=""/>
@@ -34876,8 +34872,12 @@ http://dangerousprototypes.com</description>
 <part name="+3V16" library="supply1" deviceset="+3V3" device=""/>
 <part name="P+3" library="supply1" deviceset="+5V" device=""/>
 <part name="P+6" library="supply1" deviceset="+5V" device=""/>
-<part name="R47" library="adafruit" deviceset="R-US_" device="R0805"/>
-<part name="R34" library="adafruit" deviceset="R-US_" device="R0805"/>
+<part name="R47" library="adafruit" deviceset="R-US_" device="R0805">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="R34" library="adafruit" deviceset="R-US_" device="R0805">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="SUPPLY70" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY29" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY71" library="supply2" deviceset="GND" device=""/>
@@ -34955,17 +34955,21 @@ http://dangerousprototypes.com</description>
 <part name="SUPPLY57" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY82" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY83" library="supply2" deviceset="GND" device=""/>
-<part name="TP1" library="testpad" deviceset="TPSQ" device="PAD1-13"/>
-<part name="TP2" library="testpad" deviceset="TPSQ" device="PAD1-13"/>
+<part name="TP1" library="testpad" deviceset="TPSQ" device="PAD1-13">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="TP2" library="testpad" deviceset="TPSQ" device="PAD1-13">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="SUPPLY84" library="supply2" deviceset="+9V" device=""/>
 <part name="SUPPLY85" library="supply2" deviceset="-9V" device=""/>
 <part name="SUPPLY87" library="supply2" deviceset="GND" device=""/>
-<part name="LED1" library="dp_devices" deviceset="LED" device="-0805" value="RED"/>
-<part name="LED2" library="dp_devices" deviceset="LED" device="-0805" value="YELLOW"/>
-<part name="LED3" library="dp_devices" deviceset="LED" device="-0805" value="GREEN"/>
-<part name="LED4" library="dp_devices" deviceset="LED" device="-0805" value="BLUE"/>
-<part name="LED5" library="dp_devices" deviceset="LED" device="-0805" value="BLUE"/>
-<part name="LED6" library="dp_devices" deviceset="LED" device="-0805" value="GREEN"/>
+<part name="LED1" library="dp_devices" deviceset="LED" device="-0805" value="GREEN"/>
+<part name="LED2" library="dp_devices" deviceset="LED" device="-0805" value="GREEN"/>
+<part name="LED3" library="dp_devices" deviceset="LED" device="-0805" value="BLUE"/>
+<part name="LED4" library="dp_devices" deviceset="LED" device="-0805" value="YELLOW"/>
+<part name="LED5" library="dp_devices" deviceset="LED" device="-0805" value="YELLOW"/>
+<part name="LED6" library="dp_devices" deviceset="LED" device="-0805" value="YELLOW"/>
 <part name="R52" library="resistor" deviceset="R-US_" device="R0603" value="220R"/>
 <part name="R53" library="resistor" deviceset="R-US_" device="R0603" value="220R"/>
 <part name="R54" library="resistor" deviceset="R-US_" device="R0603" value="220R"/>
@@ -35021,16 +35025,30 @@ http://dangerousprototypes.com</description>
 <part name="SUPPLY38" library="supply2" deviceset="GND" device=""/>
 <part name="R59" library="resistor" deviceset="R-US_" device="R0603" value="4k7"/>
 <part name="R60" library="resistor" deviceset="R-US_" device="R0603" value="4k7"/>
-<part name="JP7" library="pinhead" deviceset="PINHD-1X3" device=""/>
+<part name="JP7" library="pinhead" deviceset="PINHD-1X3" device="">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="SUPPLY113" library="supply2" deviceset="GND" device=""/>
-<part name="JP8" library="pinhead" deviceset="PINHD-1X2" device=""/>
-<part name="TP3" library="testpad" deviceset="PTR1" device="PAD1-13"/>
-<part name="TP4" library="testpad" deviceset="PTR1" device="PAD1-13"/>
-<part name="TP5" library="testpad" deviceset="PTR1" device="PAD1-13"/>
-<part name="TP6" library="testpad" deviceset="PTR1" device="PAD1-13"/>
+<part name="JP8" library="pinhead" deviceset="PINHD-1X2" device="">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="TP3" library="testpad" deviceset="PTR1" device="PAD1-13">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="TP4" library="testpad" deviceset="PTR1" device="PAD1-13">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="TP5" library="testpad" deviceset="PTR1" device="PAD1-13">
+<variant name="no-adc" populate="no"/>
+</part>
+<part name="TP6" library="testpad" deviceset="PTR1" device="PAD1-13">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="TP7" library="testpad" deviceset="PTR1" device="PAD1-13"/>
 <part name="TP8" library="testpad" deviceset="PTR1" device="PAD1-13"/>
-<part name="TP9" library="testpad" deviceset="PTR1" device="PAD1-13"/>
+<part name="TP9" library="testpad" deviceset="PTR1" device="PAD1-13">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="R61" library="resistor" deviceset="R-US_" device="R0603" value="470R"/>
 <part name="JP5" library="pinhead" deviceset="PINHD-2X15" device="/90"/>
 <part name="P+7" library="supply1" deviceset="+5V" device=""/>
@@ -35039,32 +35057,42 @@ http://dangerousprototypes.com</description>
 <part name="C65" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="+3V32" library="supply1" deviceset="+3V3" device=""/>
 <part name="SUPPLY111" library="supply2" deviceset="GND" device=""/>
-<part name="U4" library="customs" deviceset="LTC3200" device="ES6"/>
+<part name="U4" library="customs" deviceset="LTC3200" device="ES6">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="C84" library="rcl" deviceset="C-EU" device="C0603" value="1u">
 <attribute name="DIGIKEY#" value="490-1543-1-ND"/>
 <attribute name="PART#" value="GRM188R61A105KA61D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C85" library="rcl" deviceset="C-EU" device="C0603" value="1u">
 <attribute name="DIGIKEY#" value="490-1543-1-ND"/>
 <attribute name="PART#" value="GRM188R61A105KA61D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C86" library="rcl" deviceset="C-EU" device="C0603" value="1u">
 <attribute name="DIGIKEY#" value="490-1543-1-ND"/>
 <attribute name="PART#" value="GRM188R61A105KA61D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="C87" library="rcl" deviceset="C-EU" device="C0603" value="1u">
 <attribute name="DIGIKEY#" value="490-1543-1-ND"/>
 <attribute name="PART#" value="GRM188R61A105KA61D"/>
+<variant name="no-adc" populate="no"/>
 </part>
 <part name="SUPPLY112" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY114" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY115" library="supply2" deviceset="GND" device=""/>
-<part name="L9" library="SparkFun" deviceset="INDUCTOR" device="0603" value="120nH"/>
+<part name="L9" library="SparkFun" deviceset="INDUCTOR" device="0603" value="120nH">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="+3V36" library="supply1" deviceset="+3V3" device=""/>
 <part name="C88" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C89" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C90" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
-<part name="JP10" library="pinhead" deviceset="PINHD-1X2" device=""/>
+<part name="JP10" library="pinhead" deviceset="PINHD-1X2" device="">
+<variant name="no-adc" populate="no"/>
+</part>
 <part name="U10" library="customs" deviceset="ATSHA204-SH" device=""/>
 <part name="SUPPLY86" library="supply2" deviceset="GND" device=""/>
 <part name="+3V37" library="supply1" deviceset="+3V3" device=""/>
@@ -35073,18 +35101,18 @@ http://dangerousprototypes.com</description>
 <part name="C91" library="resistor" deviceset="C-EU" device="C0603"/>
 <part name="SUPPLY116" library="supply2" deviceset="GND" device=""/>
 <part name="P+2" library="supply1" deviceset="+5V" device=""/>
-<part name="LED7" library="dp_devices" deviceset="LED" device="-0805" value="RED"/>
-<part name="LED8" library="dp_devices" deviceset="LED" device="-0805" value="YELLOW"/>
-<part name="LED9" library="dp_devices" deviceset="LED" device="-0805" value="GREEN"/>
-<part name="LED10" library="dp_devices" deviceset="LED" device="-0805" value="BLUE"/>
-<part name="LED11" library="dp_devices" deviceset="LED" device="-0805" value="BLUE"/>
-<part name="LED12" library="dp_devices" deviceset="LED" device="-0805" value="GREEN"/>
-<part name="U$11" library="adafruit" deviceset="FIDUCIAL" device=""/>
-<part name="U$13" library="adafruit" deviceset="FIDUCIAL" device=""/>
-<part name="U$14" library="adafruit" deviceset="FIDUCIAL" device=""/>
-<part name="U$15" library="adafruit" deviceset="FIDUCIAL" device=""/>
-<part name="U$17" library="adafruit" deviceset="FIDUCIAL" device=""/>
-<part name="U$18" library="adafruit" deviceset="FIDUCIAL" device=""/>
+<part name="LED7" library="dp_devices" deviceset="LED" device="-0805" value="GREEN"/>
+<part name="LED8" library="dp_devices" deviceset="LED" device="-0805" value="GREEN"/>
+<part name="LED9" library="dp_devices" deviceset="LED" device="-0805" value="BLUE"/>
+<part name="LED10" library="dp_devices" deviceset="LED" device="-0805" value="YELLOW"/>
+<part name="LED11" library="dp_devices" deviceset="LED" device="-0805" value="YELLOW"/>
+<part name="LED12" library="dp_devices" deviceset="LED" device="-0805" value="YELLOW"/>
+<part name="FID1" library="adafruit" deviceset="FIDUCIAL" device=""/>
+<part name="FID6" library="adafruit" deviceset="FIDUCIAL" device=""/>
+<part name="FID2" library="adafruit" deviceset="FIDUCIAL" device=""/>
+<part name="FID5" library="adafruit" deviceset="FIDUCIAL" device=""/>
+<part name="FID3" library="adafruit" deviceset="FIDUCIAL" device=""/>
+<part name="FID4" library="adafruit" deviceset="FIDUCIAL" device=""/>
 <part name="R37" library="resistor" deviceset="R-US_" device="R0603" value="220R"/>
 <part name="+3V38" library="supply1" deviceset="+3V3" device=""/>
 <part name="IC4" library="manekinen_diy" deviceset="GTL2003" device=""/>
@@ -36056,8 +36084,8 @@ http://dangerousprototypes.com</description>
 <instance part="CON6" gate="_CDF-FPGA" x="60.96" y="109.22" rot="MR0"/>
 <instance part="FRAME3" gate="G$1" x="0" y="0"/>
 <instance part="FRAME3" gate="G$2" x="147.32" y="0"/>
-<instance part="U$3" gate="G$1" x="167.64" y="129.54" rot="R180"/>
-<instance part="U$5" gate="G$1" x="142.24" y="40.64" rot="R180"/>
+<instance part="CHANNEL2" gate="G$1" x="167.64" y="129.54" rot="R180"/>
+<instance part="CHANNEL1" gate="G$1" x="142.24" y="40.64" rot="R180"/>
 <instance part="SUPPLY37" gate="GND" x="142.24" y="167.64" rot="R270"/>
 <instance part="SUPPLY39" gate="GND" x="142.24" y="165.1" rot="R270"/>
 <instance part="SUPPLY40" gate="GND" x="142.24" y="119.38" rot="R270"/>
@@ -36107,7 +36135,7 @@ http://dangerousprototypes.com</description>
 <net name="OA_HILO" class="0">
 <segment>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D8~V20~IO_L71N_1"/>
-<pinref part="U$3" gate="G$1" pin="HILO"/>
+<pinref part="CHANNEL2" gate="G$1" pin="HILO"/>
 <wire x1="66.04" y1="162.56" x2="144.78" y2="162.56" width="0.1524" layer="91"/>
 <label x="132.08" y="162.56" size="1.778" layer="95"/>
 </segment>
@@ -36115,7 +36143,7 @@ http://dangerousprototypes.com</description>
 <net name="OA_GAIN" class="0">
 <segment>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D9~Y22~IO_L59N_1"/>
-<pinref part="U$3" gate="G$1" pin="GAIN"/>
+<pinref part="CHANNEL2" gate="G$1" pin="GAIN"/>
 <wire x1="66.04" y1="160.02" x2="144.78" y2="160.02" width="0.1524" layer="91"/>
 <label x="132.08" y="160.02" size="1.778" layer="95"/>
 </segment>
@@ -36123,7 +36151,7 @@ http://dangerousprototypes.com</description>
 <net name="OA_ADC0" class="0">
 <segment>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D10~AA22~IO_L63N_1"/>
-<pinref part="U$3" gate="G$1" pin="ADC0"/>
+<pinref part="CHANNEL2" gate="G$1" pin="ADC0"/>
 <wire x1="66.04" y1="157.48" x2="144.78" y2="157.48" width="0.1524" layer="91"/>
 <label x="132.08" y="157.48" size="1.778" layer="95"/>
 </segment>
@@ -36131,14 +36159,14 @@ http://dangerousprototypes.com</description>
 <net name="OA_CLKADC" class="0">
 <segment>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F10~AA21~IO_L63P_1"/>
-<pinref part="U$3" gate="G$1" pin="CLKADC"/>
+<pinref part="CHANNEL2" gate="G$1" pin="CLKADC"/>
 <wire x1="66.04" y1="154.94" x2="144.78" y2="154.94" width="0.1524" layer="91"/>
 <label x="132.08" y="154.94" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="OA_ADC2" class="0">
 <segment>
-<pinref part="U$3" gate="G$1" pin="ADC2"/>
+<pinref part="CHANNEL2" gate="G$1" pin="ADC2"/>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D11~Y21~IO_L59P_1"/>
 <wire x1="144.78" y1="152.4" x2="66.04" y2="152.4" width="0.1524" layer="91"/>
 <label x="132.08" y="152.4" size="1.778" layer="95"/>
@@ -36147,14 +36175,14 @@ http://dangerousprototypes.com</description>
 <net name="OA_ADC1" class="0">
 <segment>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F11~AB21~IO_L61N_1"/>
-<pinref part="U$3" gate="G$1" pin="ADC1"/>
+<pinref part="CHANNEL2" gate="G$1" pin="ADC1"/>
 <wire x1="66.04" y1="149.86" x2="144.78" y2="149.86" width="0.1524" layer="91"/>
 <label x="132.08" y="149.86" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="OA_ADC4" class="0">
 <segment>
-<pinref part="U$3" gate="G$1" pin="ADC4"/>
+<pinref part="CHANNEL2" gate="G$1" pin="ADC4"/>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D12~W20~IO_L53P_1"/>
 <wire x1="144.78" y1="147.32" x2="66.04" y2="147.32" width="0.1524" layer="91"/>
 <label x="132.08" y="147.32" size="1.778" layer="95"/>
@@ -36163,7 +36191,7 @@ http://dangerousprototypes.com</description>
 <net name="OA_ADC3" class="0">
 <segment>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F12~Y20~IO_L67N_1"/>
-<pinref part="U$3" gate="G$1" pin="ADC3"/>
+<pinref part="CHANNEL2" gate="G$1" pin="ADC3"/>
 <wire x1="66.04" y1="144.78" x2="144.78" y2="144.78" width="0.1524" layer="91"/>
 <label x="132.08" y="144.78" size="1.778" layer="95"/>
 </segment>
@@ -36173,7 +36201,7 @@ http://dangerousprototypes.com</description>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D13~AA20~IO_L61P_1"/>
 <wire x1="66.04" y1="142.24" x2="127" y2="142.24" width="0.1524" layer="91"/>
 <wire x1="127" y1="142.24" x2="127" y2="116.84" width="0.1524" layer="91"/>
-<pinref part="U$3" gate="G$1" pin="ADC6"/>
+<pinref part="CHANNEL2" gate="G$1" pin="ADC6"/>
 <wire x1="127" y1="116.84" x2="144.78" y2="116.84" width="0.1524" layer="91"/>
 <label x="132.08" y="116.84" size="1.778" layer="95"/>
 </segment>
@@ -36183,7 +36211,7 @@ http://dangerousprototypes.com</description>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F13~AB20~IO_L65N_1"/>
 <wire x1="66.04" y1="139.7" x2="124.46" y2="139.7" width="0.1524" layer="91"/>
 <wire x1="124.46" y1="139.7" x2="124.46" y2="114.3" width="0.1524" layer="91"/>
-<pinref part="U$3" gate="G$1" pin="ADC5"/>
+<pinref part="CHANNEL2" gate="G$1" pin="ADC5"/>
 <wire x1="124.46" y1="114.3" x2="144.78" y2="114.3" width="0.1524" layer="91"/>
 <label x="132.08" y="114.3" size="1.778" layer="95"/>
 </segment>
@@ -36193,7 +36221,7 @@ http://dangerousprototypes.com</description>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D14~V19~IO_L71P_1"/>
 <wire x1="66.04" y1="137.16" x2="121.92" y2="137.16" width="0.1524" layer="91"/>
 <wire x1="121.92" y1="137.16" x2="121.92" y2="111.76" width="0.1524" layer="91"/>
-<pinref part="U$3" gate="G$1" pin="ADC8"/>
+<pinref part="CHANNEL2" gate="G$1" pin="ADC8"/>
 <wire x1="121.92" y1="111.76" x2="144.78" y2="111.76" width="0.1524" layer="91"/>
 <label x="132.08" y="111.76" size="1.778" layer="95"/>
 </segment>
@@ -36203,14 +36231,14 @@ http://dangerousprototypes.com</description>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F14~AB19~IO_L65P_1"/>
 <wire x1="66.04" y1="134.62" x2="119.38" y2="134.62" width="0.1524" layer="91"/>
 <wire x1="119.38" y1="134.62" x2="119.38" y2="109.22" width="0.1524" layer="91"/>
-<pinref part="U$3" gate="G$1" pin="ADC7"/>
+<pinref part="CHANNEL2" gate="G$1" pin="ADC7"/>
 <wire x1="119.38" y1="109.22" x2="144.78" y2="109.22" width="0.1524" layer="91"/>
 <label x="132.08" y="109.22" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="OA_ADCOR" class="0">
 <segment>
-<pinref part="U$3" gate="G$1" pin="ADCOR"/>
+<pinref part="CHANNEL2" gate="G$1" pin="ADCOR"/>
 <wire x1="144.78" y1="106.68" x2="116.84" y2="106.68" width="0.1524" layer="91"/>
 <wire x1="116.84" y1="106.68" x2="116.84" y2="132.08" width="0.1524" layer="91"/>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D15~Y19~IO_L67P_1"/>
@@ -36223,14 +36251,14 @@ http://dangerousprototypes.com</description>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F15~AB18~IO_L2N_CMPMOSI_2"/>
 <wire x1="66.04" y1="129.54" x2="114.3" y2="129.54" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="129.54" x2="114.3" y2="104.14" width="0.1524" layer="91"/>
-<pinref part="U$3" gate="G$1" pin="ADC9"/>
+<pinref part="CHANNEL2" gate="G$1" pin="ADC9"/>
 <wire x1="114.3" y1="104.14" x2="144.78" y2="104.14" width="0.1524" layer="91"/>
 <label x="132.08" y="104.14" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="OA_TRIGIN" class="0">
 <segment>
-<pinref part="U$3" gate="G$1" pin="TRIGIN"/>
+<pinref part="CHANNEL2" gate="G$1" pin="TRIGIN"/>
 <wire x1="144.78" y1="101.6" x2="111.76" y2="101.6" width="0.1524" layer="91"/>
 <wire x1="111.76" y1="101.6" x2="111.76" y2="127" width="0.1524" layer="91"/>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D16~V18~IO_L73N_1"/>
@@ -36240,7 +36268,7 @@ http://dangerousprototypes.com</description>
 </net>
 <net name="OA_CLKIN" class="0">
 <segment>
-<pinref part="U$3" gate="G$1" pin="CLKIN"/>
+<pinref part="CHANNEL2" gate="G$1" pin="CLKIN"/>
 <wire x1="109.22" y1="99.06" x2="144.78" y2="99.06" width="0.1524" layer="91"/>
 <pinref part="CON6" gate="_CDF-FPGA" pin="C20~Y11~IO_L31P_GCLK31_D14_2"/>
 <wire x1="66.04" y1="109.22" x2="109.22" y2="109.22" width="0.1524" layer="91"/>
@@ -36252,14 +36280,14 @@ http://dangerousprototypes.com</description>
 <segment>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D20~W15~IO_L14P_D11_2"/>
 <wire x1="66.04" y1="106.68" x2="106.68" y2="106.68" width="0.1524" layer="91"/>
-<pinref part="U$5" gate="G$1" pin="HILO"/>
+<pinref part="CHANNEL1" gate="G$1" pin="HILO"/>
 <wire x1="119.38" y1="73.66" x2="106.68" y2="73.66" width="0.1524" layer="91"/>
 <wire x1="106.68" y1="73.66" x2="106.68" y2="106.68" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$40" class="0">
 <segment>
-<pinref part="U$5" gate="G$1" pin="GAIN"/>
+<pinref part="CHANNEL1" gate="G$1" pin="GAIN"/>
 <wire x1="119.38" y1="71.12" x2="104.14" y2="71.12" width="0.1524" layer="91"/>
 <wire x1="104.14" y1="71.12" x2="104.14" y2="104.14" width="0.1524" layer="91"/>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F20~Y16~IO_L14N_D12_2"/>
@@ -36270,14 +36298,14 @@ http://dangerousprototypes.com</description>
 <segment>
 <pinref part="CON6" gate="_CDF-FPGA" pin="C21~AA12~IO_L30P_GCLK1_D13_2"/>
 <wire x1="66.04" y1="101.6" x2="101.6" y2="101.6" width="0.1524" layer="91"/>
-<pinref part="U$5" gate="G$1" pin="ADC0"/>
+<pinref part="CHANNEL1" gate="G$1" pin="ADC0"/>
 <wire x1="119.38" y1="68.58" x2="101.6" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="101.6" y1="68.58" x2="101.6" y2="101.6" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$45" class="0">
 <segment>
-<pinref part="U$5" gate="G$1" pin="CLKADC"/>
+<pinref part="CHANNEL1" gate="G$1" pin="CLKADC"/>
 <wire x1="119.38" y1="66.04" x2="99.06" y2="66.04" width="0.1524" layer="91"/>
 <wire x1="99.06" y1="66.04" x2="99.06" y2="99.06" width="0.1524" layer="91"/>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D21~AA14~IO_L15P_2"/>
@@ -36289,7 +36317,7 @@ http://dangerousprototypes.com</description>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F21~AB14~IO_L15N_2"/>
 <wire x1="66.04" y1="96.52" x2="96.52" y2="96.52" width="0.1524" layer="91"/>
 <wire x1="96.52" y1="96.52" x2="96.52" y2="63.5" width="0.1524" layer="91"/>
-<pinref part="U$5" gate="G$1" pin="ADC2"/>
+<pinref part="CHANNEL1" gate="G$1" pin="ADC2"/>
 <wire x1="96.52" y1="63.5" x2="119.38" y2="63.5" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -36309,35 +36337,35 @@ http://dangerousprototypes.com</description>
 </net>
 <net name="GND" class="2">
 <segment>
-<pinref part="U$3" gate="G$1" pin="GND@3"/>
+<pinref part="CHANNEL2" gate="G$1" pin="GND@3"/>
 <pinref part="SUPPLY37" gate="GND" pin="GND"/>
 </segment>
 <segment>
-<pinref part="U$3" gate="G$1" pin="GND@2"/>
+<pinref part="CHANNEL2" gate="G$1" pin="GND@2"/>
 <pinref part="SUPPLY39" gate="GND" pin="GND"/>
 </segment>
 <segment>
-<pinref part="U$3" gate="G$1" pin="GND@0"/>
+<pinref part="CHANNEL2" gate="G$1" pin="GND@0"/>
 <pinref part="SUPPLY40" gate="GND" pin="GND"/>
 </segment>
 <segment>
-<pinref part="U$3" gate="G$1" pin="GND@1"/>
+<pinref part="CHANNEL2" gate="G$1" pin="GND@1"/>
 <pinref part="SUPPLY41" gate="GND" pin="GND"/>
 </segment>
 <segment>
-<pinref part="U$5" gate="G$1" pin="GND@1"/>
+<pinref part="CHANNEL1" gate="G$1" pin="GND@1"/>
 <pinref part="SUPPLY42" gate="GND" pin="GND"/>
 </segment>
 <segment>
-<pinref part="U$5" gate="G$1" pin="GND@0"/>
+<pinref part="CHANNEL1" gate="G$1" pin="GND@0"/>
 <pinref part="SUPPLY43" gate="GND" pin="GND"/>
 </segment>
 <segment>
-<pinref part="U$5" gate="G$1" pin="GND@3"/>
+<pinref part="CHANNEL1" gate="G$1" pin="GND@3"/>
 <pinref part="SUPPLY44" gate="GND" pin="GND"/>
 </segment>
 <segment>
-<pinref part="U$5" gate="G$1" pin="GND@2"/>
+<pinref part="CHANNEL1" gate="G$1" pin="GND@2"/>
 <pinref part="SUPPLY45" gate="GND" pin="GND"/>
 </segment>
 <segment>
@@ -36367,35 +36395,35 @@ http://dangerousprototypes.com</description>
 </net>
 <net name="+3V3" class="2">
 <segment>
-<pinref part="U$3" gate="G$1" pin="AVCC@0"/>
+<pinref part="CHANNEL2" gate="G$1" pin="AVCC@0"/>
 <pinref part="+3V17" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
-<pinref part="U$3" gate="G$1" pin="AVCC@1"/>
+<pinref part="CHANNEL2" gate="G$1" pin="AVCC@1"/>
 <pinref part="+3V18" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
-<pinref part="U$3" gate="G$1" pin="DVCC@0"/>
+<pinref part="CHANNEL2" gate="G$1" pin="DVCC@0"/>
 <pinref part="+3V19" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
-<pinref part="U$3" gate="G$1" pin="DVCC@1"/>
+<pinref part="CHANNEL2" gate="G$1" pin="DVCC@1"/>
 <pinref part="+3V20" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
-<pinref part="U$5" gate="G$1" pin="DVCC@0"/>
+<pinref part="CHANNEL1" gate="G$1" pin="DVCC@0"/>
 <pinref part="+3V21" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
-<pinref part="U$5" gate="G$1" pin="DVCC@1"/>
+<pinref part="CHANNEL1" gate="G$1" pin="DVCC@1"/>
 <pinref part="+3V22" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
-<pinref part="U$5" gate="G$1" pin="AVCC@1"/>
+<pinref part="CHANNEL1" gate="G$1" pin="AVCC@1"/>
 <pinref part="+3V23" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
-<pinref part="U$5" gate="G$1" pin="AVCC@0"/>
+<pinref part="CHANNEL1" gate="G$1" pin="AVCC@0"/>
 <pinref part="+3V24" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
@@ -36561,13 +36589,13 @@ http://dangerousprototypes.com</description>
 <pinref part="CON6" gate="_CDF-FPGA" pin="C22~Y10~IO_L29N_GCLK2_2"/>
 <wire x1="66.04" y1="93.98" x2="93.98" y2="93.98" width="0.1524" layer="91"/>
 <wire x1="93.98" y1="93.98" x2="93.98" y2="60.96" width="0.1524" layer="91"/>
-<pinref part="U$5" gate="G$1" pin="ADC1"/>
+<pinref part="CHANNEL1" gate="G$1" pin="ADC1"/>
 <wire x1="93.98" y1="60.96" x2="119.38" y2="60.96" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$35" class="0">
 <segment>
-<pinref part="U$5" gate="G$1" pin="ADC4"/>
+<pinref part="CHANNEL1" gate="G$1" pin="ADC4"/>
 <wire x1="119.38" y1="58.42" x2="91.44" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="91.44" y1="58.42" x2="91.44" y2="91.44" width="0.1524" layer="91"/>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D22~AB12~IO_L30N_GCLK0_USERCCLK_2"/>
@@ -36579,13 +36607,13 @@ http://dangerousprototypes.com</description>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F22~AB11~IO_L31N_GCLK30_D15_2"/>
 <wire x1="66.04" y1="88.9" x2="88.9" y2="88.9" width="0.1524" layer="91"/>
 <wire x1="88.9" y1="88.9" x2="88.9" y2="55.88" width="0.1524" layer="91"/>
-<pinref part="U$5" gate="G$1" pin="ADC3"/>
+<pinref part="CHANNEL1" gate="G$1" pin="ADC3"/>
 <wire x1="88.9" y1="55.88" x2="119.38" y2="55.88" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$48" class="0">
 <segment>
-<pinref part="U$5" gate="G$1" pin="ADC6"/>
+<pinref part="CHANNEL1" gate="G$1" pin="ADC6"/>
 <wire x1="119.38" y1="27.94" x2="86.36" y2="27.94" width="0.1524" layer="91"/>
 <wire x1="86.36" y1="27.94" x2="86.36" y2="81.28" width="0.1524" layer="91"/>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F23~W11~IO_L29P_GCLK3_2"/>
@@ -36597,13 +36625,13 @@ http://dangerousprototypes.com</description>
 <pinref part="CON6" gate="_CDF-FPGA" pin="C24~Y13~IO_L41P_2"/>
 <wire x1="66.04" y1="78.74" x2="83.82" y2="78.74" width="0.1524" layer="91"/>
 <wire x1="83.82" y1="78.74" x2="83.82" y2="25.4" width="0.1524" layer="91"/>
-<pinref part="U$5" gate="G$1" pin="ADC5"/>
+<pinref part="CHANNEL1" gate="G$1" pin="ADC5"/>
 <wire x1="83.82" y1="25.4" x2="119.38" y2="25.4" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$50" class="0">
 <segment>
-<pinref part="U$5" gate="G$1" pin="ADC8"/>
+<pinref part="CHANNEL1" gate="G$1" pin="ADC8"/>
 <wire x1="119.38" y1="22.86" x2="81.28" y2="22.86" width="0.1524" layer="91"/>
 <wire x1="81.28" y1="22.86" x2="81.28" y2="76.2" width="0.1524" layer="91"/>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D24~T14~IO_L20P_2"/>
@@ -36615,13 +36643,13 @@ http://dangerousprototypes.com</description>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F24~U14~IO_L20N_2"/>
 <wire x1="66.04" y1="73.66" x2="78.74" y2="73.66" width="0.1524" layer="91"/>
 <wire x1="78.74" y1="73.66" x2="78.74" y2="20.32" width="0.1524" layer="91"/>
-<pinref part="U$5" gate="G$1" pin="ADC7"/>
+<pinref part="CHANNEL1" gate="G$1" pin="ADC7"/>
 <wire x1="78.74" y1="20.32" x2="119.38" y2="20.32" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$52" class="0">
 <segment>
-<pinref part="U$5" gate="G$1" pin="ADCOR"/>
+<pinref part="CHANNEL1" gate="G$1" pin="ADCOR"/>
 <wire x1="119.38" y1="17.78" x2="76.2" y2="17.78" width="0.1524" layer="91"/>
 <wire x1="76.2" y1="17.78" x2="76.2" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="CON6" gate="_CDF-FPGA" pin="C25~W9~IO_L47P_2"/>
@@ -36633,13 +36661,13 @@ http://dangerousprototypes.com</description>
 <pinref part="CON6" gate="_CDF-FPGA" pin="D25~W12~IO_L42P_2"/>
 <wire x1="66.04" y1="68.58" x2="73.66" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="73.66" y1="68.58" x2="73.66" y2="15.24" width="0.1524" layer="91"/>
-<pinref part="U$5" gate="G$1" pin="ADC9"/>
+<pinref part="CHANNEL1" gate="G$1" pin="ADC9"/>
 <wire x1="73.66" y1="15.24" x2="119.38" y2="15.24" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$54" class="0">
 <segment>
-<pinref part="U$5" gate="G$1" pin="TRIGIN"/>
+<pinref part="CHANNEL1" gate="G$1" pin="TRIGIN"/>
 <wire x1="119.38" y1="12.7" x2="71.12" y2="12.7" width="0.1524" layer="91"/>
 <wire x1="71.12" y1="12.7" x2="71.12" y2="66.04" width="0.1524" layer="91"/>
 <pinref part="CON6" gate="_CDF-FPGA" pin="F25~Y12~IO_L42N_2"/>
@@ -38141,12 +38169,12 @@ http://dangerousprototypes.com</description>
 <instance part="SUPPLY34" gate="GND" x="86.36" y="129.54"/>
 <instance part="SUPPLY51" gate="GND" x="160.02" y="147.32" rot="R90"/>
 <instance part="SUPPLY56" gate="GND" x="109.22" y="152.4"/>
-<instance part="U$11" gate="G$1" x="50.8" y="43.18"/>
-<instance part="U$13" gate="G$1" x="58.42" y="43.18"/>
-<instance part="U$14" gate="G$1" x="66.04" y="43.18"/>
-<instance part="U$15" gate="G$1" x="50.8" y="33.02"/>
-<instance part="U$17" gate="G$1" x="58.42" y="33.02"/>
-<instance part="U$18" gate="G$1" x="66.04" y="33.02"/>
+<instance part="FID1" gate="G$1" x="50.8" y="43.18"/>
+<instance part="FID6" gate="G$1" x="58.42" y="43.18"/>
+<instance part="FID2" gate="G$1" x="66.04" y="43.18"/>
+<instance part="FID5" gate="G$1" x="50.8" y="33.02"/>
+<instance part="FID3" gate="G$1" x="58.42" y="33.02"/>
+<instance part="FID4" gate="G$1" x="66.04" y="33.02"/>
 </instances>
 <busses>
 </busses>
