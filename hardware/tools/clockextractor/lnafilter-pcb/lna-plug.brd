@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.5.0">
+<eagle version="7.1.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -2881,6 +2881,9 @@ design rules under a new name.</description>
 <autorouter>
 <pass name="Default">
 <param name="RoutingGrid" value="50mil"/>
+<param name="AutoGrid" value="1"/>
+<param name="Efforts" value="0"/>
+<param name="TopRouterVariant" value="1"/>
 <param name="tpViaShape" value="round"/>
 <param name="PrefDir.1" value="|"/>
 <param name="PrefDir.2" value="0"/>
@@ -3021,7 +3024,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="122.301" y="49.657" size="1.016" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="124.841" y="48.133" size="1.016" layer="27" font="vector"/>
 </element>
-<element name="C10" library="resistor" package="C0603" value="" x="111.125" y="50.165" smashed="yes" rot="R90">
+<element name="C10" library="resistor" package="C0603" value="100nF" x="111.125" y="50.165" smashed="yes" rot="R90">
 <attribute name="NAME" x="113.2205" y="48.641" size="1.27" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="113.157" y="49.276" size="1.27" layer="27" rot="R90"/>
 </element>
@@ -3181,7 +3184,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="56.515" y="42.8625" size="1.27" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="53.975" y="52.07" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="C28" library="resistor" package="C0603" value="" x="108.585" y="48.26" smashed="yes">
+<element name="C28" library="resistor" package="C0603" value="100nF" x="108.585" y="48.26" smashed="yes">
 <attribute name="NAME" x="107.3785" y="46.1645" size="1.27" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="107.696" y="46.228" size="1.27" layer="27"/>
 </element>
@@ -3189,11 +3192,11 @@ design rules under a new name.</description>
 <attribute name="NAME" x="30.7281875" y="51.95485625" size="1.27" layer="25" font="vector" ratio="16" rot="R135"/>
 <attribute name="VALUE" x="28.1493375" y="46.769490625" size="1.27" layer="27" rot="R45"/>
 </element>
-<element name="C30" library="resistor" package="C0603" value="" x="33.02" y="50.8" smashed="yes">
+<element name="C30" library="resistor" package="C0603" value="100nF" x="33.02" y="50.8" smashed="yes">
 <attribute name="NAME" x="31.496" y="51.562" size="1.27" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="32.131" y="48.768" size="1.27" layer="27"/>
 </element>
-<element name="C31" library="resistor" package="C0603" value="" x="22.86" y="50.8" smashed="yes">
+<element name="C31" library="resistor" package="C0603" value="100nF" x="22.86" y="50.8" smashed="yes">
 <attribute name="NAME" x="21.336" y="51.562" size="1.27" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="21.971" y="48.768" size="1.27" layer="27"/>
 </element>
@@ -3224,7 +3227,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="36.195" y="44.1325" size="1.27" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="33.655" y="50.8" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="C35" library="resistor" package="C0603" value="" x="33.02" y="45.72" smashed="yes">
+<element name="C35" library="resistor" package="C0603" value="100nF" x="33.02" y="45.72" smashed="yes">
 <attribute name="NAME" x="31.1785" y="43.6245" size="1.27" layer="25" font="vector" ratio="16"/>
 <attribute name="VALUE" x="32.131" y="43.688" size="1.27" layer="27"/>
 </element>
@@ -3250,11 +3253,11 @@ design rules under a new name.</description>
 <attribute name="OC_FARNELL" value="1019325" x="47.625" y="59.055" size="1.016" layer="27" font="vector" ratio="16" rot="R270" display="off"/>
 <attribute name="VALUE" x="38.735" y="57.785" size="1.778" layer="27" rot="R270"/>
 </element>
-<element name="C29" library="resistor" package="C0603" value="" x="47.625" y="50.165" smashed="yes" rot="R90">
+<element name="C29" library="resistor" package="C0603" value="100nF" x="47.625" y="50.165" smashed="yes" rot="R90">
 <attribute name="NAME" x="46.863" y="49.276" size="1.27" layer="25" font="vector" ratio="16" rot="R90"/>
 <attribute name="VALUE" x="49.657" y="49.276" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="C38" library="resistor" package="C0603" value="" x="45.085" y="48.26" smashed="yes" rot="R180">
+<element name="C38" library="resistor" package="C0603" value="100nF" x="45.085" y="48.26" smashed="yes" rot="R180">
 <attribute name="NAME" x="46.9265" y="47.498" size="1.27" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="45.974" y="50.292" size="1.27" layer="27" rot="R180"/>
 </element>
