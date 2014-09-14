@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.5.0">
+<eagle version="7.1.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -18867,7 +18867,7 @@ Basic Inductor/Choke - 0603 and 1206. Footprints are not proven and vary greatly
 <part name="C7" library="resistor" deviceset="C-EU" device="C0603" value="100n"/>
 <part name="C8" library="resistor" deviceset="C-EU" device="C0603" value="100n"/>
 <part name="C9" library="resistor" deviceset="C-EU" device="C0603" value="18nF"/>
-<part name="C10" library="resistor" deviceset="C-EU" device="C0603"/>
+<part name="C10" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C11" library="resistor" deviceset="C-EU" device="C0603" value="100n"/>
 <part name="C12" library="resistor" deviceset="C-EU" device="C0603" value="100n"/>
 <part name="SUPPLY1" library="supply2" deviceset="GND" device=""/>
@@ -18928,18 +18928,18 @@ Basic Inductor/Choke - 0603 and 1206. Footprints are not proven and vary greatly
 <part name="JP3" library="pinhead" deviceset="PINHD-2X3" device=""/>
 <part name="+3V1" library="supply1" deviceset="+3V3" device=""/>
 <part name="FRAME3" library="frames" deviceset="LETTER_L" device=""/>
-<part name="C28" library="resistor" deviceset="C-EU" device="C0603"/>
+<part name="C28" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="U2" library="customs" deviceset="BGA2801" device=""/>
 <part name="SUPPLY17" library="supply2" deviceset="GND" device=""/>
-<part name="C30" library="resistor" deviceset="C-EU" device="C0603"/>
-<part name="C31" library="resistor" deviceset="C-EU" device="C0603"/>
+<part name="C30" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
+<part name="C31" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C32" library="resistor" deviceset="C-EU" device="C0603" value="22nF"/>
 <part name="C33" library="resistor" deviceset="C-EU" device="C0603" value="100n"/>
 <part name="C34" library="resistor" deviceset="C-EU" device="C0603" value="1u"/>
 <part name="X2" library="con-coax" deviceset="SMA-" device="142-0711-821/826"/>
 <part name="JP4" library="pinhead" deviceset="PINHD-2X2" device=""/>
 <part name="JP5" library="pinhead" deviceset="PINHD-2X2" device=""/>
-<part name="C35" library="resistor" deviceset="C-EU" device="C0603"/>
+<part name="C35" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="SUPPLY18" library="supply2" deviceset="GND" device=""/>
 <part name="C36" library="resistor" deviceset="C-EU" device="C0603" value="100n"/>
 <part name="C37" library="resistor" deviceset="C-EU" device="C0603"/>
@@ -18947,8 +18947,8 @@ Basic Inductor/Choke - 0603 and 1206. Footprints are not proven and vary greatly
 <part name="SUPPLY20" library="supply2" deviceset="GND" device=""/>
 <part name="X1" library="con-coax" deviceset="SMA-" device="142-0701-851/861"/>
 <part name="X3" library="con-coax" deviceset="SMA-" device="142-0701-851/861"/>
-<part name="C29" library="resistor" deviceset="C-EU" device="C0603"/>
-<part name="C38" library="resistor" deviceset="C-EU" device="C0603"/>
+<part name="C29" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
+<part name="C38" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="SUPPLY21" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY22" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY23" library="supply2" deviceset="GND" device=""/>
