@@ -17745,8 +17745,6 @@ We've spent an enormous amount of time creating and checking these footprints an
 <part name="JP5" library="pinhead" deviceset="PINHD-1X1" device=""/>
 <part name="JP6" library="pinhead" deviceset="PINHD-1X1" device=""/>
 <part name="R5" library="resistor" deviceset="R-US_" device="R0603" value="49.9R"/>
-<part name="C9" library="rcl" deviceset="C-EU" device="C0603" value="0R"/>
-<part name="C10" library="rcl" deviceset="C-EU" device="C0603" value="0R"/>
 <part name="R6" library="resistor" deviceset="R-US_" device="M0805" value="DNM"/>
 <part name="R7" library="resistor" deviceset="R-US_" device="R0603" value="DNM"/>
 <part name="R8" library="resistor" deviceset="R-US_" device="R0603" value="DNM"/>
@@ -17758,14 +17756,14 @@ We've spent an enormous amount of time creating and checking these footprints an
 <part name="R13" library="rcl" deviceset="R-US_" device="R0402" value="510R, 1%"/>
 <part name="R14" library="rcl" deviceset="R-US_" device="R0402" value="10k, 1%"/>
 <part name="R15" library="rcl" deviceset="R-US_" device="R0402" value="25k"/>
-<part name="C11" library="resistor" deviceset="C-EU" device="C0402"/>
+<part name="C11" library="resistor" deviceset="C-EU" device="C0402" value="680pF"/>
 <part name="SUPPLY13" library="adc_microboard" deviceset="AGND" device=""/>
 <part name="R16" library="rcl" deviceset="R-US_" device="R0402"/>
 <part name="R17" library="rcl" deviceset="R-US_" device="R0402"/>
 <part name="LED1" library="led" deviceset="LED" device="CHIPLED_0603" value="RIGHT"/>
 <part name="LED2" library="led" deviceset="LED" device="CHIPLED_0603" value="LEFT"/>
-<part name="C12" library="resistor" deviceset="C-EU" device="C0402"/>
-<part name="C13" library="resistor" deviceset="C-EU" device="C0402"/>
+<part name="C12" library="resistor" deviceset="C-EU" device="C0402" value="100nF"/>
+<part name="C13" library="resistor" deviceset="C-EU" device="C0402" value="100nF"/>
 <part name="SUPPLY14" library="adc_microboard" deviceset="AGND" device=""/>
 <part name="SUPPLY15" library="adc_microboard" deviceset="AGND" device=""/>
 <part name="SJ1" library="SparkFun" deviceset="SOLDERJUMPER_2WAY" device="PASTE1&amp;2"/>
@@ -17778,6 +17776,8 @@ We've spent an enormous amount of time creating and checking these footprints an
 <part name="U$4" library="adafruit" deviceset="FIDUCIAL" device=""/>
 <part name="U$5" library="adafruit" deviceset="FIDUCIAL" device=""/>
 <part name="U$6" library="adafruit" deviceset="FIDUCIAL" device=""/>
+<part name="R18" library="resistor" deviceset="R-US_" device="R0603" value="10R"/>
+<part name="R19" library="resistor" deviceset="R-US_" device="R0603" value="10R"/>
 </parts>
 <sheets>
 <sheet>
@@ -17833,8 +17833,6 @@ We've spent an enormous amount of time creating and checking these footprints an
 <instance part="JP5" gate="G$1" x="175.26" y="55.88"/>
 <instance part="JP6" gate="G$1" x="175.26" y="48.26"/>
 <instance part="R5" gate="G$1" x="132.08" y="119.38"/>
-<instance part="C9" gate="G$1" x="40.64" y="154.94" rot="R270"/>
-<instance part="C10" gate="G$1" x="40.64" y="144.78" rot="R270"/>
 <instance part="R6" gate="G$1" x="58.42" y="149.86" rot="R270"/>
 <instance part="R7" gate="G$1" x="63.5" y="144.78"/>
 <instance part="R8" gate="G$1" x="63.5" y="154.94"/>
@@ -17866,6 +17864,8 @@ We've spent an enormous amount of time creating and checking these footprints an
 <instance part="U$4" gate="G$1" x="226.06" y="147.32"/>
 <instance part="U$5" gate="G$1" x="226.06" y="139.7"/>
 <instance part="U$6" gate="G$1" x="226.06" y="132.08"/>
+<instance part="R18" gate="G$1" x="40.64" y="154.94"/>
+<instance part="R19" gate="G$1" x="40.64" y="144.78"/>
 </instances>
 <busses>
 </busses>
@@ -18159,45 +18159,49 @@ We've spent an enormous amount of time creating and checking these footprints an
 <pinref part="JP1" gate="G$1" pin="1"/>
 <wire x1="17.78" y1="152.4" x2="33.02" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="33.02" y1="152.4" x2="33.02" y2="154.94" width="0.1524" layer="91"/>
-<pinref part="C9" gate="G$1" pin="2"/>
 <wire x1="33.02" y1="154.94" x2="35.56" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="R18" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$7" class="0">
 <segment>
-<pinref part="C9" gate="G$1" pin="1"/>
 <pinref part="R6" gate="G$1" pin="1"/>
-<wire x1="43.18" y1="154.94" x2="50.8" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="154.94" x2="45.72" y2="154.94" width="0.1524" layer="91"/>
 <pinref part="R8" gate="G$1" pin="1"/>
 <junction x="58.42" y="154.94"/>
 <pinref part="U1" gate="G$1" pin="VIN+"/>
+<wire x1="45.72" y1="154.94" x2="50.8" y2="154.94" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="154.94" x2="58.42" y2="154.94" width="0.1524" layer="91"/>
 <wire x1="96.52" y1="124.46" x2="50.8" y2="124.46" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="124.46" x2="50.8" y2="154.94" width="0.1524" layer="91"/>
 <junction x="50.8" y="154.94"/>
+<pinref part="R18" gate="G$1" pin="2"/>
+<junction x="45.72" y="154.94"/>
 </segment>
 </net>
 <net name="N$13" class="0">
 <segment>
 <pinref part="R6" gate="G$1" pin="2"/>
-<pinref part="C10" gate="G$1" pin="1"/>
 <wire x1="58.42" y1="144.78" x2="48.26" y2="144.78" width="0.1524" layer="91"/>
 <pinref part="R7" gate="G$1" pin="1"/>
 <junction x="58.42" y="144.78"/>
 <pinref part="U1" gate="G$1" pin="VIN-"/>
-<wire x1="48.26" y1="144.78" x2="43.18" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="48.26" y1="144.78" x2="45.72" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="144.78" x2="43.18" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="96.52" y1="121.92" x2="48.26" y2="121.92" width="0.1524" layer="91"/>
 <wire x1="48.26" y1="121.92" x2="48.26" y2="144.78" width="0.1524" layer="91"/>
 <junction x="48.26" y="144.78"/>
+<pinref part="R19" gate="G$1" pin="2"/>
+<junction x="45.72" y="144.78"/>
 </segment>
 </net>
 <net name="N$14" class="0">
 <segment>
-<pinref part="C10" gate="G$1" pin="2"/>
 <wire x1="35.56" y1="144.78" x2="33.02" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="33.02" y1="144.78" x2="33.02" y2="149.86" width="0.1524" layer="91"/>
 <pinref part="JP1" gate="G$1" pin="2"/>
 <wire x1="33.02" y1="149.86" x2="17.78" y2="149.86" width="0.1524" layer="91"/>
+<pinref part="R19" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$15" class="0">
