@@ -1,9 +1,6 @@
 chipwhisperer.analyzer.utils package
 ===================================
 
-Submodules
-----------
-
 chipwhisperer.analyzer.utils.Partition module
 --------------------------------------------------
 

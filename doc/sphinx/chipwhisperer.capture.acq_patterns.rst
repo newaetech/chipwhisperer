@@ -1,7 +1,5 @@
 chipwhisperer.capture.acq_patterns package
 ====================================
-Submodules
-----------
 
 chipwhisperer.capture.acq_patterns._base module
 ------------------------------------------------------

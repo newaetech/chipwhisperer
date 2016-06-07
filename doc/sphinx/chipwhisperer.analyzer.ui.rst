@@ -1,9 +1,6 @@
 chipwhisperer.analyzer.ui package
 ======================================
   
-Submodules
-----------
-
 chipwhisperer.analyzer.ui.CWAnalyzer
 -----------------------------------------------------
 

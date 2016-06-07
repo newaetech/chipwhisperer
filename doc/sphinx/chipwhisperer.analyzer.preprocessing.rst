@@ -1,8 +1,6 @@
 chipwhisperer.analyzer.preprocessing package
 ============================================
 
-Submodules
-----------
 chipwhisperer.analyzer.preprocessing._base module
 ----------------------------------------------------------
 

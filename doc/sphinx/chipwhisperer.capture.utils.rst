@@ -1,4 +1,4 @@
-chipwhisperer.capture.utils package
+chipwhisperer.capture.utils 
 ===================================
 
 chipwhisperer.capture.utils.AVRProgrammer module

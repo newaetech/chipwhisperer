@@ -1,4 +1,4 @@
-chipwhisperer.common.results package
+chipwhisperer.common.results 
 ===================================
 
 chipwhisperer.common.results._plotdata module

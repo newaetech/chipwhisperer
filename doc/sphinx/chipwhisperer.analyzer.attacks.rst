@@ -1,17 +1,11 @@
 chipwhisperer.analyzer.attacks package
 ======================================
 
-Subpackages
------------
-
 .. toctree::
     chipwhisperer.analyzer.attacks.cpa_algorithms
     chipwhisperer.analyzer.attacks.models
     chipwhisperer.analyzer.attacks.profiling_algorithms
     
-Submodules
-----------
-
 chipwhisperer.analyzer.attacks._base module
 -----------------------------------------------------
 

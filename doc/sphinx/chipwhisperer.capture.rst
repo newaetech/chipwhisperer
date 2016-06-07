@@ -1,9 +1,6 @@
 chipwhisperer.capture package
 =============================
 
-Subpackages
------------
-
 .. toctree::
 
     chipwhisperer.capture.acq_patterns

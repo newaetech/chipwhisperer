@@ -1,9 +1,6 @@
 chipwhisperer.analyzer.attacks.models package
 =============================================
 
-Submodules
-----------
-
 chipwhisperer.analyzer.attacks.models.AES128_8bit module
 --------------------------------------------------------
 
@@ -27,3 +24,4 @@ chipwhisperer.analyzer.attacks.models.aes.key_schedule module
     :members:
     :undoc-members:
     :show-inheritance:
+	

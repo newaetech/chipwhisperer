@@ -1,15 +1,10 @@
 chipwhisperer.capture.scopes package
 ====================================
-Subpackages
------------
 
 .. toctree::
     chipwhisperer.analyzer.scopes.cwhardware
 	chipwhisperer.analyzer.scopes.openadc_interface
 	chipwhisperer.analyzer.scopes.visascope_interface
-
-Submodules
-----------
 
 chipwhisperer.capture.scopes._base module
 ------------------------------------------------------

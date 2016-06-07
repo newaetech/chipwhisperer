@@ -1,9 +1,6 @@
 chipwhisperer package
 =====================
 
-Subpackages
------------
-
 .. toctree::
 
     chipwhisperer.analyzer

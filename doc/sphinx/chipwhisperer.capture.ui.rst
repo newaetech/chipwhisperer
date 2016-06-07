@@ -1,4 +1,4 @@
-chipwhisperer.capture.ui package
+chipwhisperer.capture.ui 
 ====================================
 
 chipwhisperer.capture.ui.CWCaptureGUI

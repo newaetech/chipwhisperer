@@ -1,4 +1,4 @@
-chipwhisperer.common.api package
+chipwhisperer.common.api 
 ===================================
 
 chipwhisperer.common.api.CWCoreAPI module

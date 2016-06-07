@@ -1,16 +1,10 @@
 chipwhisperer.capture.targets package
 =====================================
 
-Subpackages
------------
-
 .. toctree::
     chipwhisperer.capture.targets.simpleserial_readers
 	chipwhisperer.capture.targets.smartcard_protocols
 	chipwhisperer.capture.targets.smartcard_readers
-
-Submodules
-----------
 
 chipwhisperer.capture.targets.CW305 module
 -----------------------------------------------------

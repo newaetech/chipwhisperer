@@ -1,4 +1,4 @@
-chipwhisperer.common.scripts package
+chipwhisperer.common.scripts 
 ===================================
 
 chipwhisperer.common.scripts.base module

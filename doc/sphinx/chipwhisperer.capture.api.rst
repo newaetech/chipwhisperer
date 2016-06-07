@@ -1,9 +1,6 @@
 chipwhisperer.capture.api package
 ====================================
 
-Submodules
-----------
-
 chipwhisperer.capture.api.AcquisitionController module
 ------------------------------------------------------
 

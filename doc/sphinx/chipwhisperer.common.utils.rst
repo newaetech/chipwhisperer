@@ -1,4 +1,4 @@
-chipwhisperer.common.utils package
+chipwhisperer.common.utils 
 ===================================
 
 chipwhisperer.common.utils.aes_cipher module

@@ -1,4 +1,4 @@
-chipwhisperer.common.ui package
+chipwhisperer.common.ui 
 ===================================
 
 chipwhisperer.common.ui.CWMainGUI module

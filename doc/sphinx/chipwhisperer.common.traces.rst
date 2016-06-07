@@ -1,4 +1,4 @@
-chipwhisperer.common.traces package
+chipwhisperer.common.traces 
 ===================================
 
 chipwhisperer.common.traces._base module

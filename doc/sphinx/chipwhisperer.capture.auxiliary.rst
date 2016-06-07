@@ -1,9 +1,6 @@
 chipwhisperer.capture.auxiliary package
 =======================================
 
-Submodules
-----------
-
 chipwhisperer.capture.auxiliary._base module
 --------------------------------------------------------
 
