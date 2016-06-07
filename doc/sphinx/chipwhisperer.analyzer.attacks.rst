@@ -9,7 +9,7 @@ chipwhisperer.analyzer.attacks package
 chipwhisperer.analyzer.attacks._base module
 -----------------------------------------------------
 
-.. automodule:: chipwhisperer.analyzer.attacks.AttackBaseClass
+.. automodule:: chipwhisperer.analyzer.attacks._base
     :members:
     :undoc-members:
     :show-inheritance:
@@ -17,7 +17,7 @@ chipwhisperer.analyzer.attacks._base module
 chipwhisperer.analyzer.attacks._generic_parameters module
 -------------------------------------------------------------
 
-.. automodule:: chipwhisperer.analyzer.attacks.AttackGenericParameters
+.. automodule:: chipwhisperer.analyzer.attacks._generic_parameters
     :members:
     :undoc-members:
     :show-inheritance:
@@ -25,7 +25,7 @@ chipwhisperer.analyzer.attacks._generic_parameters module
 chipwhisperer.analyzer.attacks._channel_estimation_attack module
 ----------------------------------------------------------
 
-.. automodule:: chipwhisperer.analyzer.attacks.AttackProgressDialog
+.. automodule:: chipwhisperer.analyzer.attacks._channel_estimation_attack
     :members:
     :undoc-members:
     :show-inheritance:
@@ -33,7 +33,7 @@ chipwhisperer.analyzer.attacks._channel_estimation_attack module
 chipwhisperer.analyzer.attacks._stats module
 -------------------------------------------------
 
-.. automodule:: chipwhisperer.analyzer.attacks.AttackStats
+.. automodule:: chipwhisperer.analyzer.attacks._stats
     :members:
     :undoc-members:
     :show-inheritance:
