@@ -1,4 +1,4 @@
-chipwhisperer.common 
+chipwhisperer.common package
 ============================
 
 .. toctree::

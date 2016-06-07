@@ -1,34 +1,34 @@
 chipwhisperer.common.api 
 ===================================
 
-chipwhisperer.common.api.CWCoreAPI module
+chipwhisperer.common.api.CWCoreAPI.CWCoreAPI module
 -------------------------------------------------
 
-.. automodule:: chipwhisperer.common.api.CWCoreAPI
+.. automodule:: chipwhisperer.common.api.CWCoreAPI.CWCoreAPI
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.common.api.ExtendedParameter module
+chipwhisperer.common.api.ExtendedParameter.ExtendedParameter module
 -------------------------------------------------------
 
-.. automodule:: chipwhisperer.common.api.ExtendedParameter
+.. automodule:: chipwhisperer.common.api.ExtendedParameter.ExtendedParameter
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.common.api.ProjectFormat module
+chipwhisperer.common.api.ProjectFormat.ProjectFormat module
 ------------------------------------------------------
 
-.. automodule:: chipwhisperer.common.api.ProjectFormat
+.. automodule:: chipwhisperer.common.api.ProjectFormat.ProjectFormat
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.common.api.TraceManager module
+chipwhisperer.common.api.TraceManager.TraceManager module
 ------------------------------------------------------
 
-.. automodule:: chipwhisperer.common.api.TraceManager
+.. automodule:: chipwhisperer.common.api.TraceManager.TraceManager
     :members:
     :undoc-members:
     :show-inheritance:
