@@ -6,38 +6,14 @@ Subpackages
 
 .. toctree::
 
-    chipwhisperer.capture.auxiliary
+    chipwhisperer.capture.acq_patterns
+	chipwhisperer.capture.api
+	chipwhisperer.capture.auxiliary
     chipwhisperer.capture.scopes
     chipwhisperer.capture.scripts
     chipwhisperer.capture.targets
+	chipwhisperer.capture.ui
     chipwhisperer.capture.utils
-
-Submodules
-----------
-
-chipwhisperer.capture.ChipWhispererCapture module
--------------------------------------------------
-
-.. automodule:: chipwhisperer.capture.ChipWhispererCapture
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-chipwhisperer.capture.ListAllModules module
--------------------------------------------
-
-.. automodule:: chipwhisperer.capture.ListAllModules
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-chipwhisperer.capture.aes_tables module
----------------------------------------
-
-.. automodule:: chipwhisperer.capture.aes_tables
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 
 Module contents

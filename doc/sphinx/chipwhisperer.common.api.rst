@@ -1,53 +1,53 @@
-chipwhisperer.common.traces package
+chipwhisperer.common.api package
 ===================================
 
 Submodules
 ----------
 
-chipwhisperer.common.traces._base module
+chipwhisperer.common.api.CWCoreAPI module
 -------------------------------------------------
 
-.. automodule:: chipwhisperer.common.traces._base
+.. automodule:: chipwhisperer.common.api.CWCoreAPI
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.common.traces._cfgfile module
+chipwhisperer.common.api.ExtendedParameter module
 -------------------------------------------------------
 
-.. automodule:: chipwhisperer.common.traces._cfgfile
+.. automodule:: chipwhisperer.common.api.ExtendedParameter
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.common.traces.TraceContainerDPAv3 module
+chipwhisperer.common.api.ProjectFormat module
 ------------------------------------------------------
 
-.. automodule:: chipwhisperer.common.traces.TraceContainerDPAv3
+.. automodule:: chipwhisperer.common.api.ProjectFormat
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.common.traces.TraceContainerMySQL module
+chipwhisperer.common.api.TraceManager module
 ------------------------------------------------------
 
-.. automodule:: chipwhisperer.common.traces.TraceContainerMySQL
+.. automodule:: chipwhisperer.common.api.TraceManager
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.common.traces.TraceContainerNative module
+chipwhisperer.common.api.autoscript module
 -------------------------------------------------------
 
-.. automodule:: chipwhisperer.common.traces.TraceContainerNative
+.. automodule:: chipwhisperer.common.api.autoscript
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.common.traces.TraceContainerTypes module
+chipwhisperer.common.api.dictdiffer module
 ------------------------------------------------------
 
-.. automodule:: chipwhisperer.common.traces.TraceContainerTypes
+.. automodule:: chipwhisperer.common.api.dictdiffer
     :members:
     :undoc-members:
     :show-inheritance:
@@ -55,7 +55,7 @@ chipwhisperer.common.traces.TraceContainerTypes module
 Module contents
 ---------------
 
-.. automodule:: chipwhisperer.common.traces
+.. automodule:: chipwhisperer.common.api
     :members:
     :undoc-members:
     :show-inheritance:

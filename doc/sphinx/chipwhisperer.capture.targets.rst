@@ -1,21 +1,29 @@
 chipwhisperer.capture.targets package
 =====================================
 
+Subpackages
+-----------
+
+.. toctree::
+    chipwhisperer.capture.targets.simpleserial_readers
+	chipwhisperer.capture.targets.smartcard_protocols
+	chipwhisperer.capture.targets.smartcard_readers
+
 Submodules
 ----------
 
-chipwhisperer.capture.targets.ChipWhispererSPI module
+chipwhisperer.capture.targets.CW305 module
 -----------------------------------------------------
 
-.. automodule:: chipwhisperer.capture.targets.ChipWhispererSPI
+.. automodule:: chipwhisperer.capture.targets.CW305
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.capture.targets.ChipWhispererTargets module
+chipwhisperer.capture.targets.ChipwhispererSPI module
 ---------------------------------------------------------
 
-.. automodule:: chipwhisperer.capture.targets.ChipWhispererTargets
+.. automodule:: chipwhisperer.capture.targets.ChipwhispererSPI
     :members:
     :undoc-members:
     :show-inheritance:
@@ -52,10 +60,18 @@ chipwhisperer.capture.targets.SmartCard module
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.capture.targets.TargetTemplate module
+chipwhisperer.capture.targets._base module
 ---------------------------------------------------
 
-.. automodule:: chipwhisperer.capture.targets.TargetTemplate
+.. automodule:: chipwhisperer.capture.targets._base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+	
+chipwhisperer.capture.targets._smartcard_gui module
+---------------------------------------------------
+
+.. automodule:: chipwhisperer.capture.targets._smartcard_gui
     :members:
     :undoc-members:
     :show-inheritance:

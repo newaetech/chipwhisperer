@@ -5,13 +5,14 @@ Subpackages
 -----------
 
 .. toctree::
-
+    chipwhisperer.analyzer.attacks.cpa_algorithms
     chipwhisperer.analyzer.attacks.models
-
+    chipwhisperer.analyzer.attacks.profiling_algorithms
+    
 Submodules
 ----------
 
-chipwhisperer.analyzer.attacks.AttackBaseClass module
+chipwhisperer.analyzer.attacks._base module
 -----------------------------------------------------
 
 .. automodule:: chipwhisperer.analyzer.attacks.AttackBaseClass
@@ -19,7 +20,7 @@ chipwhisperer.analyzer.attacks.AttackBaseClass module
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.analyzer.attacks.AttackGenericParameters module
+chipwhisperer.analyzer.attacks._generic_parameters module
 -------------------------------------------------------------
 
 .. automodule:: chipwhisperer.analyzer.attacks.AttackGenericParameters
@@ -27,7 +28,7 @@ chipwhisperer.analyzer.attacks.AttackGenericParameters module
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.analyzer.attacks.AttackProgressDialog module
+chipwhisperer.analyzer.attacks._channel_estimation_attack module
 ----------------------------------------------------------
 
 .. automodule:: chipwhisperer.analyzer.attacks.AttackProgressDialog
@@ -35,7 +36,7 @@ chipwhisperer.analyzer.attacks.AttackProgressDialog module
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.analyzer.attacks.AttackStats module
+chipwhisperer.analyzer.attacks._stats module
 -------------------------------------------------
 
 .. automodule:: chipwhisperer.analyzer.attacks.AttackStats
@@ -43,56 +44,22 @@ chipwhisperer.analyzer.attacks.AttackStats module
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.analyzer.attacks.CPA module
+chipwhisperer.analyzer.attacks.cpa module
 -----------------------------------------
 
-.. automodule:: chipwhisperer.analyzer.attacks.CPA
+.. automodule:: chipwhisperer.analyzer.attacks.cpa
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.analyzer.attacks.CPAProgressive module
-----------------------------------------------------
 
-.. automodule:: chipwhisperer.analyzer.attacks.CPAProgressive
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-chipwhisperer.analyzer.attacks.CPASimpleLoop module
----------------------------------------------------
-
-.. automodule:: chipwhisperer.analyzer.attacks.CPASimpleLoop
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-chipwhisperer.analyzer.attacks.Profiling module
+chipwhisperer.analyzer.attacks.profiling module
 -----------------------------------------------
 
-.. automodule:: chipwhisperer.analyzer.attacks.Profiling
+.. automodule:: chipwhisperer.analyzer.attacks.profiling
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-chipwhisperer.analyzer.attacks.ProfilingTemplate module
--------------------------------------------------------
-
-.. automodule:: chipwhisperer.analyzer.attacks.ProfilingTemplate
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-chipwhisperer.analyzer.attacks.datanalysis module
--------------------------------------------------
-
-.. automodule:: chipwhisperer.analyzer.attacks.dataanalysis
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 
 Module contents
