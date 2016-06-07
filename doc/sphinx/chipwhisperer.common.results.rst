@@ -1,9 +1,6 @@
 chipwhisperer.common.results package
 ===================================
 
-Submodules
-----------
-
 chipwhisperer.common.results._plotdata module
 -------------------------------------------------
 
@@ -72,14 +69,6 @@ chipwhisperer.common.results.waveform_widget module
 -----------------------------------------------------------
 
 .. automodule:: chipwhisperer.common.results.waveform_widget
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: chipwhisperer.common.results
     :members:
     :undoc-members:
     :show-inheritance:

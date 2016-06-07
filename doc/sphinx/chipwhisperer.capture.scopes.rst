@@ -60,11 +60,3 @@ chipwhisperer.capture.scopes.VisaScope module
     :undoc-members:
     :show-inheritance:
 
-
-Module contents
----------------
-
-.. automodule:: chipwhisperer.capture.scopes
-    :members:
-    :undoc-members:
-    :show-inheritance:

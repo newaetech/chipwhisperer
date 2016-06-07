@@ -1,9 +1,6 @@
 chipwhisperer.common.ui package
 ===================================
 
-Submodules
-----------
-
 chipwhisperer.common.ui.CWMainGUI module
 -------------------------------------------------
 
@@ -120,15 +117,6 @@ chipwhisperer.common.ui.saveproject module
 -----------------------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.saveproject
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: chipwhisperer.common.ui
     :members:
     :undoc-members:
     :show-inheritance:

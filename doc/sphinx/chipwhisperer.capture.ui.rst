@@ -1,9 +1,6 @@
 chipwhisperer.capture.ui package
 ====================================
 
-Submodules
-----------
-
 chipwhisperer.capture.ui.CWCaptureGUI
 ------------------------------------------------------
 
@@ -19,12 +16,4 @@ chipwhisperer.capture.ui.EncryptionStatusMonitor module
     :members:
     :undoc-members:
     :show-inheritance:
-	
 
-Module contents
----------------
-
-.. automodule:: chipwhisperer.capture.ui
-    :members:
-    :undoc-members:
-    :show-inheritance:

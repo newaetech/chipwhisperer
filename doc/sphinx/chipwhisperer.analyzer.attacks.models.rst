@@ -27,12 +27,3 @@ chipwhisperer.analyzer.attacks.models.aes.key_schedule module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: chipwhisperer.analyzer.attacks.models
-    :members:
-    :undoc-members:
-    :show-inheritance:

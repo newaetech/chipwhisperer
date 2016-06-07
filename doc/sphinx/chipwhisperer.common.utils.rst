@@ -1,9 +1,6 @@
 chipwhisperer.common.utils package
 ===================================
 
-Submodules
-----------
-
 chipwhisperer.common.utils.aes_cipher module
 -------------------------------------------------
 
@@ -100,10 +97,3 @@ chipwhisperer.common.utils.util module
     :undoc-members:
     :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: chipwhisperer.common.utils
-    :members:
-    :undoc-members:
-    :show-inheritance:

@@ -27,12 +27,4 @@ chipwhisperer.capture.acq_patterns.critest module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: chipwhisperer.capture.acq_patterns
-    :members:
-    :undoc-members:
-    :show-inheritance:
+	

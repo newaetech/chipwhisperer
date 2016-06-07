@@ -76,11 +76,3 @@ chipwhisperer.capture.targets._smartcard_gui module
     :undoc-members:
     :show-inheritance:
 
-
-Module contents
----------------
-
-.. automodule:: chipwhisperer.capture.targets
-    :members:
-    :undoc-members:
-    :show-inheritance:

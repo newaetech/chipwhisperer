@@ -1,9 +1,6 @@
 chipwhisperer.common package
 ============================
 
-Subpackages
------------
-
 .. toctree::
 
     chipwhisperer.common.api
@@ -13,10 +10,3 @@ Subpackages
 	chipwhisperer.common.ui
 	chipwhisperer.common.utility
 
-Module contents
----------------
-
-.. automodule:: chipwhisperer.common
-    :members:
-    :undoc-members:
-    :show-inheritance:

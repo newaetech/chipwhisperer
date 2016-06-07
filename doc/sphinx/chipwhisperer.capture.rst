@@ -15,11 +15,3 @@ Subpackages
 	chipwhisperer.capture.ui
     chipwhisperer.capture.utils
 
-
-Module contents
----------------
-
-.. automodule:: chipwhisperer.capture
-    :members:
-    :undoc-members:
-    :show-inheritance:

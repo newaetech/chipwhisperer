@@ -43,12 +43,4 @@ chipwhisperer.analyzer.utils.attackscriptgen module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: chipwhisperer.analyzer.utils
-    :members:
-    :undoc-members:
-    :show-inheritance:
+	

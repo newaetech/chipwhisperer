@@ -1,9 +1,6 @@
 chipwhisperer.common.api package
 ===================================
 
-Submodules
-----------
-
 chipwhisperer.common.api.CWCoreAPI module
 -------------------------------------------------
 
@@ -48,14 +45,6 @@ chipwhisperer.common.api.dictdiffer module
 ------------------------------------------------------
 
 .. automodule:: chipwhisperer.common.api.dictdiffer
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: chipwhisperer.common.api
     :members:
     :undoc-members:
     :show-inheritance:

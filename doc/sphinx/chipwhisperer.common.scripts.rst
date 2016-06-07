@@ -1,9 +1,6 @@
 chipwhisperer.common.scripts package
 ===================================
 
-Submodules
-----------
-
 chipwhisperer.common.scripts.base module
 -------------------------------------------------
 
@@ -12,10 +9,3 @@ chipwhisperer.common.scripts.base module
     :undoc-members:
     :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: chipwhisperer.common.scripts
-    :members:
-    :undoc-members:
-    :show-inheritance:

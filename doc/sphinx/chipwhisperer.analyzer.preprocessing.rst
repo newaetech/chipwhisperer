@@ -90,12 +90,3 @@ chipwhisperer.analyzer.preprocessing.ResyncSAD module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: chipwhisperer.analyzer.preprocessing
-    :members:
-    :undoc-members:
-    :show-inheritance:

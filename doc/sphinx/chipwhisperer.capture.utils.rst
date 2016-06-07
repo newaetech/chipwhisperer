@@ -1,8 +1,6 @@
 chipwhisperer.capture.utils package
 ===================================
 
-Submodules
-----------
 chipwhisperer.capture.utils.AVRProgrammer module
 --------------------------------------------------
 
@@ -48,15 +46,6 @@ chipwhisperer.capture.utils.XMEGAProgrammer module
 -------------------------------------------------------
 
 .. automodule:: chipwhisperer.capture.utils.XMEGAProgrammer
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: chipwhisperer.capture.utils
     :members:
     :undoc-members:
     :show-inheritance:

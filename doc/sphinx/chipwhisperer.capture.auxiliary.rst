@@ -44,11 +44,3 @@ chipwhisperer.capture.auxiliary.ResetCW1173Read module
     :undoc-members:
     :show-inheritance:
 	
-
-Module contents
----------------
-
-.. automodule:: chipwhisperer.capture.auxiliary
-    :members:
-    :undoc-members:
-    :show-inheritance:
