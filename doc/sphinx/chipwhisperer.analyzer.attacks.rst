@@ -55,3 +55,7 @@ chipwhisperer.analyzer.attacks.profiling module
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: chipwhisperer.analyzer.attacks
+    :members:
+    :undoc-members:
+    :show-inheritance:
