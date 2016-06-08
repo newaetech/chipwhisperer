@@ -29,7 +29,6 @@ except ImportError:
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../../software/'))
 sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/'))
 sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer'))
@@ -40,6 +39,22 @@ sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/attack
 sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/preprocessing'))
 sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/ui'))
 sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/utils'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture/acq_patterns'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture/api'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture/auxiliary'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture/scopes'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture/targets'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture/ui'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture/utils'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/common'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/common/api'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/common/results'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/common/scripts'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/common/traces'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/common/ui'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/common/utils'))
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
