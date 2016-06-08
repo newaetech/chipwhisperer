@@ -1,0 +1,6 @@
+pyqtgraph
+configobj
+pyusb
+pyside
+pyconfigobj
+pyserial

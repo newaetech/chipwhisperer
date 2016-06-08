@@ -1,0 +1,91 @@
+sphinx-build -b html -d _build/doctrees   . _build/html
+Running Sphinx v1.2.3
+loading pickled environment... done
+building [html]: targets for 0 source files that are out of date
+updating environment: 0 added, 29 changed, 0 removed
+reading sources... [  3%] chipwhisperer.analyzer.attacks
+reading sources... [  6%] chipwhisperer.analyzer.attacks.cpa_algorithms
+reading sources... [ 10%] chipwhisperer.analyzer.attacks.profiling_algorithms
+reading sources... [ 13%] chipwhisperer.analyzer.preprocessing
+reading sources... [ 17%] chipwhisperer.analyzer.scripts
+reading sources... [ 20%] chipwhisperer.analyzer.ui
+reading sources... [ 24%] chipwhisperer.analyzer.utils
+reading sources... [ 27%] chipwhisperer.analyzer.utils.TraceExplorerScripts
+reading sources... [ 31%] chipwhisperer.capture.acq_patterns
+reading sources... [ 34%] chipwhisperer.capture.auxiliary
+reading sources... [ 37%] chipwhisperer.capture.scopes
+reading sources... [ 41%] chipwhisperer.capture.scopes.cwhardware
+reading sources... [ 44%] chipwhisperer.capture.scopes.openadc_interface
+reading sources... [ 48%] chipwhisperer.capture.scopes.visascope_interface
+reading sources... [ 51%] chipwhisperer.capture.targets
+reading sources... [ 55%] chipwhisperer.capture.targets.simpleserial_readers
+reading sources... [ 58%] chipwhisperer.capture.targets.smartcard_protocols
+reading sources... [ 62%] chipwhisperer.capture.targets.smartcard_readers
+reading sources... [ 65%] chipwhisperer.capture.ui
+reading sources... [ 68%] chipwhisperer.capture.utils
+reading sources... [ 72%] chipwhisperer.common.api
+reading sources... [ 75%] chipwhisperer.common.results
+reading sources... [ 79%] chipwhisperer.common.scripts
+reading sources... [ 82%] chipwhisperer.common.traces
+reading sources... [ 86%] chipwhisperer.common.ui
+ERROR: PySide is required for this program
+reading sources... [ 89%] chipwhisperer.common.utils
+*****************************************
+*****************************************
+PySerial not found. Install from https://pypi.python.org/pypi/pyserial or http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyserial
+*****************************************
+*****************************************
+reading sources... [ 93%] chipwhisperer.hardware.naeusb
+reading sources... [ 96%] newaedocs
+reading sources... [100%] tutorialsadvanced
+
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... done
+preparing documents... done
+writing output... [  2%] chipwhisperer.analyzer
+writing output... [  5%] chipwhisperer.analyzer.attacks
+writing output... [  8%] chipwhisperer.analyzer.attacks.cpa_algorithms
+writing output... [ 11%] chipwhisperer.analyzer.attacks.profiling_algorithms
+writing output... [ 14%] chipwhisperer.analyzer.preprocessing
+writing output... [ 17%] chipwhisperer.analyzer.scripts
+writing output... [ 20%] chipwhisperer.analyzer.ui
+writing output... [ 22%] chipwhisperer.analyzer.utils
+writing output... [ 25%] chipwhisperer.analyzer.utils.TraceExplorerScripts
+writing output... [ 28%] chipwhisperer.capture
+writing output... [ 31%] chipwhisperer.capture.acq_patterns
+writing output... [ 34%] chipwhisperer.capture.auxiliary
+writing output... [ 37%] chipwhisperer.capture.scopes
+writing output... [ 40%] chipwhisperer.capture.scopes.cwhardware
+writing output... [ 42%] chipwhisperer.capture.scopes.openadc_interface
+writing output... [ 45%] chipwhisperer.capture.scopes.visascope_interface
+writing output... [ 48%] chipwhisperer.capture.targets
+writing output... [ 51%] chipwhisperer.capture.targets.simpleserial_readers
+writing output... [ 54%] chipwhisperer.capture.targets.smartcard_protocols
+writing output... [ 57%] chipwhisperer.capture.targets.smartcard_readers
+writing output... [ 60%] chipwhisperer.capture.ui
+writing output... [ 62%] chipwhisperer.capture.utils
+writing output... [ 65%] chipwhisperer.common
+writing output... [ 68%] chipwhisperer.common.api
+writing output... [ 71%] chipwhisperer.common.results
+writing output... [ 74%] chipwhisperer.common.scripts
+writing output... [ 77%] chipwhisperer.common.traces
+writing output... [ 80%] chipwhisperer.common.ui
+writing output... [ 82%] chipwhisperer.common.utils
+writing output... [ 85%] chipwhisperer.hardware
+writing output... [ 88%] chipwhisperer.hardware.naeusb
+writing output... [ 91%] index
+writing output... [ 94%] index_backup
+writing output... [ 97%] newaedocs
+writing output... [100%] tutorialsadvanced
+
+writing additional files... (18 module code pages) _modules/index genindex py-modindex search
+copying images... [100%] images/cw_banner_tagline.png
+
+copying static files... done
+copying extra files... done
+dumping search index... done
+dumping object inventory... done
+build succeeded, 137 warnings.
+
+Build finished. The HTML pages are in _build/html.
