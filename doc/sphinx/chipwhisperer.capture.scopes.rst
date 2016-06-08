@@ -3,8 +3,8 @@ chipwhisperer.capture.scopes package
 
 .. toctree::
     chipwhisperer.analyzer.scopes.cwhardware
-	chipwhisperer.analyzer.scopes.openadc_interface
-	chipwhisperer.analyzer.scopes.visascope_interface
+    chipwhisperer.analyzer.scopes.openadc_interface
+    chipwhisperer.analyzer.scopes.visascope_interface
 
 chipwhisperer.capture.scopes._base module
 ------------------------------------------------------
@@ -13,7 +13,7 @@ chipwhisperer.capture.scopes._base module
     :members:
     :undoc-members:
     :show-inheritance:
-	
+
 chipwhisperer.capture.scopes._qt module
 ------------------------------------------------------
 
@@ -21,7 +21,7 @@ chipwhisperer.capture.scopes._qt module
     :members:
     :undoc-members:
     :show-inheritance:
-	
+
 chipwhisperer.capture.scopes._OpenADCInterface module
 ------------------------------------------------------
 
