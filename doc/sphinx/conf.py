@@ -33,7 +33,7 @@ sys.path.insert(0, os.path.abspath('../../software/'))
 sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/'))
 sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer'))
 sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/attacks'))
-ys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/attacks/models'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/attacks/models'))
 sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/attacks/profiling_algorithm'))
 sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/attacks/cpa_algorithm'))
 sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/preprocessing'))
@@ -74,7 +74,7 @@ extensions = [
 ]
 if spelling is not None:
     extensions.append('sphinxcontrib.spelling')
-	
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
