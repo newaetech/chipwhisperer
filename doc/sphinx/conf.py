@@ -15,10 +15,45 @@
 import sys
 import os
 
+try:
+    import sphinx_rtd_theme
+except ImportError:
+    sphinx_rtd_theme = None
+
+try:
+    from sphinxcontrib import spelling
+except ImportError:
+    spelling = None
+	
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../../software/'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/attacks'))
+ys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/attacks/models'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/attacks/profiling_algorithm'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/attacks/cpa_algorithm'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/preprocessing'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/ui'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/utils'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture/acq_patterns'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture/api'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture/auxiliary'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture/scopes'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture/targets'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture/ui'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/capture/utils'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/common'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/common/api'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/common/results'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/common/scripts'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/common/traces'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/common/ui'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/common/utils'))
 
 # -- General configuration ------------------------------------------------
 
@@ -37,7 +72,9 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
 ]
-
+if spelling is not None:
+    extensions.append('sphinxcontrib.spelling')
+	
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -106,7 +143,11 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+if sphinx_rtd_theme:
+    html_theme = "sphinx_rtd_theme"
+    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+else:
+    html_theme = "default"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
