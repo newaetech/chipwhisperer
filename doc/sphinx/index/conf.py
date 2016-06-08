@@ -32,6 +32,14 @@ except ImportError:
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../../software/'))
 sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/attacks'))
+ys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/attacks/models'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/attacks/profiling_algorithm'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/attacks/cpa_algorithm'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/preprocessing'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/ui'))
+sys.path.insert(0, os.path.abspath('../../software/chipwhisperer/analyzer/utils'))
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
