@@ -1,21 +1,8 @@
-chipwhisperer.common.traces 
+chipwhisperer.common.traces package
 ===================================
 
-chipwhisperer.common.traces._base module
--------------------------------------------------
-
-.. automodule:: chipwhisperer.common.traces._base
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-chipwhisperer.common.traces._cfgfile module
--------------------------------------------------------
-
-.. automodule:: chipwhisperer.common.traces._cfgfile
-    :members:
-    :undoc-members:
-    :show-inheritance:
+Submodules
+----------
 
 chipwhisperer.common.traces.TraceContainerDPAv3 module
 ------------------------------------------------------
@@ -45,6 +32,15 @@ chipwhisperer.common.traces.TraceContainerTypes module
 ------------------------------------------------------
 
 .. automodule:: chipwhisperer.common.traces.TraceContainerTypes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: chipwhisperer.common.traces
     :members:
     :undoc-members:
     :show-inheritance:

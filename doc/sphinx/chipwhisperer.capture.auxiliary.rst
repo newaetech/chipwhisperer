@@ -1,13 +1,8 @@
 chipwhisperer.capture.auxiliary package
 =======================================
 
-chipwhisperer.capture.auxiliary._base module
---------------------------------------------------------
-
-.. automodule:: chipwhisperer.capture.auxiliary._base
-    :members:
-    :undoc-members:
-    :show-inheritance:
+Submodules
+----------
 
 chipwhisperer.capture.auxiliary.FrequencyMeasure module
 -------------------------------------------------------
@@ -18,26 +13,34 @@ chipwhisperer.capture.auxiliary.FrequencyMeasure module
     :show-inheritance:
 
 chipwhisperer.capture.auxiliary.GPIOToggle module
--------------------------------------------------------
+-------------------------------------------------
 
 .. automodule:: chipwhisperer.capture.auxiliary.GPIOToggle
     :members:
     :undoc-members:
     :show-inheritance:
-	
+
 chipwhisperer.capture.auxiliary.ResetAVR module
--------------------------------------------------------
+-----------------------------------------------
 
 .. automodule:: chipwhisperer.capture.auxiliary.ResetAVR
     :members:
     :undoc-members:
     :show-inheritance:
-	
+
 chipwhisperer.capture.auxiliary.ResetCW1173Read module
--------------------------------------------------------
+------------------------------------------------------
 
 .. automodule:: chipwhisperer.capture.auxiliary.ResetCW1173Read
     :members:
     :undoc-members:
     :show-inheritance:
-	
+
+
+Module contents
+---------------
+
+.. automodule:: chipwhisperer.capture.auxiliary
+    :members:
+    :undoc-members:
+    :show-inheritance:

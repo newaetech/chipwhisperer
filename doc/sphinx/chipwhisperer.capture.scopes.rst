@@ -1,57 +1,47 @@
 chipwhisperer.capture.scopes package
 ====================================
 
+Subpackages
+-----------
+
 .. toctree::
-    chipwhisperer.analyzer.scopes.cwhardware
-    chipwhisperer.analyzer.scopes.openadc_interface
-    chipwhisperer.analyzer.scopes.visascope_interface
 
-chipwhisperer.capture.scopes._base.ScopeTemplate module
-------------------------------------------------------
+    chipwhisperer.capture.scopes.cwhardware
+    chipwhisperer.capture.scopes.openadc_interface
+    chipwhisperer.capture.scopes.visascope_interface
 
-.. automodule:: chipwhisperer.capture.scopes._base.ScopeTemplate
-    :members:
-    :undoc-members:
-    :show-inheritance:
+Submodules
+----------
 
-chipwhisperer.capture.scopes._qt.OpenADCQt module
-------------------------------------------------------
-
-.. automodule:: chipwhisperer.capture.scopes._qt.OpenADCQt
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-chipwhisperer.capture.scopes._OpenADCInterface module
-------------------------------------------------------
-
-.. automodule:: chipwhisperer.capture.scopes._OpenADCInterface
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-chipwhisperer.capture.scopes.OpenADC.OpenADCInterface module
+chipwhisperer.capture.scopes.OpenADC module
 -------------------------------------------
 
-.. automodule:: chipwhisperer.capture.scopes.OpenADC.OpenADCInterface
+.. automodule:: chipwhisperer.capture.scopes.OpenADC
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.capture.scopes.PicoScope.PicoScope module
+chipwhisperer.capture.scopes.PicoScope module
 ---------------------------------------------
 
-.. automodule:: chipwhisperer.capture.scopes.PicoScope.PicoScope
+.. automodule:: chipwhisperer.capture.scopes.PicoScope
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.capture.scopes.VisaScope.VisaScope module
+chipwhisperer.capture.scopes.VisaScope module
 ---------------------------------------------
 
-.. automodule:: chipwhisperer.capture.scopes.VisaScope.VisaScope
+.. automodule:: chipwhisperer.capture.scopes.VisaScope
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: chipwhisperer.capture.scopes
+    :members:
+    :undoc-members:
+    :show-inheritance:

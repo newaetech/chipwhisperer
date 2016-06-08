@@ -1,16 +1,11 @@
-chipwhisperer.common.results 
-===================================
+chipwhisperer.common.results package
+====================================
 
-chipwhisperer.common.results._plotdata module
--------------------------------------------------
-
-.. automodule:: chipwhisperer.common.results._plotdata
-    :members:
-    :undoc-members:
-    :show-inheritance:
+Submodules
+----------
 
 chipwhisperer.common.results.attacksettings module
--------------------------------------------------------
+--------------------------------------------------
 
 .. automodule:: chipwhisperer.common.results.attacksettings
     :members:
@@ -18,7 +13,7 @@ chipwhisperer.common.results.attacksettings module
     :show-inheritance:
 
 chipwhisperer.common.results.base module
-------------------------------------------------------
+----------------------------------------
 
 .. automodule:: chipwhisperer.common.results.base
     :members:
@@ -26,7 +21,7 @@ chipwhisperer.common.results.base module
     :show-inheritance:
 
 chipwhisperer.common.results.corrvstraceplot module
-------------------------------------------------------
+---------------------------------------------------
 
 .. automodule:: chipwhisperer.common.results.corrvstraceplot
     :members:
@@ -34,7 +29,7 @@ chipwhisperer.common.results.corrvstraceplot module
     :show-inheritance:
 
 chipwhisperer.common.results.outputvstimeplot module
--------------------------------------------------------
+----------------------------------------------------
 
 .. automodule:: chipwhisperer.common.results.outputvstimeplot
     :members:
@@ -42,7 +37,7 @@ chipwhisperer.common.results.outputvstimeplot module
     :show-inheritance:
 
 chipwhisperer.common.results.pgevstraceplot module
-------------------------------------------------------
+--------------------------------------------------
 
 .. automodule:: chipwhisperer.common.results.pgevstraceplot
     :members:
@@ -50,7 +45,7 @@ chipwhisperer.common.results.pgevstraceplot module
     :show-inheritance:
 
 chipwhisperer.common.results.save module
------------------------------------------------
+----------------------------------------
 
 .. automodule:: chipwhisperer.common.results.save
     :members:
@@ -58,7 +53,7 @@ chipwhisperer.common.results.save module
     :show-inheritance:
 
 chipwhisperer.common.results.table module
------------------------------------------------------
+-----------------------------------------
 
 .. automodule:: chipwhisperer.common.results.table
     :members:
@@ -66,9 +61,18 @@ chipwhisperer.common.results.table module
     :show-inheritance:
 
 chipwhisperer.common.results.waveform_widget module
------------------------------------------------------------
+---------------------------------------------------
 
 .. automodule:: chipwhisperer.common.results.waveform_widget
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: chipwhisperer.common.results
     :members:
     :undoc-members:
     :show-inheritance:

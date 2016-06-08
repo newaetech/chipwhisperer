@@ -1,28 +1,30 @@
 chipwhisperer.capture.acq_patterns package
-====================================
+==========================================
 
-chipwhisperer.capture.acq_patterns._base module
-------------------------------------------------------
+Submodules
+----------
 
-.. automodule:: chipwhisperer.acq_patterns._base
-    :members:
-    :undoc-members:
-    :show-inheritance:
-	
 chipwhisperer.capture.acq_patterns.basic module
-------------------------------------------------------
+-----------------------------------------------
 
 .. automodule:: chipwhisperer.capture.acq_patterns.basic
     :members:
     :undoc-members:
     :show-inheritance:
 
+chipwhisperer.capture.acq_patterns.crittest module
+--------------------------------------------------
 
-chipwhisperer.capture.acq_patterns.critest module
--------------------------------------------
-
-.. automodule:: chipwhisperer.capture.acq_patterns.critest
+.. automodule:: chipwhisperer.capture.acq_patterns.crittest
     :members:
     :undoc-members:
     :show-inheritance:
-	
+
+
+Module contents
+---------------
+
+.. automodule:: chipwhisperer.capture.acq_patterns
+    :members:
+    :undoc-members:
+    :show-inheritance:

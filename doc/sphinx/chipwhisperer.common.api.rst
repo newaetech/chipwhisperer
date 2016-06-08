@@ -1,40 +1,43 @@
-chipwhisperer.common.api 
-===================================
+chipwhisperer.common.api package
+================================
 
-chipwhisperer.common.api.CWCoreAPI.CWCoreAPI module
--------------------------------------------------------
+Submodules
+----------
 
-.. automodule:: chipwhisperer.common.api.CWCoreAPI.CWCoreAPI
+chipwhisperer.common.api.CWCoreAPI module
+-----------------------------------------
+
+.. automodule:: chipwhisperer.common.api.CWCoreAPI
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.common.api.ExtendedParameter.ExtendedParameter module
--------------------------------------------------------
+chipwhisperer.common.api.ExtendedParameter module
+-------------------------------------------------
 
-.. automodule:: chipwhisperer.common.api.ExtendedParameter.ExtendedParameter
+.. automodule:: chipwhisperer.common.api.ExtendedParameter
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.common.api.ProjectFormat.ProjectFormat module
-------------------------------------------------------
+chipwhisperer.common.api.ProjectFormat module
+---------------------------------------------
 
-.. automodule:: chipwhisperer.common.api.ProjectFormat.ProjectFormat
+.. automodule:: chipwhisperer.common.api.ProjectFormat
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.common.api.TraceManager.TraceManager module
-------------------------------------------------------
+chipwhisperer.common.api.TraceManager module
+--------------------------------------------
 
-.. automodule:: chipwhisperer.common.api.TraceManager.TraceManager
+.. automodule:: chipwhisperer.common.api.TraceManager
     :members:
     :undoc-members:
     :show-inheritance:
 
 chipwhisperer.common.api.autoscript module
--------------------------------------------------------
+------------------------------------------
 
 .. automodule:: chipwhisperer.common.api.autoscript
     :members:
@@ -42,9 +45,18 @@ chipwhisperer.common.api.autoscript module
     :show-inheritance:
 
 chipwhisperer.common.api.dictdiffer module
-------------------------------------------------------
+------------------------------------------
 
 .. automodule:: chipwhisperer.common.api.dictdiffer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: chipwhisperer.common.api
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,8 +1,11 @@
-chipwhisperer.common.ui 
-===================================
+chipwhisperer.common.ui package
+===============================
+
+Submodules
+----------
 
 chipwhisperer.common.ui.CWMainGUI module
--------------------------------------------------
+----------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.CWMainGUI
     :members:
@@ -10,7 +13,7 @@ chipwhisperer.common.ui.CWMainGUI module
     :show-inheritance:
 
 chipwhisperer.common.ui.GraphWidget module
--------------------------------------------------------
+------------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.GraphWidget
     :members:
@@ -18,7 +21,7 @@ chipwhisperer.common.ui.GraphWidget module
     :show-inheritance:
 
 chipwhisperer.common.ui.HelpWindow module
-------------------------------------------------------
+-----------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.HelpWindow
     :members:
@@ -26,7 +29,7 @@ chipwhisperer.common.ui.HelpWindow module
     :show-inheritance:
 
 chipwhisperer.common.ui.KeyScheduleDialog module
-------------------------------------------------------
+------------------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.KeyScheduleDialog
     :members:
@@ -34,7 +37,7 @@ chipwhisperer.common.ui.KeyScheduleDialog module
     :show-inheritance:
 
 chipwhisperer.common.ui.ParameterTypesCustom module
--------------------------------------------------------
+---------------------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.ParameterTypesCustom
     :members:
@@ -42,7 +45,7 @@ chipwhisperer.common.ui.ParameterTypesCustom module
     :show-inheritance:
 
 chipwhisperer.common.ui.ProgressBar module
-------------------------------------------------------
+------------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.ProgressBar
     :members:
@@ -50,7 +53,7 @@ chipwhisperer.common.ui.ProgressBar module
     :show-inheritance:
 
 chipwhisperer.common.ui.ProjectTextEditor module
------------------------------------------------
+------------------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.ProjectTextEditor
     :members:
@@ -58,7 +61,7 @@ chipwhisperer.common.ui.ProjectTextEditor module
     :show-inheritance:
 
 chipwhisperer.common.ui.PythonConsole module
------------------------------------------------------
+--------------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.PythonConsole
     :members:
@@ -66,7 +69,7 @@ chipwhisperer.common.ui.PythonConsole module
     :show-inheritance:
 
 chipwhisperer.common.ui.TraceManagerDialog module
------------------------------------------------------------
+-------------------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.TraceManagerDialog
     :members:
@@ -74,23 +77,23 @@ chipwhisperer.common.ui.TraceManagerDialog module
     :show-inheritance:
 
 chipwhisperer.common.ui.TraceManagerImport module
------------------------------------------------------
+-------------------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.TraceManagerImport
     :members:
     :undoc-members:
     :show-inheritance:
-	
+
 chipwhisperer.common.ui.ValidationDialog module
------------------------------------------------------
+-----------------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.ValidationDialog
     :members:
     :undoc-members:
     :show-inheritance:
-	
+
 chipwhisperer.common.ui.projectdiffwidget module
------------------------------------------------------
+------------------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.projectdiffwidget
     :members:
@@ -98,7 +101,7 @@ chipwhisperer.common.ui.projectdiffwidget module
     :show-inheritance:
 
 chipwhisperer.common.ui.pysidegraph module
------------------------------------------------------
+------------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.pysidegraph
     :members:
@@ -106,7 +109,7 @@ chipwhisperer.common.ui.pysidegraph module
     :show-inheritance:
 
 chipwhisperer.common.ui.qrc_resources module
------------------------------------------------------
+--------------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.qrc_resources
     :members:
@@ -114,9 +117,18 @@ chipwhisperer.common.ui.qrc_resources module
     :show-inheritance:
 
 chipwhisperer.common.ui.saveproject module
------------------------------------------------------
+------------------------------------------
 
 .. automodule:: chipwhisperer.common.ui.saveproject
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: chipwhisperer.common.ui
     :members:
     :undoc-members:
     :show-inheritance:

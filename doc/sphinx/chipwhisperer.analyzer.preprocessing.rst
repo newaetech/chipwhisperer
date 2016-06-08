@@ -1,13 +1,8 @@
 chipwhisperer.analyzer.preprocessing package
 ============================================
 
-chipwhisperer.analyzer.preprocessing._base module
-----------------------------------------------------------
-
-.. automodule:: chipwhisperer.analyzer.preprocessing._base
-    :members:
-    :undoc-members:
-    :show-inheritance:
+Submodules
+----------
 
 chipwhisperer.analyzer.preprocessing.AddNoiseJitter module
 ----------------------------------------------------------
@@ -34,9 +29,9 @@ chipwhisperer.analyzer.preprocessing.DecimationClockRecovery module
     :show-inheritance:
 
 chipwhisperer.analyzer.preprocessing.DecimationFixed module
--------------------------------------------------------------------
+-----------------------------------------------------------
 
-.. automodule:: chipwhisperer.analyzer.preprocessing.DecimationClockRecovery
+.. automodule:: chipwhisperer.analyzer.preprocessing.DecimationFixed
     :members:
     :undoc-members:
     :show-inheritance:
@@ -58,7 +53,7 @@ chipwhisperer.analyzer.preprocessing.Normalize module
     :show-inheritance:
 
 chipwhisperer.analyzer.preprocessing.ResyncCrossCorrelation module
----------------------------------------------------------
+------------------------------------------------------------------
 
 .. automodule:: chipwhisperer.analyzer.preprocessing.ResyncCrossCorrelation
     :members:
@@ -66,7 +61,7 @@ chipwhisperer.analyzer.preprocessing.ResyncCrossCorrelation module
     :show-inheritance:
 
 chipwhisperer.analyzer.preprocessing.ResyncPeakDetect module
----------------------------------------------------------
+------------------------------------------------------------
 
 .. automodule:: chipwhisperer.analyzer.preprocessing.ResyncPeakDetect
     :members:
@@ -74,7 +69,7 @@ chipwhisperer.analyzer.preprocessing.ResyncPeakDetect module
     :show-inheritance:
 
 chipwhisperer.analyzer.preprocessing.ResyncResampleZC module
----------------------------------------------------------
+------------------------------------------------------------
 
 .. automodule:: chipwhisperer.analyzer.preprocessing.ResyncResampleZC
     :members:
@@ -85,6 +80,15 @@ chipwhisperer.analyzer.preprocessing.ResyncSAD module
 -----------------------------------------------------
 
 .. automodule:: chipwhisperer.analyzer.preprocessing.ResyncSAD
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: chipwhisperer.analyzer.preprocessing
     :members:
     :undoc-members:
     :show-inheritance:

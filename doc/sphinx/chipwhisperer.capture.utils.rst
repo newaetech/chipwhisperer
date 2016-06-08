@@ -1,8 +1,11 @@
-chipwhisperer.capture.utils 
+chipwhisperer.capture.utils package
 ===================================
 
+Submodules
+----------
+
 chipwhisperer.capture.utils.AVRProgrammer module
---------------------------------------------------
+------------------------------------------------
 
 .. automodule:: chipwhisperer.capture.utils.AVRProgrammer
     :members:
@@ -10,7 +13,7 @@ chipwhisperer.capture.utils.AVRProgrammer module
     :show-inheritance:
 
 chipwhisperer.capture.utils.GlitchExplorerDialog module
---------------------------------------------------
+-------------------------------------------------------
 
 .. automodule:: chipwhisperer.capture.utils.GlitchExplorerDialog
     :members:
@@ -18,13 +21,12 @@ chipwhisperer.capture.utils.GlitchExplorerDialog module
     :show-inheritance:
 
 chipwhisperer.capture.utils.IntelHex module
---------------------------------------------------
+-------------------------------------------
 
 .. automodule:: chipwhisperer.capture.utils.IntelHex
     :members:
     :undoc-members:
     :show-inheritance:
-	
 
 chipwhisperer.capture.utils.SerialProtocols module
 --------------------------------------------------
@@ -43,9 +45,18 @@ chipwhisperer.capture.utils.SerialTerminalDialog module
     :show-inheritance:
 
 chipwhisperer.capture.utils.XMEGAProgrammer module
--------------------------------------------------------
+--------------------------------------------------
 
 .. automodule:: chipwhisperer.capture.utils.XMEGAProgrammer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: chipwhisperer.capture.utils
     :members:
     :undoc-members:
     :show-inheritance:

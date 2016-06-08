@@ -1,5 +1,8 @@
 chipwhisperer.capture.api package
-====================================
+=================================
+
+Submodules
+----------
 
 chipwhisperer.capture.api.AcquisitionController module
 ------------------------------------------------------
@@ -8,4 +11,12 @@ chipwhisperer.capture.api.AcquisitionController module
     :members:
     :undoc-members:
     :show-inheritance:
-	
+
+
+Module contents
+---------------
+
+.. automodule:: chipwhisperer.capture.api
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,24 +1,27 @@
-chipwhisperer.common.utils 
-===================================
+chipwhisperer.common.utils package
+==================================
+
+Submodules
+----------
 
 chipwhisperer.common.utils.aes_cipher module
--------------------------------------------------
+--------------------------------------------
 
 .. automodule:: chipwhisperer.common.utils.aes_cipher
     :members:
     :undoc-members:
     :show-inheritance:
 
-chipwhisperer.common.utils.aes_table module
--------------------------------------------------------
+chipwhisperer.common.utils.aes_tables module
+--------------------------------------------
 
-.. automodule:: chipwhisperer.common.utils.aes_table
+.. automodule:: chipwhisperer.common.utils.aes_tables
     :members:
     :undoc-members:
     :show-inheritance:
 
 chipwhisperer.common.utils.analysissource module
-------------------------------------------------------
+------------------------------------------------
 
 .. automodule:: chipwhisperer.common.utils.analysissource
     :members:
@@ -26,7 +29,7 @@ chipwhisperer.common.utils.analysissource module
     :show-inheritance:
 
 chipwhisperer.common.utils.parameters module
-------------------------------------------------------
+--------------------------------------------
 
 .. automodule:: chipwhisperer.common.utils.parameters
     :members:
@@ -34,7 +37,7 @@ chipwhisperer.common.utils.parameters module
     :show-inheritance:
 
 chipwhisperer.common.utils.pluginmanager module
--------------------------------------------------------
+-----------------------------------------------
 
 .. automodule:: chipwhisperer.common.utils.pluginmanager
     :members:
@@ -42,7 +45,7 @@ chipwhisperer.common.utils.pluginmanager module
     :show-inheritance:
 
 chipwhisperer.common.utils.qt_tweaks module
-------------------------------------------------------
+-------------------------------------------
 
 .. automodule:: chipwhisperer.common.utils.qt_tweaks
     :members:
@@ -50,7 +53,7 @@ chipwhisperer.common.utils.qt_tweaks module
     :show-inheritance:
 
 chipwhisperer.common.utils.serialport module
------------------------------------------------
+--------------------------------------------
 
 .. automodule:: chipwhisperer.common.utils.serialport
     :members:
@@ -58,7 +61,7 @@ chipwhisperer.common.utils.serialport module
     :show-inheritance:
 
 chipwhisperer.common.utils.timer module
------------------------------------------------------
+---------------------------------------
 
 .. automodule:: chipwhisperer.common.utils.timer
     :members:
@@ -66,7 +69,7 @@ chipwhisperer.common.utils.timer module
     :show-inheritance:
 
 chipwhisperer.common.utils.tracereader_dpacontestv3 module
------------------------------------------------------------
+----------------------------------------------------------
 
 .. automodule:: chipwhisperer.common.utils.tracereader_dpacontestv3
     :members:
@@ -74,7 +77,7 @@ chipwhisperer.common.utils.tracereader_dpacontestv3 module
     :show-inheritance:
 
 chipwhisperer.common.utils.tracereader_native module
------------------------------------------------------
+----------------------------------------------------
 
 .. automodule:: chipwhisperer.common.utils.tracereader_native
     :members:
@@ -82,7 +85,7 @@ chipwhisperer.common.utils.tracereader_native module
     :show-inheritance:
 
 chipwhisperer.common.utils.tracesource module
------------------------------------------------------
+---------------------------------------------
 
 .. automodule:: chipwhisperer.common.utils.tracesource
     :members:
@@ -90,10 +93,18 @@ chipwhisperer.common.utils.tracesource module
     :show-inheritance:
 
 chipwhisperer.common.utils.util module
------------------------------------------------------
+--------------------------------------
 
 .. automodule:: chipwhisperer.common.utils.util
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: chipwhisperer.common.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:

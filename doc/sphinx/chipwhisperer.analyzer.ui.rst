@@ -1,11 +1,22 @@
 chipwhisperer.analyzer.ui package
-======================================
-  
-chipwhisperer.analyzer.ui.CWAnalyzer
------------------------------------------------------
+=================================
 
-.. automodule:: chipwhisperer.analyzer.ui.CWAnalyzer
+Submodules
+----------
+
+chipwhisperer.analyzer.ui.CWAnalyzerGUI module
+----------------------------------------------
+
+.. automodule:: chipwhisperer.analyzer.ui.CWAnalyzerGUI
     :members:
     :undoc-members:
     :show-inheritance:
-	
+
+
+Module contents
+---------------
+
+.. automodule:: chipwhisperer.analyzer.ui
+    :members:
+    :undoc-members:
+    :show-inheritance:
