@@ -2,7 +2,7 @@ chipwhisperer.common.api
 ===================================
 
 chipwhisperer.common.api.CWCoreAPI.CWCoreAPI module
--------------------------------------------------
+-------------------------------------------------------
 
 .. automodule:: chipwhisperer.common.api.CWCoreAPI.CWCoreAPI
     :members:
