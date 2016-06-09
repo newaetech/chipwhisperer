@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.2.0">
+<eagle version="7.4.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -17832,9 +17832,9 @@ We've spent an enormous amount of time creating and checking these footprints an
 <instance part="JP5" gate="G$1" x="175.26" y="55.88"/>
 <instance part="JP6" gate="G$1" x="175.26" y="48.26"/>
 <instance part="R5" gate="G$1" x="132.08" y="119.38"/>
-<instance part="R6" gate="G$1" x="58.42" y="149.86" rot="R270"/>
-<instance part="R7" gate="G$1" x="63.5" y="144.78"/>
-<instance part="R8" gate="G$1" x="63.5" y="154.94"/>
+<instance part="R6" gate="G$1" x="55.88" y="149.86" rot="R270"/>
+<instance part="R7" gate="G$1" x="68.58" y="144.78"/>
+<instance part="R8" gate="G$1" x="68.58" y="154.94"/>
 <instance part="R9" gate="G$1" x="101.6" y="152.4" rot="R180"/>
 <instance part="R10" gate="G$1" x="83.82" y="142.24" rot="R270"/>
 <instance part="SUPPLY12" gate="G$1" x="83.82" y="134.62"/>
@@ -18164,33 +18164,31 @@ We've spent an enormous amount of time creating and checking these footprints an
 <net name="N$7" class="0">
 <segment>
 <pinref part="R6" gate="G$1" pin="1"/>
-<wire x1="43.18" y1="154.94" x2="45.72" y2="154.94" width="0.1524" layer="91"/>
 <pinref part="R8" gate="G$1" pin="1"/>
-<junction x="58.42" y="154.94"/>
+<junction x="55.88" y="154.94"/>
 <pinref part="U1" gate="G$1" pin="VIN+"/>
 <wire x1="45.72" y1="154.94" x2="50.8" y2="154.94" width="0.1524" layer="91"/>
-<wire x1="50.8" y1="154.94" x2="58.42" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="50.8" y1="154.94" x2="55.88" y2="154.94" width="0.1524" layer="91"/>
 <wire x1="96.52" y1="124.46" x2="50.8" y2="124.46" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="124.46" x2="50.8" y2="154.94" width="0.1524" layer="91"/>
 <junction x="50.8" y="154.94"/>
 <pinref part="R18" gate="G$1" pin="2"/>
-<junction x="45.72" y="154.94"/>
+<wire x1="55.88" y1="154.94" x2="63.5" y2="154.94" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$13" class="0">
 <segment>
 <pinref part="R6" gate="G$1" pin="2"/>
-<wire x1="58.42" y1="144.78" x2="48.26" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="55.88" y1="144.78" x2="48.26" y2="144.78" width="0.1524" layer="91"/>
 <pinref part="R7" gate="G$1" pin="1"/>
-<junction x="58.42" y="144.78"/>
+<junction x="55.88" y="144.78"/>
 <pinref part="U1" gate="G$1" pin="VIN-"/>
 <wire x1="48.26" y1="144.78" x2="45.72" y2="144.78" width="0.1524" layer="91"/>
-<wire x1="45.72" y1="144.78" x2="43.18" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="96.52" y1="121.92" x2="48.26" y2="121.92" width="0.1524" layer="91"/>
 <wire x1="48.26" y1="121.92" x2="48.26" y2="144.78" width="0.1524" layer="91"/>
 <junction x="48.26" y="144.78"/>
 <pinref part="R19" gate="G$1" pin="2"/>
-<junction x="45.72" y="144.78"/>
+<wire x1="55.88" y1="144.78" x2="63.5" y2="144.78" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$14" class="0">
@@ -18205,16 +18203,16 @@ We've spent an enormous amount of time creating and checking these footprints an
 <net name="N$15" class="0">
 <segment>
 <pinref part="R8" gate="G$1" pin="2"/>
-<wire x1="68.58" y1="154.94" x2="71.12" y2="154.94" width="0.1524" layer="91"/>
-<wire x1="71.12" y1="154.94" x2="71.12" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="73.66" y1="154.94" x2="76.2" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="76.2" y1="154.94" x2="76.2" y2="152.4" width="0.1524" layer="91"/>
 <pinref part="R7" gate="G$1" pin="2"/>
-<wire x1="71.12" y1="152.4" x2="71.12" y2="144.78" width="0.1524" layer="91"/>
-<wire x1="71.12" y1="144.78" x2="68.58" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="76.2" y1="152.4" x2="76.2" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="76.2" y1="144.78" x2="73.66" y2="144.78" width="0.1524" layer="91"/>
 <pinref part="R9" gate="G$1" pin="2"/>
 <wire x1="96.52" y1="152.4" x2="83.82" y2="152.4" width="0.1524" layer="91"/>
-<junction x="71.12" y="152.4"/>
+<junction x="76.2" y="152.4"/>
 <pinref part="R10" gate="G$1" pin="1"/>
-<wire x1="83.82" y1="152.4" x2="71.12" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="83.82" y1="152.4" x2="76.2" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="83.82" y1="147.32" x2="83.82" y2="152.4" width="0.1524" layer="91"/>
 <junction x="83.82" y="152.4"/>
 </segment>
