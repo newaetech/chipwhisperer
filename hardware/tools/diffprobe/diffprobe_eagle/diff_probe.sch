@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.1.0">
+<eagle version="7.2.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -17753,7 +17753,7 @@ We've spent an enormous amount of time creating and checking these footprints an
 <part name="SUPPLY12" library="adc_microboard" deviceset="AGND" device=""/>
 <part name="U2" library="Texas Instruments_By_element14_Batch_1" deviceset="LM2903PWR" device=""/>
 <part name="R11" library="rcl" deviceset="R-US_" device="R0402" value="10k, 1%"/>
-<part name="R13" library="rcl" deviceset="R-US_" device="R0402" value="510R, 1%"/>
+<part name="R13" library="rcl" deviceset="R-US_" device="R0402" value="1k, 1%"/>
 <part name="R14" library="rcl" deviceset="R-US_" device="R0402" value="10k, 1%"/>
 <part name="R15" library="rcl" deviceset="R-US_" device="R0402" value="25k"/>
 <part name="C11" library="resistor" deviceset="C-EU" device="C0402" value="680pF"/>
@@ -17770,11 +17770,11 @@ We've spent an enormous amount of time creating and checking these footprints an
 <part name="LED3" library="led" deviceset="LED" device="CHIPLED_0603" value="RIGHT"/>
 <part name="R12" library="resistor" deviceset="R-US_" device="R0603" value="4k7"/>
 <part name="SUPPLY16" library="adc_microboard" deviceset="AGND" device=""/>
-<part name="U$1" library="adafruit" deviceset="FIDUCIAL" device=""/>
-<part name="U$2" library="adafruit" deviceset="FIDUCIAL" device=""/>
-<part name="U$3" library="adafruit" deviceset="FIDUCIAL" device=""/>
-<part name="U$4" library="adafruit" deviceset="FIDUCIAL" device=""/>
-<part name="U$6" library="adafruit" deviceset="FIDUCIAL" device=""/>
+<part name="FID5" library="adafruit" deviceset="FIDUCIAL" device=""/>
+<part name="FID4" library="adafruit" deviceset="FIDUCIAL" device=""/>
+<part name="FID2" library="adafruit" deviceset="FIDUCIAL" device=""/>
+<part name="FID1" library="adafruit" deviceset="FIDUCIAL" device=""/>
+<part name="FID6" library="adafruit" deviceset="FIDUCIAL" device=""/>
 <part name="R18" library="resistor" deviceset="R-US_" device="R0603" value="10R"/>
 <part name="R19" library="resistor" deviceset="R-US_" device="R0603" value="10R"/>
 </parts>
@@ -17857,11 +17857,11 @@ We've spent an enormous amount of time creating and checking these footprints an
 <instance part="LED3" gate="G$1" x="167.64" y="139.7"/>
 <instance part="R12" gate="G$1" x="167.64" y="129.54" rot="R270"/>
 <instance part="SUPPLY16" gate="G$1" x="167.64" y="121.92"/>
-<instance part="U$1" gate="G$1" x="226.06" y="170.18"/>
-<instance part="U$2" gate="G$1" x="226.06" y="162.56"/>
-<instance part="U$3" gate="G$1" x="226.06" y="154.94"/>
-<instance part="U$4" gate="G$1" x="226.06" y="147.32"/>
-<instance part="U$6" gate="G$1" x="226.06" y="132.08"/>
+<instance part="FID5" gate="G$1" x="226.06" y="170.18"/>
+<instance part="FID4" gate="G$1" x="226.06" y="162.56"/>
+<instance part="FID2" gate="G$1" x="226.06" y="154.94"/>
+<instance part="FID1" gate="G$1" x="226.06" y="147.32"/>
+<instance part="FID6" gate="G$1" x="226.06" y="132.08"/>
 <instance part="R18" gate="G$1" x="40.64" y="154.94"/>
 <instance part="R19" gate="G$1" x="40.64" y="144.78"/>
 </instances>

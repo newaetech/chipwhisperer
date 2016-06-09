@@ -18863,7 +18863,7 @@ Basic Inductor/Choke - 0603 and 1206. Footprints are not proven and vary greatly
 <part name="C3" library="resistor" deviceset="C-EU" device="C0603" value="100n"/>
 <part name="C4" library="resistor" deviceset="C-EU" device="C0603" value="100n"/>
 <part name="C5" library="resistor" deviceset="C-EU" device="C0603" value="100n"/>
-<part name="C6" library="resistor" deviceset="C-EU" device="C0603"/>
+<part name="C6" library="resistor" deviceset="C-EU" device="C0603" value="22nF"/>
 <part name="C7" library="resistor" deviceset="C-EU" device="C0603" value="100n"/>
 <part name="C8" library="resistor" deviceset="C-EU" device="C0603" value="100n"/>
 <part name="C9" library="resistor" deviceset="C-EU" device="C0603" value="18nF"/>
@@ -18942,7 +18942,7 @@ Basic Inductor/Choke - 0603 and 1206. Footprints are not proven and vary greatly
 <part name="C35" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="SUPPLY18" library="supply2" deviceset="GND" device=""/>
 <part name="C36" library="resistor" deviceset="C-EU" device="C0603" value="100n"/>
-<part name="C37" library="resistor" deviceset="C-EU" device="C0603"/>
+<part name="C37" library="resistor" deviceset="C-EU" device="C0603" value="22nF"/>
 <part name="SUPPLY19" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY20" library="supply2" deviceset="GND" device=""/>
 <part name="X1" library="con-coax" deviceset="SMA-" device="142-0701-851/861"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.1.0">
+<eagle version="7.2.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -8,7 +8,7 @@
 </settings>
 <grid distance="0.3175" unitdist="mm" unit="mm" style="lines" multiple="1" display="no" altdistance="0.05" altunitdist="mm" altunit="mm"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="no" active="yes"/>
+<layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
 <layer number="3" name="Route3" color="4" fill="3" visible="no" active="no"/>
 <layer number="14" name="Route14" color="1" fill="6" visible="no" active="no"/>
@@ -18,9 +18,9 @@
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
 <layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="yes"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="yes"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="yes"/>
 <layer number="25" name="tNames" color="7" fill="1" visible="no" active="yes"/>
 <layer number="26" name="bNames" color="7" fill="1" visible="no" active="yes"/>
@@ -3095,7 +3095,7 @@ design rules under a new name.</description>
 <attribute name="NAME" x="25.4" y="17.78" size="0.8128" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="22.225" y="19.3675" size="1.27" layer="27" rot="R180"/>
 </element>
-<element name="R13" library="rcl" package="R0402" value="510R, 1%" x="21.59" y="16.1925" smashed="yes" rot="R180">
+<element name="R13" library="rcl" package="R0402" value="1k, 1%" x="21.59" y="16.1925" smashed="yes" rot="R180">
 <attribute name="NAME" x="25.4" y="16.51" size="0.8128" layer="25" font="vector" ratio="16" rot="R180"/>
 <attribute name="VALUE" x="22.225" y="18.0975" size="1.27" layer="27" rot="R180"/>
 </element>
@@ -3147,11 +3147,11 @@ design rules under a new name.</description>
 <element name="R12" library="resistor" package="R0603" value="4k7" x="13.97" y="16.8275" smashed="yes" rot="R270">
 <attribute name="VALUE" x="11.938" y="17.7165" size="1.27" layer="27" rot="R270"/>
 </element>
-<element name="U$1" library="adafruit" package="FIDUCIAL_1MM" value="FIDUCIAL" x="35.2425" y="29.845" rot="MR0"/>
-<element name="U$2" library="adafruit" package="FIDUCIAL_1MM" value="FIDUCIAL" x="18.0975" y="30.48" smashed="yes" rot="MR0"/>
-<element name="U$3" library="adafruit" package="FIDUCIAL_1MM" value="FIDUCIAL" x="35.2425" y="29.845"/>
-<element name="U$4" library="adafruit" package="FIDUCIAL_1MM" value="FIDUCIAL" x="12.3825" y="12.065"/>
-<element name="U$6" library="adafruit" package="FIDUCIAL_1MM" value="FIDUCIAL" x="36.195" y="20.955" rot="MR0"/>
+<element name="FID5" library="adafruit" package="FIDUCIAL_1MM" value="FIDUCIAL" x="35.2425" y="29.845" rot="MR0"/>
+<element name="FID4" library="adafruit" package="FIDUCIAL_1MM" value="FIDUCIAL" x="18.0975" y="30.48" smashed="yes" rot="MR0"/>
+<element name="FID2" library="adafruit" package="FIDUCIAL_1MM" value="FIDUCIAL" x="35.2425" y="29.845"/>
+<element name="FID1" library="adafruit" package="FIDUCIAL_1MM" value="FIDUCIAL" x="12.3825" y="12.065"/>
+<element name="FID6" library="adafruit" package="FIDUCIAL_1MM" value="FIDUCIAL" x="36.195" y="20.955" rot="MR0"/>
 <element name="R18" library="resistor" package="R0603" value="10R" x="22.86" y="34.29" smashed="yes" rot="R270">
 <attribute name="NAME" x="21.209" y="35.814" size="0.8128" layer="25" font="vector" ratio="16" rot="R270"/>
 <attribute name="VALUE" x="20.828" y="35.179" size="1.27" layer="27" rot="R270"/>
