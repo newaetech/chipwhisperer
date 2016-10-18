@@ -29,7 +29,7 @@ def scan():
               pass
       return available
     else:
-      return glob.glob('/dev/ttyS*') + glob.glob('/dev/ttyUSB*')
+      return glob.glob('/dev/ttyS*') + glob.glob('/dev/ttyACM*') + glob.glob('/dev/ttyUSB*')
 
 if __name__=='__main__':
     print ("Found ports:")
