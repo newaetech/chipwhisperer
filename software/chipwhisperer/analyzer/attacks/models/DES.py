@@ -282,6 +282,8 @@ class DES(ModelsBase, Plugin):
 
     def processKnownKey(self, inpkey):
         return self.modelobj.keyScheduleRounds(inpkey, 0, 1)
+    def keyScheduleRounds(self, inputkey, inputround, desiredround, returnSubkeys=True):
+        return self.modelobj.keyScheduleRounds(inputkey, inputround, desiredround, returnSubkeys)
 
     def leakage(self, pt, ct, guess, bnum, state):
         try:

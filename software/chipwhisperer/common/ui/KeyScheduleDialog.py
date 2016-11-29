@@ -228,28 +228,33 @@ class DesKeyScheduleDialog(QtFixes.QDialog):
         self.inprnd.blockSignals(False)
 
     def inTextChanged(self, _=None):
+        data = self.indata.text() 
         try:
-            key = util.hexstr2list(self.indata.text())
-            key = [int(d) for d in key]
+            key = util.hexstr2list(data)
+            if len(key) != 8:
+                err = "ERR: Len=%d: %s" % (len(key), key)
+                self.keysched.setText(err)
+            else:
+                key = [int(d) for d in key]
 
-            #Read settings
-            inpround = self.inprnd.itemData(self.inprnd.currentIndex())
+                #Read settings
+                inpround = self.inprnd.itemData(self.inprnd.currentIndex())
 
-            # Get entire key schedule
-            totalrndstr = ""
-            roundKeys = self.model.getRoundKeys(key, inpround)
-            for i, key in enumerate(roundKeys):
-                totalrndstr += "%2d: " % i
-                for j, bit in enumerate(key):
-                    if bit is not None:
-                        totalrndstr += str(bit)
-                    elif i == 0 and j % 8 == 7:
-                        totalrndstr += 'X'
-                    else:
-                        totalrndstr += '?'
-                totalrndstr += "\n"
+                # Get entire key schedule
+                totalrndstr = ""
+                roundKeys = self.model.getRoundKeys(key, inpround)
+                for i, key in enumerate(roundKeys):
+                    totalrndstr += "%2d: " % i
+                    for j, bit in enumerate(key):
+                        if bit is not None:
+                            totalrndstr += str(bit)
+                        elif i == 0 and j % 8 == 7:
+                            totalrndstr += 'X'
+                        else:
+                            totalrndstr += '?'
+                    totalrndstr += "\n"
 
-            self.keysched.setText(totalrndstr)
+                self.keysched.setText(totalrndstr)
 
         except:
             self.keysched.clear()

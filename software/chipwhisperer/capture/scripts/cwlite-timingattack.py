@@ -94,7 +94,7 @@ class UserScript(UserScriptBase):
                        
         # Get one capture for fun
         self.api.capture1()
-        data = self.api.getScope().datapoints
+        data =  self.api.getScope().channels[0].getTrace()
         print data
         
         # Crack the first letter
@@ -109,7 +109,7 @@ class UserScript(UserScriptBase):
                 self.api.capture1()
                 
                 # Grab the trace
-                nextTrace = self.api.getScope().datapoints
+                nextTrace = self.api.getScope().channels[0].getTrace()
                 
                 # Check location 153, 225, etc. If it's too low, we've failed
                 if nextTrace[153 + 72*i] < -0.2:
