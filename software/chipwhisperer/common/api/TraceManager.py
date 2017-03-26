@@ -39,7 +39,7 @@ class TraceManager(TraceSource):
     load and manage the traces.
     """
 
-    def __init__(self, name = "Trace Management"):
+    def __init__(self, name="Trace Management"):
         TraceSource.__init__(self, name)
         self.name = name
         self.dirty = util.Observable(False)
@@ -48,7 +48,8 @@ class TraceManager(TraceSource):
         self._sampleRate = 0
         self.lastUsedSegment = None
         self.traceSegments = []
-        if __debug__: logging.debug('Created: ' + str(self))
+        if __debug__:
+            logging.debug('Created: ' + str(self))
 
     def newProject(self):
         """Create a new empty set of traces."""
@@ -60,7 +61,8 @@ class TraceManager(TraceSource):
         """Save the trace segments information to a project file."""
         config[self.name].clear()
         for indx, t in enumerate(self.traceSegments):
-            config[self.name]['tracefile%d' % indx] = os.path.normpath(os.path.relpath(t.config.configFilename(), os.path.split(configfilename)[0]))
+            config[self.name]['tracefile%d' % indx] = os.path.normpath(
+                os.path.relpath(t.config.configFilename(), os.path.split(configfilename)[0]))
             config[self.name]['enabled%d' % indx] = str(t.enabled)
         self.dirty.setValue(False)
 
@@ -111,9 +113,9 @@ class TraceManager(TraceSource):
         if end == -1:
             end = self._numTraces
 
-        dataDict = {'offsetList':[], 'lengthList':[]}
+        dataDict = {'offsetList': [], 'lengthList': []}
 
-        while(tnum < end):
+        while tnum < end:
             t = self.getSegment(tnum)
             dataDict['offsetList'].append(t.mappedRange[0])
             dataDict['lengthList'].append(t.mappedRange[1] - t.mappedRange[0] + 1)
@@ -150,7 +152,7 @@ class TraceManager(TraceSource):
         else:
             filedata = None
 
-        return {'cfgdata':cfg, 'filedata':filedata}
+        return {'cfgdata': cfg, 'filedata': filedata}
 
     def getTrace(self, n):
         """Return the trace with index n in the list of enabled segments"""
@@ -190,7 +192,8 @@ class TraceManager(TraceSource):
                     if self._numPoints == 0:
                         self._numPoints = np
                     else:
-                        logging.warning("Selected trace segments have different number of points: %d!=%d" % (self._numPoints, np))
+                        logging.warning("Selected trace segments have different number of points: %d!=%d" %
+                                        (self._numPoints, np))
                         self._numPoints = min(self._numPoints, np)
 
                 sr = int(float(t.config.attr("scopeSampleRate")))
@@ -198,7 +201,8 @@ class TraceManager(TraceSource):
                     if self._sampleRate == 0:
                         self._sampleRate = sr
                     else:
-                        logging.warning("Selected trace segments have different sample rates: %d!=%d" % (self._sampleRate, sr))
+                        logging.warning("Selected trace segments have different sample rates: %d!=%d" %
+                                        (self._sampleRate, sr))
             else:
                 t.mappedRange = None
         self._numTraces = startTrace

@@ -69,13 +69,14 @@ class ProjectFormat(object):
         self.sigStatusChanged = util.Signal()
         self.dirty = util.Observable(True)
 
-        self.settingsDict = {'Project Name':"Untitled", 'Project File Version':"1.00", 'Project Author':"Unknown"}
+        self.settingsDict = {'Project Name': "Untitled", 'Project File Version': "1.00", 'Project Author': "Unknown"}
         self.datadirectory = ""
         self.config = ConfigObjProj(callback=self.configObjChanged)
         self._traceManager = TraceManager().register()
         self._traceManager.dirty.connect(self.__dirtyCallback)
         self.setFilename(ProjectFormat.untitledFileName)
-        if __debug__: logging.debug('Created: ' + str(self))
+        if __debug__:
+            logging.debug('Created: ' + str(self))
 
     def __dirtyCallback(self):
         self.dirty.setValue(self._traceManager.dirty.value() or self.dirty.value())
@@ -90,22 +91,19 @@ class ProjectFormat(object):
         return self._traceManager
 
     def setProgramName(self, name):
-        self.settingsDict['Program Name']=name
+        self.settingsDict['Program Name'] = name
     
     def setProgramVersion(self, ver):
-        self.settingsDict['Program Version']=ver
+        self.settingsDict['Program Version'] = ver
         
     def setAuthor(self, author):
-        self.settingsDict['Project Author']=author
+        self.settingsDict['Project Author'] = author
     
     def setProjectName(self, name):
-        self.settingsDict['Project Name']=name
+        self.settingsDict['Project Name'] = name
     
     def setFileVersion(self, ver):
-        self.settingsDict['Project File Version']=ver
-        
-    def addWave(self, configfile):
-        return       
+        self.settingsDict['Project File Version'] = ver
         
     def getFilename(self):
         return self.filename
@@ -134,7 +132,7 @@ class ProjectFormat(object):
         if not os.path.isdir(os.path.join(self.datadirectory, 'glitchresults')):
             os.mkdir(os.path.join(self.datadirectory, 'glitchresults'))
 
-    def load(self, f = None):
+    def load(self, f=None):
         if f is not None:
             self.setFilename(f)
 
@@ -148,12 +146,13 @@ class ProjectFormat(object):
         relfname = os.path.relpath(fname, os.path.split(self.config.filename)[0])
         fname = os.path.normpath(fname)
         relfname = os.path.normpath(relfname)
-        return {"abs":fname, "rel":relfname}
+        return {"abs": fname, "rel": relfname}
 
     def convertDataFilepathAbs(self, relativepath):
         return os.path.join(os.path.split(self.filename)[0], relativepath)
 
-    def checkDataConfig(self, config, requiredSettings):
+    @staticmethod
+    def checkDataConfig(config, requiredSettings):
         """Check a configuration section for various settings"""
         requiredSettings = util.convert_to_str(requiredSettings)
         config = util.convert_to_str(config)
@@ -214,7 +213,7 @@ class ProjectFormat(object):
         Parameter.saveRegistered(fname, onlyVisibles)
 
     def saveTraceManager(self):
-        #Waveform list is Universal across ALL types
+        # Waveform list is Universal across ALL types
         if 'Trace Management' not in self.config:
             self.config['Trace Management'] = {}
             
@@ -226,13 +225,13 @@ class ProjectFormat(object):
 
         self.saveTraceManager()
             
-        #self.config['Waveform List'] = self.config['Waveform List'] + self.waveList
+        # self.config['Waveform List'] = self.config['Waveform List'] + self.waveList
 
-        #Program-Specific Options
+        # Program-Specific Options
         pn = self.settingsDict['Program Name']
        
         self.config[pn] = {}
-        self.config[pn]['General Settings'] =  self.settingsDict
+        self.config[pn]['General Settings'] = self.settingsDict
 
         self.config.write()
         self.sigStatusChanged.emit()
@@ -252,7 +251,8 @@ class ProjectFormat(object):
 
         added = diff.added()
         removed = diff.removed()
-        changed = diff.changed() #TODO: bug when comparing projects with template sections. It is returning changes when there is not.
+        # TODO: bug when comparing projects with template sections. It is returning changes when there is not.
+        changed = diff.changed()
 
         return added, removed, changed
 
@@ -264,7 +264,7 @@ class ProjectFormat(object):
             return False
         return True
 
-    def consolidate(self, keepOriginals = True):
+    def consolidate(self, keepOriginals=True):
         for indx, t in enumerate(self._traceManager.traceSegments):
             destinationDir = os.path.normpath(self.datadirectory + "traces/")
             config = ConfigObj(t.config.configFilename())
@@ -278,8 +278,12 @@ class ProjectFormat(object):
                     util.copyFile(os.path.normpath(tracePath + "/" + traceFile), destinationDir, keepOriginals)
 
             util.copyFile(t.config.configFilename(), destinationDir, keepOriginals)
-            t.config.setConfigFilename(os.path.normpath(destinationDir + "/" + os.path.split(t.config.configFilename())[1]))
+            t.config.setConfigFilename(os.path.normpath(destinationDir + "/" +
+                                                        os.path.split(t.config.configFilename())[1]))
+
+        self.save()
         self.sigStatusChanged.emit()
 
     def __del__(self):
-        if __debug__: logging.debug('Deleted: ' + str(self))
+        if __debug__:
+            logging.debug('Deleted: ' + str(self))
