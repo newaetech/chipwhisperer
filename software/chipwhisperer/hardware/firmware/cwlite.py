@@ -4,6 +4,8 @@
 import base64
 import StringIO
 
+fwver = [0, 11]
+
 def getsome(item, filelike=True):
     data = _contents[item]
     data = base64.b64decode(data)
