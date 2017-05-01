@@ -27,7 +27,6 @@ import logging
 from chipwhisperer.common.utils import util
 from chipwhisperer.hardware.naeusb.programmer_avr import supported_avr
 from chipwhisperer.hardware.naeusb.programmer_xmega import supported_xmega
-from chipwhisperer.capture.utils.IntelHex import IntelHex
 
 
 class Programmer(object):
@@ -60,8 +59,6 @@ class Programmer(object):
 class AVRProgrammer(Programmer):
     def __init__(self):
         super(AVRProgrammer, self).__init__()
-        self.supported_chips = []
-        self._foundchip = False
         self.avr = None
 
     def setUSBInterface(self, iface):
@@ -69,27 +66,11 @@ class AVRProgrammer(Programmer):
         # self.avr.setChip(self.supported_chips[0])
 
     def find(self):
-        self._foundchip = False
-
-        self.avr.enableISP(True)
-        sig = self.avr.readSignature()
-
-        # Figure out which device?
-        # Check if it's one we know about?
-        for t in supported_avr:
-            if ((sig[0] == t.signature[0]) and
-                (sig[1] == t.signature[1]) and
-                (sig[2] == t.signature[2])):
-
-                self._foundchip = True
-
-                self.log("Detected %s" % t.name)
-                self.avr.setChip(t)
-                break
-
-        # Print signature of unknown device
-        if self._foundchip == False:
-            self.log("Detected Unknown Chip, sig=%2x %2x %2x" % (sig[0], sig[1], sig[2]))
+        sig, chip = self.avr.find()
+        if chip is None:
+            self.log("AVR: Detected unknown device with signature=%2x %2x %2x" % (sig[0], sig[1], sig[2]))
+        else:
+            self.log("AVR: Detected device %s" % chip.name)
 
     def erase(self):
         self.log("Erasing Chip")
@@ -97,29 +78,7 @@ class AVRProgrammer(Programmer):
 
     def program(self, filename, memtype="flash", verify=True):
         Programmer.lastFlashedFile = filename
-        f = IntelHex(filename)
-
-        maxsize = self.avr._chip.memtypes[memtype]["size"]
-        fsize = f.maxaddr() - f.minaddr()
-
-        if fsize > maxsize:
-            raise IOError("File %s appears to be %d bytes, larger than %s size of %d" % (filename, fsize, memtype, maxsize))
-
-        self.log("AVR Programming %s..." % memtype)
-        util.updateUI()
-        fdata = f.tobinarray(start=0)
-        self.avr.writeMemory(0, fdata, memtype)
-
-        self.log("AVR Reading %s..." % memtype)
-        util.updateUI()
-        # Do verify run
-        rdata = self.avr.readMemory(0, len(fdata))  # memtype ?
-
-        for i in range(0, len(fdata)):
-            if fdata[i] != rdata[i]:
-                raise IOError("Verify failed at 0x%04x, %x != %x" % (i, fdata[i], rdata[i]))
-
-        self.log("Verified %s OK, %d bytes" % (memtype, fsize))
+        self.avr.program(filename, memtype, verify)
     
     def close(self):
         if self.avr is not None:
@@ -130,73 +89,30 @@ class XMEGAProgrammer(Programmer):
 
     def __init__(self):
         super(XMEGAProgrammer, self).__init__()
+        self.xmega = None
         self.supported_chips = supported_xmega
-        self._foundchip = False
 
     def setUSBInterface(self, iface):
-        self._foundchip = False
         self.xmega = iface
         self.xmega.setChip(self.supported_chips[0])
 
     def find(self):
-        self._foundchip = False
-        self.xmega.setParamTimeout(400)
-        self.xmega.enablePDI(True)
-
-        # Read signature bytes
-        data = self.xmega.readMemory(0x01000090, 3, "signature")
-
-        # Check if it's one we know about?
-        for t in self.supported_chips:
-            if ((data[0] == t.signature[0]) and
-                (data[1] == t.signature[1]) and
-                (data[2] == t.signature[2])):
-
-                self._foundchip = True
-
-                self.log("Detected %s" % t.name)
-                self.xmega.setChip(t)
-                break
+        sig, chip = self.xmega.find()
 
         # Print signature of unknown device
-        if self._foundchip == False:
-            self.log("Detected Unknown Chip, sig=%2x %2x %2x" % (data[0], data[1], data[2]))
+        if chip is None:
+            self.log("Detected Unknown Chip, sig=%2x %2x %2x" % (sig[0], sig[1], sig[2]))
+        else:
+             self.log("Detected %s" % chip.name)
 
     def erase(self, memtype="chip"):
         self.log("Erasing Chip")
-        if memtype == "app":
-            self.xmega.eraseApp()
-        elif memtype == "chip":
-            self.xmega.eraseChip()
-        else:
-            raise ValueError("Invalid memtype: %s" % memtype)
+        self.xmega.erase(memtype)
+
 
     def program(self, filename, memtype="flash", verify=True):
         Programmer.lastFlashedFile = filename
-        f = IntelHex(filename)
-
-        startaddr = self.xmega._chip.memtypes[memtype]["offset"]
-        maxsize = self.xmega._chip.memtypes[memtype]["size"]
-        fsize = f.maxaddr() - f.minaddr()
-
-        if fsize > maxsize:
-            raise IOError("File %s appears to be %d bytes, larger than %s size of %d" % (filename, fsize, memtype, maxsize))
-
-        self.log("XMEGA Programming %s..." % memtype)
-        util.updateUI()
-        fdata = f.tobinarray(start=0)
-        self.xmega.writeMemory(startaddr, fdata, memtype)  # , erasePage=True
-
-        self.log("XMEGA Reading %s..." % memtype)
-        util.updateUI()
-        # Do verify run
-        rdata = self.xmega.readMemory(startaddr, len(fdata), memtype)
-
-        for i in range(0, len(fdata)):
-            if fdata[i] != rdata[i]:
-                raise IOError("Verify failed at 0x%04x, %x != %x" % (i, fdata[i], rdata[i]))
-
-        self.log("Verified %s OK, %d bytes" % (memtype, fsize))
+        self.xmega.program(filename, memtype, verify)
 
     def close(self):
         self.xmega.enablePDI(False)

@@ -23,11 +23,17 @@
 #==========================================================================
 import logging
 import time
+import usb.backend.libusb0 as libusb0
 import usb.core
 import usb.util
 import math
 from threading import Condition, Thread
 import array
+
+import chipwhisperer.hardware.firmware.cwlite as fw_cwlite
+import chipwhisperer.hardware.firmware.cw1200 as fw_cw1200
+import chipwhisperer.hardware.firmware.cw305  as fw_cw305
+
 
 
 def packuint32(data):
@@ -53,11 +59,10 @@ def packuint16(data):
 #List of all NewAE PID's
 NEWAE_VID = 0x2B3E
 NEWAE_PIDS = {
-    0xACE2: "ChipWhisperer-Lite",
-    0xACE3: "ChipWHisperer-CW1200",
-    0xC305: "CW305 Artix FPGA Board",
+    0xACE2: {'name': "ChipWhisperer-Lite",     'fwver': fw_cwlite.fwver},
+    0xACE3: {'name': "ChipWHisperer-CW1200",   'fwver': fw_cw1200.fwver},
+    0xC305: {'name': "CW305 Artix FPGA Board", 'fwver': fw_cw305.fwver},
 }
-
 
 class NAEUSB(object):
     """
@@ -85,7 +90,7 @@ class NAEUSB(object):
         """
 
         for id in idProduct:
-            dev = usb.core.find(idVendor=0x2B3E, idProduct=id)
+            dev = usb.core.find(idVendor=0x2B3E, idProduct=id, backend=libusb0.get_backend())
             foundId = id
 
             #Found something
@@ -111,7 +116,8 @@ class NAEUSB(object):
 
 
         if foundId in NEWAE_PIDS:
-            name = NEWAE_PIDS[foundId]
+            name = NEWAE_PIDS[foundId]['name']
+            fw_latest = NEWAE_PIDS[foundId]['fwver']
         else:
             name = "Unknown (PID = %04x)"%foundId
 
@@ -125,8 +131,9 @@ class NAEUSB(object):
         fwver = self.readFwVersion()
         logging.info('SAM3U Firmware version = %d.%d b%d' % (fwver[0], fwver[1], fwver[2]))
 
-        if not (fwver[0] >= self.fwversion_latest[0] and fwver[1] >= self.fwversion_latest[1]):
-            logging.warning('Your firmware is outdated - latest is %d.%d' % (self.fwversion_latest[0], self.fwversion_latest[1]) +
+        latest = fwver[0] > fw_latest[0] or (fwver[0] == fw_latest[0] and fwver[1] >= fw_latest[1])
+        if not latest:
+            logging.warning('Your firmware is outdated - latest is %d.%d' % (fw_latest[0], fw_latest[1]) +
                             '. Suggested to update firmware, as you may experience errors')
 
         return foundId
