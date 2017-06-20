@@ -24,6 +24,8 @@
 #=================================================
 
 import time
+from PySide.QtCore import *
+from PySide.QtGui import *
 from chipwhisperer.capture.auxiliary._base import AuxiliaryTemplate
 from chipwhisperer.common.api.CWCoreAPI import CWCoreAPI
 from chipwhisperer.common.utils import util, timer
@@ -108,7 +110,7 @@ class ResetCW1173Read(AuxiliaryTemplate):
 
     def nonblockingSleep(self, stime):
         """Sleep for given number of seconds (~50mS resolution), but don't block GUI while we do it"""
-        timer.Timer.singleShot(stime * 1000, self.nonblockingSleep_done)
+        QTimer.singleShot(stime * 1000, self.nonblockingSleep_done)
         self._sleeping = True
         while(self._sleeping):
             time.sleep(0.01)
