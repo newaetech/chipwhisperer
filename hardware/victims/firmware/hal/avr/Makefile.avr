@@ -11,6 +11,3 @@ OBJDUMP = avr-objdump
 SIZE = avr-size
 AR = avr-ar rcs
 NM = avr-nm
-
-#Fancy AVR Size formatting
-ELFSIZE = --mcu=$(MCU) --format=avr
