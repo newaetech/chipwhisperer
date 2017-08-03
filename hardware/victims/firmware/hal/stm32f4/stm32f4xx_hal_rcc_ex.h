@@ -1212,7 +1212,7 @@ typedef struct
                                       } while(0U)
 #define __HAL_RCC_DCMI_CLK_DISABLE()  (RCC->AHB2ENR &= ~(RCC_AHB2ENR_DCMIEN))
 
-#if defined(STM32F437xx)|| defined(STM32F439xx) || defined(STM32F479xx)
+//#if defined(STM32F437xx)|| defined(STM32F439xx) || defined(STM32F479xx)
 #define __HAL_RCC_CRYP_CLK_ENABLE()   do { \
                                       __IO uint32_t tmpreg = 0x00U; \
                                       SET_BIT(RCC->AHB2ENR, RCC_AHB2ENR_CRYPEN);\
@@ -1230,7 +1230,7 @@ typedef struct
 
 #define __HAL_RCC_CRYP_CLK_DISABLE()  (RCC->AHB2ENR &= ~(RCC_AHB2ENR_CRYPEN))
 #define __HAL_RCC_HASH_CLK_DISABLE()  (RCC->AHB2ENR &= ~(RCC_AHB2ENR_HASHEN))
-#endif /* STM32F437xx || STM32F439xx || STM32F479xx */
+//#endif /* STM32F437xx || STM32F439xx || STM32F479xx */
 
 #define __HAL_RCC_USB_OTG_FS_CLK_ENABLE()  do {(RCC->AHB2ENR |= (RCC_AHB2ENR_OTGFSEN));\
                                                __HAL_RCC_SYSCFG_CLK_ENABLE();\
