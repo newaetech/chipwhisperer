@@ -42,12 +42,12 @@ class VisaScope(Parameterized):
         self.dataUpdated = util.Signal()
 
         self.getParams().addChildren([
-            {'name':'X-Scale', 'key':'xscale', 'type':'list', 'values':self.xScales},
-            {'name':'Y-Scale', 'key':'yscale', 'type':'list', 'values':self.yScales},
-            {'name':'Y-Offset', 'key':'yoffset', 'type':'float', 'step':1E-3, 'siPrefix': True, 'suffix': 'V'},
-            {'name':'X-Offset', 'key':'xoffset', 'type':'float', 'step':1E-6, 'siPrefix': True, 'suffix': 'S'},
-            {'name':'Download Offset', 'key':'xdisporigin', 'type':'int',  'limits':(0,1E9)},
-            {'name':'Download Size', 'key':'xdisprange', 'type':'int', 'limits':(0,1E9)},
+            {'name':'X-Scale', 'key':'xscale', 'type':'list', 'values':self.xScales, 'value':self.xScales.keys()[0]},
+            {'name':'Y-Scale', 'key':'yscale', 'type':'list', 'values':self.yScales, 'value':self.yScales.keys()[0]},
+            {'name':'Y-Offset', 'key':'yoffset', 'type':'float', 'step':1E-3, 'siPrefix': True, 'suffix': 'V', 'value':0},
+            {'name':'X-Offset', 'key':'xoffset', 'type':'float', 'step':1E-6, 'siPrefix': True, 'suffix': 'S', 'value':0},
+            {'name':'Download Offset', 'key':'xdisporigin', 'type':'int',  'limits':(0,1E9), 'value':0},
+            {'name':'Download Size', 'key':'xdisprange', 'type':'int', 'limits':(0,1E9), 'value':0},
         ])
 
     def con(self, constr):

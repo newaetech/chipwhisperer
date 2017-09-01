@@ -21,9 +21,10 @@
 import logging
 import time
 from _base import VisaScope
+from chipwhisperer.common.utils.pluginmanager import Plugin
 
 
-class VisaScopeInterface_MSO54831D(VisaScope):
+class VisaScopeInterface_MSO54831D(VisaScope, Plugin):
     _name = "Agilent MSO 54831D"
 
     xScales = {"500 mS":500E-3, "200 mS":200E-3, "100 mS":100E-3, "50 mS":50E-3,
