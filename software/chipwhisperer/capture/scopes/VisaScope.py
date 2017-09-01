@@ -45,7 +45,7 @@ class VisaScopeInterface(ScopeTemplate, Plugin):
         self.params.addChildren([
             {'name':'Scope Type', 'key':'type', 'type':'list', 'values':scopes, 'value':scopes[VisaScopeInterface_MSO54831D._name], 'action':self.setCurrentScope_act, 'childmode':'parent'},
             {'name':'Connect String', 'key':'connStr', 'type':'str', 'value':''},
-            {'name':'Example Strings', 'type':'list', 'values':['', 'TCPIP0::192.168.2.100::inst0::INSTR'], 'value':' ', 'action':self.exampleString},
+            {'name':'Example Strings', 'type':'list', 'values':['', 'TCPIP0::192.168.2.100::inst0::INSTR'], 'value':'', 'action':self.exampleString},
         ])
         self.params.init()
         self.scopetype = None
