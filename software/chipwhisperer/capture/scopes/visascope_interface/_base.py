@@ -60,6 +60,9 @@ class VisaScope(Parameterized):
             time.sleep(0.1)
         self.updateCurrentSettings()
 
+    def dis(self):
+        pass
+
     def updateCurrentSettings(self):
         self.currentSettings()
 
