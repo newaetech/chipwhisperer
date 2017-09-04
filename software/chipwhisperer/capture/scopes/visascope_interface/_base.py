@@ -51,7 +51,8 @@ class VisaScope(Parameterized):
         ])
 
     def con(self, constr):
-        self.visaInst = instrument(constr)
+        rm = ResourceManager()
+        self.visaInst = rm.open_resource(constr)
         self.visaInst.write("*RST")
         logging.info(self.visaInst.ask("*IDN?"))
         for cmd in self.header:
