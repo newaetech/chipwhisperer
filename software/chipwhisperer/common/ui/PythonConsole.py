@@ -723,13 +723,11 @@ class QPythonScriptRunner(QtGui.QWidget):
 class QSplitConsole(QtGui.QSplitter):
     def __init__(self, parent=None, locals=None):
         super(QSplitConsole,self).__init__(parent)
+        self.setOrientation(QtCore.Qt.Vertical)
         self.console = QPythonConsole(parent, locals)
-        self.addWidget(self.console)
-
         self.script_runner = QPythonScriptRunner(self.console, parent)
         self.addWidget(self.script_runner)
-
-#        self.setLayout(QtGui.QHBoxLayout(self))
+        self.addWidget(self.console)
 
 if __name__ == "__main__":
     import sys
