@@ -53,6 +53,8 @@ class SerialTerminalDialog(QtFixes.QDialog):
         self.textLayouts.addWidget(self.textOut, 0, 0)
         self.textLayouts.addWidget(self.textIn, 1, 0)
         self.textLayouts.addWidget(self.textInSend, 1, 1)
+
+
         self.textLayouts.addWidget(self.textClear, 0, 1)
 
         self.textOut.setReadOnly(True)
@@ -106,10 +108,21 @@ class SerialTerminalDialog(QtFixes.QDialog):
 
         self.mainLayout.addLayout(self.conLayout)
 
+        ### Layout for scrolling text
+        self.scrollLayout = QHBoxLayout()
+        self.scrollPB = QPushButton("Scrolling")
+        self.scrollPB.setMinimumWidth(90)
+        self.scrollPB.clicked.connect(self.scrollCmd)
+        self.scrollLayout.addWidget(self.scrollPB)
+        self.scrollLayout.addWidget(QLabel("Choose to scroll text."))
+        self.scrollLayout.addStretch()
+        self.mainLayout.addLayout(self.scrollLayout)
+	self.textScroll = True
+
         # ## Final Setup
 
         self.textIn.setEnabled(False)
-        self.textOut.setEnabled(False)
+        self.textOut.setEnabled(True)
 
         self.setLayout(self.mainLayout)
         self.hide()
@@ -127,24 +140,24 @@ class SerialTerminalDialog(QtFixes.QDialog):
         idx = self.rxDisplayMode.currentIndex()
 
         if idx == 0:
-            self.textOut.moveCursor(QTextCursor.End)
+            if self.textScroll == True: self.textOut.moveCursor(QTextCursor.End)
             self.textOut.setTextColor(cmain)
             self.textOut.insertPlainText (data)
-            self.textOut.moveCursor(QTextCursor.End)
+            if self.textScroll == True: self.textOut.moveCursor(QTextCursor.End)
         elif idx == 1:
             for c in data:
                 h = ord(c)
                 if (h < 32 or h > 126) and (h != ord('\n')):
-                    self.textOut.moveCursor(QTextCursor.End)
+                    if self.textScroll == True: self.textOut.moveCursor(QTextCursor.End)
                     self.textOut.setTextColor(QColor(Qt.red))
                     self.textOut.insertPlainText("%02x" % h)
-                    self.textOut.moveCursor(QTextCursor.End)
+                    if self.textScroll == True: self.textOut.moveCursor(QTextCursor.End)
 
                 if (c == '\n') or (h >= 32 and h <= 126):
-                    self.textOut.moveCursor(QTextCursor.End)
+                    if self.textScroll == True: self.textOut.moveCursor(QTextCursor.End)
                     self.textOut.setTextColor(cmain)
                     self.textOut.insertPlainText(c)
-                    self.textOut.moveCursor(QTextCursor.End)
+                    if self.textScroll == True: self.textOut.moveCursor(QTextCursor.End)
         else:
 
             s = ""
@@ -155,13 +168,23 @@ class SerialTerminalDialog(QtFixes.QDialog):
                 if (i % 16) == 0:
                     s += "\n"
 
-            self.textOut.moveCursor(QTextCursor.End)
+            if self.textScroll == True: self.textOut.moveCursor(QTextCursor.End)
             self.textOut.setTextColor(cmain)
             self.textOut.insertPlainText(s)
-            self.textOut.moveCursor(QTextCursor.End)
+            if self.textScroll == True: self.textOut.moveCursor(QTextCursor.End)
 
 
         self.textOut.setTextColor(QColor(Qt.black))
+
+    def scrollCmd(self):
+        print self.textOut.isEnabled
+        if self.textScroll == True:
+                self.textScroll = False
+                self.scrollPB.setText("No Scrolling")
+
+        else:
+                self.textScroll = True
+                self.scrollPB.setText("Scrolling")
 
 
     def returnPressedIn(self):
@@ -210,7 +233,7 @@ class SerialTerminalDialog(QtFixes.QDialog):
         #self.driver.con()
 
         self.textIn.setEnabled(True)
-        self.textOut.setEnabled(True)
+        self.textOut.setEnabled(False)
         self.pollIntervalSP.setEnabled(True)
 
         self.timerRead.start(self.pollIntervalSP.value())
@@ -221,7 +244,7 @@ class SerialTerminalDialog(QtFixes.QDialog):
 
     def _tryDis(self):
         self.textIn.setEnabled(False)
-        self.textOut.setEnabled(False)
+        self.textOut.setEnabled(True)
         self.pollIntervalSP.setEnabled(False)
         self.timerRead.stop()
         
