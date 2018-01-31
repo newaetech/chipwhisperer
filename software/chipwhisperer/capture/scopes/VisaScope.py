@@ -43,23 +43,25 @@ class VisaScopeInterface(ScopeTemplate, Plugin):
         scopes = pluginmanager.getPluginsInDictFromPackage("chipwhisperer.capture.scopes.visascope_interface", True, False)
 
         self.params.addChildren([
-            {'name':'Scope Type', 'key':'type', 'type':'list', 'values':scopes, 'value':scopes[VisaScopeInterface_MSO54831D._name], 'set':self.setCurrentScope, 'childmode':'parent'},
+            {'name':'Scope Type', 'key':'type', 'type':'list', 'values':scopes, 'value':scopes[VisaScopeInterface_MSO54831D._name], 'action':self.setCurrentScope_act, 'childmode':'parent'},
             {'name':'Connect String', 'key':'connStr', 'type':'str', 'value':''},
-            {'name':'Example Strings', 'type':'list', 'values':['', 'TCPIP0::192.168.2.100::inst0::INSTR'], 'value':'', 'set':self.exampleString},
+            {'name':'Example Strings', 'type':'list', 'values':['', 'TCPIP0::192.168.2.100::inst0::INSTR'], 'value':'', 'action':self.exampleString},
         ])
         self.params.init()
         self.scopetype = None
         self.setCurrentScope(self.findParam('type').getValue(type))
 
-    @setupSetParam("Example Strings")
-    def exampleString(self, newstr):
-        self.findParam('connStr').setValue(newstr)
+    def exampleString(self, param):
+        self.findParam('connStr').setValue(param.getValue())
 
-    @setupSetParam("Scope Type")
+    def setCurrentScope_act(self, param):
+        self.setCurrentScope(param.getValue())
+
     def setCurrentScope(self, scope, update=True):
         self.scopetype = scope
         if scope is not None:
             self.scopetype.dataUpdated.connect(self.newDataReceived)
+            self.params.append(self.scopetype.getParams())
 
     def _con(self):
         if self.scopetype is not None:

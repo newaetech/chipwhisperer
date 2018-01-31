@@ -22,9 +22,10 @@ import logging
 import time
 from _base import VisaScope
 from chipwhisperer.common.utils import util
+from chipwhisperer.common.utils.pluginmanager import Plugin
 
 
-class VisaScopeInterface_DSO1024A(VisaScope):
+class VisaScopeInterface_DSO1024A(VisaScope, Plugin):
     _name = "Agilent DSO 1024A"
 
     # TODO: What scales & ranges are allowed on the DSO1024A?
