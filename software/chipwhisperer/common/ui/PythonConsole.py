@@ -16,10 +16,11 @@ import os, sys, subprocess, shutil
 from code import InteractiveConsole as _InteractiveConsole
 from PySide import QtCore, QtGui
 from chipwhisperer.common.utils.util import requestConsoleBreak, updateUI
-from os.path import expanduser
+from chipwhisperer.common.api.settings import Settings
 
 # Note: we'd like to use cStringIO (it's faster) but we can't subclass it
 from StringIO import StringIO
+
 
 class MyStringIO(StringIO):
     """Custom StringIO class - prints everything to console"""
