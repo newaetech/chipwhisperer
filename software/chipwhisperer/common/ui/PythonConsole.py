@@ -182,29 +182,31 @@ class QPythonConsole(QtGui.QWidget):
         self.ui.input.setText(line)
         self.ui.input.end(False)
 
+
 class CWPythonFileTree(QtGui.QTreeView):
     """Customized QTreeView that only displays Python files.
 
     Optional parameter in __init__: root sets up base directory for file tree
     """
 
+    model_class = QtGui.QFileSystemModel()
+
     def __init__(self, root=None, parent=None):
         super(CWPythonFileTree, self).__init__(parent)
-        model = QtGui.QFileSystemModel()
         if root is not None:
-            model.setRootPath(root)
+            self.model_class.setRootPath(root)
         else:
             # TODO: unsure if this works on all operating systems.
             # Amazingly, it works on Windows.
-            model.setRootPath('/')
+            self.model_class.setRootPath('/')
 
         # Only display Python files
-        model.setNameFilters(["*.py"])
-        model.setNameFilterDisables(False)
+        self.model_class.setNameFilters(["*.py"])
+        self.model_class.setNameFilterDisables(False)
 
-        self.setModel(model)
+        self.setModel(self.model_class)
         if root is not None:
-            self.setRootIndex(model.index(root))
+            self.setRootIndex(self.model_class.index(root))
         else:
             # It seems like this is unnecessary. Not sure why...
             # self.setRootIndex(model.index('/'))
@@ -222,6 +224,10 @@ class CWPythonFileTree(QtGui.QTreeView):
 
     def setSelectedPath(self, path):
         self.setCurrentIndex(self.model().index(path))
+
+    def updateFileTreePath(self, path):
+        self.model_class.setRootPath(path)
+        self.setRootIndex(self.model_class.index(path))
 
 
 class CWPythonRecentTable(QtGui.QTableWidget):
