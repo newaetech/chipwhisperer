@@ -422,10 +422,11 @@ class CWPythonRecentTable(QtGui.QTableWidget):
 
 
 class QPythonScriptBrowser(QtGui.QWidget):
-    """A script browser with 3 tabs to help find Python files:
+    """A script browser with 4 tabs to help find Python files:
     1. ChipWhisperer directory
-    2. Root of file system
-    3. Recent file list with options to pin files
+    2. Project directory
+    3. Root of file system
+    4. Recent file list with options to pin files
     """
 
     # Note that this signal needs to be defined at the class level
@@ -433,8 +434,16 @@ class QPythonScriptBrowser(QtGui.QWidget):
     sigSelectionChanged = QtCore.Signal()
     sigSelectionConfirmed = QtCore.Signal()
 
-    def __init__(self, parent=None, default="capture"):
+    project_dir = os.path.normpath(Settings().value('project-home-dir'))
+    program_type = "capture"
+
+ 
+    def __init__(self, parent=None, program_type="capture"):
         super(QPythonScriptBrowser,self).__init__(parent)
+
+        cwroot = os.path.dirname(os.path.dirname(chipwhisperer.__file__))
+        self.project_dir = os.path.normpath(Settings().value('project-home-dir'))
+        self.program_type = program_type
 
         self.tab_bar = QtGui.QTabBar()
         self.tab_bar.addTab("ChipWhisperer")
@@ -443,17 +452,12 @@ class QPythonScriptBrowser(QtGui.QWidget):
         self.tab_bar.addTab("Recent")
         self.tab_bar.currentChanged.connect(self.tabChanged)
 
-        cwroot = os.path.dirname(os.path.dirname(chipwhisperer.__file__))
-        home_user_dir = expanduser("~")
-        project_dir = os.path.join(home_user_dir, 'chipwhisperer', 'projects')
-        
-        
-        if default == "capture":
+        if program_type == "capture":
             scripts_folder = os.path.join(cwroot, 'chipwhisperer', 'capture', 'scripts')
-            project_scripts_folder = os.path.join(project_dir, 'chipwhisperer', 'capture', 'scripts')
-        elif default == "analyzer":
+            project_scripts_folder = os.path.join(self.project_dir, 'chipwhisperer', 'capture', 'scripts')
+        elif program_type == "analyzer":
             scripts_folder = os.path.join(cwroot, 'chipwhisperer', 'analyzer', 'scripts')
-            project_scripts_folder = os.path.join(project_dir, 'chipwhisperer', 'analyzer', 'scripts')
+            project_scripts_folder = os.path.join(self.project_dir, 'chipwhisperer', 'analyzer', 'scripts')
         else:
             scripts_folder = cwroot
             project_scripts_folder = project_dir
@@ -485,6 +489,7 @@ class QPythonScriptBrowser(QtGui.QWidget):
                  self, QtCore.SLOT("selectionChanged(QItemSelection, QItemSelection)"))
 
         self.file_view_cw.activated.connect(self.selectionConfirmed)
+        self.file_view_project.activated.connect(self.selectionConfirmed)
         self.file_view_all.activated.connect(self.selectionConfirmed)
         self.file_view_recent.activated.connect(self.selectionConfirmed)
 
@@ -496,7 +501,27 @@ class QPythonScriptBrowser(QtGui.QWidget):
         if newTab == 0: # ChipWhisperer
             self.file_view_cw.show()
         elif newTab == 1: # Project
+            # Update current project folder if Project Folder is changed in preferences.
+            if not os.path.normpath(self.project_dir) == os.path.normpath(Settings().value('project-home-dir')):
+                self.project_dir = os.path.normpath(Settings().value('project-home-dir'))
+
+                # Create capture script storage directory
+                if not os.path.isdir(os.path.join(self.project_dir, 'chipwhisperer', 'capture', 'scripts')):
+                    os.makedirs(os.path.join(self.project_dir, 'chipwhisperer', 'capture', 'scripts'))
+
+                # Create analyze script storage directory
+                if not os.path.isdir(os.path.join(self.project_dir, 'chipwhisperer', 'analyzer', 'scripts')):
+                    os.makedirs(os.path.join(self.project_dir, 'chipwhisperer', 'analyzer', 'scripts'))
+
+                if self.program_type == "capture":
+                    project_scripts_folder = os.path.join(self.project_dir, 'chipwhisperer', 'capture', 'scripts')
+                elif self.program_type == "analyzer":
+                    project_scripts_folder = os.path.join(self.project_dir, 'chipwhisperer', 'analyzer', 'scripts')
+                # Update project folder
+                self.file_view_project.updateFileTreePath(project_scripts_folder)
+
             self.file_view_project.show()
+
         elif newTab == 2: # File system
             self.file_view_all.show()
         else: # Recent
@@ -572,7 +597,7 @@ class QPythonScriptRunner(QtGui.QWidget):
             sccmdtype = "analyzer"
         else:
             sccmdtype = None
-        self.browser = QPythonScriptBrowser(default=sccmdtype)
+        self.browser = QPythonScriptBrowser(program_type=sccmdtype)
 
         self.file_preview = QtGui.QTextEdit()
         self.file_preview.setReadOnly(True)
