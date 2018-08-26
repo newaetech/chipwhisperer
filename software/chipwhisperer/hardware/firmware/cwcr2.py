@@ -2,13 +2,13 @@
 # Generated on 2016-06-30 11:19:12.607000
 #
 import base64
-import StringIO
+import io
 
 def getsome(item, filelike=True):
     data = _contents[item]
     data = base64.b64decode(data)
     if filelike:
-        data = StringIO.StringIO(data)
+        data = io.BytesIO(data)
     return data
 
 _contents = {
