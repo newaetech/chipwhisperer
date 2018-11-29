@@ -1,0 +1,6 @@
+C:\Users\hapr\Documents\PSoC Creator\ChipWhisperer\ChipWhisperer.cydsn\ChipWhisperer.cyprj|1ff18209-f2da-407c-a05c-3302108dafa4
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|d6c20c20-6644-40d6-91c3-d4a849946a2a
+C:\Users\hapr\Documents\PSoC Creator\4.2\Downloads ( 4.2).cylib\Downloads ( 4.2).cyprj|6c8442db-4100-48a3-8d38-7f7f3f879318
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|87bb8b1a-9f59-4573-9199-113caad31d4d
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|8a1176b1-ebe5-47fb-91fb-dde6d564b1d8
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|f1f54f3b-1b43-4d90-8eb0-6d9d34ab4fed

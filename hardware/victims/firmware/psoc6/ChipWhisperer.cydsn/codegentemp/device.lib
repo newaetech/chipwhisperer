@@ -1,0 +1,1775 @@
+  cell (abufcell) {
+  }
+  cell (ARM) {
+    pin (nmi) { direction : input; }
+  }
+  cell (BLE) {
+    pin (ext_pa_lna_chip_en_out) { direction : output; }
+    pin (ext_lna_rx_ctl_out) { direction : output; }
+    pin (ext_pa_tx_ctl_out) { direction : output; }
+    pin (interrupt) { direction : output; }
+  }
+  cell (boostcell) {
+    pin (interrupt) { direction : output; }
+  }
+  cell (cachecell) {
+    pin (interrupt) { direction : output; }
+  }
+  cell (cancell) {
+    pin (clock) { direction : input; }
+    pin (can_rx) { direction : input; }
+    pin (can_tx) { direction : output; }
+    pin (can_tx_en) { direction : output; }
+    pin (interrupt) { direction : output; }
+  }
+  cell (capsensecell) {
+    pin (lft) { direction : input; }
+    pin (rt) { direction : input; }
+  }
+  cell (CLK_GEN) {
+    pin (gen_clk_in_0) { direction : input; }
+    pin (gen_clk_in_1) { direction : input; }
+    pin (gen_clk_in_2) { direction : input; }
+    pin (gen_clk_in_3) { direction : input; }
+    pin (gen_clk_in_4) { direction : input; }
+    pin (gen_clk_in_5) { direction : input; }
+    pin (gen_clk_in_6) { direction : input; }
+    pin (gen_clk_in_7) { direction : input; }
+    pin (gen_clk_out_0) { 
+		direction : output; 
+            timing() {
+                timing_sense : positive_unate;
+                timing_type : combinational;
+                related_pin : "gen_clk_in_0";
+                intrinsic_rise : 0.0;
+                intrinsic_fall : 0.0;
+            }
+	}
+    pin (gen_clk_out_1) {
+		direction : output; 
+            timing() {
+                timing_sense : positive_unate;
+                timing_type : combinational;
+                related_pin : "gen_clk_in_1";
+                intrinsic_rise : 0.0;
+                intrinsic_fall : 0.0;
+            }
+	}
+    pin (gen_clk_out_2) {
+		direction : output; 
+            timing() {
+                timing_sense : positive_unate;
+                timing_type : combinational;
+                related_pin : "gen_clk_in_2";
+                intrinsic_rise : 0.0;
+                intrinsic_fall : 0.0;
+            }
+	}
+    pin (gen_clk_out_3) {
+		direction : output; 
+            timing() {
+                timing_sense : positive_unate;
+                timing_type : combinational;
+                related_pin : "gen_clk_in_3";
+                intrinsic_rise : 0.0;
+                intrinsic_fall : 0.0;
+            }
+	}
+    pin (gen_clk_out_4) {
+		direction : output; 
+            timing() {
+                timing_sense : positive_unate;
+                timing_type : combinational;
+                related_pin : "gen_clk_in_4";
+                intrinsic_rise : 0.0;
+                intrinsic_fall : 0.0;
+            }
+	}
+    pin (gen_clk_out_5) {
+		direction : output; 
+            timing() {
+                timing_sense : positive_unate;
+                timing_type : combinational;
+                related_pin : "gen_clk_in_5";
+                intrinsic_rise : 0.0;
+                intrinsic_fall : 0.0;
+            }
+	}
+    pin (gen_clk_out_6) {
+		direction : output; 
+            timing() {
+                timing_sense : positive_unate;
+                timing_type : combinational;
+                related_pin : "gen_clk_in_6";
+                intrinsic_rise : 0.0;
+                intrinsic_fall : 0.0;
+            }
+	}
+    pin (gen_clk_out_7) {
+		direction : output; 
+            timing() {
+                timing_sense : positive_unate;
+                timing_type : combinational;
+                related_pin : "gen_clk_in_7";
+                intrinsic_rise : 0.0;
+                intrinsic_fall : 0.0;
+            }
+	}
+  }
+  cell (Clock) {
+    pin (imo) { direction : output; }
+    pin (ext) { direction : output; }
+    pin (eco) { direction : output; }
+    pin (altHf) { direction : output; }
+    pin (fll) { direction : output; }
+    pin (pll_0) { direction : output; }
+    pin (pll_1) { direction : output; }
+    pin (pll_2) { direction : output; }
+    pin (pll_3) { direction : output; }
+    pin (pll_4) { direction : output; }
+    pin (pll_5) { direction : output; }
+    pin (pll_6) { direction : output; }
+    pin (pll_7) { direction : output; }
+    pin (pll_8) { direction : output; }
+    pin (pll_9) { direction : output; }
+    pin (pll_10) { direction : output; }
+    pin (pll_11) { direction : output; }
+    pin (pll_12) { direction : output; }
+    pin (pll_13) { direction : output; }
+    pin (pll_14) { direction : output; }
+    pin (hfclk_0) { direction : output; }
+    pin (hfclk_1) { direction : output; }
+    pin (hfclk_2) { direction : output; }
+    pin (hfclk_3) { direction : output; }
+    pin (hfclk_4) { direction : output; }
+    pin (hfclk_5) { direction : output; }
+    pin (hfclk_6) { direction : output; }
+    pin (hfclk_7) { direction : output; }
+    pin (hfclk_8) { direction : output; }
+    pin (hfclk_9) { direction : output; }
+    pin (hfclk_10) { direction : output; }
+    pin (hfclk_11) { direction : output; }
+    pin (hfclk_12) { direction : output; }
+    pin (hfclk_13) { direction : output; }
+    pin (hfclk_14) { direction : output; }
+    pin (hfclk_15) { direction : output; }
+    pin (fastclk) { direction : output; }
+    pin (periclk) { direction : output; }
+    pin (slowclk) { direction : output; }
+    pin (ilo) { direction : output; }
+    pin (wco) { direction : output; }
+    pin (altLf) { direction : output; }
+    pin (lfclk) { direction : output; }
+    pin (udb_div_0) { direction : output; }
+    pin (udb_div_1) { direction : output; }
+    pin (udb_div_2) { direction : output; }
+    pin (udb_div_3) { direction : output; }
+    pin (udb_div_4) { direction : output; }
+    pin (udb_div_5) { direction : output; }
+    pin (udb_div_6) { direction : output; }
+    pin (udb_div_7) { direction : output; }
+    pin (udb_div_8) { direction : output; }
+    pin (udb_div_9) { direction : output; }
+    pin (udb_div_10) { direction : output; }
+    pin (udb_div_11) { direction : output; }
+    pin (udb_div_12) { direction : output; }
+    pin (udb_div_13) { direction : output; }
+    pin (udb_div_14) { direction : output; }
+    pin (udb_div_15) { direction : output; }
+    pin (uab_div_0) { direction : output; }
+    pin (uab_div_1) { direction : output; }
+    pin (uab_div_2) { direction : output; }
+    pin (uab_div_3) { direction : output; }
+    pin (ff_div_0) { direction : output; }
+    pin (ff_div_1) { direction : output; }
+    pin (ff_div_2) { direction : output; }
+    pin (ff_div_3) { direction : output; }
+    pin (ff_div_4) { direction : output; }
+    pin (ff_div_5) { direction : output; }
+    pin (ff_div_6) { direction : output; }
+    pin (ff_div_7) { direction : output; }
+    pin (ff_div_8) { direction : output; }
+    pin (ff_div_9) { direction : output; }
+    pin (ff_div_10) { direction : output; }
+    pin (ff_div_11) { direction : output; }
+    pin (ff_div_12) { direction : output; }
+    pin (ff_div_13) { direction : output; }
+    pin (ff_div_14) { direction : output; }
+    pin (ff_div_15) { direction : output; }
+    pin (ff_div_16) { direction : output; }
+    pin (ff_div_17) { direction : output; }
+    pin (ff_div_18) { direction : output; }
+    pin (ff_div_19) { direction : output; }
+    pin (ff_div_20) { direction : output; }
+    pin (ff_div_21) { direction : output; }
+    pin (ff_div_22) { direction : output; }
+    pin (ff_div_23) { direction : output; }
+    pin (ff_div_24) { direction : output; }
+    pin (ff_div_25) { direction : output; }
+    pin (ff_div_26) { direction : output; }
+    pin (ff_div_27) { direction : output; }
+    pin (ff_div_28) { direction : output; }
+    pin (ff_div_29) { direction : output; }
+    pin (ff_div_30) { direction : output; }
+    pin (ff_div_31) { direction : output; }
+    pin (ff_div_32) { direction : output; }
+    pin (ff_div_33) { direction : output; }
+    pin (ff_div_34) { direction : output; }
+    pin (ff_div_35) { direction : output; }
+    pin (ff_div_36) { direction : output; }
+    pin (ff_div_37) { direction : output; }
+    pin (ff_div_38) { direction : output; }
+    pin (ff_div_39) { direction : output; }
+    pin (ff_div_40) { direction : output; }
+    pin (ff_div_41) { direction : output; }
+    pin (ff_div_42) { direction : output; }
+    pin (ff_div_43) { direction : output; }
+    pin (ff_div_44) { direction : output; }
+    pin (ff_div_45) { direction : output; }
+    pin (ff_div_46) { direction : output; }
+    pin (ff_div_47) { direction : output; }
+    pin (ff_div_48) { direction : output; }
+    pin (ff_div_49) { direction : output; }
+    pin (ff_div_50) { direction : output; }
+    pin (ff_div_51) { direction : output; }
+    pin (ff_div_52) { direction : output; }
+    pin (ff_div_53) { direction : output; }
+    pin (ff_div_54) { direction : output; }
+    pin (ff_div_55) { direction : output; }
+    pin (ff_div_56) { direction : output; }
+    pin (ff_div_57) { direction : output; }
+    pin (ff_div_58) { direction : output; }
+    pin (ff_div_59) { direction : output; }
+    pin (ff_div_60) { direction : output; }
+    pin (ff_div_61) { direction : output; }
+    pin (ff_div_62) { direction : output; }
+    pin (ff_div_63) { direction : output; }
+    pin (ff_div_64) { direction : output; }
+    pin (ff_div_65) { direction : output; }
+    pin (ff_div_66) { direction : output; }
+    pin (ff_div_67) { direction : output; }
+    pin (ff_div_68) { direction : output; }
+    pin (ff_div_69) { direction : output; }
+    pin (ff_div_70) { direction : output; }
+    pin (ff_div_71) { direction : output; }
+    pin (ff_div_72) { direction : output; }
+    pin (ff_div_73) { direction : output; }
+    pin (ff_div_74) { direction : output; }
+    pin (ff_div_75) { direction : output; }
+    pin (ff_div_76) { direction : output; }
+    pin (ff_div_77) { direction : output; }
+    pin (ff_div_78) { direction : output; }
+    pin (ff_div_79) { direction : output; }
+    pin (ff_div_80) { direction : output; }
+    pin (ff_div_81) { direction : output; }
+    pin (ff_div_82) { direction : output; }
+    pin (ff_div_83) { direction : output; }
+    pin (ff_div_84) { direction : output; }
+    pin (ff_div_85) { direction : output; }
+    pin (ff_div_86) { direction : output; }
+    pin (ff_div_87) { direction : output; }
+    pin (ff_div_88) { direction : output; }
+    pin (ff_div_89) { direction : output; }
+    pin (ff_div_90) { direction : output; }
+    pin (ff_div_91) { direction : output; }
+    pin (ff_div_92) { direction : output; }
+    pin (ff_div_93) { direction : output; }
+    pin (ff_div_94) { direction : output; }
+    pin (ff_div_95) { direction : output; }
+    pin (ff_div_96) { direction : output; }
+    pin (ff_div_97) { direction : output; }
+    pin (ff_div_98) { direction : output; }
+    pin (ff_div_99) { direction : output; }
+    pin (ff_div_100) { direction : output; }
+    pin (ff_div_101) { direction : output; }
+    pin (ff_div_102) { direction : output; }
+    pin (ff_div_103) { direction : output; }
+    pin (ff_div_104) { direction : output; }
+    pin (ff_div_105) { direction : output; }
+    pin (ff_div_106) { direction : output; }
+    pin (ff_div_107) { direction : output; }
+    pin (ff_div_108) { direction : output; }
+    pin (ff_div_109) { direction : output; }
+    pin (ff_div_110) { direction : output; }
+    pin (ff_div_111) { direction : output; }
+    pin (ff_div_112) { direction : output; }
+    pin (ff_div_113) { direction : output; }
+    pin (ff_div_114) { direction : output; }
+    pin (ff_div_115) { direction : output; }
+    pin (dsi_out_0) { direction : output; }
+    pin (dsi_out_1) { direction : output; }
+    pin (dsi_out_2) { direction : output; }
+    pin (dsi_out_3) { direction : output; }
+    pin (dsi_out_4) { direction : output; }
+    pin (dsi_out_5) { direction : output; }
+    pin (dsi_out_6) { direction : output; }
+    pin (dsi_out_7) { direction : output; }
+    pin (dsi_out_8) { direction : output; }
+    pin (dsi_out_9) { direction : output; }
+    pin (dsi_out_10) { direction : output; }
+    pin (dsi_out_11) { direction : output; }
+    pin (dsi_out_12) { direction : output; }
+    pin (dsi_out_13) { direction : output; }
+    pin (dsi_out_14) { direction : output; }
+    pin (dsi_out_15) { direction : output; }
+    pin (dsi_in_0) { direction : input; }
+    pin (dsi_in_1) { direction : input; }
+    pin (dsi_in_2) { direction : input; }
+    pin (dsi_in_3) { direction : input; }
+    pin (dsi_in_4) { direction : input; }
+    pin (dsi_in_5) { direction : input; }
+    pin (dsi_in_6) { direction : input; }
+    pin (dsi_in_7) { direction : input; }
+    pin (dsi_in_8) { direction : input; }
+    pin (dsi_in_9) { direction : input; }
+    pin (dsi_in_10) { direction : input; }
+    pin (dsi_in_11) { direction : input; }
+    pin (dsi_in_12) { direction : input; }
+    pin (dsi_in_13) { direction : input; }
+    pin (dsi_in_14) { direction : input; }
+    pin (dsi_in_15) { direction : input; }
+  }
+  cell (clockblockcell) {
+    pin (dclk_0) { direction : output; }
+    pin (dclk_1) { direction : output; }
+    pin (dclk_2) { direction : output; }
+    pin (dclk_3) { direction : output; }
+    pin (dclk_4) { direction : output; }
+    pin (dclk_5) { direction : output; }
+    pin (dclk_6) { direction : output; }
+    pin (dclk_7) { direction : output; }
+    pin (dclk_glb_0) { direction : output; }
+    pin (dclk_glb_1) { direction : output; }
+    pin (dclk_glb_2) { direction : output; }
+    pin (dclk_glb_3) { direction : output; }
+    pin (dclk_glb_4) { direction : output; }
+    pin (dclk_glb_5) { direction : output; }
+    pin (dclk_glb_6) { direction : output; }
+    pin (dclk_glb_7) { direction : output; }
+    pin (aclk_0) { direction : output; }
+    pin (aclk_1) { direction : output; }
+    pin (aclk_2) { direction : output; }
+    pin (aclk_3) { direction : output; }
+    pin (aclk_glb_0) { direction : output; }
+    pin (aclk_glb_1) { direction : output; }
+    pin (aclk_glb_2) { direction : output; }
+    pin (aclk_glb_3) { direction : output; }
+    pin (clk_a_dig_0) { direction : output; }
+    pin (clk_a_dig_1) { direction : output; }
+    pin (clk_a_dig_2) { direction : output; }
+    pin (clk_a_dig_3) { direction : output; }
+    pin (clk_a_dig_glb_0) { direction : output; }
+    pin (clk_a_dig_glb_1) { direction : output; }
+    pin (clk_a_dig_glb_2) { direction : output; }
+    pin (clk_a_dig_glb_3) { direction : output; }
+    pin (clk_bus) { direction : output; }
+    pin (clk_bus_glb) { direction : output; }
+    pin (clk_sync) { direction : output; }
+    pin (clk_32k_xtal) { direction : output; }
+    pin (clk_100k) { direction : output; }
+    pin (clk_32k) { direction : output; }
+    pin (clk_1k) { direction : output; }
+    pin (clk_usb) { direction : output; }
+    pin (xmhz_xerr) { direction : output; }
+    pin (pll_lock_out) { direction : output; }
+    pin (dsi_dig_div_0) { direction : input; }
+    pin (dsi_dig_div_1) { direction : input; }
+    pin (dsi_dig_div_2) { direction : input; }
+    pin (dsi_dig_div_3) { direction : input; }
+    pin (dsi_dig_div_4) { direction : input; }
+    pin (dsi_dig_div_5) { direction : input; }
+    pin (dsi_dig_div_6) { direction : input; }
+    pin (dsi_dig_div_7) { direction : input; }
+    pin (dsi_ana_div_0) { direction : input; }
+    pin (dsi_ana_div_1) { direction : input; }
+    pin (dsi_ana_div_2) { direction : input; }
+    pin (dsi_ana_div_3) { direction : input; }
+    pin (dsi_glb_div) { direction : input; }
+    pin (dsi_clkin_div) { direction : input; }
+    pin (imo) { direction : output; }
+    pin (ilo) { direction : output; }
+    pin (xtal) { direction : output; }
+    pin (pllout) { direction : output; }
+    pin (clk_bus_glb_ff) { direction : output; }
+    pin (aclk_glb_ff_0) { direction : output; }
+    pin (clk_a_dig_glb_ff_0) { direction : output; }
+    pin (aclk_glb_ff_1) { direction : output; }
+    pin (clk_a_dig_glb_ff_1) { direction : output; }
+    pin (aclk_glb_ff_2) { direction : output; }
+    pin (clk_a_dig_glb_ff_2) { direction : output; }
+    pin (aclk_glb_ff_3) { direction : output; }
+    pin (clk_a_dig_glb_ff_3) { direction : output; }
+    pin (dclk_glb_ff_0) { direction : output; }
+    pin (dclk_glb_ff_1) { direction : output; }
+    pin (dclk_glb_ff_2) { direction : output; }
+    pin (dclk_glb_ff_3) { direction : output; }
+    pin (dclk_glb_ff_4) { direction : output; }
+    pin (dclk_glb_ff_5) { direction : output; }
+    pin (dclk_glb_ff_6) { direction : output; }
+    pin (dclk_glb_ff_7) { direction : output; }
+  }
+  cell (comparatorcell) {
+    pin (out) { direction : output; }
+    pin (clk_udb) { direction : input; }
+    pin (clock) { direction : input; }
+  }
+
+  cell (CPUSS) {
+    pin (interrupts_dw0_0) { direction : output; }
+    pin (interrupts_dw0_1) { direction : output; }
+    pin (interrupts_dw0_2) { direction : output; }
+    pin (interrupts_dw0_3) { direction : output; }
+    pin (interrupts_dw0_4) { direction : output; }
+    pin (interrupts_dw0_5) { direction : output; }
+    pin (interrupts_dw0_6) { direction : output; }
+    pin (interrupts_dw0_7) { direction : output; }
+    pin (interrupts_dw0_8) { direction : output; }
+    pin (interrupts_dw0_9) { direction : output; }
+    pin (interrupts_dw0_10) { direction : output; }
+    pin (interrupts_dw0_11) { direction : output; }
+    pin (interrupts_dw0_12) { direction : output; }
+    pin (interrupts_dw0_13) { direction : output; }
+    pin (interrupts_dw0_14) { direction : output; }
+    pin (interrupts_dw0_15) { direction : output; }
+    pin (interrupts_dw1_0) { direction : output; }
+    pin (interrupts_dw1_1) { direction : output; }
+    pin (interrupts_dw1_2) { direction : output; }
+    pin (interrupts_dw1_3) { direction : output; }
+    pin (interrupts_dw1_4) { direction : output; }
+    pin (interrupts_dw1_5) { direction : output; }
+    pin (interrupts_dw1_6) { direction : output; }
+    pin (interrupts_dw1_7) { direction : output; }
+    pin (interrupts_dw1_8) { direction : output; }
+    pin (interrupts_dw1_9) { direction : output; }
+    pin (interrupts_dw1_10) { direction : output; }
+    pin (interrupts_dw1_11) { direction : output; }
+    pin (interrupts_dw1_12) { direction : output; }
+    pin (interrupts_dw1_13) { direction : output; }
+    pin (interrupts_dw1_14) { direction : output; }
+    pin (interrupts_dw1_15) { direction : output; }
+    pin (interrupts_fault_0) { direction : output; }
+    pin (interrupts_fault_1) { direction : output; }
+    pin (interrupt_fm) { direction : output; }
+    pin (interrupts_cm0_cti_0) { direction : output; }
+    pin (interrupts_cm0_cti_1) { direction : output; }
+    pin (interrupts_cm4_cti_0) { direction : output; }
+    pin (interrupts_cm4_cti_1) { direction : output; }
+    pin (cti_tr_in_0) { direction : input; }
+    pin (cti_tr_in_1) { direction : input; }
+    pin (cti_tr_out_0) { direction : output; }
+    pin (cti_tr_out_1) { direction : output; }
+    pin (tr_fault_0) { direction : output; }
+    pin (tr_fault_1) { direction : output; }
+    pin (fault_out_0) { direction : output; }
+    pin (fault_out_1) { direction : output; }
+    pin (zero) { direction : output; }
+    pin (swj_trstn) { direction : input; }
+    pin (swj_swdoe_tdi) { direction : input; }
+    pin (swj_swclk_tclk) { direction : input; }
+    pin (swj_swo_tdo) { direction : output; }
+    pin (swj_swdio_tms) { direction : input; }
+    pin (trace_clock) { direction : output; }
+    pin (trace_data_0) { direction : output; }
+    pin (trace_data_1) { direction : output; }
+    pin (trace_data_2) { direction : output; }
+    pin (trace_data_3) { direction : output; }
+    pin (clock_trace_in) { direction : input; }
+  }
+  cell (CRYPTO) {
+    pin (interrupt) { direction : output; }
+  }
+  cell (csabufcell) {
+    pin (swon) { direction : input; }
+  }
+  cell (CSIDAC7) {
+    pin (dsi_idac_leg1_en) { direction : input; }
+    pin (dsi_idac_leg2_en) { direction : input; }
+    pin (dsi_idac_leg3_en) { direction : input; }
+    pin (dsi_idac_pol) { direction : input; }
+  }
+  cell (CTDAC) {
+    pin (clock) { direction : input; }
+    pin (dsi_ctdac_strobe) { direction : input; }
+    pin (tr_ctdac_empty) { direction : output; }
+    pin (interrupt_dac) { direction : output; }
+  }
+  cell (decimatorcell) {
+    pin (aclock) { direction : input; }
+    pin (mod_dat_0) { direction : input; }
+    pin (mod_dat_1) { direction : input; }
+    pin (mod_dat_2) { direction : input; }
+    pin (mod_dat_3) { direction : input; }
+    pin (ext_start) { direction : input; }
+    pin (modrst) { direction : output; }
+    pin (interrupt) { direction : output; }
+  }
+  cell (dfbcell) {
+    pin (clock) { direction : input; }
+    pin (in_1) { direction : input; }
+    pin (in_2) { direction : input; }
+    pin (out_1) { direction : output; }
+    pin (out_2) { direction : output; }
+    pin (dmareq_1) { direction : output; }
+    pin (dmareq_2) { direction : output; }
+    pin (interrupt) { direction : output; }
+  }
+  cell (drqcell) {
+    pin (dmareq) { direction : input; }
+    pin (termin) { direction : input; }
+    pin (termout) { direction : output; }
+    pin (interrupt) { direction : output; }
+    pin (clock) { direction : input; }
+  }
+  cell (dsmodcell) {
+    pin (aclock) { direction : input; }
+    pin (modbitin_udb) { direction : input; }
+    pin (reset_udb) { direction : input; }
+    pin (reset_dec) { direction : input; }
+    pin (dec_clock) { direction : output; }
+    pin (mod_dat_0) { direction : output; }
+    pin (mod_dat_1) { direction : output; }
+    pin (mod_dat_2) { direction : output; }
+    pin (mod_dat_3) { direction : output; }
+    pin (dout_udb_0) { direction : output; }
+    pin (dout_udb_1) { direction : output; }
+    pin (dout_udb_2) { direction : output; }
+    pin (dout_udb_3) { direction : output; }
+    pin (dout_udb_4) { direction : output; }
+    pin (dout_udb_5) { direction : output; }
+    pin (dout_udb_6) { direction : output; }
+    pin (dout_udb_7) { direction : output; }
+    pin (extclk_cp_udb) { direction : input; }
+    pin (clk_udb) { direction : input; }
+  }
+  cell (emifcell) {
+    pin (EM_clock) { direction : output; }
+    pin (EM_CEn) { direction : output; }
+    pin (EM_OEn) { direction : output; }
+    pin (EM_ADSCn) { direction : output; }
+    pin (EM_sleep) { direction : output; }
+    pin (EM_WRn) { direction : output; }
+    pin (dataport_OE) { direction : output; }
+    pin (dataport_OEn) { direction : output; }
+    pin (wr) { direction : output; }
+    pin (rd) { direction : output; }
+    pin (udb_stall) { direction : input; }
+    pin (udb_ready) { direction : input; }
+    pin (busclk) { direction : input; }
+  }
+  cell (i2ccell) {
+    pin (clock) { direction : input; }
+    pin (scl_in) { direction : input; }
+    pin (sda_in) { direction : input; }
+    pin (scl_out) { direction : output; }
+    pin (sda_out) { direction : output; }
+    pin (interrupt) { direction : output; }
+  }
+  cell (I2S) {
+    pin (clock) { direction : input; }
+    pin (clk_i2s_if) { direction : input; }
+    pin (tx_sck) { direction : output; }
+    pin (tx_ws) { direction : output; }
+    pin (rx_sck) { direction : output; }
+    pin (rx_ws) { direction : output; }
+    pin (tx_sdo) { direction : output; }
+    pin (rx_sdi) { direction : input; }
+    pin (tr_i2s_tx_req) { direction : output; }
+    pin (tr_i2s_rx_req) { direction : output; }
+    pin (interrupt) { direction : output; }
+  }
+  cell (interrupt) {
+    pin (interrupt) { direction : input; }
+    pin (clock) { direction : input; }
+  }
+  cell (iocell) {
+    pin (oe) { direction : input; }
+    pin (fb) { direction : output; }
+    pin (pa_out) { direction : output; }
+    pin (pin_input) { direction : input; }
+    pin (pad_in) { direction : input; }
+    pin (pad_out) { direction : output; }
+    pin (oe_reg) { direction : output; }
+    pin (oe_internal) { direction : input; }
+    pin (in_clock) { direction : input; }
+    pin (in_clock_en) { direction : input; }
+    pin (in_reset) { direction : input; }
+    pin (out_clock) { direction : input; }
+    pin (out_clock_en) { direction : input; }
+    pin (out_reset) { direction : input; }
+  }
+  cell (IOSS) {
+    pin (interrupt_gpio) { direction : output; }
+    pin (interrupt_vdd) { direction : output; }
+    pin (interrupt_port_0) { direction : output; }
+    pin (interrupt_port_1) { direction : output; }
+    pin (interrupt_port_2) { direction : output; }
+    pin (interrupt_port_3) { direction : output; }
+    pin (interrupt_port_4) { direction : output; }
+    pin (interrupt_port_5) { direction : output; }
+    pin (interrupt_port_6) { direction : output; }
+    pin (interrupt_port_7) { direction : output; }
+    pin (interrupt_port_8) { direction : output; }
+    pin (interrupt_port_9) { direction : output; }
+    pin (interrupt_port_10) { direction : output; }
+    pin (interrupt_port_11) { direction : output; }
+    pin (interrupt_port_12) { direction : output; }
+    pin (interrupt_port_13) { direction : output; }
+    pin (interrupt_port_14) { direction : output; }
+  }
+  cell (IPC) {
+    pin (interrupt) { direction : output; }
+  }
+  cell (LCD) {
+    pin (clock) { direction : input; }
+    pin (com_0) { direction : output; }
+    pin (com_1) { direction : output; }
+    pin (com_2) { direction : output; }
+    pin (com_3) { direction : output; }
+    pin (com_4) { direction : output; }
+    pin (com_5) { direction : output; }
+    pin (com_6) { direction : output; }
+    pin (com_7) { direction : output; }
+    pin (com_8) { direction : output; }
+    pin (com_9) { direction : output; }
+    pin (com_10) { direction : output; }
+    pin (com_11) { direction : output; }
+    pin (com_12) { direction : output; }
+    pin (com_13) { direction : output; }
+    pin (com_14) { direction : output; }
+    pin (com_15) { direction : output; }
+    pin (com_16) { direction : output; }
+    pin (com_17) { direction : output; }
+    pin (com_18) { direction : output; }
+    pin (com_19) { direction : output; }
+    pin (com_20) { direction : output; }
+    pin (com_21) { direction : output; }
+    pin (com_22) { direction : output; }
+    pin (com_23) { direction : output; }
+    pin (com_24) { direction : output; }
+    pin (com_25) { direction : output; }
+    pin (com_26) { direction : output; }
+    pin (com_27) { direction : output; }
+    pin (com_28) { direction : output; }
+    pin (com_29) { direction : output; }
+    pin (com_30) { direction : output; }
+    pin (com_31) { direction : output; }
+    pin (com_32) { direction : output; }
+    pin (com_33) { direction : output; }
+    pin (com_34) { direction : output; }
+    pin (com_35) { direction : output; }
+    pin (com_36) { direction : output; }
+    pin (com_37) { direction : output; }
+    pin (com_38) { direction : output; }
+    pin (com_39) { direction : output; }
+    pin (com_40) { direction : output; }
+    pin (com_41) { direction : output; }
+    pin (com_42) { direction : output; }
+    pin (com_43) { direction : output; }
+    pin (com_44) { direction : output; }
+    pin (com_45) { direction : output; }
+    pin (com_46) { direction : output; }
+    pin (com_47) { direction : output; }
+    pin (com_48) { direction : output; }
+    pin (com_49) { direction : output; }
+    pin (com_50) { direction : output; }
+    pin (com_51) { direction : output; }
+    pin (com_52) { direction : output; }
+    pin (com_53) { direction : output; }
+    pin (com_54) { direction : output; }
+    pin (com_55) { direction : output; }
+    pin (com_56) { direction : output; }
+    pin (com_57) { direction : output; }
+    pin (com_58) { direction : output; }
+    pin (com_59) { direction : output; }
+    pin (com_60) { direction : output; }
+    pin (com_61) { direction : output; }
+    pin (com_62) { direction : output; }
+    pin (com_63) { direction : output; }
+    pin (seg_0) { direction : output; }
+    pin (seg_1) { direction : output; }
+    pin (seg_2) { direction : output; }
+    pin (seg_3) { direction : output; }
+    pin (seg_4) { direction : output; }
+    pin (seg_5) { direction : output; }
+    pin (seg_6) { direction : output; }
+    pin (seg_7) { direction : output; }
+    pin (seg_8) { direction : output; }
+    pin (seg_9) { direction : output; }
+    pin (seg_10) { direction : output; }
+    pin (seg_11) { direction : output; }
+    pin (seg_12) { direction : output; }
+    pin (seg_13) { direction : output; }
+    pin (seg_14) { direction : output; }
+    pin (seg_15) { direction : output; }
+    pin (seg_16) { direction : output; }
+    pin (seg_17) { direction : output; }
+    pin (seg_18) { direction : output; }
+    pin (seg_19) { direction : output; }
+    pin (seg_20) { direction : output; }
+    pin (seg_21) { direction : output; }
+    pin (seg_22) { direction : output; }
+    pin (seg_23) { direction : output; }
+    pin (seg_24) { direction : output; }
+    pin (seg_25) { direction : output; }
+    pin (seg_26) { direction : output; }
+    pin (seg_27) { direction : output; }
+    pin (seg_28) { direction : output; }
+    pin (seg_29) { direction : output; }
+    pin (seg_30) { direction : output; }
+    pin (seg_31) { direction : output; }
+    pin (seg_32) { direction : output; }
+    pin (seg_33) { direction : output; }
+    pin (seg_34) { direction : output; }
+    pin (seg_35) { direction : output; }
+    pin (seg_36) { direction : output; }
+    pin (seg_37) { direction : output; }
+    pin (seg_38) { direction : output; }
+    pin (seg_39) { direction : output; }
+    pin (seg_40) { direction : output; }
+    pin (seg_41) { direction : output; }
+    pin (seg_42) { direction : output; }
+    pin (seg_43) { direction : output; }
+    pin (seg_44) { direction : output; }
+    pin (seg_45) { direction : output; }
+    pin (seg_46) { direction : output; }
+    pin (seg_47) { direction : output; }
+    pin (seg_48) { direction : output; }
+    pin (seg_49) { direction : output; }
+    pin (seg_50) { direction : output; }
+    pin (seg_51) { direction : output; }
+    pin (seg_52) { direction : output; }
+    pin (seg_53) { direction : output; }
+    pin (seg_54) { direction : output; }
+    pin (seg_55) { direction : output; }
+    pin (seg_56) { direction : output; }
+    pin (seg_57) { direction : output; }
+    pin (seg_58) { direction : output; }
+    pin (seg_59) { direction : output; }
+    pin (seg_60) { direction : output; }
+    pin (seg_61) { direction : output; }
+    pin (seg_62) { direction : output; }
+    pin (seg_63) { direction : output; }
+  }
+  cell (lcdctrlcell) {
+    pin (drive_en) { direction : input; }
+    pin (frame) { direction : input; }
+    pin (data_clk) { direction : input; }
+    pin (en_hi) { direction : input; }
+    pin (dac_dis) { direction : input; }
+    pin (chop_clk) { direction : input; }
+    pin (int_clr) { direction : input; }
+    pin (lp_ack_udb) { direction : input; }
+    pin (mode_1) { direction : input; }
+    pin (mode_2) { direction : input; }
+    pin (interrupt) { direction : output; }
+  }
+  cell (logicalport) {
+    pin (interrupt) { direction : output; }
+    pin (precharge) { direction : input; }
+    pin (in_clock) { direction : input; }
+    pin (in_clock_en) { direction : input; }
+    pin (in_reset) { direction : input; }
+    pin (out_clock) { direction : input; }
+    pin (out_clock_en) { direction : input; }
+    pin (out_reset) { direction : input; }
+  }
+  cell (LPCOMP) {
+    pin (dsi_comp) { direction : output; }
+  }
+  cell (LPCOMPBLOCK) {
+    pin (interrupt) { direction : output; }
+  }
+  cell (lpfcell) {
+  }
+  cell (lvdcell) {
+    pin (interrupt) { direction : output; }
+  }
+  cell (m0s8clockblockcell) {
+    pin (imo) { direction : output; }
+    pin (ext) { direction : output; }
+    pin (eco) { direction : output; }
+    pin (ilo) { direction : output; }
+    pin (wco) { direction : output; }
+    pin (dbl) { direction : output; }
+    pin (pll) { direction : output; }
+    pin (dpll) { direction : output; }
+    pin (dsi_out_0) { direction : input; }
+    pin (dsi_out_1) { direction : input; }
+    pin (dsi_out_2) { direction : input; }
+    pin (dsi_out_3) { direction : input; }
+    pin (lfclk) { direction : output; }
+    pin (hfclk) { direction : output; }
+    pin (sysclk) { direction : output; }
+    pin (halfsysclk) { direction : output; }
+    pin (udb_div_0) { direction : output; }
+    pin (udb_div_1) { direction : output; }
+    pin (udb_div_2) { direction : output; }
+    pin (udb_div_3) { direction : output; }
+    pin (udb_div_4) { direction : output; }
+    pin (udb_div_5) { direction : output; }
+    pin (udb_div_6) { direction : output; }
+    pin (udb_div_7) { direction : output; }
+    pin (udb_div_8) { direction : output; }
+    pin (udb_div_9) { direction : output; }
+    pin (udb_div_10) { direction : output; }
+    pin (udb_div_11) { direction : output; }
+    pin (udb_div_12) { direction : output; }
+    pin (udb_div_13) { direction : output; }
+    pin (udb_div_14) { direction : output; }
+    pin (udb_div_15) { direction : output; }
+    pin (uab_div_0) { direction : output; }
+    pin (uab_div_1) { direction : output; }
+    pin (uab_div_2) { direction : output; }
+    pin (uab_div_3) { direction : output; }
+    pin (ff_div_0) { direction : output; }
+    pin (ff_div_1) { direction : output; }
+    pin (ff_div_2) { direction : output; }
+    pin (ff_div_3) { direction : output; }
+    pin (ff_div_4) { direction : output; }
+    pin (ff_div_5) { direction : output; }
+    pin (ff_div_6) { direction : output; }
+    pin (ff_div_7) { direction : output; }
+    pin (ff_div_8) { direction : output; }
+    pin (ff_div_9) { direction : output; }
+    pin (ff_div_10) { direction : output; }
+    pin (ff_div_11) { direction : output; }
+    pin (ff_div_12) { direction : output; }
+    pin (ff_div_13) { direction : output; }
+    pin (ff_div_14) { direction : output; }
+    pin (ff_div_15) { direction : output; }
+    pin (ff_div_16) { direction : output; }
+    pin (ff_div_17) { direction : output; }
+    pin (ff_div_18) { direction : output; }
+    pin (ff_div_19) { direction : output; }
+    pin (ff_div_20) { direction : output; }
+    pin (ff_div_21) { direction : output; }
+    pin (ff_div_22) { direction : output; }
+    pin (ff_div_23) { direction : output; }
+    pin (ff_div_24) { direction : output; }
+    pin (ff_div_25) { direction : output; }
+    pin (ff_div_26) { direction : output; }
+    pin (ff_div_27) { direction : output; }
+    pin (ff_div_28) { direction : output; }
+    pin (ff_div_29) { direction : output; }
+    pin (ff_div_30) { direction : output; }
+    pin (ff_div_31) { direction : output; }
+    pin (ff_div_32) { direction : output; }
+    pin (ff_div_33) { direction : output; }
+    pin (ff_div_34) { direction : output; }
+    pin (ff_div_35) { direction : output; }
+    pin (ff_div_36) { direction : output; }
+    pin (ff_div_37) { direction : output; }
+    pin (ff_div_38) { direction : output; }
+    pin (ff_div_39) { direction : output; }
+    pin (ff_div_40) { direction : output; }
+    pin (ff_div_41) { direction : output; }
+    pin (ff_div_42) { direction : output; }
+    pin (ff_div_43) { direction : output; }
+    pin (ff_div_44) { direction : output; }
+    pin (ff_div_45) { direction : output; }
+    pin (ff_div_46) { direction : output; }
+    pin (ff_div_47) { direction : output; }
+    pin (ff_div_48) { direction : output; }
+    pin (ff_div_49) { direction : output; }
+    pin (ff_div_50) { direction : output; }
+    pin (ff_div_51) { direction : output; }
+    pin (ff_div_52) { direction : output; }
+    pin (ff_div_53) { direction : output; }
+    pin (ff_div_54) { direction : output; }
+    pin (ff_div_55) { direction : output; }
+    pin (ff_div_56) { direction : output; }
+    pin (ff_div_57) { direction : output; }
+    pin (ff_div_58) { direction : output; }
+    pin (ff_div_59) { direction : output; }
+    pin (ff_div_60) { direction : output; }
+    pin (ff_div_61) { direction : output; }
+    pin (ff_div_62) { direction : output; }
+    pin (ff_div_63) { direction : output; }
+    pin (dsi_in_0) { direction : output; }
+    pin (dsi_in_1) { direction : output; }
+    pin (dsi_in_2) { direction : output; }
+    pin (dsi_in_3) { direction : output; }
+  }
+  cell (m0s8clockgenblockcell) {
+    pin (gen_clk_in_0) { direction : input; }
+    pin (gen_clk_in_1) { direction : input; }
+    pin (gen_clk_in_2) { direction : input; }
+    pin (gen_clk_in_3) { direction : input; }
+    pin (gen_clk_in_4) { direction : input; }
+    pin (gen_clk_in_5) { direction : input; }
+    pin (gen_clk_in_6) { direction : input; }
+    pin (gen_clk_in_7) { direction : input; }
+    pin (gen_clk_out_0) { direction : output; }
+    pin (gen_clk_out_1) { direction : output; }
+    pin (gen_clk_out_2) { direction : output; }
+    pin (gen_clk_out_3) { direction : output; }
+    pin (gen_clk_out_4) { direction : output; }
+    pin (gen_clk_out_5) { direction : output; }
+    pin (gen_clk_out_6) { direction : output; }
+    pin (gen_clk_out_7) { direction : output; }
+  }
+  cell (m0s8cpusscell) {
+    pin (interrupt_dma) { direction : output; }
+    pin (interrupt_spcif) { direction : output; }
+  }
+  cell (m0s8iosscell) {
+    pin (interrupt_gpio) { direction : output; }
+  }
+  cell (m0s8lcdcell) {
+    pin (com_0) { direction : output; }
+    pin (com_1) { direction : output; }
+    pin (com_2) { direction : output; }
+    pin (com_3) { direction : output; }
+    pin (com_4) { direction : output; }
+    pin (com_5) { direction : output; }
+    pin (com_6) { direction : output; }
+    pin (com_7) { direction : output; }
+    pin (com_8) { direction : output; }
+    pin (com_9) { direction : output; }
+    pin (com_10) { direction : output; }
+    pin (com_11) { direction : output; }
+    pin (com_12) { direction : output; }
+    pin (com_13) { direction : output; }
+    pin (com_14) { direction : output; }
+    pin (com_15) { direction : output; }
+    pin (seg_0) { direction : output; }
+    pin (seg_1) { direction : output; }
+    pin (seg_2) { direction : output; }
+    pin (seg_3) { direction : output; }
+    pin (seg_4) { direction : output; }
+    pin (seg_5) { direction : output; }
+    pin (seg_6) { direction : output; }
+    pin (seg_7) { direction : output; }
+    pin (seg_8) { direction : output; }
+    pin (seg_9) { direction : output; }
+    pin (seg_10) { direction : output; }
+    pin (seg_11) { direction : output; }
+    pin (seg_12) { direction : output; }
+    pin (seg_13) { direction : output; }
+    pin (seg_14) { direction : output; }
+    pin (seg_15) { direction : output; }
+    pin (seg_16) { direction : output; }
+    pin (seg_17) { direction : output; }
+    pin (seg_18) { direction : output; }
+    pin (seg_19) { direction : output; }
+    pin (seg_20) { direction : output; }
+    pin (seg_21) { direction : output; }
+    pin (seg_22) { direction : output; }
+    pin (seg_23) { direction : output; }
+    pin (seg_24) { direction : output; }
+    pin (seg_25) { direction : output; }
+    pin (seg_26) { direction : output; }
+    pin (seg_27) { direction : output; }
+    pin (seg_28) { direction : output; }
+    pin (seg_29) { direction : output; }
+    pin (seg_30) { direction : output; }
+    pin (seg_31) { direction : output; }
+    pin (seg_32) { direction : output; }
+    pin (seg_33) { direction : output; }
+    pin (seg_34) { direction : output; }
+    pin (seg_35) { direction : output; }
+    pin (seg_36) { direction : output; }
+    pin (seg_37) { direction : output; }
+    pin (seg_38) { direction : output; }
+    pin (seg_39) { direction : output; }
+    pin (seg_40) { direction : output; }
+    pin (seg_41) { direction : output; }
+    pin (seg_42) { direction : output; }
+    pin (seg_43) { direction : output; }
+    pin (seg_44) { direction : output; }
+    pin (seg_45) { direction : output; }
+    pin (seg_46) { direction : output; }
+    pin (seg_47) { direction : output; }
+    pin (seg_48) { direction : output; }
+    pin (seg_49) { direction : output; }
+    pin (seg_50) { direction : output; }
+    pin (seg_51) { direction : output; }
+    pin (seg_52) { direction : output; }
+    pin (seg_53) { direction : output; }
+    pin (seg_54) { direction : output; }
+    pin (seg_55) { direction : output; }
+    pin (seg_56) { direction : output; }
+    pin (seg_57) { direction : output; }
+    pin (seg_58) { direction : output; }
+    pin (seg_59) { direction : output; }
+    pin (seg_60) { direction : output; }
+    pin (seg_61) { direction : output; }
+    pin (seg_62) { direction : output; }
+    pin (seg_63) { direction : output; }
+    pin (clock) { direction : input; }
+  }
+  cell (m0s8scbcell) {
+    pin (clock) { direction : input; }
+    pin (interrupt) { direction : output; }
+    pin (uart_cts) { direction : input; }
+    pin (uart_rts) { direction : output; }
+    pin (uart_rx) { direction : input; }
+    pin (uart_tx) { direction : output; }
+    pin (mosi_m) { direction : output; }
+    pin (miso_m) { direction : input; }
+    pin (select_m_0) { direction : output; }
+    pin (select_m_1) { direction : output; }
+    pin (select_m_2) { direction : output; }
+    pin (select_m_3) { direction : output; }
+    pin (sclk_m) { direction : output; }
+    pin (mosi_s) { direction : input; }
+    pin (miso_s) { direction : output; }
+    pin (select_s) { direction : input; }
+    pin (sclk_s) { direction : input; }
+    pin (i2c_scl) { direction : input; }
+    pin (i2c_sda) { direction : input; }
+    pin (tr_rx_req) { direction : output; }
+    pin (tr_tx_req) { direction : output; }
+  }
+  cell (m0s8srsscell) {
+    pin (clock_pump) { direction : input; }
+    pin (clock_ss) { direction : input; }
+    pin (dsi_ss_code_0) { direction : input; }
+    pin (dsi_ss_code_1) { direction : input; }
+    pin (dsi_ss_code_2) { direction : input; }
+    pin (dsi_ss_code_3) { direction : input; }
+    pin (dsi_ss_code_4) { direction : input; }
+    pin (dsi_ss_updown) { direction : output; }
+    pin (interrupt_wdt) { direction : output; }
+    pin (interrupt_pwr) { direction : output; }
+  }
+  cell (m0s8tcpwmcell) {
+    pin (clock) { direction : input; }
+    pin (capture) { direction : input; }
+    pin (count) { direction : input; }
+    pin (reload) { direction : input; }
+    pin (stop) { direction : input; }
+    pin (start) { direction : input; }
+    pin (tr_underflow) { direction : output; }
+    pin (tr_overflow) { direction : output; }
+    pin (tr_compare_match) { direction : output; }
+    pin (line) { direction : output; }
+    pin (line_compl) { direction : output; }
+    pin (interrupt) { direction : output; }
+  }
+  cell (m0s8tsscell) {
+    pin (clk_seq) { direction : input; }
+    pin (clk_adc) { direction : input; }
+    pin (ext_reject) { direction : input; }
+    pin (ext_sync) { direction : input; }
+    pin (tx_sync) { direction : input; }
+    pin (reject_in) { direction : input; }
+    pin (start_in) { direction : input; }
+    pin (lx_det_hi) { direction : output; }
+    pin (lx_det_lo) { direction : output; }
+    pin (rej_window) { direction : output; }
+    pin (tx_hilo) { direction : output; }
+    pin (phase_end) { direction : output; }
+    pin (phase_num_0) { direction : output; }
+    pin (phase_num_1) { direction : output; }
+    pin (phase_num_2) { direction : output; }
+    pin (phase_num_3) { direction : output; }
+    pin (ipq_reject) { direction : output; }
+    pin (ipq_start) { direction : output; }
+    pin (epq_reject) { direction : output; }
+    pin (epq_start) { direction : output; }
+    pin (mcs_reject) { direction : output; }
+    pin (mcs_start) { direction : output; }
+    pin (do_switch) { direction : output; }
+    pin (adc_start) { direction : output; }
+    pin (adc_done) { direction : output; }
+    pin (irq) { direction : output; }
+    pin (cmpout) { direction : output; }
+  }
+  cell (MCWDT) {
+    pin (interrupt) { direction : output; }
+  }
+  cell (CSD) {
+    pin (dsi_sense_out) { direction : output; }
+    pin (dsi_sample_out) { direction : output; }
+    pin (dsi_sense_in) { direction : input; }
+    pin (dsi_sample_in) { direction : input; }
+    pin (irq) { direction : output; }
+    pin (comp) { direction : output; }
+    pin (clk) { direction : input; }
+    pin (dsi_csh_tank) { direction : output; }
+    pin (dsi_cmod) { direction : output; }
+    pin (dsi_hscmp) { direction : output; }
+    pin (dsi_start) { direction : input; }
+    pin (dsi_sampling) { direction : output; }
+    pin (dsi_adc_on) { direction : output; }
+    pin (dsi_count_0) { direction : output; }
+    pin (dsi_count_1) { direction : output; }
+    pin (dsi_count_2) { direction : output; }
+    pin (dsi_count_3) { direction : output; }
+    pin (dsi_count_4) { direction : output; }
+    pin (dsi_count_5) { direction : output; }
+    pin (dsi_count_6) { direction : output; }
+    pin (dsi_count_7) { direction : output; }
+    pin (dsi_count_8) { direction : output; }
+    pin (dsi_count_9) { direction : output; }
+    pin (dsi_count_10) { direction : output; }
+    pin (dsi_count_11) { direction : output; }
+    pin (dsi_count_12) { direction : output; }
+    pin (dsi_count_13) { direction : output; }
+    pin (dsi_count_14) { direction : output; }
+    pin (dsi_count_15) { direction : output; }
+    pin (dsi_count_val_sel) { direction : input; }
+    pin (tr_adc_done) { direction : output; }
+    pin (csd_tx) { direction : output; }
+    pin (csd_tx_n) { direction : output; }
+  }
+  cell (OA) {
+    pin (ctb_dsi_comp) { direction : output; }
+  }
+  cell (SARMUX) {
+  }
+  cell (p4abufcell) {
+    pin (ctb_dsi_comp) { direction : output; }
+    pin (ctb_dsi_comp_n) { direction : output; }
+  }
+  cell (p4blecell) {
+    pin (interrupt) { direction : output; }
+    pin (rfctrl_extpa_en) { direction : output; }
+    pin (wco_in) { direction : input; }
+    pin (wco_out) { direction : output; }
+    pin (ext_pa_tx_ctl) { direction : output; }
+    pin (ext_lna_rx_ctl) { direction : output; }
+    pin (ext_pa_lna_chip_en) { direction : output; }
+  }
+  cell (p4cryptocell) {
+    pin (tr_in) { direction : input; }
+    pin (tr_out) { direction : output; }
+    pin (interrupt) { direction : output; }
+  }
+  cell (p4csidac7cell) {
+    pin (en) { direction : input; }
+  }
+  cell (p4csidac8cell) {
+    pin (en) { direction : input; }
+  }
+  cell (p4csidacV2cell) {
+    pin (en_a) { direction : input; }
+    pin (en_b) { direction : input; }
+    pin (en_c) { direction : input; }
+    pin (pol) { direction : input; }
+  }
+  cell (p4decimatorcell) {
+    pin (trigger) { direction : input; }
+    pin (valid) { direction : input; }
+    pin (incr) { direction : input; }
+    pin (reset) { direction : output; }
+    pin (intr) { direction : output; }
+  }
+  cell (p4excocell) {
+    pin (eco_in) { direction : input; }
+    pin (eco_out) { direction : output; }
+  }
+  cell (p4halfuabcell) {
+    pin (clock) { direction : input; }
+    pin (modbitab) { direction : input; }
+    pin (modbitc) { direction : input; }
+    pin (strobe) { direction : input; }
+    pin (trigger) { direction : input; }
+    pin (comp) { direction : output; }
+    pin (uab_valid) { direction : output; }
+    pin (uab_trig_out) { direction : output; }
+    pin (uab_dac_intr) { direction : output; }
+  }
+  cell (p4lnfecell) {
+  }
+  cell (p4lpcompblockcell) {
+    pin (interrupt) { direction : output; }
+  }
+  cell (p4lpcompcell) {
+    pin (cmpout) { direction : output; }
+  }
+  cell (p4passblockcell) {
+    pin (interrupt_ctbs) { direction : output; }
+    pin (interrupt_uabs) { direction : output; }
+    pin (tr_gen_trig_in_0) { direction : input; }
+    pin (tr_gen_trig_in_1) { direction : input; }
+    pin (tr_gen_trig_in_2) { direction : input; }
+    pin (tr_gen_trig_in_3) { direction : input; }
+    pin (tr_gen_trig_in_4) { direction : input; }
+    pin (tr_gen_trig_in_5) { direction : input; }
+    pin (lnfe_base) { direction : output; }
+    pin (lnfe_emitter) { direction : output; }
+    pin (ctb0_data_out_0) { direction : input; }
+    pin (ctb0_data_out_1) { direction : input; }
+    pin (ctb0_data_out_2) { direction : input; }
+    pin (ctb0_data_out_3) { direction : input; }
+    pin (ctb0_data_out_4) { direction : input; }
+    pin (ctb0_data_out_5) { direction : input; }
+    pin (ctb0_data_out_6) { direction : input; }
+    pin (ctb0_data_out_7) { direction : input; }
+    pin (ctb0_data_oe_0) { direction : input; }
+    pin (ctb0_data_oe_1) { direction : input; }
+    pin (ctb0_data_oe_2) { direction : input; }
+    pin (ctb0_data_oe_3) { direction : input; }
+    pin (ctb1_data_out_0) { direction : input; }
+    pin (ctb1_data_out_1) { direction : input; }
+    pin (ctb1_data_out_2) { direction : input; }
+    pin (ctb1_data_out_3) { direction : input; }
+    pin (ctb1_data_out_4) { direction : input; }
+    pin (ctb1_data_out_5) { direction : input; }
+    pin (ctb1_data_out_6) { direction : input; }
+    pin (ctb1_data_out_7) { direction : input; }
+    pin (ctb1_data_oe_0) { direction : input; }
+    pin (ctb1_data_oe_1) { direction : input; }
+    pin (ctb1_data_oe_2) { direction : input; }
+    pin (ctb1_data_oe_3) { direction : input; }
+  }
+  cell (p4prefcell) {
+  }
+  cell (p4rsbcell) {
+  }
+  cell (p4sarcell) {
+    pin (clock) { direction : input; }
+    pin (sample_done) { direction : output; }
+    pin (chan_id_valid) { direction : output; }
+    pin (chan_id_0) { direction : output; }
+    pin (chan_id_1) { direction : output; }
+    pin (chan_id_2) { direction : output; }
+    pin (chan_id_3) { direction : output; }
+    pin (data_valid) { direction : output; }
+    pin (data_0) { direction : output; }
+    pin (data_1) { direction : output; }
+    pin (data_2) { direction : output; }
+    pin (data_3) { direction : output; }
+    pin (data_4) { direction : output; }
+    pin (data_5) { direction : output; }
+    pin (data_6) { direction : output; }
+    pin (data_7) { direction : output; }
+    pin (data_8) { direction : output; }
+    pin (data_9) { direction : output; }
+    pin (data_10) { direction : output; }
+    pin (data_11) { direction : output; }
+    pin (eos_intr) { direction : output; }
+    pin (tr_sar_out) { direction : output; }
+    pin (irq) { direction : output; }
+    pin (sw_negvref) { direction : input; }
+    pin (cfg_st_sel_0) { direction : input; }
+    pin (cfg_st_sel_1) { direction : input; }
+    pin (cfg_average) { direction : input; }
+    pin (cfg_resolution) { direction : input; }
+    pin (cfg_differential) { direction : input; }
+    pin (tr_sar_in) { direction : input; }
+    pin (data_hilo_sel) { direction : input; }
+    pin (swctrl_0) { direction : input; }
+    pin (swctrl_1) { direction : input; }
+    pin (data_out_0) { direction : input; }
+    pin (data_out_1) { direction : input; }
+    pin (data_out_2) { direction : input; }
+    pin (data_out_3) { direction : input; }
+    pin (data_out_4) { direction : input; }
+    pin (data_out_5) { direction : input; }
+    pin (data_out_6) { direction : input; }
+    pin (data_out_7) { direction : input; }
+    pin (data_oe_0) { direction : input; }
+    pin (data_oe_1) { direction : input; }
+    pin (data_oe_2) { direction : input; }
+    pin (data_oe_3) { direction : input; }
+  }
+  cell (p4sarmuxcell) {
+  }
+  cell (p4smartiocell) {
+    pin (clock_smartio) { direction : input; }
+    pin (data0_i) { direction : input; }
+    pin (data0_o) { direction : output; }
+    pin (gpio0_i) { direction : input; }
+    pin (gpio0_o) { direction : output; }
+    pin (data1_i) { direction : input; }
+    pin (data1_o) { direction : output; }
+    pin (gpio1_i) { direction : input; }
+    pin (gpio1_o) { direction : output; }
+    pin (data2_i) { direction : input; }
+    pin (data2_o) { direction : output; }
+    pin (gpio2_i) { direction : input; }
+    pin (gpio2_o) { direction : output; }
+    pin (data3_i) { direction : input; }
+    pin (data3_o) { direction : output; }
+    pin (gpio3_i) { direction : input; }
+    pin (gpio3_o) { direction : output; }
+    pin (data4_i) { direction : input; }
+    pin (data4_o) { direction : output; }
+    pin (gpio4_i) { direction : input; }
+    pin (gpio4_o) { direction : output; }
+    pin (data5_i) { direction : input; }
+    pin (data5_o) { direction : output; }
+    pin (gpio5_i) { direction : input; }
+    pin (gpio5_o) { direction : output; }
+    pin (data6_i) { direction : input; }
+    pin (data6_o) { direction : output; }
+    pin (gpio6_i) { direction : input; }
+    pin (gpio6_o) { direction : output; }
+    pin (data7_i) { direction : input; }
+    pin (data7_o) { direction : output; }
+    pin (gpio7_i) { direction : input; }
+    pin (gpio7_o) { direction : output; }
+  }
+  cell (p4tempcell) {
+  }
+  cell (p4usbcell) {
+    pin (dp) { direction : output; }
+    pin (dm) { direction : output; }
+    pin (vbus_valid) { direction : input; }
+    pin (interrupt_lo) { direction : output; }
+    pin (interrupt_med) { direction : output; }
+    pin (interrupt_hi) { direction : output; }
+    pin (dsi_usb_sof) { direction : output; }
+    pin (dma_burstend_0) { direction : input; }
+    pin (dma_burstend_1) { direction : input; }
+    pin (dma_burstend_2) { direction : input; }
+    pin (dma_burstend_3) { direction : input; }
+    pin (dma_burstend_4) { direction : input; }
+    pin (dma_burstend_5) { direction : input; }
+    pin (dma_burstend_6) { direction : input; }
+    pin (dma_burstend_7) { direction : input; }
+    pin (dma_req_0) { direction : output; }
+    pin (dma_req_1) { direction : output; }
+    pin (dma_req_2) { direction : output; }
+    pin (dma_req_3) { direction : output; }
+    pin (dma_req_4) { direction : output; }
+    pin (dma_req_5) { direction : output; }
+    pin (dma_req_6) { direction : output; }
+    pin (dma_req_7) { direction : output; }
+    pin (sof) { direction : output; }
+    pin (ep0) { direction : output; }
+    pin (ep8_1) { direction : output; }
+    pin (reset) { direction : output; }
+    pin (arb) { direction : output; }
+  }
+  cell (p4usbpdcell) {
+    pin (clock_rx) { direction : input; }
+    pin (clock_tx) { direction : input; }
+    pin (clock_sar) { direction : input; }
+    pin (clock_refgen) { direction : input; }
+    pin (clock_bch_det) { direction : input; }
+    pin (clock_filter1) { direction : input; }
+    pin (clock_filter2) { direction : input; }
+    pin (interrupt) { direction : output; }
+    pin (interrupt_wakeup) { direction : output; }
+    pin (cmp_out) { direction : output; }
+    pin (tx_data) { direction : input; }
+    pin (tx_data_en) { direction : input; }
+    pin (tr_out_0) { direction : output; }
+    pin (tr_out_1) { direction : output; }
+    pin (tr_out_2) { direction : output; }
+    pin (tr_out_3) { direction : output; }
+    pin (tr_out_4) { direction : output; }
+    pin (tr_out_5) { direction : output; }
+    pin (tr_out_6) { direction : output; }
+    pin (hpd) { direction : output; }
+    pin (auxn_io) { direction : output; }
+    pin (auxp_io) { direction : output; }
+    pin (clock_swap) { direction : input; }
+    pin (gpio_ddft0) { direction : output; }
+    pin (gpio_ddft1) { direction : output; }
+    pin (sbu1_io) { direction : output; }
+    pin (sbu2_io) { direction : output; }
+    pin (swapt_in) { direction : output; }
+    pin (swapt_out_0) { direction : output; }
+    pin (swapt_out_1) { direction : output; }
+    pin (adc_cmp_out_gpio_0) { direction : output; }
+    pin (adc_cmp_out_gpio_1) { direction : output; }
+    pin (usbphy_dp_afc_0) { direction : output; }
+    pin (usbphy_dp_afc_1) { direction : output; }
+    pin (usbphy_dm_afc_0) { direction : output; }
+    pin (usbphy_dm_afc_1) { direction : output; }
+    pin (sbu_io_0) { direction : output; }
+    pin (sbu_io_1) { direction : output; }
+    pin (dpdm_uart_tx_io) { direction : output; }
+    pin (dpdm_uart_rx_io) { direction : output; }
+    pin (clock_isnk) { direction : input; }
+    pin (afc_tx_data_0) { direction : output; }
+    pin (afc_tx_data_1) { direction : output; }
+    pin (afc_tx_data_en) { direction : output; }
+    pin (fault_gpio0) { direction : output; }
+    pin (fault_gpio1) { direction : output; }
+    pin (gpio_rx_frs) { direction : output; }
+    pin (pad_dpdm_uart_tx) { direction : output; }
+    pin (pad_dpdm_uart_rx) { direction : output; }
+    pin (usbphy_dp_bch_det_0) { direction : output; }
+    pin (usbphy_dp_bch_det_1) { direction : output; }
+    pin (usbphy_dm_bch_det_0) { direction : output; }
+    pin (usbphy_dm_bch_det_1) { direction : output; }
+  }
+  cell (p4wcocell) {
+    pin (wco_in) { direction : input; }
+    pin (wco_out) { direction : output; }
+    pin (interrupt) { direction : output; }
+  }
+  cell (PASSBLOCK) {
+    pin (clock_pump_peri) { direction : input; }
+    pin (interrupt_ctbs) { direction : output; }
+    pin (interrupt_dacs) { direction : output; }
+    pin (tr_gen_trig_in_0) { direction : input; }
+    pin (tr_gen_trig_in_1) { direction : input; }
+    pin (tr_gen_trig_in_2) { direction : input; }
+    pin (tr_gen_trig_in_3) { direction : input; }
+    pin (tr_gen_trig_in_4) { direction : input; }
+    pin (tr_gen_trig_in_5) { direction : input; }
+    pin (dsi_ctb0_data_out_0) { direction : input; }
+    pin (dsi_ctb0_data_out_1) { direction : input; }
+    pin (dsi_ctb0_data_out_2) { direction : input; }
+    pin (dsi_ctb0_data_out_3) { direction : input; }
+    pin (dsi_ctb0_data_out_4) { direction : input; }
+    pin (dsi_ctb0_data_out_5) { direction : input; }
+    pin (dsi_ctb0_data_out_6) { direction : input; }
+    pin (dsi_ctb0_data_out_7) { direction : input; }
+    pin (dsi_ctb0_data_oe_0) { direction : input; }
+    pin (dsi_ctb0_data_oe_1) { direction : input; }
+    pin (dsi_ctb0_data_oe_2) { direction : input; }
+    pin (dsi_ctb0_data_oe_3) { direction : input; }
+    pin (dsi_ctb1_data_out_0) { direction : input; }
+    pin (dsi_ctb1_data_out_1) { direction : input; }
+    pin (dsi_ctb1_data_out_2) { direction : input; }
+    pin (dsi_ctb1_data_out_3) { direction : input; }
+    pin (dsi_ctb1_data_out_4) { direction : input; }
+    pin (dsi_ctb1_data_out_5) { direction : input; }
+    pin (dsi_ctb1_data_out_6) { direction : input; }
+    pin (dsi_ctb1_data_out_7) { direction : input; }
+    pin (dsi_ctb1_data_oe_0) { direction : input; }
+    pin (dsi_ctb1_data_oe_1) { direction : input; }
+    pin (dsi_ctb1_data_oe_2) { direction : input; }
+    pin (dsi_ctb1_data_oe_3) { direction : input; }
+    pin (dsi_ctb0_samplesw) { direction : input; }
+    pin (dsi_ctb1_samplesw) { direction : input; }
+    pin (dsi_sar_swctrl_0) { direction : input; }
+    pin (dsi_sar_swctrl_1) { direction : input; }
+    pin (dsi_sar_data_out_0) { direction : input; }
+    pin (dsi_sar_data_out_1) { direction : input; }
+    pin (dsi_sar_data_out_2) { direction : input; }
+    pin (dsi_sar_data_out_3) { direction : input; }
+    pin (dsi_sar_data_out_4) { direction : input; }
+    pin (dsi_sar_data_out_5) { direction : input; }
+    pin (dsi_sar_data_out_6) { direction : input; }
+    pin (dsi_sar_data_out_7) { direction : input; }
+    pin (dsi_sar_data_oe_0) { direction : input; }
+    pin (dsi_sar_data_oe_1) { direction : input; }
+    pin (dsi_sar_data_oe_2) { direction : input; }
+    pin (dsi_sar_data_oe_3) { direction : input; }
+  }
+  cell (PDM) {
+    pin (clock) { direction : input; }
+    pin (pdm_clk) { direction : output; }
+    pin (pdm_data) { direction : input; }
+    pin (tr_pdm_rx_req) { direction : output; }
+    pin (interrupt) { direction : output; }
+  }
+  cell (pmcell) {
+    pin (ctw_int) { direction : output; }
+    pin (ftw_int) { direction : output; }
+    pin (limact_int) { direction : output; }
+    pin (onepps_int) { direction : output; }
+    pin (pm_int) { direction : output; }
+  }
+  cell (PROFILE) {
+    pin (clock) { direction : input; }
+    pin (interrupt) { direction : output; }
+    pin (tr_start) { direction : input; }
+    pin (tr_stop) { direction : input; }
+  }
+  cell (RTC) {
+    pin (interrupt) { direction : output; }
+  }
+  cell (SAMPLEHOLD) {
+  }
+  cell (SARADC) {
+    pin (dsi_sar_sample_done) { direction : output; }
+    pin (dsi_sar_chan_id_valid) { direction : output; }
+    pin (dsi_sar_data_valid) { direction : output; }
+    pin (tr_sar_out) { direction : output; }
+    pin (dsi_sar_data_0) { direction : output; }
+    pin (dsi_sar_data_1) { direction : output; }
+    pin (dsi_sar_data_2) { direction : output; }
+    pin (dsi_sar_data_3) { direction : output; }
+    pin (dsi_sar_data_4) { direction : output; }
+    pin (dsi_sar_data_5) { direction : output; }
+    pin (dsi_sar_data_6) { direction : output; }
+    pin (dsi_sar_data_7) { direction : output; }
+    pin (dsi_sar_data_8) { direction : output; }
+    pin (dsi_sar_data_9) { direction : output; }
+    pin (dsi_sar_data_10) { direction : output; }
+    pin (dsi_sar_data_11) { direction : output; }
+    pin (dsi_sar_chan_id_0) { direction : output; }
+    pin (dsi_sar_chan_id_1) { direction : output; }
+    pin (dsi_sar_chan_id_2) { direction : output; }
+    pin (dsi_sar_chan_id_3) { direction : output; }
+    pin (dsi_sar_cfg_st_sel_0) { direction : input; }
+    pin (dsi_sar_cfg_st_sel_1) { direction : input; }
+    pin (dsi_sar_cfg_average) { direction : input; }
+    pin (dsi_sar_cfg_differential) { direction : input; }
+    pin (dsi_sar_sw_negvref) { direction : input; }
+    pin (dsi_sar_data_hilo_sel) { direction : input; }
+    pin (tr_sar_in) { direction : input; }
+    pin (clock) { direction : input; }
+    pin (interrupt) { direction : output; }
+  }
+  cell (sarcell) {
+    pin (clock) { direction : input; }
+    pin (pump_clock) { direction : input; }
+    pin (clk_udb) { direction : input; }
+    pin (sof_udb) { direction : input; }
+    pin (vp_ctl_udb_0) { direction : input; }
+    pin (vp_ctl_udb_1) { direction : input; }
+    pin (vp_ctl_udb_2) { direction : input; }
+    pin (vp_ctl_udb_3) { direction : input; }
+    pin (vn_ctl_udb_0) { direction : input; }
+    pin (vn_ctl_udb_1) { direction : input; }
+    pin (vn_ctl_udb_2) { direction : input; }
+    pin (vn_ctl_udb_3) { direction : input; }
+    pin (data_out_udb_0) { direction : output; }
+    pin (data_out_udb_1) { direction : output; }
+    pin (data_out_udb_2) { direction : output; }
+    pin (data_out_udb_3) { direction : output; }
+    pin (data_out_udb_4) { direction : output; }
+    pin (data_out_udb_5) { direction : output; }
+    pin (data_out_udb_6) { direction : output; }
+    pin (data_out_udb_7) { direction : output; }
+    pin (data_out_udb_8) { direction : output; }
+    pin (data_out_udb_9) { direction : output; }
+    pin (data_out_udb_10) { direction : output; }
+    pin (data_out_udb_11) { direction : output; }
+    pin (eof_udb) { direction : output; }
+    pin (irq) { direction : output; }
+    pin (next) { direction : output; }
+  }
+  cell (SCB) {
+    pin (clock) { direction : input; }
+    pin (uart_rx) { direction : input; }
+    pin (uart_tx) { direction : output; }
+    pin (uart_rts) { direction : output; }
+    pin (uart_cts) { direction : output; }
+    pin (i2c_scl) { direction : input; }
+    pin (i2c_sda) { direction : input; }
+    pin (spi_clk) { direction : output; }
+    pin (spi_select_0) { direction : output; }
+    pin (spi_select_1) { direction : output; }
+    pin (spi_select_2) { direction : output; }
+    pin (spi_select_3) { direction : output; }
+    pin (spi_mosi) { direction : output; }
+    pin (spi_miso) { direction : output; }
+    pin (interrupt) { direction : output; }
+    pin (tr_tx_req) { direction : output; }
+    pin (tr_rx_req) { direction : output; }
+    pin (tr_i2c_scl_filtered) { direction : output; }
+  }
+  cell (sccell) {
+    pin (aclk) { direction : input; }
+    pin (bst_clk) { direction : input; }
+    pin (clk_udb) { direction : input; }
+    pin (modout) { direction : output; }
+    pin (dyn_cntl_udb) { direction : input; }
+  }
+  cell (SmartIO) {
+    pin (clock) { direction : input; }
+    pin (data0_i) { direction : input; }
+    pin (data0_o) { direction : output; }
+    pin (data0_oe) { direction : output; }
+    pin (data0_io) { direction : inout; }
+    pin (data1_i) { direction : input; }
+    pin (data1_o) { direction : output; }
+    pin (data1_oe) { direction : output; }
+    pin (data1_io) { direction : inout; }
+    pin (data2_i) { direction : input; }
+    pin (data2_o) { direction : output; }
+    pin (data2_oe) { direction : output; }
+    pin (data2_io) { direction : inout; }
+    pin (data3_i) { direction : input; }
+    pin (data3_o) { direction : output; }
+    pin (data3_oe) { direction : output; }
+    pin (data3_io) { direction : inout; }
+    pin (data4_i) { direction : input; }
+    pin (data4_o) { direction : output; }
+    pin (data4_oe) { direction : output; }
+    pin (data4_io) { direction : inout; }
+    pin (data5_i) { direction : input; }
+    pin (data5_o) { direction : output; }
+    pin (data5_oe) { direction : output; }
+    pin (data5_io) { direction : inout; }
+    pin (data6_i) { direction : input; }
+    pin (data6_o) { direction : output; }
+    pin (data6_oe) { direction : output; }
+    pin (data6_io) { direction : inout; }
+    pin (data7_i) { direction : input; }
+    pin (data7_o) { direction : output; }
+    pin (data7_oe) { direction : output; }
+    pin (data7_io) { direction : inout; }
+    pin (gpio0_i) { direction : input; }
+    pin (gpio0_o) { direction : output; }
+    pin (gpio0_oe) { direction : output; }
+    pin (gpio0_io) { direction : inout; }
+    pin (gpio1_i) { direction : input; }
+    pin (gpio1_o) { direction : output; }
+    pin (gpio1_oe) { direction : output; }
+    pin (gpio1_io) { direction : inout; }
+    pin (gpio2_i) { direction : input; }
+    pin (gpio2_o) { direction : output; }
+    pin (gpio2_oe) { direction : output; }
+    pin (gpio2_io) { direction : inout; }
+    pin (gpio3_i) { direction : input; }
+    pin (gpio3_o) { direction : output; }
+    pin (gpio3_oe) { direction : output; }
+    pin (gpio3_io) { direction : inout; }
+    pin (gpio4_i) { direction : input; }
+    pin (gpio4_o) { direction : output; }
+    pin (gpio4_oe) { direction : output; }
+    pin (gpio4_io) { direction : inout; }
+    pin (gpio5_i) { direction : input; }
+    pin (gpio5_o) { direction : output; }
+    pin (gpio5_oe) { direction : output; }
+    pin (gpio5_io) { direction : inout; }
+    pin (gpio6_i) { direction : input; }
+    pin (gpio6_o) { direction : output; }
+    pin (gpio6_oe) { direction : output; }
+    pin (gpio6_io) { direction : inout; }
+    pin (gpio7_i) { direction : input; }
+    pin (gpio7_o) { direction : output; }
+    pin (gpio7_oe) { direction : output; }
+    pin (gpio7_io) { direction : inout; }
+  }
+  cell (SMIF) {
+    pin (clock) { direction : input; }
+    pin (spi_clk) { direction : output; }
+    pin (spi_select_0) { direction : output; }
+    pin (spi_select_1) { direction : output; }
+    pin (spi_select_2) { direction : output; }
+    pin (spi_select_3) { direction : output; }
+    pin (spi_data_0) { direction : output; }
+    pin (spi_data_1) { direction : output; }
+    pin (spi_data_2) { direction : output; }
+    pin (spi_data_3) { direction : output; }
+    pin (spi_data_4) { direction : output; }
+    pin (spi_data_5) { direction : output; }
+    pin (spi_data_6) { direction : output; }
+    pin (spi_data_7) { direction : output; }
+    pin (interrupt) { direction : output; }
+    pin (tr_tx_req) { direction : output; }
+    pin (tr_rx_req) { direction : output; }
+  }
+  cell (spccell) {
+    pin (data_ready) { direction : output; }
+    pin (eeprom_fault_int) { direction : output; }
+    pin (idle) { direction : output; }
+  }
+  cell (SRSS) {
+    pin (clock_timer) { direction : input; }
+    pin (interrupt_mcwdt_0) { direction : output; }
+    pin (interrupt_mcwdt_1) { direction : output; }
+    pin (interrupt_backup) { direction : output; }
+    pin (interrupt) { direction : output; }
+    pin (ext_clk) { direction : input; }
+    pin (clk_ext) { direction : output; }
+    pin (swd_data) { direction : input; }
+    pin (swd_clk) { direction : input; }
+    pin (xres_n) { direction : input; }
+    pin (pmic_wakeup_in) { direction : input; }
+    pin (pmic_wakeup_out) { direction : output; }
+    pin (hibernate_wakeup) { direction : input; }
+  }
+  cell (ssccell) {
+    pin (rst_n) { direction : input; }
+    pin (scli) { direction : input; }
+    pin (sdai) { direction : input; }
+    pin (csel) { direction : input; }
+    pin (sclo) { direction : output; }
+    pin (sdao) { direction : output; }
+    pin (irq) { direction : output; }
+  }
+  cell (TCPWM) {
+    pin (clock) { direction : input; }
+    pin (capture) { direction : input; }
+    pin (count) { direction : input; }
+    pin (reload) { direction : input; }
+    pin (stop) { direction : input; }
+    pin (start) { direction : input; }
+    pin (tr_underflow) { direction : output; }
+    pin (tr_compare_match) { direction : output; }
+    pin (tr_overflow) { direction : output; }
+    pin (line_compl) { direction : output; }
+    pin (line) { direction : output; }
+    pin (interrupt) { direction : output; }
+  }
+  cell (TEMP) {
+  }
+  cell (tfaultcell) {
+    pin (tfault_dsi) { direction : output; }
+  }
+  cell (timercell) {
+    pin (clock) { direction : input; }
+    pin (kill) { direction : input; }
+    pin (enable) { direction : input; }
+    pin (capture) { direction : input; }
+    pin (timer_reset) { direction : input; }
+    pin (tc) { direction : output; }
+    pin (cmp) { direction : output; }
+    pin (irq) { direction : output; }
+  }
+  cell (udbclockencell) {
+    pin (clock_in) { direction : input; }
+    pin (enable) { direction : input; }
+    pin (clock_out) { direction : output; }
+  }
+  cell (USB) {
+    pin (usb_dp_pad) { direction : output; }
+    pin (usb_dm_pad) { direction : output; }
+    pin (interrupt_lo) { direction : output; }
+    pin (interrupt_med) { direction : output; }
+    pin (interrupt_hi) { direction : output; }
+    pin (dma_req_0) { direction : output; }
+    pin (dma_req_1) { direction : output; }
+    pin (dma_req_2) { direction : output; }
+    pin (dma_req_3) { direction : output; }
+    pin (dma_req_4) { direction : output; }
+    pin (dma_req_5) { direction : output; }
+    pin (dma_req_6) { direction : output; }
+    pin (dma_req_7) { direction : output; }
+    pin (dma_burstend_0) { direction : input; }
+    pin (dma_burstend_1) { direction : input; }
+    pin (dma_burstend_2) { direction : input; }
+    pin (dma_burstend_3) { direction : input; }
+    pin (dma_burstend_4) { direction : input; }
+    pin (dma_burstend_5) { direction : input; }
+    pin (dma_burstend_6) { direction : input; }
+    pin (dma_burstend_7) { direction : input; }
+    pin (dsi_usb_sof) { direction : output; }
+    pin (clk_usb_dev) { direction : input; }
+    pin (clk_usb_host) { direction : input; }
+    pin (clock_dev_brs) { direction : input; }
+  }
+  cell (usbcell) {
+    pin (sof_int) { direction : output; }
+    pin (arb_int) { direction : output; }
+    pin (usb_int) { direction : output; }
+    pin (ord_int) { direction : output; }
+    pin (ept_int_0) { direction : output; }
+    pin (ept_int_1) { direction : output; }
+    pin (ept_int_2) { direction : output; }
+    pin (ept_int_3) { direction : output; }
+    pin (ept_int_4) { direction : output; }
+    pin (ept_int_5) { direction : output; }
+    pin (ept_int_6) { direction : output; }
+    pin (ept_int_7) { direction : output; }
+    pin (ept_int_8) { direction : output; }
+    pin (dma_req_0) { direction : output; }
+    pin (dma_req_1) { direction : output; }
+    pin (dma_req_2) { direction : output; }
+    pin (dma_req_3) { direction : output; }
+    pin (dma_req_4) { direction : output; }
+    pin (dma_req_5) { direction : output; }
+    pin (dma_req_6) { direction : output; }
+    pin (dma_req_7) { direction : output; }
+    pin (dma_termin) { direction : output; }
+  }
+  cell (vidaccell) {
+    pin (data_0) { direction : input; }
+    pin (data_1) { direction : input; }
+    pin (data_2) { direction : input; }
+    pin (data_3) { direction : input; }
+    pin (data_4) { direction : input; }
+    pin (data_5) { direction : input; }
+    pin (data_6) { direction : input; }
+    pin (data_7) { direction : input; }
+    pin (strobe) { direction : input; }
+    pin (strobe_udb) { direction : input; }
+    pin (reset) { direction : input; }
+    pin (idir) { direction : input; }
+    pin (ioff) { direction : input; }
+  }

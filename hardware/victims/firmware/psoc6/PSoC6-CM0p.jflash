@@ -1,0 +1,109 @@
+  AppVersion = 63201
+  FileVersion = 2
+[GENERAL]
+  ConnectMode = 0
+  CurrentFile = "C:\Users\hapr\Documents\PSoC Creator\ChipWhisperer\ChipWhisperer.cydsn\CortexM0p\ARM_GCC_541\Release\ChipWhisperer.hex"
+  DataFileSAddr = 0x00000000
+  GUIMode = 0
+  HostName = ""
+  TargetIF = 1
+  USBPort = 0
+  USBSerialNo = 0x00000000
+[JTAG]
+  IRLen = 0
+  MultipleTargets = 0
+  NumDevices = 0
+  Speed0 = 4000
+  Speed1 = 4000
+  TAP_Number = 0
+  UseAdaptive0 = 0
+  UseAdaptive1 = 0
+  UseMaxSpeed0 = 0
+  UseMaxSpeed1 = 0
+[CPU]
+  NumInitSteps = 1
+  InitStep0_Action = "Reset"
+  InitStep0_Value0 = 0x00000000
+  InitStep0_Value1 = 0x00000000
+  InitStep0_Comment = "Reset and halt target"
+  NumExitSteps = 0
+  UseScriptFile = 0
+  ScriptFile = ""
+  UseRAM = 1
+  RAMAddr = 0x08002400
+  RAMSize = 0x00080000
+  CheckCoreID = 0
+  CoreID = 0x00000000
+  CoreIDMask = 0x0F000FFF
+  UseAutoSpeed = 0x00000001
+  ClockSpeed = 0x00000000
+  EndianMode = 0
+  ChipName = "Cypress CY8C6xx7_CM0p"
+[FLASH]
+  NumBanks = 7
+[FLASH0]
+  aRangeSel[1] = 0-2047
+  BankName = "FLASH  (Main)"
+  BankSelMode = 1
+  BaseAddr = 0x10000000
+[FLASH1]
+  aRangeSel[1] = 0-63
+  BankName = "WFLASH (Work)"
+  BankSelMode = 1
+  BaseAddr = 0x14000000
+[FLASH2]
+  aRangeSel[1] = 0-3
+  BankName = "SFLASH: User Data"
+  BankSelMode = 1
+  BaseAddr = 0x16000800
+[FLASH3]
+  aRangeSel[1] = 0
+  BankName = "SFLASH: NAR"
+  BankSelMode = 1
+  BaseAddr = 0x16001A00
+[FLASH4]
+  aRangeSel[1] = 0-5
+  BankName = "SFLASH: Public Key"
+  BankSelMode = 1
+  BaseAddr = 0x16005A00
+[FLASH5]
+  aRangeSel[1] = 0-1
+  BankName = "SFLASH: TOC2"
+  BankSelMode = 1
+  BaseAddr = 0x16007C00
+[FLASH6]
+  aRangeSel[1] = 0-63
+  BankName = "SMIF"
+  BankSelMode = 1
+  BaseAddr = 0x18000000
+[PRODUCTION]
+  AutoPerformsErase = 1
+  AutoPerformsProgram = 1
+  AutoPerformsSecure = 0
+  AutoPerformsStartApp = 0
+  AutoPerformsUnsecure = 0
+  AutoPerformsVerify = 1
+  EnableFixedVTref = 0
+  EnableTargetPower = 0
+  EraseType = 1
+  FixedVTref = 0x00000CE4
+  MonitorVTref = 0
+  MonitorVTrefMax = 0x0000157C
+  MonitorVTrefMin = 0x000003E8
+  OverrideTimeouts = 0
+  ProgramSN = 0
+  SerialFile = ""
+  SNAddr = 0x00000000
+  SNInc = 0x00000001
+  SNLen = 0x00000004
+  SNListFile = ""
+  SNValue = 0x00000001
+  StartAppType = 0
+  TargetPowerDelay = 0x00000014
+  TimeoutErase = 0x00003A98
+  TimeoutProgram = 0x00002710
+  TimeoutVerify = 0x00002710
+  VerifyType = 1
+[PERFORMANCE]
+  PerfromBlankCheckPriorEraseChip = 0x00000001
+  PerfromBlankCheckPriorEraseSelectedSectors = 0x00000001
