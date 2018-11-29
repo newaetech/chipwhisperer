@@ -41,6 +41,9 @@ define KNOWN_PLATFORMS
 +--------------------------------------------------+
 | CW308_STM32F4 | CW308T-STM32F4 (ST Micro STM32F4)|
 +--------------------------------------------------+
+| CW308_STM32F7 | CW308T-STM32F7 (ST Micro STM32F7)|
++--------------------------------------------------+
+
 
 Options to define platform:
 (1) Run make with PLATFORM specified as follows:
@@ -97,6 +100,9 @@ else ifeq ($(PLATFORM),CW308_STM32F3)
 else ifeq ($(PLATFORM),CW308_STM32F4)
  HAL = stm32f4
  PLTNAME = CW308T: STM32F4 Target
+else ifeq ($(PLATFORM),CW308_STM32F7)
+ HAL = stm32f7
+ PLTNAME = CW308T: STM32F7 Target
 else
   $(error Invalid or empty PLATFORM: $(PLATFORM). Known platforms: $(KNOWN_PLATFORMS))
   $(error haHA)

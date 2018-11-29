@@ -22,20 +22,22 @@
 void platform_init(void);
 
 //PLATFORM Define Types
-#define CW301_AVR      1
-#define CW301_XMEGA    2
-#define CW303          3
-#define CW304          4
-#define CW308_MEGARF   8
-#define CW308_PIC24FJ  10
-#define CW308_SAM4L    11
-#define CW308_SI4010   12
-#define CW308_MPC5748G 13
-#define CW308_STM32F0  14
-#define CW308_STM32F1  15
-#define CW308_STM32F2  16
-#define CW308_STM32F3  17
-#define CW308_STM32F4  18
+#define CW301_AVR        1
+#define CW301_XMEGA      2
+#define CW303            3
+#define CW304            4
+#define CW308_MEGARF     8
+#define CW308_PIC24FJ   10
+#define CW308_SAM4L     11
+#define CW308_SI4010    12
+#define CW308_MPC5748G  13
+#define CW308_STM32F0   14
+#define CW308_STM32F1   15
+#define CW308_STM32F2   16
+#define CW308_STM32F3   17
+#define CW308_STM32F4   18
+#define CW308_STM32F7   19
+#define CW308_STM32F746 19
 
 //HAL_TYPE Define Types
 #define HAL_avr     1
@@ -47,6 +49,7 @@ void platform_init(void);
 #define HAL_stm32f2 7
 #define HAL_stm32f3 8
 #define HAL_stm32f4 9
+#define HAL_stm32f7 10
 
 #if HAL_TYPE == HAL_avr
     #include <avr/io.h>
@@ -73,6 +76,8 @@ void platform_init(void);
 	#include "stm32f3/stm32f3_hal.h"
 #elif HAL_TYPE == HAL_stm32f4
 	#include "stm32f4/stm32f4_hal.h"
+#elif HAL_TYPE == HAL_stm32f7
+    #include "stm32f7/stm32f7_hal.h"
 #else
     #error "Unsupported HAL Type"
 #endif
