@@ -1,0 +1,44 @@
+VPATH += :$(HALPATH)/stm32f7
+SRC += stm32f7_hal.c
+SRC += stm32f7xx_hal.c
+SRC += stm32f7_hal_lowlevel.c 
+SRC += stm32f7_sysmem.c
+SRC += stm32f7xx_hal.c
+SRC += stm32f7xx_hal_gpio.c
+SRC += stm32f7xx_hal_uart.c
+SRC += stm32f7xx_hal_rcc.c
+SRC += stm32f7xx_hal_rcc_ex.c
+SRC += stm32f7xx_hal_dma.c
+SRC += stm32f7xx_hal_flash.c
+SRC += stm32f7xx_hal_cryp.c
+SRC += stm32f7xx_hal_cortex.c
+
+
+EXTRAINCDIRS += $(HALPATH)/stm32f7 $(HALPATH)/stm32f7/CMSIS $(HALPATH)/stm32f7/CMSIS/core $(HALPATH)/stm32f7/CMSIS/device $(HALPATH)/stm32f7/Legacy
+
+ASRC += stm32f7_startup.S
+
+MCU_FLAGS = -mcpu=cortex-m7
+
+CC = arm-none-eabi-gcc
+OBJCOPY = arm-none-eabi-objcopy
+OBJDUMP = arm-none-eabi-objdump
+SIZE = arm-none-eabi-size
+AR = arm-none-eabi-ar rcs
+NM = arm-none-eabi-nm
+
+#Output Format = Binary for this target
+FORMAT = binary
+
+CFLAGS += -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fmessage-length=0 -ffunction-sections
+CPPFLAGS += -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fmessage-length=0 -ffunction-sections
+ASFLAGS += -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fmessage-length=0 -ffunction-sections
+
+CDEFS   += -DSSTM32F746IEKX -DSTM32F7 -DSTM32 -DDEBUG 
+CPPDEFS += -DSSTM32F746IEKx -DSTM32F7 -DSTM32 -DDEBUG
+
+LDFLAGS += -T $(HALPATH)/stm32f7/LinkerScript.ld -Wl,--gc-sections -lm
+LDFLAGS += -mthumb -mcpu=cortex-m7
+
+
+$(info ************ Makefile.stm32f7: end of file ************)
