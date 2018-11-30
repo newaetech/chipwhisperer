@@ -22,46 +22,49 @@
 void platform_init(void);
 
 //PLATFORM Define Types
-#define CW301_AVR      1
-#define CW301_XMEGA    2
-#define CW303          3
-#define CW304          4
-#define CW308_MEGARF   8
-#define CW308_PIC24FJ  10
-#define CW308_SAM4L    11
-#define CW308_SI4010   12
-#define CW308_MPC5748G 13
-#define CW308_STM32F0  14
-#define CW308_STM32F1  15
-#define CW308_STM32F2  16
-#define CW308_STM32F3  17
-#define CW308_STM32F4  18
-#define CW308_CC2538   19
-#define CW308_K24F     20
-#define CW308_NRF52840 21
-#define CW308_AURIX     22
-#define CW308_SAML11     23
-#define CW308_EFM32TG11B     24
-#define CW308_K24F     25
+#define CW301_AVR         1
+#define CW301_XMEGA       2
+#define CW303             3
+#define CW304             4
+#define CW308_MEGARF      8
+#define CW308_PIC24FJ    10
+#define CW308_SAM4L      11
+#define CW308_SI4010     12
+#define CW308_MPC5748G   13
+#define CW308_STM32F0    14
+#define CW308_STM32F1    15
+#define CW308_STM32F2    16
+#define CW308_STM32F3    17
+#define CW308_STM32F4    18
+#define CW308_STM32F7    19
+#define CW308_STM32F746  19
+#define CW308_CC2538     20
+#define CW308_K24F       21
+#define CW308_NRF52840   22
+#define CW308_AURIX      23
+#define CW308_SAML11     24
+#define CW308_EFM32TG11B 25
+#define CW308_K24F       26
 
 //HAL_TYPE Define Types
-#define HAL_avr     1
-#define HAL_xmega   2
-#define HAL_pic24f  3
-#define HAL_sam4l   4
-#define HAL_stm32f0 5
-#define HAL_stm32f1 6
-#define HAL_stm32f2 7
-#define HAL_stm32f3 8
-#define HAL_stm32f4 9
-#define HAL_cc2538  10
-#define HAL_k24f    11
-#define HAL_nrf52840 12
-#define HAL_stm32f0_nano 13
-#define HAL_aurix 14
-#define HAL_saml11 15
-#define HAL_efm32tg11b 16
-#define HAL_k24f    17
+#define HAL_avr          1
+#define HAL_xmega        2
+#define HAL_pic24f       3
+#define HAL_sam4l        4
+#define HAL_stm32f0      5
+#define HAL_stm32f1      6
+#define HAL_stm32f2      7
+#define HAL_stm32f3      8
+#define HAL_stm32f4      9
+#define HAL_stm32f7      10
+#define HAL_cc2538       11
+#define HAL_k24f         12
+#define HAL_nrf52840     13
+#define HAL_stm32f0_nano 14
+#define HAL_aurix        15
+#define HAL_saml11       16
+#define HAL_efm32tg11b   17
+#define HAL_k24f         18
 
 #if HAL_TYPE == HAL_avr
     #include <avr/io.h>
@@ -91,6 +94,8 @@ void platform_init(void);
 	#endif
 #elif HAL_TYPE == HAL_stm32f4
 	#include "stm32f4/stm32f4_hal.h"
+#elif HAL_TYPE == HAL_stm32f7
+    #include "stm32f7/stm32f7_hal.h"
 #elif HAL_TYPE == HAL_cc2538
 	#include "cc2538/cc2538_hal.h"
 #elif HAL_TYPE == HAL_k24f

@@ -1,0 +1,35 @@
+Altium Designer Pick and Place Locations
+C:\Applications\hardware\pca70181\trunk\production_files\400375_pick_and_place.txt
+
+========================================================================================================================
+File Design Information:
+
+Date:       26.09.18
+Time:       09:36
+Revision:   15203
+Variant:    Default assembly
+Units used: mm
+
+Designator Comment         Layer    Footprint                    Center-X(mm) Center-Y(mm) Rotation Description                               
+R9         0R              TopLayer RESC1608X06L                 13.6500      37.5250      180      "Resistor, ±5%, 0.1W"                     
+R8         100R            TopLayer RESC1608X06L                 12.1250      42.7000      135      "Resistor, ±1%, 0.1W"                     
+R7         10k             TopLayer RESC1608X06L                 19.0000      33.7750      180      "Resistor, ±1%, 0.1W"                     
+R6         22R             TopLayer RESC1608X06L                 31.5000      42.2500      0        "Resistor, ±1%, 0.1W"                     
+R5         22R             TopLayer RESC1608X06L                 26.9500      33.3000      270      "Resistor, ±1%, 0.1W"                     
+R4         10k             TopLayer RESC1608X06L                 18.5000      29.8000      90       "Resistor, ±1%, 0.1W"                     
+R3         10k             TopLayer RESC1608X06L                 22.8500      50.5000      270      "Resistor, ±1%, 0.1W"                     
+R2         10k             TopLayer RESC1608X06L                 24.8500      50.5000      270      "Resistor, ±1%, 0.1W"                     
+C13        100nF           TopLayer CAPC1608X06L                 17.2000      43.9000      180      "Chip Cap 0603"                           
+U1         STM32F74XIXK    TopLayer BGA201C65P15X15_1000X1000X60 24.1300      40.6400      0        Imported                                  
+R1         22R             TopLayer RESC1608X06L                 31.5000      38.2500      180      "Resistor, ±1%, 0.1W"                     
+P9         "Pin List 1x3"  TopLayer LIST_1x3                     43.1800      17.7800      270      "Pin List 1x3, 2.54mm (100mil)"           
+P8         "Pin List 1x3"  TopLayer LIST_1x3                     40.6400      17.7800      270      "Pin List 1x3, 2.54mm (100mil)"           
+P3         "Pin List 1x2"  TopLayer LIST_1x2                     41.9100      40.6400      180      "Pin List 1x2, 2.54mm (100mil)"           
+P6         "Pin List 1x3"  TopLayer LIST_1x3                     33.0200      17.7800      270      "Pin List 1x3, 2.54mm (100mil)"           
+P2         "Pin List 1x3"  TopLayer LIST_1x3                     43.1800      48.2600      270      "Pin List 1x3, 2.54mm (100mil)"           
+P1         "Pin List 1x3"  TopLayer LIST_1x3                     40.6400      48.2600      270      "Pin List 1x3, 2.54mm (100mil)"           
+P5         "Pin List 1x3"  TopLayer LIST_1x3                     43.1800      33.0200      270      "Pin List 1x3, 2.54mm (100mil)"           
+P4         "Pin List 1x3"  TopLayer LIST_1x3                     40.6400      33.0200      270      "Pin List 1x3, 2.54mm (100mil)"           
+C8         2.2µF           TopLayer CAPC1608X06L                 31.5000      47.5000      360      "Capacitor, X7R, ±10%"                    
+C4         2.2µF           TopLayer CAPC1608X06L                 27.6000      27.4000      180      "Capacitor, X7R, ±10%"                    
+J1         CW308_TARGETCON TopLayer CW308_TBOARD_CONN            24.1300      29.2100      0        "CW308 "Standard" Target Board Connector" 
