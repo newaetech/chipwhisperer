@@ -12,7 +12,7 @@ EXTRAINCDIRS += $(HALPATH)
 
 #Manually have to update these lists...
 PLATFORM_LIST = CW308_CC2538 CW301_AVR CW303 CW304 CW308_MEGARF CW308_SAM4L \
-	CW308_STM32F0 CW308_STM32F1 CW308_STM32F2 CW308_STM32F3 CW308_STM32F4 CW308_K24F \
+	CW308_STM32F0 CW308_STM32F1 CW308_STM32F2 CW308_STM32F3 CW308_STM32F4 CW308_STM32F7 CW308_K24F \
     CW308_NRF52 CW308_AURIX CW308_SAML11 CW308_EFM32TG11B CWLITEARM CWLITEXMEGA CWNANO CW308_K82F
 
 define KNOWN_PLATFORMS
@@ -41,6 +41,8 @@ define KNOWN_PLATFORMS
 | CW308_STM32F3 | CW308T-STM32F3 (ST Micro STM32F3)     |
 +-------------------------------------------------------+
 | CW308_STM32F4 | CW308T-STM32F4 (ST Micro STM32F4)     |
++-------------------------------------------------------+
+| CW308_STM32F7 | CW308T-STM32F7 (ST Micro STM32F7)     |
 +-------------------------------------------------------+
 | CW308_CC2538  | CW308T-CC2538 (TI CC2538)             |
 +-------------------------------------------------------+
@@ -130,6 +132,9 @@ else ifeq ($(PLATFORM),CWLITEARM)
 else ifeq ($(PLATFORM),CW308_STM32F4)
  HAL = stm32f4
  PLTNAME = CW308T: STM32F4 Target
+else ifeq ($(PLATFORM),CW308_STM32F7)
+ HAL = stm32f7
+ PLTNAME = CW308T: STM32F7 Target
 else ifeq ($(PLATFORM),CW308_CC2538)
  HAL = cc2538
  PLTNAME = cc2538 Target
