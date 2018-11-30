@@ -1,0 +1,3 @@
+Layer Pairs Export File for PCB: C:\Applications\hardware\pca70182\trunk\altium_files\400376.PcbDoc
+LayersSetName=Top_Bot_Thru_Holes|DrillFile=400242_nc_drill.txt|DrillLayers=gtl,g1,g2,gbl
+LayersSetName=Top_Mid_1_Blind_Vias|DrillFile=400242_nc_drill.tx1|DrillLayers=gtl,g1

@@ -1,0 +1,35 @@
+Altium Designer Pick and Place Locations
+C:\Applications\hardware\pca70182\trunk\production_files\400242_pick_and_place.txt
+
+========================================================================================================================
+File Design Information:
+
+Date:       26.09.18
+Time:       10:08
+Revision:   14366
+Variant:    Default assembly
+Units used: mm
+
+Designator Comment           Layer    Footprint                  Center-X(mm) Center-Y(mm) Rotation Description                                                  
+R5         100R              TopLayer RESC1608X06L               5.0800       48.2600      0        "Resistor, ±1%, 0.1W"                                        
+C16        100nF             TopLayer CAPC1608X06L               28.8000      43.7000      180      "Chip Cap 0603"                                              
+C15        10µF              TopLayer CAPC1608X06L               28.8000      42.5000      180      "Capacitor, X5R, ±20%"                                       
+R3         0R                TopLayer RESC1608X06L               26.9500      46.2500      360      "Resistor, ±5%, 0.1W"                                        
+R2         4k7               TopLayer RESC1608X06L               7.6000       40.7000      0        "Resistor, ±1%, 0.06W"                                       
+R4         22R               TopLayer RESC1608X06L               24.3000      46.2500      0        "Resistor, ±1%, 0.1W"                                        
+U1         CY8C6347BZI-BLD43 TopLayer BGA116C50P10X12_520X640X70 24.1500      41.9000      0        "Cypress PSoC 6 soc with BLE and cryptographic accelerators" 
+R1         22R               TopLayer RESC1608X06L               19.3000      46.9000      90       "Resistor, ±1%, 0.1W"                                        
+P8         "Pin List 1x3"    TopLayer LIST_1x3                   43.1800      17.7800      270      "Pin List 1x3, 2.54mm (100mil)"                              
+P3         "Pin List 1x2"    TopLayer LIST_1x2                   41.9100      40.6400      180      "Pin List 1x2, 2.54mm (100mil)"                              
+P6         "Pin List 1x3"    TopLayer LIST_1x3                   33.0200      17.7800      270      "Pin List 1x3, 2.54mm (100mil)"                              
+P1         "Pin List 1x3"    TopLayer LIST_1x3                   43.1800      48.2600      270      "Pin List 1x3, 2.54mm (100mil)"                              
+P5         "Pin List 1x3"    TopLayer LIST_1x3                   43.1800      33.0200      270      "Pin List 1x3, 2.54mm (100mil)"                              
+L1         2.2µH             TopLayer INDC1608X06L               20.4000      43.2000      90       "FIXED IND 2.2UH 700MA 300 MOHM"                             
+C13        4.7µF             TopLayer CAPC1608X06L               19.8000      39.8500      360      "Capacitor, X5R, ±10%"                                       
+C12        100nF             TopLayer CAPC1608X06L               19.2000      43.2000      270      "Chip Cap 0603"                                              
+C8         4.7µF             TopLayer CAPC1608X06L               18.6500      52.9500      360      "Capacitor, X5R, ±10%"                                       
+C7         1.0µF             TopLayer CAPC1608X06L               18.6500      51.6000      360      "Capacitor, X7R, ±10%"                                       
+C6         100nF             TopLayer CAPC1608X06L               18.6500      50.2500      360      "Chip Cap 0603"                                              
+C5         100nF             TopLayer CAPC1608X06L               18.6500      48.9000      360      "Chip Cap 0603"                                              
+C1         100nF             TopLayer CAPC1608X06L               24.3000      47.5500      0        "Chip Cap 0603"                                              
+J1         CW308_TARGETCON   TopLayer CW308_TBOARD_CONN          24.1300      29.2100      0        "CW308 "Standard" Target Board Connector"                    
