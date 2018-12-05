@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>tmpb9cq4dhy</title>
+<title>tmp33o84a6x</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13246,6 +13246,7 @@ rm -f -- objdir/*.lst
 rm -f -- simpleserial-aes.s simpleserial.s stm32f3_hal.s stm32f3_hal_lowlevel.s stm32f3_sysmem.s aes-independant.s aes.s
 rm -f -- simpleserial-aes.d simpleserial.d stm32f3_hal.d stm32f3_hal_lowlevel.d stm32f3_sysmem.d aes-independant.d aes.d
 rm -f -- simpleserial-aes.i simpleserial.i stm32f3_hal.i stm32f3_hal_lowlevel.i stm32f3_sysmem.i aes-independant.i aes.i
+mkdir .dep
 .
 -------- begin --------
 arm-none-eabi-gcc (GNU Tools for Arm Embedded Processors 7-2018-q2-update) 7.3.1 20180622 (release) [ARM/embedded-7-branch revision 261907]
@@ -13503,7 +13504,7 @@ Verified flash OK, 7715 bytes
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>Capturing traces: 100%|██████████| 500/500 [01:40&lt;00:00,  4.85it/s]
+<pre>Capturing traces: 100%|██████████| 500/500 [01:39&lt;00:00,  4.92it/s]
 </pre>
 </div>
 </div>
@@ -13568,7 +13569,7 @@ Verified flash OK, 7715 bytes
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>ERROR:root:Value 500 out of limits (OrderedDict([(&#39;None&#39;, None), (&#39;Trace Management&#39;, &lt;chipwhisperer.common.api.TraceManager.TraceManager object at 0x0C10D0F0&gt;)])) in parameter &#34;Input&#34;
+<pre>ERROR:root:Value 500 out of limits (OrderedDict([(&#39;None&#39;, None), (&#39;Trace Management&#39;, &lt;chipwhisperer.common.api.TraceManager.TraceManager object at 0x0C0FFFD0&gt;)])) in parameter &#34;Input&#34;
 </pre>
 </div>
 </div>
@@ -13663,18 +13664,18 @@ Verified flash OK, 7715 bytes
 <span class="ansi-green-intense-fg ansi-bold">----&gt; 2</span><span class="ansi-yellow-intense-fg ansi-bold"> </span>attack_results <span class="ansi-yellow-intense-fg ansi-bold">=</span> attack<span class="ansi-yellow-intense-fg ansi-bold">.</span>processTracesNoGUI<span class="ansi-yellow-intense-fg ansi-bold">(</span>cb<span class="ansi-yellow-intense-fg ansi-bold">)</span>
 
 <span class="ansi-green-intense-fg ansi-bold">c:\users\user\code\term2\chipwhisperer\software\chipwhisperer\analyzer\attacks\_base.py</span> in <span class="ansi-cyan-fg">processTracesNoGUI</span><span class="ansi-blue-intense-fg ansi-bold">(self, callback, show_progress_bar)</span>
-<span class="ansi-green-fg">    158</span>     <span class="ansi-red-intense-fg ansi-bold"># for backwards compatability</span>
-<span class="ansi-green-fg">    159</span>     <span class="ansi-green-intense-fg ansi-bold">def</span> processTracesNoGUI<span class="ansi-yellow-intense-fg ansi-bold">(</span>self<span class="ansi-yellow-intense-fg ansi-bold">,</span> callback<span class="ansi-yellow-intense-fg ansi-bold">=</span><span class="ansi-green-intense-fg ansi-bold">None</span><span class="ansi-yellow-intense-fg ansi-bold">,</span> show_progress_bar<span class="ansi-yellow-intense-fg ansi-bold">=</span><span class="ansi-green-intense-fg ansi-bold">False</span><span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">:</span>
-<span class="ansi-green-intense-fg ansi-bold">--&gt; 160</span><span class="ansi-yellow-intense-fg ansi-bold">         </span><span class="ansi-green-intense-fg ansi-bold">return</span> self<span class="ansi-yellow-intense-fg ansi-bold">.</span>processTraces<span class="ansi-yellow-intense-fg ansi-bold">(</span>callback<span class="ansi-yellow-intense-fg ansi-bold">,</span> show_progress_bar<span class="ansi-yellow-intense-fg ansi-bold">)</span>
-<span class="ansi-green-fg">    161</span> 
-<span class="ansi-green-fg">    162</span>     <span class="ansi-green-intense-fg ansi-bold">def</span> setProject<span class="ansi-yellow-intense-fg ansi-bold">(</span>self<span class="ansi-yellow-intense-fg ansi-bold">,</span> project<span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">:</span>
+<span class="ansi-green-fg">    164</span>     <span class="ansi-red-intense-fg ansi-bold"># for backwards compatability</span>
+<span class="ansi-green-fg">    165</span>     <span class="ansi-green-intense-fg ansi-bold">def</span> processTracesNoGUI<span class="ansi-yellow-intense-fg ansi-bold">(</span>self<span class="ansi-yellow-intense-fg ansi-bold">,</span> callback<span class="ansi-yellow-intense-fg ansi-bold">=</span><span class="ansi-green-intense-fg ansi-bold">None</span><span class="ansi-yellow-intense-fg ansi-bold">,</span> show_progress_bar<span class="ansi-yellow-intense-fg ansi-bold">=</span><span class="ansi-green-intense-fg ansi-bold">False</span><span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">:</span>
+<span class="ansi-green-intense-fg ansi-bold">--&gt; 166</span><span class="ansi-yellow-intense-fg ansi-bold">         </span><span class="ansi-green-intense-fg ansi-bold">return</span> self<span class="ansi-yellow-intense-fg ansi-bold">.</span>processTraces<span class="ansi-yellow-intense-fg ansi-bold">(</span>callback<span class="ansi-yellow-intense-fg ansi-bold">,</span> show_progress_bar<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">    167</span> 
+<span class="ansi-green-fg">    168</span>     <span class="ansi-green-intense-fg ansi-bold">def</span> setProject<span class="ansi-yellow-intense-fg ansi-bold">(</span>self<span class="ansi-yellow-intense-fg ansi-bold">,</span> project<span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">:</span>
 
 <span class="ansi-green-intense-fg ansi-bold">c:\users\user\code\term2\chipwhisperer\software\chipwhisperer\analyzer\attacks\_base.py</span> in <span class="ansi-cyan-fg">processTraces</span><span class="ansi-blue-intense-fg ansi-bold">(self, callback, show_progress_bar)</span>
-<span class="ansi-green-fg">    152</span> 
-<span class="ansi-green-fg">    153</span>                 <span class="ansi-red-intense-fg ansi-bold"># TODO:support start/end point different per byte</span>
-<span class="ansi-green-intense-fg ansi-bold">--&gt; 154</span><span class="ansi-yellow-intense-fg ansi-bold">                 </span>self<span class="ansi-yellow-intense-fg ansi-bold">.</span>attack<span class="ansi-yellow-intense-fg ansi-bold">.</span>addTraces<span class="ansi-yellow-intense-fg ansi-bold">(</span>self<span class="ansi-yellow-intense-fg ansi-bold">.</span>getTraceSource<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">,</span> <span class="ansi-yellow-intense-fg ansi-bold">(</span>startingTrace<span class="ansi-yellow-intense-fg ansi-bold">,</span> endingTrace<span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">,</span> progressBar<span class="ansi-yellow-intense-fg ansi-bold">,</span> pointRange<span class="ansi-yellow-intense-fg ansi-bold">=</span>self<span class="ansi-yellow-intense-fg ansi-bold">.</span>getPointRange<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-green-intense-fg ansi-bold">None</span><span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
-<span class="ansi-green-fg">    155</span> 
-<span class="ansi-green-fg">    156</span>         <span class="ansi-green-intense-fg ansi-bold">return</span> self<span class="ansi-yellow-intense-fg ansi-bold">.</span>attack<span class="ansi-yellow-intense-fg ansi-bold">.</span>getStatistics<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">    158</span> 
+<span class="ansi-green-fg">    159</span>                 <span class="ansi-red-intense-fg ansi-bold"># TODO:support start/end point different per byte</span>
+<span class="ansi-green-intense-fg ansi-bold">--&gt; 160</span><span class="ansi-yellow-intense-fg ansi-bold">                 </span>self<span class="ansi-yellow-intense-fg ansi-bold">.</span>attack<span class="ansi-yellow-intense-fg ansi-bold">.</span>addTraces<span class="ansi-yellow-intense-fg ansi-bold">(</span>self<span class="ansi-yellow-intense-fg ansi-bold">.</span>getTraceSource<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">,</span> <span class="ansi-yellow-intense-fg ansi-bold">(</span>startingTrace<span class="ansi-yellow-intense-fg ansi-bold">,</span> endingTrace<span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">,</span> progressBar<span class="ansi-yellow-intense-fg ansi-bold">,</span> pointRange<span class="ansi-yellow-intense-fg ansi-bold">=</span>self<span class="ansi-yellow-intense-fg ansi-bold">.</span>getPointRange<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-green-intense-fg ansi-bold">None</span><span class="ansi-yellow-intense-fg ansi-bold">)</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-green-fg">    161</span> 
+<span class="ansi-green-fg">    162</span>         <span class="ansi-green-intense-fg ansi-bold">return</span> self<span class="ansi-yellow-intense-fg ansi-bold">.</span>attack<span class="ansi-yellow-intense-fg ansi-bold">.</span>getStatistics<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
 
 <span class="ansi-green-intense-fg ansi-bold">c:\users\user\code\term2\chipwhisperer\software\chipwhisperer\analyzer\attacks\cpa_algorithms\progressive.py</span> in <span class="ansi-cyan-fg">addTraces</span><span class="ansi-blue-intense-fg ansi-bold">(self, traceSource, tracerange, progressBar, pointRange)</span>
 <span class="ansi-green-fg">    172</span> 
