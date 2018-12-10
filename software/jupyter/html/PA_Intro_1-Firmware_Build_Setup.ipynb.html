@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>tmphvfkn027</title>
+<title>tmp0mt5elhk</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13577,6 +13577,13 @@ Size after:
 NAME
     chipwhisperer
 
+DESCRIPTION
+    .. module:: chipwhisperer
+       :platform: Unix, Windows
+       :synopsis: Test
+    
+    .. moduleauthor:: NewAE
+
 PACKAGE CONTENTS
     analyzer (package)
     capture (package)
@@ -13601,7 +13608,8 @@ FUNCTIONS
     cpa(trace_source, leak_model=None, algorithm=&lt;class &#39;chipwhisperer.analyzer.attacks.cpa_algorithms.progressive.CPAProgressive&#39;&gt;)
         Create a CPA attack object with sane defaults
         
-        Defaults:
+        Create a CPA attack object with:
+        
         * trace source = trace_source
         * traces start at beginning
         * uses all traces for attack
@@ -13609,6 +13617,20 @@ FUNCTIONS
         * Reporting Interval = 10
         * Attack all keys
         * Full point range
+        
+        leak_model must be set either by this function or by attack.setLeakModel() before running attack.
+        
+        Args:
+        
+           trace_source (TraceManager): TraceManager or preprocessing object that holds traces, plaintext, etc.
+        
+           leak_model (AESLeakageHelper): Model describing information leaked from target. Must be set before running attack.
+        
+           algorithm (AlgorithmsBase): Algorithm to perform CPA loop. Default is almost always the right choice
+        
+        Returns:
+        
+           A CPA object. For more information, see documentation for CPA.
     
     createProject(filename, overwrite=False)
         Create a new project with the path &lt;filename&gt;.
@@ -13657,10 +13679,14 @@ NAME
 
 DESCRIPTION
     Scopes:
-    * OpenADC - CWLite and CWPro
-    * CWNano - CWNano
-    * PicoScope - PicoScope (old, untested)
-    * VisaScope - VisaScope (requires Visa module, old, untested)
+    
+       * OpenADC- CWLite and CWPro
+    
+       * CWNano - CWNano
+    
+       * PicoScope - PicoScope (old, untested)
+    
+       * VisaScope - VisaScope (requires Visa module, old, untested)
 
 PACKAGE CONTENTS
     OpenADC
@@ -13899,8 +13925,8 @@ Verified flash OK, 4671 bytes
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>b&#39;F75DFCD2AE6171B0FF8ED6733D266060&#39;
-b&#39;F75DFCD2AE6171B0FF8ED6733D266060&#39;
+<pre>b&#39;BC2368760D5553431047DFFA9D851269&#39;
+b&#39;BC2368760D5553431047DFFA9D851269&#39;
 </pre>
 </div>
 </div>
