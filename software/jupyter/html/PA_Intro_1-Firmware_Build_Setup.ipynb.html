@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>tmp0mt5elhk</title>
+<title>tmp2857qd95</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13308,7 +13308,6 @@ rm -f -- objdir/*.lst
 rm -f -- simpleserial-base.s simpleserial.s stm32f3_hal.s stm32f3_hal_lowlevel.s stm32f3_sysmem.s
 rm -f -- simpleserial-base.d simpleserial.d stm32f3_hal.d stm32f3_hal_lowlevel.d stm32f3_sysmem.d
 rm -f -- simpleserial-base.i simpleserial.i stm32f3_hal.i stm32f3_hal_lowlevel.i stm32f3_sysmem.i
-mkdir objdir 
 mkdir .dep
 .
 -------- begin --------
@@ -13592,6 +13591,7 @@ PACKAGE CONTENTS
     tests (package)
 
 SUBMODULES
+    CWFirmwareUpdate
     aes128leakage
     cpa_algorithms
     key_text_patterns
@@ -13637,7 +13637,7 @@ FUNCTIONS
         
         If &lt;overwrite&gt; is False, raise an IOError if this path already exists.
     
-    getJupyterCallback(attack, head=6)
+    getJupyterCallback(attack, head=6, fmt=&#39;{:02X}&lt;br&gt;{:.3f}&#39;)
         Get callback for use in Jupyter
     
     openProject(filename)
@@ -13653,12 +13653,15 @@ FUNCTIONS
         
         Programmers can be found in the programmers submodule
     
-    scope(type=&lt;class &#39;chipwhisperer.capture.scopes.OpenADC.OpenADC&#39;&gt;)
+    scope(type=&lt;class &#39;chipwhisperer.capture.scopes.OpenADC.OpenADC&#39;&gt;, sn=None)
         Create a scope object and connect to it.
         
         This function allows any type of scope to be created. By default, the scope
         is a ChipWhisperer OpenADC object, but this can be set to any valid scope
         class.
+        
+        If multiple chipwhisperers are connected, the serial number of the one you
+        want to connect to can be specified by passing sn=&lt;SERIAL_NUMBER&gt;
     
     target(scope, type=&lt;class &#39;chipwhisperer.capture.targets.SimpleSerial.SimpleSerial&#39;&gt;, **kwargs)
         Create a target object and connect to it.
@@ -13925,8 +13928,8 @@ Verified flash OK, 4671 bytes
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>b&#39;BC2368760D5553431047DFFA9D851269&#39;
-b&#39;BC2368760D5553431047DFFA9D851269&#39;
+<pre>b&#39;C3E2B63D9A2ED8FCC0DC1AA3D682168D&#39;
+b&#39;C3E2B63D9A2ED8FCC0DC1AA3D682168D&#39;
 </pre>
 </div>
 </div>
