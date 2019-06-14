@@ -13135,7 +13135,6 @@ div#notebook {
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">SCOPETYPE</span> <span class="o">=</span> <span class="s1">&#39;OPENADC&#39;</span>
 <span class="n">PLATFORM</span> <span class="o">=</span> <span class="s1">&#39;CWLITEXMEGA&#39;</span>
-<span class="n">GLITCHTYPE</span> <span class="o">=</span> <span class="s1">&#39;CLOCK&#39;</span>
 </pre></div>
 
     </div>
@@ -13168,7 +13167,7 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Typically, one of the slowest parts of an embedded system is its communication lines. It's pretty common to see a processor running in the MHz range with a serial connection of 96k baud. To make these two different speeds work together, embedded firmware usually fills up a buffer with data and lets a serial driver print on its own time. This setup means we can expect to see code like:</p>
+<p>Typically, one of the slowest parts of an embedded system is its communication lines. It's pretty common to see a processor running in the MHz range with a serial connection of 9.6k baud. To make these two different speeds work together, embedded firmware usually fills up a buffer with data and lets a serial driver print on its own time. This setup means we can expect to see code like:</p>
 <div class="highlight"><pre><span></span><span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">number_of_bytes_to_print</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">print_one_byte_to_serial</span><span class="p">(</span><span class="n">buffer</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
@@ -13551,16 +13550,13 @@ Verified flash OK, 1663 bytes
     <span class="n">scope</span><span class="o">.</span><span class="n">glitch</span><span class="o">.</span><span class="n">trigger_src</span> <span class="o">=</span> <span class="s1">&#39;ext_single&#39;</span>
     <span class="n">scope</span><span class="o">.</span><span class="n">glitch</span><span class="o">.</span><span class="n">repeat</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">scope</span><span class="o">.</span><span class="n">glitch</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;clock_only&quot;</span>
-    <span class="k">if</span> <span class="n">GLITCHTYPE</span> <span class="o">==</span> <span class="s2">&quot;CLOCK&quot;</span><span class="p">:</span>
-        <span class="n">scope</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">hs2</span> <span class="o">=</span> <span class="s2">&quot;glitch&quot;</span>
-        <span class="k">if</span> <span class="n">PLATFORM</span> <span class="o">==</span> <span class="s2">&quot;CWLITEARM&quot;</span><span class="p">:</span>
-            <span class="n">scope</span><span class="o">.</span><span class="n">glitch</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="o">-</span><span class="mf">37.9</span>
-            <span class="n">scope</span><span class="o">.</span><span class="n">glitch</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="o">-</span><span class="mi">7</span>
-        <span class="k">elif</span> <span class="n">PLATFORM</span> <span class="o">==</span> <span class="s2">&quot;CWLITEXMEGA&quot;</span> <span class="ow">or</span> <span class="n">PLATFORM</span> <span class="o">==</span> <span class="s2">&quot;CW303&quot;</span><span class="p">:</span>
-            <span class="n">scope</span><span class="o">.</span><span class="n">glitch</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.3</span>
-            <span class="n">scope</span><span class="o">.</span><span class="n">glitch</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mf">1.56</span>
-    <span class="k">elif</span> <span class="n">GLITCHTYPE</span> <span class="o">==</span> <span class="s2">&quot;VCC&quot;</span><span class="p">:</span>
-        <span class="k">pass</span>
+    <span class="n">scope</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">hs2</span> <span class="o">=</span> <span class="s2">&quot;glitch&quot;</span>
+    <span class="k">if</span> <span class="n">PLATFORM</span> <span class="o">==</span> <span class="s2">&quot;CWLITEARM&quot;</span><span class="p">:</span>
+        <span class="n">scope</span><span class="o">.</span><span class="n">glitch</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="o">-</span><span class="mf">37.9</span>
+        <span class="n">scope</span><span class="o">.</span><span class="n">glitch</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="o">-</span><span class="mi">7</span>
+    <span class="k">elif</span> <span class="n">PLATFORM</span> <span class="o">==</span> <span class="s2">&quot;CWLITEXMEGA&quot;</span> <span class="ow">or</span> <span class="n">PLATFORM</span> <span class="o">==</span> <span class="s2">&quot;CW303&quot;</span><span class="p">:</span>
+        <span class="n">scope</span><span class="o">.</span><span class="n">glitch</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.3</span>
+        <span class="n">scope</span><span class="o">.</span><span class="n">glitch</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mf">1.56</span>
 <span class="k">elif</span> <span class="n">SCOPETYPE</span> <span class="o">==</span> <span class="s2">&quot;CWNANO&quot;</span><span class="p">:</span>
     <span class="k">pass</span> <span class="c1">#do this later instead </span>
 </pre></div>
@@ -13612,12 +13608,12 @@ adc =
     presamples = 0
     samples    = 5000
     decimate   = 1
-    trig_count = 45216523
+    trig_count = 846500992
 clock = 
     adc_src       = clkgen_x4
     adc_phase     = 0
-    adc_freq      = 29538459
-    adc_rate      = 29538459.0
+    adc_freq      = 29538471
+    adc_rate      = 29538471.0
     adc_locked    = True
     freq_ctr      = 0
     freq_ctr_src  = extclk
@@ -13849,10 +13845,8 @@ The response took 9645 cycles
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="n">GLITCHTYPE</span> <span class="o">==</span> <span class="s2">&quot;CLOCK&quot;</span><span class="p">:</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="n">SCOPETYPE</span> <span class="o">==</span> <span class="s2">&quot;OPENADC&quot;</span><span class="p">:</span>
     <span class="n">scope</span><span class="o">.</span><span class="n">glitch</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;clock_xor&quot;</span>
-<span class="k">elif</span> <span class="n">GLITCHTYPE</span> <span class="o">==</span> <span class="s2">&quot;VCC&quot;</span><span class="p">:</span>
-    <span class="n">scope</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">glitch_lp</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
 
     </div>
@@ -14014,13 +14008,13 @@ The response took 9645 cycles
 
  
  
-<div id="743e7fca-201a-4d72-b918-36f1f78bb789"></div>
+<div id="6c8d1f92-8db4-4f6e-94a6-75f3dcf78605"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#743e7fca-201a-4d72-b918-36f1f78bb789');
+var element = $('#6c8d1f92-8db4-4f6e-94a6-75f3dcf78605');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
-{"version_major": 2, "version_minor": 0, "model_id": "40d894be7a6b4f55a388a3fe1026de3c"}
+{"version_major": 2, "version_minor": 0, "model_id": "8ec6c57e469a4b6bbe0d6fa76f4b8eb9"}
 </script>
 </div>
 
@@ -14036,13 +14030,13 @@ var element = $('#743e7fca-201a-4d72-b918-36f1f78bb789');
 
  
  
-<div id="c05d9b2f-e484-4042-94f7-0b0ce52b42fa"></div>
+<div id="89eeab5d-a290-4827-94ed-0442646230be"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#c05d9b2f-e484-4042-94f7-0b0ce52b42fa');
+var element = $('#89eeab5d-a290-4827-94ed-0442646230be');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
-{"version_major": 2, "version_minor": 0, "model_id": "d372f933b7a74a1eb3021ecbaff1f5c1"}
+{"version_major": 2, "version_minor": 0, "model_id": "f07cace7801a42a38734400fb0531939"}
 </script>
 </div>
 
@@ -14058,13 +14052,82 @@ var element = $('#c05d9b2f-e484-4042-94f7-0b0ce52b42fa');
 
  
  
-<div id="dc9080dc-51d8-409c-868b-a1430ba4ec5d"></div>
+<div id="3fa195b2-8239-4e4e-841a-83a79875fc7c"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#dc9080dc-51d8-409c-868b-a1430ba4ec5d');
+var element = $('#3fa195b2-8239-4e4e-841a-83a79875fc7c');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
-{"version_major": 2, "version_minor": 0, "model_id": "2d13a7c7d17c4be7b1f1756c7a215ebd"}
+{"version_major": 2, "version_minor": 0, "model_id": "342db4d53a6f4540a26cfbc5c61b1664"}
+</script>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>WARNING:root:SAM3U Serial buffers OVERRUN - data loss has occurred.
+WARNING:root:Timeout in OpenADC capture(), trigger FORCED
+WARNING:root:Timeout in OpenADC capture(), trigger FORCED
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+
+ 
+ 
+<div id="a8a5e07c-e857-44ed-846a-daeaf5b463d9"></div>
+<div class="output_subarea output_widget_view ">
+<script type="text/javascript">
+var element = $('#a8a5e07c-e857-44ed-846a-daeaf5b463d9');
+</script>
+<script type="application/vnd.jupyter.widget-view+json">
+{"version_major": 2, "version_minor": 0, "model_id": "5a45a14368a149f583797819c7c88b8d"}
+</script>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>WARNING:root:Timeout in OpenADC capture(), trigger FORCED
+WARNING:root:Timeout in OpenADC capture(), trigger FORCED
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+
+ 
+ 
+<div id="4b895337-d76a-48f4-a2de-1e003e07aef0"></div>
+<div class="output_subarea output_widget_view ">
+<script type="text/javascript">
+var element = $('#4b895337-d76a-48f4-a2de-1e003e07aef0');
+</script>
+<script type="application/vnd.jupyter.widget-view+json">
+{"version_major": 2, "version_minor": 0, "model_id": "baaeddee4f254faa84e573d2e8193566"}
 </script>
 </div>
 
@@ -14088,16 +14151,16 @@ var element = $('#dc9080dc-51d8-409c-868b-a1430ba4ec5d');
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Glitched!
-	Ext offset: 9632
+	Ext offset: 9633
 	Offset: -4.296875
 	Width: 1.5625
-0x00r0
+r0
 
 
 
 
 
-6720736265747267206762206f686c207a767978210x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x00Don&#39;t forget to buy milk!0x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x00</pre>
+6720736265747267206762206f686c207a767978210x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x00Don&#39;t forget to buy milk!0x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x00</pre>
 </div>
 </div>
 
@@ -14370,61 +14433,7 @@ var element = $('#dc9080dc-51d8-409c-868b-a1430ba4ec5d');
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>0x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x00</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>WARNING:root:SAM3U Serial buffers OVERRUN - data loss has occurred.
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>0x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x00</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">scope</span><span class="o">.</span><span class="n">glitch</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">scope</span><span class="o">.</span><span class="n">glitch</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>1.5625
--4.296875
-</pre>
+<pre>0x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x000x00</pre>
 </div>
 </div>
 
@@ -14443,7 +14452,7 @@ var element = $('#dc9080dc-51d8-409c-868b-a1430ba4ec5d');
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">scope</span><span class="o">.</span><span class="n">dis</span><span class="p">()</span>
@@ -14535,7 +14544,7 @@ var element = $('#dc9080dc-51d8-409c-868b-a1430ba4ec5d');
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">assert</span> <span class="p">(</span><span class="n">broken</span> <span class="o">==</span> <span class="kc">True</span><span class="p">),</span> <span class="s2">&quot;Failed to break bootloader in </span><span class="si">{}</span><span class="s2"> glitches&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>

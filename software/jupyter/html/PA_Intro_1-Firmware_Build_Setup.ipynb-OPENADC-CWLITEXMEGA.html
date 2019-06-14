@@ -13124,14 +13124,29 @@ div#notebook {
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This tutorial will introduce you to the 'simpleserial' communications system. It will show you how to perform different operations on data based on input from the ChipWhisperer software. This can be used for building your own system which you wish to 'break'. All the <code>%%bash</code> blocks can be run either in Jupyter or in your favourite command line environment (note that Jupyter resets your path between blocks).</p>
+<p>Additionally, there is a block below that has <code>#Parameters</code> at the top. This is a block used to configure tutorials for different targets and situations. Make sure you change these parameters in this and future tutorials so that they match your hardware setup. Important parameters include:</p>
+<ul>
+<li><code>SCOPETYPE</code> - Capture hardware to use, for example "OPENADC" for CWLite or CWPro.</li>
+<li><code>PLATFORM</code>  - Target being attacked. For example, "CW308_STM32F3" for STM32F3 on CW308 board.</li>
+<li><code>CRYPTO_TARGET</code> - Cryptography library used for encryption functions. For example, "TINYAES128C".</li>
+</ul>
+<p>Some common hardware configurations are (<code>CRYPTO_TARGET</code> is unused in this tutorial, but will be used in later tutorials involving AES and RSA):</p>
+<p>CWLite 1-part w/ Arm target:</p>
+<div class="highlight"><pre><span></span><span class="n">SCOPETYPE</span> <span class="o">=</span> <span class="s1">&#39;OPENADC&#39;</span>
+<span class="n">PLATFORM</span> <span class="o">=</span> <span class="s1">&#39;CWLITEARM&#39;</span>
+<span class="n">CRYPTO_TARGET</span> <span class="o">=</span> <span class="s1">&#39;TINYAES128C&#39;</span>
+</pre></div>
+<p>CWLite 1-part w/ Xmega target</p>
+<div class="highlight"><pre><span></span><span class="n">SCOPETYPE</span> <span class="o">=</span> <span class="s1">&#39;OPENADC&#39;</span>
+<span class="n">PLATFORM</span> <span class="o">=</span> <span class="s1">&#39;CWLITEXMEGA&#39;</span>
+<span class="n">CRYPTO_TARGET</span> <span class="o">=</span> <span class="s1">&#39;AVRCRYPTOLIB&#39;</span>
+</pre></div>
+<p>CWNano 1-part</p>
+<div class="highlight"><pre><span></span><span class="n">SCOPETYPE</span> <span class="o">=</span> <span class="s1">&#39;CWNANO&#39;</span>
+<span class="n">PLATFORM</span> <span class="o">=</span> <span class="s1">&#39;CWNANO&#39;</span>
+<span class="n">CRYPTO_TARGET</span> <span class="o">=</span> <span class="s1">&#39;TINYAES128C&#39;</span>
+</pre></div>
 
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="What-is-SimpleSerial">What is SimpleSerial<a class="anchor-link" href="#What-is-SimpleSerial">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -13148,6 +13163,13 @@ div#notebook {
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="What-is-SimpleSerial">What is SimpleSerial<a class="anchor-link" href="#What-is-SimpleSerial">&#182;</a></h2>
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
@@ -13817,7 +13839,6 @@ FILE
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Now that the clock and IO lines are setup, we can program the target. ChipWhisperer includes a generic programming function, <code>cw.programTarget(scope, type, fw_path)</code>. Here <code>type</code> is one of the programmers available in the cw.programmers submodule (<code>help(cw.programmers)</code> for more information). <code>fw_path</code> is the path to the hex file that you want to flash onto the device.</p>
 <p>The final part of the binary path should match your platform (<code>&lt;path&gt;/simpleserial-base-CWLITEARM.hex</code> for CWLITEARM)</p>
-<p>XMEGA setup:</p>
 
 </div>
 </div>
@@ -13825,29 +13846,6 @@ FILE
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># program the target</span>
-<span class="n">fw_path</span> <span class="o">=</span> <span class="s1">&#39;../../hardware/victims/firmware/simpleserial-base-lab1/simpleserial-base-CW303.hex&#39;</span>
-<span class="n">prog</span> <span class="o">=</span> <span class="n">cw</span><span class="o">.</span><span class="n">programmers</span><span class="o">.</span><span class="n">XMEGAProgrammer</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>STM32F Setup:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="s2">&quot;STM&quot;</span> <span class="ow">in</span> <span class="n">PLATFORM</span> <span class="ow">or</span> <span class="n">PLATFORM</span> <span class="o">==</span> <span class="s2">&quot;CWLITEARM&quot;</span> <span class="ow">or</span> <span class="n">PLATFORM</span> <span class="o">==</span> <span class="s2">&quot;CWNANO&quot;</span><span class="p">:</span>
@@ -13875,7 +13873,7 @@ FILE
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">cw</span><span class="o">.</span><span class="n">programTarget</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">fw_path</span><span class="p">)</span>
@@ -13916,7 +13914,7 @@ Verified flash OK, 1813 bytes
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">ktp</span> <span class="o">=</span> <span class="n">cw</span><span class="o">.</span><span class="n">ktp</span><span class="o">.</span><span class="n">Basic</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span> <span class="c1"># object to generate fixed/random key and text (default fixed key, random text)</span>
@@ -13953,8 +13951,8 @@ Verified flash OK, 1813 bytes
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>b&#39;0BC0F568861CA28ACC28D5D85BBDAEA6&#39;
-b&#39;0BC0F568861CA28ACC28D5D&#39;
+<pre>b&#39;9D18BCD9EBE74E5D1DDE903069A5485C&#39;
+b&#39;9D18BCD9EBE74E5D1DDE903069A5485C&#39;
 </pre>
 </div>
 </div>
@@ -13973,7 +13971,7 @@ b&#39;0BC0F568861CA28ACC28D5D&#39;
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">scope</span><span class="o">.</span><span class="n">dis</span><span class="p">()</span>
