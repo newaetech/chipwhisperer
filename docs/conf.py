@@ -100,11 +100,6 @@ def create_tutorial_files(app, config):
     These files will contain the correct links and will always be
     rebuilt.
     """
-
-    for top, dirs, nondirs in os.walk('/home/docs'):
-        print(top, dirs, nondirs)
-
-
     print('Generating tutorial stubs with links...')
     tutorials_src_dir = os.path.abspath(os.path.join(app.srcdir, '..', 'tutorials'))
     tutorials_output_dir = os.path.abspath(os.path.join(app.srcdir, 'tutorials'))
@@ -162,6 +157,11 @@ def create_tutorial_files(app, config):
     tutorials_overview_file = os.path.join(app.srcdir, 'tutorials.rst')
     Path(tutorials_overview_file).touch()
     generated_files.append(tutorials_overview_file)
+
+    print(generated_files)
+
+    for top, dirs, nondirs in os.walk('/home/docs'):
+        print(top, dirs, nondirs)
 
 
 def setup(app):
