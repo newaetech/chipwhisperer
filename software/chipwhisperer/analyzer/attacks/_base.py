@@ -24,14 +24,8 @@
 #=================================================
 import logging
 
-from chipwhisperer.common.ui.ProgressBar import ProgressBar, ProgressBarTqdm
-from chipwhisperer.common.utils.pluginmanager import Plugin
-from chipwhisperer.common.utils.tracesource import PassiveTraceObserver, TraceSource
-from chipwhisperer.common.utils.analysissource import AnalysisSource, AnalysisObserver
-from chipwhisperer.common.api.autoscript import AutoScript
-from chipwhisperer.common.utils.parameter import Parameterized, setupSetParam
-from chipwhisperer.common.utils import pluginmanager
-from .models.AES128_8bit import AES128_8bit, SBox_output
+from chipwhisperer.common.utils.tracesource import PassiveTraceObserver
+from chipwhisperer.common.utils.parameter import setupSetParam
 from chipwhisperer.common.utils.util import camel_case_deprecated
 
 def enforceLimits(value, limits):
@@ -42,14 +36,12 @@ def enforceLimits(value, limits):
     return value
 
 
-class AttackBaseClass(PassiveTraceObserver, AnalysisSource, Parameterized, AutoScript, Plugin):
+class AttackBaseClass(PassiveTraceObserver):
     """Generic Attack Interface"""
     _name= 'Attack Settings'
     _algos = {}
 
     def __init__(self):
-        AutoScript.__init__(self)
-        AnalysisSource.__init__(self)
         PassiveTraceObserver.__init__(self)
         self._itNum = 0
         self.getParams().getChild("Input").hide()
@@ -67,13 +59,11 @@ class AttackBaseClass(PassiveTraceObserver, AnalysisSource, Parameterized, AutoS
         self.getParams().addChildren([
             {'name':'Attack Algorithm', 'type':'list',  'values':self._algos, 'get':self.getAlgorithm, 'set':self.setAlgorithm, 'action':self.updateScript, 'childmode': 'parent'}
         ])
-        models = pluginmanager.getPluginsInDictFromPackage("chipwhisperer.analyzer.attacks.models", True, False)
+        models = None
         self.getParams().addChildren([
-            {'name':'Crypto Algorithm', 'type':'list', 'values':models, 'value':models['AES 128'], 'action':self.refreshByteList, 'childmode':'child'},
+            {'name':'Crypto Algorithm', 'type':'list', 'values':models, 'action':self.refreshByteList, 'childmode':'child'},
             {'name':'Points Range', 'key':'prange', 'type':'range', 'get':self.get_point_range, 'set':self.set_point_range, 'action':self.updateScript},
         ])
-        for m in list(models.values()):
-            m.sigParametersChanged.connect(self.updateScript)
 
         self.getParams().addChildren([
             {'name':'Starting Trace', 'key':'strace', 'type':'int', 'get':self.get_trace_start, 'set':self.set_trace_start, 'action':self.updateScript},
@@ -242,7 +232,7 @@ class AttackBaseClass(PassiveTraceObserver, AnalysisSource, Parameterized, AutoS
     setPointRange = camel_case_deprecated(set_point_range)
     def known_key(self):
         """Get the known key via attack"""
-        key = self.process_known_key(self.getTraceSource().getKnownKey(self.get_trace_start()))
+        key = self.process_known_key(self.getTraceSource().get_known_key(self.get_trace_start()))
         if key is None:
             key = [None] * len(self.get_statistics().diffs)
         return key
@@ -264,43 +254,20 @@ class AttackBaseClass(PassiveTraceObserver, AnalysisSource, Parameterized, AutoS
         return self.useAbs
 
     def refreshByteList(self, _=None):
-        try:
-            self.getParams().addChildren([
-                {'name':'Attacked Subkeys', 'type':'group', 'children': [
-                    dict(name='Subkey %d' % bnum, type='bool', key='bnumenabled%d' % bnum, value=True,
-                         action=self.updateScript) for bnum in range(0, self.findParam('Crypto Algorithm').getValue().getNumSubKeys())
-                ]}])
-            self.updateScript()
-        except KeyError:
-            pass
+        pass
 
     def getEnabledSubkeys(self):
-        blist = []
-        try:
-            for bnum in range(self.findParam('Crypto Algorithm').getValue().getNumSubKeys()):
-                if self.findParam(['Attacked Subkeys', ('Subkey %d' % bnum)]).getValue():
-                    blist.append(bnum)
-        except KeyError:
-            pass
-        return blist
+        return None
 
     def get_statistics(self):
         return self.attack.getStatistics()
 
     getStatistics = camel_case_deprecated(get_statistics)
     def updateScript(self, _=None):
-        self.importsAppend("import chipwhisperer")
         if self._traceSource is None:
             return
 
         # Add attack 'other' functions such as template generators etc
-        if hasattr(self._analysisAlgorithm, '_smartstatements'):
-            for k in self._analysisAlgorithm._smartstatements:
-                self.mergeGroups(k, self._analysisAlgorithm, prefix='attack')
-
-            for k in self._analysisAlgorithm.getImportStatements():
-                self.importsAppend(k)
-
         runs = self.findParam('runs')
         atraces = self.findParam('atraces')
         strace = self.findParam('strace')
@@ -319,14 +286,6 @@ class AttackBaseClass(PassiveTraceObserver, AnalysisSource, Parameterized, AutoS
 
         pointrng = self.findParam('prange').getValue()
 
-        self.addFunction("init", "setTraceSource", "UserScript.traces, blockSignal=True", loc=0)
-        self.addFunction("init", "setProject", "UserScript.api.project()", loc=0)
-        self.addFunction("init", "setTargetSubkeys", "%s" % str(self.getEnabledSubkeys()))
-        self.addFunction("init", "setTraceStart", "%d" % strace.getValue())
-        self.addFunction("init", "setTracesPerAttack", "%d" % atraces.getValue())
-        self.addFunction("init", "setIterations", "%d" % runs.getValue())
-        self.addFunction("init", "setReportingInterval", "%d" % ri.getValue())
-        self.addFunction("init", "setPointRange", "(%d,%d)" % (pointrng[0], pointrng[1]))
 
     def updateTraceLimits(self):
         if self._traceSource is None:
@@ -335,7 +294,6 @@ class AttackBaseClass(PassiveTraceObserver, AnalysisSource, Parameterized, AutoS
         self.findParam('prange').setLimits((0, self._traceSource.num_points()-1))
         self.findParam('prange').setValue((0, self._traceSource.num_points()-1))
 
-        self.addFunction("init", "setPointRange", "(%d,%d)" % (0, self._traceSource.num_points()))
 
         strace = self.findParam('strace')
         self.findParam('runs').setValue(1)
@@ -345,36 +303,3 @@ class AttackBaseClass(PassiveTraceObserver, AnalysisSource, Parameterized, AutoS
         atrace.setValue(1, blockAction=True)
         atrace.setLimits((1, self._traceSource.num_traces()))
         atrace.setValue(self._traceSource.num_traces(), blockAction=True)
-
-
-class AttackObserver(AnalysisObserver):
-    """"It is an AnalysisObserver with methods to get information from attacks"""
-    highlightedKeyColor = 255, 0, 0
-    traceColor = 0, 255, 0
-
-    def setAnalysisSource(self, analysisSource):
-        if issubclass(analysisSource.__class__, AttackBaseClass):
-            AnalysisObserver.setAnalysisSource(self, analysisSource)
-        else:
-            AnalysisObserver.setAnalysisSource(self, None)
-
-    def _highlightedKeys(self):
-        return self._analysisSource.knownKey()
-
-    def _numPerms(self, key):
-        try:
-            return len(self._analysisSource.getStatistics().diffs[key])
-        except Exception:
-            return 0
-
-    def _maxNumPerms(self):
-        try:
-            return self._analysisSource.getStatistics().numPerms
-        except Exception:
-            return 0
-
-    def _numKeys(self):
-        try:
-            return len(self._analysisSource.getStatistics().diffs)
-        except Exception:
-            return 0

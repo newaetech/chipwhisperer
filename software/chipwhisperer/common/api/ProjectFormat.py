@@ -26,18 +26,17 @@ import os
 import re
 import sys
 from datetime import datetime
-import copy
 import zipfile
 import numpy as np
 
-from chipwhisperer.common.utils import util
-from chipwhisperer.common.api.dictdiffer import DictDiffer
 from chipwhisperer.common.api.TraceManager import TraceManager
 from chipwhisperer.common.api.settings import Settings
 from chipwhisperer.common.utils.parameter import Parameter, Parameterized, setupSetParam
-from chipwhisperer.common.utils import util, pluginmanager
+from chipwhisperer.common.utils import util
 from chipwhisperer.common.traces.TraceContainerNative import TraceContainerNative
 import copy
+from chipwhisperer.common.traces import Trace
+import shutil
 
 try:
     from configobj import ConfigObj  # import the module
@@ -46,9 +45,6 @@ except ImportError:
     sys.exit()
 
 __author__ = "Colin O'Flynn"
-
-
-PROJECT_DIR = os.path.join(os.path.expanduser('~'), 'chipwhisperer', 'projects')
 
 
 def ensure_cwp_extension(path):
@@ -101,7 +97,7 @@ class Project(Parameterized):
 
         import chipwhisperer as cw
         proj = cw.create_project("project")
-        trace = (trace_data, plaintext, ciphertext, key)
+        trace = cw.Trace(trace_data, plaintext, ciphertext, key)
         proj.traces.append(trace)
         proj.save()
 
@@ -126,10 +122,10 @@ class Project(Parameterized):
       *  :meth:`project.save <.Project.save>`
       *  :meth:`project.export <.Project.export>`
     """
-    untitledFileName = os.path.normpath(os.path.join(Settings().value("project-home-dir"), "tmp/default.cwp"))
+    untitledFileName = os.path.normpath(os.path.join(Settings().value("project-home-dir"), "tmp", "default.cwp"))
 
     def __init__(self, prog_name="ChipWhisperer", prog_ver=""):
-        self.valid_traces = pluginmanager.getPluginsInDictFromPackage("chipwhisperer.common.traces", True, True)
+        self.valid_traces = None
         self._trace_format = None
 
         self.params = Parameter(name="Project Settings", type="group")
@@ -137,7 +133,8 @@ class Project(Parameterized):
             {'name': 'Trace Format', 'type': 'list', 'values': self.valid_traces, 'get': self.get_trace_format, 'set': self.set_trace_format},
         ])
 
-        self.findParam("Trace Format").setValue(TraceContainerNative(project=self), addToList=True)
+        #self.findParam("Trace Format").setValue(TraceContainerNative(project=self), addToList=True)
+        self._trace_format = TraceContainerNative(project=self)
 
         #self.traceParam = Parameter(name="Trace Settings", type='group', addLoadSave=True).register()
         #self.params.getChild('Trace Format').stealDynamicParameters(self.traceParam)
@@ -212,7 +209,7 @@ class Project(Parameterized):
         tmp.clear()
         starttime = datetime.now()
         prefix = starttime.strftime('%Y.%m.%d-%H.%M.%S') + "_"
-        tmp.config.setConfigFilename(self.datadirectory + "traces/config_" + prefix + ".cfg")
+        tmp.config.setConfigFilename(os.path.join(self.datadirectory, "traces", "config_" + prefix + ".cfg"))
         tmp.config.setAttr("prefix", prefix)
         tmp.config.setAttr("date", starttime.strftime('%Y-%m-%d %H:%M:%S'))
         return tmp
@@ -273,7 +270,7 @@ class Project(Parameterized):
     def setFilename(self, f):
         self.filename = f
         self.config.filename = f
-        self.datadirectory = os.path.splitext(self.filename)[0] + "_data/"
+        self.datadirectory = os.path.splitext(self.filename)[0] + "_data"
         self.createDataDirectory()
         self.sigStatusChanged.emit()
 
@@ -296,7 +293,7 @@ class Project(Parameterized):
 
     def load(self, f = None):
         if f is not None:
-            self.setFilename(f)
+            self.setFilename(os.path.abspath(os.path.expanduser(f)))
 
         if not os.path.isfile(self.filename):
             raise IOError("File " + self.filename + " does not exist or is not a file")
@@ -416,25 +413,18 @@ class Project(Parameterized):
 
         disk = util.convert_to_str(ConfigObjProj(infile=self.filename))
         ram = util.convert_to_str(self.config)
-        diff = DictDiffer(ram, disk)
-
-        added = diff.added()
-        removed = diff.removed()
-        changed = diff.changed() #TODO: bug when comparing projects with template sections. It is returning changes when there is not.
-
-        return added, removed, changed
 
     def hasDiffs(self):
         if self.dirty.value(): return True
 
-        added, removed, changed = self.checkDiff()
+        #added, removed, changed = self.checkDiff()
         if (len(added) + len(removed) + len(changed)) == 0:
             return False
         return True
 
     def consolidate(self, keepOriginals = True):
         for indx, t in enumerate(self._traceManager.traceSegments):
-            destinationDir = os.path.normpath(self.datadirectory + "traces/")
+            destinationDir = os.path.normpath(os.path.join(self.datadirectory, "traces"))
             config = ConfigObj(t.config.configFilename())
             prefix = config['Trace Config']['prefix']
             tracePath = os.path.normpath(os.path.split(t.config.configFilename())[0])
@@ -443,10 +433,10 @@ class Project(Parameterized):
 
             for traceFile in os.listdir(tracePath):
                 if traceFile.startswith(prefix):
-                    util.copyFile(os.path.normpath(tracePath + "/" + traceFile), destinationDir, keepOriginals)
+                    util.copyFile(os.path.normpath(os.path.join(tracePath, traceFile)), destinationDir, keepOriginals)
 
             util.copyFile(t.config.configFilename(), destinationDir, keepOriginals)
-            t.config.setConfigFilename(os.path.normpath(destinationDir + "/" + os.path.split(t.config.configFilename())[1]))
+            t.config.setConfigFilename(os.path.normpath(os.path.join(destinationDir, os.path.split(t.config.configFilename())[1])))
         self.sigStatusChanged.emit()
 
     def __del__(self):
@@ -472,6 +462,8 @@ class Project(Parameterized):
     def export(self, file_path, file_type='zip'):
         """Export a chipwhisperer project.
 
+        Saves project before exporting.
+
         Supported export types:
           *  zip (default)
 
@@ -481,6 +473,8 @@ class Project(Parameterized):
         .. versionadded:: 5.1
             Add **export** method to active project.
         """
+        self.save()
+
         _, cwp_file = os.path.split(self.get_filename())
         name, ext = os.path.splitext(cwp_file)
         data_folder = os.path.join(self.location, '_'.join([name, 'data']))
@@ -504,6 +498,42 @@ class Project(Parameterized):
             raise ValueError('{} not supported'.format(file_type))
 
         return export_file_path
+
+    def close(self, save=True):
+        """Closes the project cleanly.
+
+        Saves by default. Then closes all claimed files.
+
+        Args:
+            save (bool): Saves the project before closing.
+        """
+        if save:
+            self.save()
+
+        for seg in self.segments:
+            seg.unloadAllTraces()
+
+    def remove(self, i_am_sure=False):
+        """Remove a project from disk.
+
+        Args:
+            i_am_sure (bool): Are you sure you want to remove the project?
+        """
+        if not i_am_sure:
+            raise RuntimeWarning('Project not removed... i_am_sure not set to True.')
+
+        self.close(save=False)
+
+        try:
+            shutil.rmtree(self.datadirectory)
+        except FileNotFoundError:
+            pass
+
+        _, cwp_file = os.path.split(self.get_filename())
+        try:
+            os.remove(os.path.join(self.location, cwp_file))
+        except FileNotFoundError:
+            pass
 
     @property
     def traces(self):
@@ -586,14 +616,14 @@ class Traces:
 
     To iterate through all traces use::
 
-        for trace, textin, textout, knownkey in my_project.traces:
-            # Something amazing...
+        for trace in my_project.traces:
+            print(trace.wave, trace.textin, trace.textout, trace.key)
 
     Indexing is supported::
 
         trace_of_interest = my_project.traces[99]
 
-    So is slicing, however, a step is not supported::
+    So is slicing::
 
         interesting_traces = my_project.traces[20:35]
 
@@ -604,10 +634,11 @@ class Traces:
             and loading traces from disk to keep memory usage reasonable.
 
     Returns:
-        (iterable) of traces in the project if the traces belongs
-         to a segment that is enabled. The iterable contains tuples
-         of length four containing the trace, plain text in,
-         encrypted text out, and known key.
+        (iterable) of :class:`traces <chipwhisperer.common.traces.Trace>`
+        in the project if the traces belongs
+        to a segment that is enabled. The iterable contains tuples
+        of length four containing the trace, plain text in,
+        encrypted text out, and known key.
 
     Raises:
         IndexError: When the index used for indexing is out of range.
@@ -638,17 +669,35 @@ class Traces:
         return self._keys
 
     def append(self, trace):
-        """Append a tuple containing the trace and related operation information.
+        """Append a Trace containing the trace and related operation information.
 
         Args:
-            trace: A tuple of length four (trace data, text in, text out, and key).
+            trace (:class:`Trace <chipwhisperer.common.trace.Trace>`): A captured or created trace.
+
+        Raises:
+            TypeError: When trying to append something other than a trace.
         """
+        if not isinstance(trace, Trace):
+            raise TypeError("Expected Trace object, got {}.".format(trace))
+
         if self.cur_trace_num > self.seg_ind_max:
             self.cur_seg = self.project.segments.new()
             self.project.segments.append(self.cur_seg)
             self.cur_trace_num = 0
         self.cur_seg.add_trace(*trace)
         self.cur_trace_num += 1
+
+    def extend(self, iterable):
+        """Add all traces in an iterable to the project.
+
+        Args:
+            iterable: Any iterable of :class:`Trace <chipwhisperer.common.trace.Trace>` objects.
+
+        Raises:
+            TypeError: If any of the object in the iterable are not a trace.
+        """
+        for item in iterable:
+            self.append(item)
 
     def __len__(self):
         return self.tm.num_traces()
@@ -661,7 +710,7 @@ class Traces:
         if self.n > self.max:
             raise StopIteration
 
-        result = (
+        result = Trace(
             self.tm.get_trace(self.n),
             self.tm.get_textin(self.n),
             self.tm.get_textout(self.n),
@@ -680,7 +729,7 @@ class Traces:
             if not (0 <= ind <= self.max):
                 raise IndexError('Index outside of range ({}, {})'.format(0, self.max))
 
-            result = (
+            result = Trace(
                 self.tm.get_trace(ind),
                 self.tm.get_textin(ind),
                 self.tm.get_textout(ind),
@@ -693,7 +742,7 @@ class Traces:
             result = []
             for i in range(*indices):
                 result.append(
-                    (
+                    Trace(
                         self.tm.get_trace(i),
                         self.tm.get_textin(i),
                         self.tm.get_textout(i),

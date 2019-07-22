@@ -14,6 +14,7 @@ from chipwhisperer.common.utils import util
 import array
 import numpy as np
 from collections import OrderedDict
+import copy
 
 ADDR_GAIN       = 0
 ADDR_SETTINGS   = 1
@@ -848,7 +849,7 @@ class ClockSettings(util.DisableNewAttr):
         else:
             raise ValueError("Invalid ADC source (possible values: 'clkgen_x4', 'clkgen_x1', 'extclk_x4', 'extclk_x1', 'extclk_dir'")
 
-        self.resetAdc()
+        self.reset_adc()
 
     @property
     def adc_phase(self):
@@ -902,7 +903,7 @@ class ClockSettings(util.DisableNewAttr):
     def adc_locked(self):
         """The current status of the ADC DCM. Read-only.
 
-        To try re-locking the ADC, see resetAdc().
+        To try re-locking the ADC, see reset_adc().
 
         :Getter: Return whether the ADC DCM is locked (True or False)
         """
@@ -979,7 +980,7 @@ class ClockSettings(util.DisableNewAttr):
         else:
             raise ValueError("Invalid setting for CLKGEN source (valid values: 'system', 'extclk')")
 
-        self.resetDcms()
+        self.reset_dcms()
 
     @property
     def extclk_freq(self):
@@ -1024,7 +1025,7 @@ class ClockSettings(util.DisableNewAttr):
     @clkgen_freq.setter
     def clkgen_freq(self, freq):
         self._autoMulDiv(freq)
-        self.resetDcms()
+        self.reset_dcms()
 
     @property
     def clkgen_locked(self):
@@ -1193,7 +1194,7 @@ class ClockSettings(util.DisableNewAttr):
         result[3] &= ~(0x01)
         self.oa.sendMessage(CODE_WRITE, ADDR_ADVCLK, result, readMask=self._readMask)
 
-    def resetAdc(self):
+    def reset_adc(self):
         """Reset the ADC DCM.
 
         After changing frequencies, the ADC DCM may become unlocked from its
@@ -1204,7 +1205,9 @@ class ClockSettings(util.DisableNewAttr):
         """
         self._reset_dcms(True, False)
 
-    def resetClkgen(self):
+    resetAdc = util.camel_case_deprecated(reset_adc)
+
+    def reset_clkgen(self):
         """Reset the CLKGEN DCM.
 
         After changing frequencies or input sources, the CLKGEN DCM may not
@@ -1215,14 +1218,18 @@ class ClockSettings(util.DisableNewAttr):
         """
         self._reset_dcms(False, True)
 
-    def resetDcms(self):
+    resetClkgen = util.camel_case_deprecated(reset_clkgen)
+
+    def reset_dcms(self):
         """Reset the CLKGEN DCM, then the ADC DCM.
 
         This order is necessary because the ADC may depend on having a locked
         clock from the CLKGEN output.
         """
-        self.resetClkgen()
-        self.resetAdc()
+        self.reset_clkgen()
+        self.reset_adc()
+
+    resetDcms = util.camel_case_deprecated(reset_dcms)
 
     def _clkgenLoad(self):
         result = self.oa.sendMessage(CODE_READ, ADDR_ADVCLK, maxResp=4)
@@ -1662,7 +1669,7 @@ class OpenADCInterface(object):
     def triggerNow(self):
         initial = self.settings()
         self.setSettings(initial | SETTINGS_TRIG_NOW)
-        # time.sleep(0.001)
+        time.sleep(0.001)
         self.setSettings(initial & ~SETTINGS_TRIG_NOW)
 
     def getStatus(self):
@@ -1819,16 +1826,18 @@ class OpenADCInterface(object):
             # Stream mode adds 500mS of extra timeout on USB traffic itself...
             self.serial.initStreamModeCapture(self._stream_len, self._sbuf, timeout_ms=int(self._timeout * 1000) + 500)
 
-    def capture(self):
+    def capture(self, offset=None):
         timeout = False
-
+        sleeptime = 0
+        if offset:
+            sleeptime = 4*offset/100000 #rougly 4ms per 100k offset
         if self._streammode:
 
             # Wait for a trigger, letting the UI run when it can
             starttime = datetime.datetime.now()
             while self.serial.cmdReadStream_isDone() == False:
                 # Wait for a moment before re-running the loop
-                # time.sleep(0.05)
+                #time.sleep(0.05)
                 diff = datetime.datetime.now() - starttime
 
                 # If we've timed out, don't wait any longer for a trigger
@@ -1861,7 +1870,8 @@ class OpenADCInterface(object):
                 status = self.getStatus()
 
                 # Wait for a moment before re-running the loop
-                # time.sleep(0.01)
+                #time.sleep(0.01) ## <-- This causes the capture slowdown
+                util.better_delay(sleeptime) ## faster sleep method
                 diff = datetime.datetime.now() - starttime
 
                 # If we've timed out, don't wait any longer for a trigger
@@ -1878,7 +1888,8 @@ class OpenADCInterface(object):
             # If using large offsets, system doesn't know we are delaying api
             nosampletimeout = self._nosampletimeout * 10
             while (self.getBytesInFifo() == 0) and nosampletimeout:
-                # time.sleep(0.005)
+                logging.debug("Bytes in Fifo: {}".format(self.getBytesInFifo()))
+                time.sleep(0.005)
                 nosampletimeout -= 1
 
             if nosampletimeout == 0:
@@ -2023,6 +2034,7 @@ class OpenADCInterface(object):
             logging.warning('Unexpected sync byte in processData(): 0x%x' % data[0])
             return None
 
+        orig_data = copy.copy(data)
         if debug:
             fpData = []
             # Slow, verbose processing method
@@ -2083,6 +2095,7 @@ class OpenADCInterface(object):
             fpData = np.reshape(data[:, [0, 1, 2]], (-1))
             trigger = data[:, 3] % 4
             fpData = fpData / 1024.0 - self.offset
+            logging.debug("Trigger_data: {} len={}".format(trigger, len(trigger)))
 
             # Search for the trigger signal
             trigfound = False
@@ -2091,7 +2104,7 @@ class OpenADCInterface(object):
                 if(t != 3):
                     trigfound = True
                     trigsamp = trigsamp + (t & 0x3)
-                    #print "Trigger found at %d"%trigsamp
+                    logging.debug("Trigger found at %d"%trigsamp)
                     break
                 else:
                     trigsamp += 3
@@ -2100,6 +2113,10 @@ class OpenADCInterface(object):
 
         if trigfound == False:
             logging.warning('Trigger not found in ADC data. No data reported!')
+            logging.debug('Trigger not found typically caused by the actual \
+            capture starting too late after the trigger event happens')
+            logging.debug('Data: {}'.format(orig_data))
+
 
         #Ensure that the trigger point matches the requested by padding/chopping
         diff = self.presamples_desired - trigsamp

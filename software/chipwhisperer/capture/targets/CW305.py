@@ -49,15 +49,16 @@ class CW305(TargetTemplate):
     """CW305 target object.
 
     This class contains the public API for the CW305 hardware.
-    To connect to the CW305, the easiest method is:
+    To connect to the CW305, the easiest method is::
 
-    >>> from chipwhisperer.capture.targets.CW305 import CW305
-    >>> target = CW305()
-    >>> target.con(bsfile=<valid FPGA bitstream file>
+        from chipwhisperer.capture.targets.CW305 import CW305
+        target = cw.target(scope,
+                targets.CW305, bsfile=<valid FPGA bitstream file>)
 
     Note that connecting to the CW305 includes programming the CW305 FPGA.
     For more help about CW305 settings, try help() on this CW305 submodule:
-        target.pll
+
+       * target.pll
     """
 
 
@@ -76,19 +77,34 @@ class CW305(TargetTemplate):
 
         self._clksleeptime = 1
         self._clkusbautooff = True
+        self.last_key = bytearray([0]*16)
 
 
     def fpga_write(self, addr, data):
-        """ Write to specified address """
+        """Write to an address on the FPGA
 
+        Args:
+            addr (int): Address to write to
+            data (list): Data to write to addr
+
+        Raises:
+            IOError: User attempted to write to a read-only location
+        """
         if addr < self._woffset:
             raise IOError("Write to read-only location: 0x%04x"%addr)
 
         return self._naeusb.cmdWriteMem(addr, data)
 
     def fpga_read(self, addr, readlen):
-        """ Read from address """
+        """Read from an address on the FPGA
 
+        Args:
+            addr (int): Address to read from
+            readlen (int): Length of data to read
+
+        Returns:
+            Requested data as a list
+        """
         if addr > self._woffset:
             logging.info('Read from write address, confirm this is not an error')
 
@@ -134,7 +150,17 @@ class CW305(TargetTemplate):
         return float(resp[1] | (resp[2] << 8)) / 1000.0
 
     def _con(self, scope=None, bsfile=None, force=False):
-        """Connect to CW305 board, download bitstream"""
+        """Connect to CW305 board, and download bitstream.
+
+        If the target has already been programmed it skips reprogramming
+        unless forced.
+
+        Args:
+            scope (ScopeTemplate): An instance of a scope object.
+            bsfile (path): The path to the bitstream file to program the FPGA with.
+            force (bool): Whether or not to force reprogramming.
+            force (bool): Whether or not to force reprogramming.
+        """
 
         self._naeusb.con(idProduct=[0xC305])
         if self.fpga.isFPGAProgrammed() == False or force:
@@ -194,13 +220,18 @@ class CW305(TargetTemplate):
         """"Read output from FPGA"""
         data = self.fpga_read(0x200, 16)
         data = data[::-1]
-        self.newInputData.emit(util.list2hexstr(data))
+        #self.newInputData.emit(util.list2hexstr(data))
         return data
 
     @property
     def clkusbautooff(self):
         """ If set, the USB clock is automatically disabled on capture.
+
         The USB clock is re-enabled after self.clksleeptime milliseconds.
+
+        :Getter: Gets whether to turn off the USB clock on capture
+
+        :Setter: Sets whether to turn off the USB clock on capture
         """
         return self._clkusbautooff
 
@@ -236,3 +267,64 @@ class CW305(TargetTemplate):
             time.sleep(self.clksleeptime/1000.0)
             self.usb_clk_setenabled(True)
 
+    def simpleserial_read(self, cmd, pay_len, end='\n', timeout=250, ack=True):
+        """Read data from target
+
+        Mimics simpleserial protocol of serial based targets
+
+        Args:
+            cmd (str): Command to ues. Only accepts 'r' for now.
+            pay_len: Unused
+            end: Unused
+            timeout: Unused
+            ack: Unused
+
+        Returns: Value from Crypto output register
+
+        .. versionadded:: 5.1
+            Added simpleserial_read to CW305
+        """
+        if cmd == "r":
+            return self.readOutput()
+        else:
+            raise ValueError("Unknown command {}".format(cmd))
+
+    def simpleserial_write(self, cmd, data, end=None):
+        """Write data to target.
+
+        Mimics simpleserial protocol of serial based targets.
+
+        Args:
+            cmd (str): Command to use. Target supports 'p' (write plaintext),
+                and 'k' (write key).
+            data (bytearray): Data to write to target
+            end: Unused
+
+        Raises:
+            ValueError: Unknown command
+
+        .. versionadded:: 5.1
+            Added simpleserial_write to CW305
+        """
+        if cmd == 'p':
+            self.loadInput(data)
+            self.go()
+        elif cmd == 'k':
+            self.loadEncryptionKey(data)
+        else:
+            raise ValueError("Unknown command {}".format(cmd))
+
+    def set_key(self, key, ack=False, timeout=250):
+        """Checks if key is different from the last one sent. If so, send it.
+
+        Args:
+            key (bytearray):  key to send
+            ack: Unused
+            timeout: Unused
+
+        .. versionadded:: 5.1
+            Added set_key to CW305
+        """
+        if self.last_key != key:
+            self.last_key = key
+            self.simpleserial_write('k', key)

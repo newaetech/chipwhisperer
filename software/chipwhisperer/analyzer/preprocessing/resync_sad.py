@@ -27,13 +27,21 @@
 
 import numpy as np
 
-from chipwhisperer.common.results.base import ResultsBase
 from ._base import PreprocessingBase
-from chipwhisperer.common.utils.parameter import setupSetParam
 from collections import OrderedDict
+
 
 class ResyncSAD(PreprocessingBase):
     """Resynchronize traces by shifting them to match in a certain window.
+
+    This method of pre-processing uses the Sum of Absolute Difference
+    (SAD) algorithm, also known as the Sum of Absolute Error. Uses a portion
+    of one of the traces as a reference. This reference is then slid over the
+    input "window" of each trace, and the amount of the shift resulting in the
+    minimum SAD criteria is used as the shift amount for each trace.
+
+    Args:
+        trace_source (Project): A project containing the traces to preprocess.
     """
     _name = "Resync: Sum-of-Difference"
     _description = "Minimizes the 'Sum of Absolute Difference' (SAD), also known as 'Sum of Absolute Error'. Uses "\
@@ -41,29 +49,15 @@ class ResyncSAD(PreprocessingBase):
                   "window' for each trace, and the amount of shift resulting in the minimum SAD criteria is selected "\
                   "as the shift amount for that trace."
 
-    def __init__(self, traceSource=None, connectTracePlot=True, name=None):
-        PreprocessingBase.__init__(self, traceSource, name=name)
+    def __init__(self, trace_source=None):
+        PreprocessingBase.__init__(self, trace_source, name=None)
         self._rtrace = None
         self._debugReturnSad = False
         self._wdStart = 0
         self._wdEnd = 1
         self._maxshift = 1
-
-        if connectTracePlot:
-            traceplot = ResultsBase.registeredObjects["Trace Output Plot"]
-        else:
-            traceplot = None
-
-        self.params.addChildren([
-            {'name':'Ref Trace', 'key':'reftrace', 'type':'int', 'get':self._getRefTrace, 'set':self._setRefTrace},
-            {'name':'Max Shift +/-', 'key':'maxshift', 'type':'int', 'get':self._getMaxShift, 'set':self._setMaxShift},
-            {'name':'Target Window', 'key':'windowpt', 'type':'rangegraph', 'graphwidget':traceplot, 'get':self._getWindow, 'set':self._setWindow},
-        ])
-        self.updateLimits()
-        self.sigTracesChanged.connect(self.updateLimits)
         self._init_not_done = True
 
-    @setupSetParam("Ref Trace")
     def _setRefTrace(self, num):
         self._rtrace = num
         self._calculateRef()
@@ -71,7 +65,6 @@ class ResyncSAD(PreprocessingBase):
     def _getRefTrace(self):
         return self._rtrace
 
-    @setupSetParam("Max Shift +/-")
     def _setMaxShift(self, shift):
         self._maxshift = shift
 
@@ -82,7 +75,9 @@ class ResyncSAD(PreprocessingBase):
     def ref_trace(self):
         """The trace being used as a reference.
 
-        Setter raises TypeError unless value is an integer."""
+        Raises:
+            TypeError: If attempting to set to non integer value.
+        """
         return self._getRefTrace()
 
     @ref_trace.setter
@@ -103,7 +98,6 @@ class ResyncSAD(PreprocessingBase):
             raise TypeError("Expected int; got %s" % type(m), m)
         self._setMaxShift(m)
 
-    @setupSetParam("Target Window")
     def _setWindow(self, window):
         self._wdStart, self._wdEnd = window
         self._calculateRef()
@@ -113,12 +107,13 @@ class ResyncSAD(PreprocessingBase):
 
     @property
     def target_window(self):
-        """Section of the trace we are trying to mimimize SAD for.
+        """Section of the trace we are trying to minimize SAD for.
 
         This must be a tuple of (first point, last point).
 
-        Setter raises TypeError if value is not a tuple or if points are not
-        integers.
+        Raises:
+            TypeError: If attempting to set to a non tuple or if points are not
+                integers.
         """
         return self._getWindow()
 
@@ -154,7 +149,7 @@ class ResyncSAD(PreprocessingBase):
                 self._calculateRef()
                 self._init_not_done = False
 
-            trace = self._traceSource.getTrace(n)
+            trace = self._traceSource.get_trace(n)
             if trace is None:
                 return None
             sad = self._findSAD(trace)
@@ -180,7 +175,8 @@ class ResyncSAD(PreprocessingBase):
                 trace = np.append(trace[diff:], np.zeros(diff))
             return trace
         else:
-            return self._traceSource.getTrace(n)
+            print("Not enabled")
+            return self._traceSource.get_trace(n)
 
     getTrace = get_trace
 
@@ -219,8 +215,8 @@ class ResyncSAD(PreprocessingBase):
         if self.enabled == False:
             return
 
-        self.reftrace = self._traceSource.getTrace(tnum)[self._wdStart:self._wdEnd]
-        sad = self._findSAD(self._traceSource.getTrace(tnum))
+        self.reftrace = self._traceSource.get_trace(tnum)[self._wdStart:self._wdEnd]
+        sad = self._findSAD(self._traceSource.get_trace(tnum))
         self.refmaxloc = np.argmin(sad)
         self.refmaxsize = min(sad)
         self.maxthreshold = np.mean(sad)

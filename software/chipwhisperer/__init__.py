@@ -17,9 +17,18 @@ from chipwhisperer.capture.api import programmers
 from chipwhisperer.capture import acq_patterns as key_text_patterns
 from chipwhisperer.common.utils.util import camel_case_deprecated
 from chipwhisperer.common.api import ProjectFormat as project
-from chipwhisperer.common.api.ProjectFormat import PROJECT_DIR
+from chipwhisperer.common.traces import Trace
+from chipwhisperer.common.utils import util
+from chipwhisperer.capture.scopes.cwhardware.ChipWhispererSAM3Update import SAMFWLoader
+
+# replace bytearray with inherited class with better repr and str.
+import builtins
+builtins.bytearray = util.bytearray
+
 # from chipwhisperer.capture.scopes.cwhardware import ChipWhispererSAM3Update as CWFirmwareUpdate
+
 ktp = key_text_patterns #alias
+
 
 def program_target(scope, prog_type, fw_path, **kwargs):
     """Program the target using the programmer <type>
@@ -33,9 +42,9 @@ def program_target(scope, prog_type, fw_path, **kwargs):
        fw_path (str): Path to hex file to program
 
     .. versionadded:: 5.0.1
-    Simplified programming target
+        Simplified programming target
     """
-    if type is None: #[makes] automating notebooks much easier
+    if prog_type is None: #[makes] automating notebooks much easier
         return
     prog = prog_type(**kwargs)
     prog.scope = scope
@@ -62,9 +71,8 @@ def open_project(filename):
     Raises:
        OSError: filename does not exist.
     """
-    from chipwhisperer.common.api import ProjectFormat as project
-    if not os.path.isfile(filename):
-        raise OSError("File " + filename + " does not exist or is not a file")
+    filename = project.ensure_cwp_extension(filename)
+
     proj = project.Project()
     proj.load(filename)
     return proj
@@ -91,11 +99,12 @@ def create_project(filename, overwrite=False):
        OSError: filename exists and overwrite is False.
     """
     filename = project.ensure_cwp_extension(filename)
+
     if os.path.isfile(filename) and (overwrite == False):
         raise OSError("File " + filename + " already exists")
 
-    if not os.path.isabs(filename):
-        filename = os.path.join(PROJECT_DIR, filename)
+    # If the user gives a relative path including ~, expand to the absolute path
+    filename = os.path.abspath(os.path.expanduser(filename))
 
     proj = project.Project()
     proj.setFilename(filename)
@@ -109,10 +118,8 @@ createProject = camel_case_deprecated(create_project)
 def import_project(filename, file_type='zip', overwrite=False):
     """Import and open a project.
 
-    Will import the **filename** by extracting to the project
-    directory, defined as '~/chipwhisperer/projects'. On Unix based
-    systems '~' expands to '/home/user/' directory. On Windows it
-    expands to 'C:\\Users\\User'.
+    Will import the **filename** by extracting to the current working
+    directory.
 
     Currently support file types:
      * zip
@@ -140,7 +147,7 @@ def import_project(filename, file_type='zip', overwrite=False):
                 root, ext = os.path.splitext(path)
                 if ext == '.cwp':
                     directory, project_name = os.path.split(root)
-                    output_path = os.path.join(PROJECT_DIR, ''.join([project_name, '.cwp']))
+                    output_path = ''.join([project_name, '.cwp'])
 
                     # check if name already exists in projects
                     if os.path.isfile(output_path) and (overwrite == False):
@@ -148,7 +155,7 @@ def import_project(filename, file_type='zip', overwrite=False):
 
                     # extract the project.cwp file and project_data directory to
                     # the PROJECT_DIR
-                    project_zip.extractall(path=PROJECT_DIR)
+                    project_zip.extractall(path=os.getcwd())
 
             if output_path is None:
                 raise ValueError('Zipfile does not contain a .cwp file, so it cannot be imported')
@@ -240,8 +247,8 @@ def capture_trace(scope, target, plaintext, key=None):
             bytearray. If None, don't send key. Defaults to None.
 
     Returns:
-        Tuple of scope_data (numpy.ndarray) and response (bytearray) or None
-        if capture timed out.
+        :class:`Trace <chipwhisperer.common.traces.Trace>` or None if capture
+        timed out.
 
     Raises:
         Warning or OSError: Error during capture.
@@ -255,7 +262,7 @@ def capture_trace(scope, target, plaintext, key=None):
             target = cw.target()
             ktp = cw.ktp.Basic()
             key, pt = ktp.new_pair()
-            trace, response = cw.capture_trace(scope, target, pt, key)
+            trace = cw.capture_trace(scope, target, pt, key)
 
     .. versionadded:: 5.1
         Added to simplify trace capture.
@@ -269,14 +276,25 @@ def capture_trace(scope, target, plaintext, key=None):
         target.simpleserial_write('p', plaintext)
 
     ret = scope.capture()
+
+    i = 0
+    while not target.is_done():
+        i += 1
+        time.sleep(0.05)
+        if i > 100:
+            warnings.warn("Target did not finish operation")
+            return None
+
     if ret:
         warnings.warn("Timeout happened during capture")
         return None
 
     response = target.simpleserial_read('r', 16)
-    trace = scope.get_last_trace()
+    wave = scope.get_last_trace()
 
-    return trace, response
+    return Trace(wave, plaintext, response, key)
 
 
 captureTrace = camel_case_deprecated(capture_trace)
+
+

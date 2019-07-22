@@ -26,15 +26,14 @@
 #=================================================
 import logging
 
-from chipwhisperer.common.api.autoscript import AutoScript
-from chipwhisperer.common.utils.pluginmanager import Plugin
-from chipwhisperer.common.utils.tracesource import TraceSource, ActiveTraceObserver
+from chipwhisperer.common.utils.tracesource import TraceSource, PassiveTraceObserver
 from chipwhisperer.common.utils.parameter import setupSetParam
 from chipwhisperer.common.utils import util
 from chipwhisperer.common.utils.util import camel_case_deprecated
 from chipwhisperer.common.api.ProjectFormat import Project
+from chipwhisperer.common.traces import Trace
 
-class PreprocessingBase(TraceSource, ActiveTraceObserver, AutoScript, Plugin):
+class PreprocessingBase(TraceSource, PassiveTraceObserver):
     """
     Base Class for all preprocessing modules
     Derivable Classes work like this:
@@ -45,12 +44,11 @@ class PreprocessingBase(TraceSource, ActiveTraceObserver, AutoScript, Plugin):
 
     def __init__(self, traceSource=None, name=None):
         self._enabled = False
-        ActiveTraceObserver.__init__(self)
+        PassiveTraceObserver.__init__(self)
         if name is None:
             TraceSource.__init__(self, self.getName())
         else:
             TraceSource.__init__(self, name=name)
-        AutoScript.__init__(self)
         if isinstance(traceSource, Project):
             traceSource = traceSource.trace_manager()
         self.setTraceSource(traceSource, blockSignal=True)
@@ -68,6 +66,7 @@ class PreprocessingBase(TraceSource, ActiveTraceObserver, AutoScript, Plugin):
 
         #Old attribute dict
         self._attrdict = None
+        self.enabled = True
 
     def _getEnabled(self):
         """Return if it is enable or not"""
@@ -98,28 +97,28 @@ class PreprocessingBase(TraceSource, ActiveTraceObserver, AutoScript, Plugin):
     def get_trace(self, n):
         """Get trace number n"""
         if self.enabled:
-            trace = self._traceSource.getTrace(n)
+            trace = self._traceSource.get_trace(n)
             # Do your preprocessing here
             return trace
         else:
-            return self._traceSource.getTrace(n)
+            return self._traceSource.get_trace(n)
 
     getTrace = camel_case_deprecated(get_trace)
     def get_textin(self, n):
         """Get text-in number n"""
-        return self._traceSource.getTextin(n)
+        return self._traceSource.get_textin(n)
 
     getTextin = camel_case_deprecated(get_textin)
 
     def get_textout(self, n):
         """Get text-out number n"""
-        return self._traceSource.getTextout(n)
+        return self._traceSource.get_textout(n)
 
     getTextout = camel_case_deprecated(get_textout)
 
     def get_known_key(self, n=None):
         """Get known-key number n"""
-        return self._traceSource.getKnownKey(n)
+        return self._traceSource.get_known_key(n)
 
     getKnownKey = camel_case_deprecated(get_known_key)
 
@@ -132,7 +131,7 @@ class PreprocessingBase(TraceSource, ActiveTraceObserver, AutoScript, Plugin):
         pass
 
     def getSegmentList(self):
-        return self._traceSource.getSegmentList()
+        return self._traceSource.get_segment_list()
 
     def getAuxData(self, n, auxDic):
         return self._traceSource.getAuxData(n, auxDic)
@@ -143,7 +142,7 @@ class PreprocessingBase(TraceSource, ActiveTraceObserver, AutoScript, Plugin):
     getSegment = camel_case_deprecated(get_segment)
 
     def num_traces(self):
-        return self._traceSource.numTraces()
+        return self._traceSource.num_traces()
 
     numTraces = camel_case_deprecated(num_traces)
 
@@ -185,3 +184,19 @@ class PreprocessingBase(TraceSource, ActiveTraceObserver, AutoScript, Plugin):
 
     def __str__(self):
         return self.__repr__()
+
+    def preprocess(self):
+        """Process all traces.
+
+        Returns:
+            Project: A new project containing the processed traces.
+
+        .. versionadded: 5.1
+            Add preprocess method to Preprocessing module.
+        """
+        proj = Project()
+
+        for i in range(self.num_traces()):
+            proj.traces.append(Trace(self.get_trace(i), self.get_textin(i),
+                                self.get_textout(i), self.get_known_key(i)))
+        return proj

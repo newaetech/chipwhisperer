@@ -392,15 +392,17 @@ def dict_to_str(input_dict, indent=""):
     return ret
 
 
-class cw_bytearray(bytearray):
-    """Overwrites the __repr__ and __str__ methods of the builtin bytearray class
-    so it prints without trying to turn everything into ascii characters
+class bytearray(bytearray):
+    """bytearray with better repr and str methods.
 
-    It should be usable like the builtin bytearray class in all other regards
+    Overwrites the __repr__ and __str__ methods of the builtin bytearray class
+    so it prints without trying to turn everything into ascii characters.
+
+    It should be usable like the builtin bytearray class in all other regards:
     """
 
     def __repr__(self):
-        return "CWbytearray({})".format([hex(c)[-2:] for c in self])
+        return "CWbytearray(b'{}')".format(' '.join(['{:0>2}'.format(hex(c)[2:]) for c in self]))
 
     def __str__(self):
         return self.__repr__()
@@ -484,9 +486,10 @@ def get_cw_type(sn=None):
     """
     from chipwhisperer.hardware.naeusb.naeusb import NAEUSB
     from chipwhisperer.capture import scopes
+    possible_ids = [0xace0, 0xace2, 0xace3]
 
     cwusb = NAEUSB()
-    possible_sn = cwusb.get_possible_devices(idProduct=None)
+    possible_sn = cwusb.get_possible_devices(idProduct=possible_ids)
     name = ""
 
     if (len(possible_sn) > 1):
@@ -507,3 +510,9 @@ def get_cw_type(sn=None):
         return scopes.OpenADC
     elif name == "ChipWhisperer Nano":
         return scopes.CWNano
+
+import time
+def better_delay(ms):
+    t = time.perf_counter() + ms / 1000
+    while time.perf_counter() < t:
+        pass

@@ -95,17 +95,10 @@ class Programmer(object):
 
     @property
     def scope(self):
-        import chipwhisperer.common.api.CWCoreAPI
-
         if self._scope:
             return self._scope
 
-        api = chipwhisperer.common.api.CWCoreAPI.CWCoreAPI.getInstance()
-        if api:
-            return api.getScope()
-        else:
-            #No scope object so we won't toggle pins
-            return None
+        return None
 
     @scope.setter
     def scope(self, value):
@@ -244,7 +237,7 @@ class XMEGAProgrammer(Programmer):
         try:
             xmega.erase(memtype)
         except IOError:
-            logging.warn("Full chip erase timed out. Reinitializing programmer and erasing only application memory")
+            logging.info("Full chip erase timed out. Reinitializing programmer and erasing only application memory")
             self.open()
             self.find()
             xmega.enablePDI(False)
@@ -269,24 +262,25 @@ class XMEGAProgrammer(Programmer):
 
 class STM32FProgrammer(Programmer):
 
-    def __init__(self):
+    def __init__(self, small_blocks=False, slow_prog=False, baud=115200):
         super(STM32FProgrammer, self).__init__()
         self.supported_chips = supported_stm32f
-        
-        self.slow_speed = False
-        self.small_blocks = True
+        self._baud = baud
+
+        self.slow_speed = slow_prog
+        self.small_blocks = small_blocks
         self.stm = None
-        
+
     def stm32prog(self):
 
         if self.stm is None:
             stm = self.scope.scopetype.dev.serialstm32f
         else:
             stm = self.stm
-        
+
         stm.slow_speed = self.slow_speed
         stm.small_blocks = self.small_blocks
-        
+
         return stm
 
     @save_and_restore_pins
@@ -300,7 +294,7 @@ class STM32FProgrammer(Programmer):
     @save_and_restore_pins
     def open(self):
         stm32f = self.stm32prog()
-        stm32f.open_port()
+        stm32f.open_port(self._baud)
 
     @save_and_restore_pins
     def find(self):

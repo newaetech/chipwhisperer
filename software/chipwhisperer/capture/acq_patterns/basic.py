@@ -29,7 +29,7 @@ from ._base import AcqKeyTextPattern_Base
 from chipwhisperer.common.utils.util import camel_case_deprecated
 
 class AcqKeyTextPattern_Basic(AcqKeyTextPattern_Base):
-    """ Class for getting basic keys and plaintexts
+    """Class for getting basic keys and plaintexts.
 
     Basic usage::
 
@@ -39,7 +39,7 @@ class AcqKeyTextPattern_Basic(AcqKeyTextPattern_Base):
     """
     _name = "Basic"
 
-    def __init__(self, target=None):
+    def __init__(self):
         AcqKeyTextPattern_Base.__init__(self)
         self._fixedKey = True
         self._fixedPlain = False
@@ -49,8 +49,6 @@ class AcqKeyTextPattern_Basic(AcqKeyTextPattern_Base):
         self._textin = util.hexStrToByteArray(self.inittext)
         self.types = {'Random': False, 'Fixed': True}
 
-        self.setTarget(target)
-
     @property
     def fixed_key(self):
         """Generate fixed key (True) or not (False).
@@ -59,8 +57,8 @@ class AcqKeyTextPattern_Basic(AcqKeyTextPattern_Base):
 
         :Setter: Set whether to use fixed key (True) or not (False).
 
-        ..versionadded:: 5.1
-        Added fixed_property
+        .. versionadded:: 5.1
+            Added fixed_key property
         """
         return self._fixedKey
 
@@ -76,8 +74,8 @@ class AcqKeyTextPattern_Basic(AcqKeyTextPattern_Base):
 
         :Setter: Set whether to use fixed plaintext (True) or not (False).
 
-        ..versionadded:: 5.1
-        Added fixed_text property
+        .. versionadded:: 5.1
+            Added fixed_text property
         """
         return self._fixedPlain
 
@@ -164,8 +162,8 @@ class AcqKeyTextPattern_Basic(AcqKeyTextPattern_Base):
         Returns:
             (key (bytearray), text (bytearray))
 
-        ..versionadded:: 5.1
-        Added next
+        .. versionadded:: 5.1
+            Added next
         """
 
         return self.next_key(), self.next_text()
@@ -179,8 +177,8 @@ class AcqKeyTextPattern_Basic(AcqKeyTextPattern_Base):
         Returns:
             text (bytearray)
 
-        ..versionadded:: 5.1
-        Added next_text
+        .. versionadded:: 5.1
+            Added next_text
         """
         if self._fixedPlain is False:
             self._textin = bytearray(self.textLen())
@@ -199,8 +197,8 @@ class AcqKeyTextPattern_Basic(AcqKeyTextPattern_Base):
         Returns:
             key (bytearray)
 
-        ..versionadded:: 5.1
-        Added next_key
+        .. versionadded:: 5.1
+            Added next_key
         """
         if self._fixedKey is False:
             self._key = bytearray(self.keyLen())

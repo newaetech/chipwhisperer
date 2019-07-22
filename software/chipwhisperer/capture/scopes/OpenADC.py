@@ -119,13 +119,30 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
         self.clock.adc_src = "clkgen_x4"
 
         count = 0
-        while not self.clock.clkgen_locked:
-            time.sleep(0.1)
-            self.clock.resetDcms()
+        while not self.clock.clkgen_locked:            
+            self.clock.reset_dcms()
+            time.sleep(0.05)
             count += 1
 
-            if count > 100:
-                raise OSError("Could not lock DCM: {}".format(self))
+            if count == 5:
+                logging.info("Could not lock clock for scope. This is typically safe to ignore. Reconnecting and retrying...")
+                self.dis()
+                time.sleep(0.25)
+                self.con()
+                time.sleep(0.25)
+                self.gain.db = 25
+                self.adc.samples = 5000
+                self.adc.offset = 0
+                self.adc.basic_mode = "rising_edge"
+                self.clock.clkgen_freq = 7.37e6
+                self.trigger.triggers = "tio4"
+                self.io.tio1 = "serial_rx"
+                self.io.tio2 = "serial_tx"
+                self.io.hs2 = "clkgen"
+                self.clock.adc_src = "clkgen_x4"
+
+            if count > 10:
+                raise OSError("Could not lock DCM. Try rerunning this function or calling scope.clock.reset_dcms(): {}".format(self))
     def dcmTimeout(self):
         if self.connectStatus:
             try:
@@ -249,7 +266,7 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
                disconnects before reraising them.
         """
         if self.connectStatus is False:
-            raise OSError("Scope \"" + self.getName() + "\" is not connected. Connect it first...")
+            raise OSError("Scope is not connected. Connect it first...")
 
         try:
             if self.advancedSettings:
@@ -274,7 +291,10 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
         Raises:
            IOError: Unknown failure.
         """
-        ret = self.qtadc.capture()
+        if not self.adc.stream_mode:
+            return self.qtadc.capture(self.adc.offset)
+        else:
+            return self.qtadc.capture(None)
         return ret
 
     def get_last_trace(self):

@@ -32,14 +32,6 @@ import functools
 
 #TODO: pyqtgraph raises a general Exception(), so we can't actually test for importerror. Perhaps should manually check
 #      for pyside first
-try:
-    from pyqtgraph.parametertree import Parameter as pyqtgraphParameter
-    import chipwhisperer.common.ui.ParameterTypesCustom  # Do not remove!!!
-except:
-    pass
-    #logging.warning("PySide or PyQtGraph not installed, disabling support for pyqtgraph parameters")
-
-
 class Parameterized(object):
     """
     Abstract class that implements basic functionality required by parameterized objects.
@@ -344,7 +336,7 @@ class Parameter(object):
                     value = limits[value]
                 else:
                     #raise ValueError("Value %s out of limits (%s) in parameter \"%s\"" % (str(value), str(limits), self.getName()))
-                    logging.error("Value %s out of limits (%s) in parameter \"%s\"" % (str(value), str(limits), self.getName()))
+                    logging.info("Value %s out of limits (%s) in parameter \"%s\"" % (str(value), str(limits), self.getName()))
 
         try:
             if blockSignal is not None:
