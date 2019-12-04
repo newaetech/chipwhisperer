@@ -16,7 +16,7 @@
 **
 **  Target      : STMicroelectronics STM32
 **
-**  Distribution: The file is distributed “as is,” without any warranty
+**  Distribution: The file is distributed ï¿½as is,ï¿½ without any warranty
 **                of any kind.
 **
 *****************************************************************************
@@ -49,8 +49,25 @@
 *****************************************************************************
 */
 
+
 /* Entry Point */
 ENTRY(Reset_Handler)
+
+/*Code space is .5GB, we need four sections
+ * 0 is bootloader
+ * 1 is shared
+ * 2 is AppA
+ * 3 is AppB 
+ 
+ * Total size is 0x20000000, so divide by 4, size per section
+  is 0x8000000 */
+
+SECTION_LENGTH = 0x8000000;
+
+BL_ORIGIN = 0x0;
+SHARED_ORIGIN = (BL_ORIGIN + SECTION_LENGTH);
+APPA_ORIGIN = (SHARED_ORIGIN + SECTION_LENGTH);
+APPB_ORIGIN = (APPA_ORIGIN + SECTION_LENGTH);
 
 /* Highest address of the user mode stack */
 _estack = 0x20003000;    /* end of RAM */
@@ -63,6 +80,10 @@ MEMORY
 {
   RAM (xrw)		: ORIGIN = 0x20000000, LENGTH = 12K
   ROM (rx)		: ORIGIN = 0x8000000, LENGTH = 64K
+  BL (xr)		: ORIGIN = BL_ORIGIN, LENGTH = SECTION_LENGTH
+  SHARED (xrw)		: ORIGIN = SHARED_ORIGIN, LENGTH = SECTION_LENGTH
+  APP_A (xrw)		: ORIGIN = APPA_ORIGIN, LENGTH = SECTION_LENGTH
+  APP_B (xrw)		: ORIGIN = APPB_ORIGIN, LENGTH = SECTION_LENGTH
 }
 
 /* Sections */
@@ -75,6 +96,42 @@ SECTIONS
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
   } >ROM
+
+  .bl_section :
+  {
+    . = ALIGN(4);
+    __bl_section_start__ = .;
+    *(.bl_section*)    
+    *main.o (.text .text*)
+    __bl_section_end__ = .;  
+  *(EXCLUDE_FILE(*main.o) .text .text*) /*exclude the main.o from the .text section to prevent multiple definition error.*/
+  } > BL
+
+  /*  .shared: 0x1000*/
+  .shared : 
+  {
+    KEEP(*(.shared))
+  } >SHARED
+
+  .app_a_section :
+  {
+    . = ALIGN(4);
+    __app_a_section_start__ = .;
+    *(.app_a_section*)    
+    *main.o (.text .text*)
+    __app_a_section_end__ = .;  
+  *(EXCLUDE_FILE(*main_A.o) .text .text*) /*exclude the main.o from the .text section to prevent multiple definition error.*/
+  } > APP_A
+
+  .app_b_section :
+  {
+    . = ALIGN(4);
+    __app_b_section_start__ = .;
+    *(.app_b_section*)    
+    *main.o (.text .text*)
+    __app_b_section_end__ = .;  
+  *(EXCLUDE_FILE(*main_B.o) .text .text*) /*exclude the main.o from the .text section to prevent multiple definition error.*/
+  } > APP_B
 
   /* The program code and other data into ROM memory */
   .text :
