@@ -1,5 +1,5 @@
 VPATH += :$(HALPATH)/stm32f3
-SRC += stm32f3_hal.c stm32f3_hal_lowlevel.c stm32f3_sysmem.c
+SRC += stm32f3_hal.c stm32f3_hal_lowlevel.c stm32f3_sysmem.c stm32f3xx_hal_flash.c stm32f3xx_hal_flash_ex.c
 EXTRAINCDIRS += $(HALPATH)/stm32f3 $(HALPATH)/stm32f3/CMSIS $(HALPATH)/stm32f3/CMSIS/core $(HALPATH)/stm32f3/CMSIS/device $(HALPATH)/stm32f4/Legacy
 
 ifeq ($(DEMO),SECCAN)
