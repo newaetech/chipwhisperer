@@ -113,7 +113,6 @@ extern FLASH_ProcessTypeDef pFlash;
  */
 /* Erase operations */
 static void              FLASH_MassErase(void);
-void    FLASH_PageErase(uint32_t PageAddress);
 
 /* Option bytes control */
 static HAL_StatusTypeDef FLASH_OB_EnableWRP(uint32_t WriteProtectPage);

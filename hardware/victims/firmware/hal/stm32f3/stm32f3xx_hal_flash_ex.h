@@ -360,7 +360,7 @@ typedef struct
 #define OB_RDP_LEVEL_0             ((uint8_t)0xAAU)
 #define OB_RDP_LEVEL_1             ((uint8_t)0xBBU)
 #define OB_RDP_LEVEL_2             ((uint8_t)0xCCU) /*!< Warning: When enabling read protection level 2 
-                                                      it's no more possible to go back to level 1 or 0U */
+                                                     // it's no more possible to go back to level 1 or 0U */
 /**
   * @}
   */
@@ -473,7 +473,7 @@ HAL_StatusTypeDef  HAL_FLASHEx_OBErase(void);
 HAL_StatusTypeDef  HAL_FLASHEx_OBProgram(FLASH_OBProgramInitTypeDef *pOBInit);
 void               HAL_FLASHEx_OBGetConfig(FLASH_OBProgramInitTypeDef *pOBInit);
 uint32_t           HAL_FLASHEx_OBGetUserData(uint32_t DATAAdress);
-
+void    FLASH_PageErase(uint32_t PageAddress);
 /**
   * @}
   */
