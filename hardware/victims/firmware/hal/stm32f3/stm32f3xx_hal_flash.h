@@ -43,6 +43,10 @@
  extern "C" {
 #endif
 
+typedef unsigned long uint32_t;
+typedef long int32_t;
+
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal_def.h"
    

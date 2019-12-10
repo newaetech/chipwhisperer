@@ -62,11 +62,14 @@ ENTRY(Reset_Handler)
  * Total size is 0x20000000, so divide by 4, size per section
   is 0x8000000 */
 
-SECTION_LENGTH = 0x8000000;
 
 BL_ORIGIN = 0x0;
+SECTION_LENGTH = 0x20000; /*Reserve entiretiy of first FLASH block for BL and shared*/
 SHARED_ORIGIN = (BL_ORIGIN + SECTION_LENGTH);
-APPA_ORIGIN = (SHARED_ORIGIN + SECTION_LENGTH);
+
+SECONDARY_FLASH_MEM = 0x8000000;
+
+APPA_ORIGIN = (SECONDARY_FLASH_MEM);
 APPB_ORIGIN = (APPA_ORIGIN + SECTION_LENGTH);
 
 /* Highest address of the user mode stack */
@@ -95,7 +98,7 @@ SECTIONS
     . = ALIGN(4);
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
-  } >ROM
+  } >SHARED /*AR: Note, this was >ROM, it might have to stay at that address (This could be done by swapping where B and shared are*/
 
   .bl_section :
   {
