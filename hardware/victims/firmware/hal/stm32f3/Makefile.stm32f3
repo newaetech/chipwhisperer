@@ -30,9 +30,9 @@ CPPDEFS += -DSTM32F303xC -DSTM32F3 -DSTM32 -DDEBUG
 ifeq ($(APP_TYPE),APP_MAIN)
 	LDFLAGS += --specs=nano.specs -T $(HALPATH)/stm32f3/LinkerScriptMain.ld -Wl,--gc-sections -lm
 else ifeq ($(APP_TYPE),APP_A)
-	LDFLAGS += --specs=nano.specs -T $(HALPATH)/stm32f3/LinkerScriptA.ld -Wl,--gc-sections -lm
+	LDFLAGS += --specs=nano.specs -T $(HALPATH)/stm32f3/LinkerScriptAppA.ld -Wl,--gc-sections -lm
 else ifeq ($(APP_TYPE),APP_B)
-	LDFLAGS += --specs=nano.specs -T $(HALPATH)/stm32f3/LinkerScriptB.ld -Wl,--gc-sections -lm
+	LDFLAGS += --specs=nano.specs -T $(HALPATH)/stm32f3/LinkerScriptAppB.ld -Wl,--gc-sections -lm
 else
 	LDFLAGS += --specs=nano.specs -T $(HALPATH)/stm32f3/LinkerScript.ld -Wl,--gc-sections -lm
 endif
