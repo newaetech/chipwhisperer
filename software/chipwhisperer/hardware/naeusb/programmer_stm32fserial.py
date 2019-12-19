@@ -26,6 +26,7 @@ import os
 import struct
 import time
 import traceback
+import math
 from datetime import datetime
 from chipwhisperer.capture.utils.IntelHex import IntelHex
 from chipwhisperer.common.utils.timer import nonBlockingDelay
@@ -83,6 +84,8 @@ class STM32F2(object):
 
 class STM32F303cBC(object):
     signature = 0x422
+    page_size = 2048
+    base_flash_address = 0x8000000
     name = "STM32F302xB(C)/303xB(C)"
 
 class STM32F40xxx(object):
@@ -441,16 +444,37 @@ class STM32FSerial(object):
         else:
             raise CmdException("Write memory (0x31) failed")
 
+    def cmdEraseRange(self, filename): 
+        f = IntelHex(filename)
+
+        fsize = f.maxaddr() - f.minaddr()
+        fdata = f.tobinarray(start=f.minaddr())
+        start_address = f.minaddr()
+        end_address = f.maxaddr()
+        
+        num_pages = (end_address - start_address) / self._chip.page_size
+        
+        num_pages = int(math.ceil(num_pages))
+        
+        first_page = start_address - self._chip.base_flash_address
+        first_page = int(first_page / self._chip.page_size)
+        
+        page_list = [i+first_page for i in range(0, num_pages)]
+        #print(page_list)
+        
+        self.cmdEraseMemory(page_list)
+        
+
     def cmdEraseMemory(self, sectors=None):
         if self.extended_erase:
-            return self.cmdExtendedEraseMemory()
+            return self.cmdExtendedEraseMemory(sectors)
 
         if self.cmdGeneric(0x43):
             logging.debug("*** Erase memory command")
             if sectors is None:
                 # Global erase
-                self.sp.write(chr(0xFF))
-                self.sp.write(chr(0x00))
+                self.sp.write(chr(0xFF)) #Command
+                self.sp.write(chr(0x00)) #Checksum
             else:
                 # Sectors erase
                 self.sp.write(chr((len(sectors) - 1) & 0xFF))
@@ -464,19 +488,35 @@ class STM32FSerial(object):
         else:
             raise CmdException("Erase memory (0x43) failed")
 
-    def cmdExtendedEraseMemory(self):
+    def cmdExtendedEraseMemory(self, sectors=None):
+        logging.debug("*** Extended Erase memory command")
         if self.cmdGeneric(0x44):
-            logging.debug("*** Extended Erase memory command")
-            # Global mass erase
-            self.sp.write(chr(0xFF))
-            self.sp.write(chr(0xFF))
-            # Checksum
-            self.sp.write(chr(0x00))
-            tmp = self.sp.timeout
-            self.sp.timeout = 30000
-            print("Extended erase (0x44), this can take ten seconds or more")
-            self._wait_for_ask("0x44 erasing failed")
-            self.sp.timeout = tmp
+            if sectors is None:
+                # Global mass erase
+                self.sp.write(chr(0xFF))
+                self.sp.write(chr(0xFF))
+                # Checksum
+                self.sp.write(chr(0x00))
+                tmp = self.sp.timeout
+                self.sp.timeout = 30000
+                print("Extended erase (0x44), this can take ten seconds or more") 
+                self._wait_for_ask("0x44 erasing failed")
+                self.sp.timeout = tmp
+            else:
+                # Sectors erase - only supports up to 256 page #, hack hack hack
+                print("Extended erase (0x44), this can take ten seconds or more") 
+                self.sp.write(chr(0x00))
+                self.sp.write(chr((len(sectors) - 1) & 0xFF))
+                crc = (len(sectors) - 1) & 0xFF
+                for c in sectors:
+                    crc = crc ^ c
+                    self.sp.write(chr(0x00))
+                    self.sp.write(chr(c))
+                self.sp.write(chr(crc))
+                tmp = self.sp.timeout
+                self.sp.timeout = 30000
+                self._wait_for_ask("0x44 erasing failed")
+                self.sp.timeout = tmp
             logging.info("    Extended Erase memory done")
         else:
             raise CmdException("Extended Erase memory (0x44) failed")
@@ -527,7 +567,6 @@ class STM32FSerial(object):
 
     @close_on_fail
     def verifyMemory(self, addr, fdata, smallblocks=False):
-
         fdata_idx = 0
 
         if smallblocks:
@@ -550,9 +589,9 @@ class STM32FSerial(object):
             for i in range(0, len(data)):
                 if fdata[i+fdata_idx] != data[i]:
                     fails += 1
-                    logging.info("Verify failed at 0x%04x, %x != %x" % (i, fdata[i+fdata_idx], data[i]))
+                    logging.info("Verify failed at 0x%04x, %x != %x" % (i+addr, fdata[i+fdata_idx], data[i]))
                     if fails > 3:
-                        raise IOError("Verify failed at 0x%04x, %x != %x" % (i, fdata[i+fdata_idx], data[i]))
+                        raise IOError("Verify failed at 0x%04x, %x != %x" % (i+addr, fdata[i+fdata_idx], data[i]))
                     else:
                         #Redo this block
                         logging.info("Read error - attempting retry")

@@ -318,10 +318,14 @@ class STM32FProgrammer(Programmer):
         stm32f.autoProgram(hexfile, erase, verify, logfunc, waitfunc)
 
     @save_and_restore_pins
-    def erase(self):
-        self.log("Erasing Chip")
+    def erase(self, erase_range = False, filename = None):
+        
         stm32f = self.stm32prog()
-        stm32f.cmdEraseMemory()
+        if(erase_range == False):
+            self.log("Erasing Chip")
+            stm32f.cmdEraseMemory()
+        else:                     
+            stm32f.cmdEraseRange(filename)
 
     @save_and_restore_pins
     def close(self):
