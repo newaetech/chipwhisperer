@@ -219,6 +219,7 @@ HAL_StatusTypeDef HAL_FLASH_Program(uint32_t TypeProgram, uint32_t Address, uint
 
     for (index = 0U; index < nbiterations; index++)
     {
+      CLEAR_BIT(FLASH->CR, FLASH_CR_STRT);
       FLASH_Program_HalfWord((Address + (2U*index)), (uint16_t)(Data >> (16U*index)));
 
         /* Wait for last operation to be completed */
@@ -497,16 +498,29 @@ __weak void HAL_FLASH_OperationErrorCallback(uint32_t ReturnValue)
   */
 HAL_StatusTypeDef HAL_FLASH_Unlock(void)
 {
-  if (HAL_IS_BIT_SET(FLASH->CR, FLASH_CR_LOCK))
+#define FLASH_UNLOCK_KEY1	0x45670123
+#define	FLASH_UNLOCK_KEY2	0xCDEF89AB
+
+  if(FLASH->CR & FLASH_CR_LOCK)
   {
-    /* Authorize the FLASH Registers access */
-    WRITE_REG(FLASH->KEYR, FLASH_KEY1);
-    WRITE_REG(FLASH->KEYR, FLASH_KEY2);
+    FLASH->KEYR = FLASH_UNLOCK_KEY1;
+    FLASH->KEYR = FLASH_UNLOCK_KEY2;
   }
-  else
+
+  if((READ_BIT(FLASH->CR, FLASH_CR_OPTWRE)) == RESET)
   {
-    return HAL_ERROR;
+
+    /* Authorizes the Option Byte register programming */
+    WRITE_REG(FLASH->OPTKEYR, FLASH_OPTKEY1);
+    WRITE_REG(FLASH->OPTKEYR, FLASH_OPTKEY2);
+
   }
+
+  FLASH->CR |= FLASH_CR_OPTER;
+  FLASH->CR |= FLASH_CR_STRT;
+
+   FLASH->CR &= ~FLASH_CR_OPTER;
+   SET_BIT(FLASH->CR, FLASH_CR_OPTPG);
 
   return HAL_OK; 
 }
@@ -609,6 +623,10 @@ uint32_t HAL_FLASH_GetError(void)
  * @{
  */
 
+;
+volatile uint16_t debug_flash_data = 0;
+volatile uint32_t debug_flash_addr = 0;
+
 /**
   * @brief  Program a half-word (16-bit) at a specified address.
   * @param  Address specify the address to be programmed.
@@ -617,14 +635,14 @@ uint32_t HAL_FLASH_GetError(void)
   */
 static void FLASH_Program_HalfWord(uint32_t Address, uint16_t Data)
 {
-  /* Clean the error context */
-  pFlash.ErrorCode = HAL_FLASH_ERROR_NONE;
-  
-    /* Proceed to program the new data */
-    SET_BIT(FLASH->CR, FLASH_CR_PG);
+  debug_flash_addr = Address;
+  debug_flash_data = Data;
 
-  /* Write data in the address */
+  FLASH->CR |= FLASH_CR_PG;
   *(__IO uint16_t*)Address = Data;
+  FLASH_WaitForLastOperation(1000);
+  FLASH->CR &= ~FLASH_CR_PG;
+
 }
 
 /**

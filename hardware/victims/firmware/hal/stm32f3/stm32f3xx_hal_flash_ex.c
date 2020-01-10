@@ -984,13 +984,39 @@ static uint8_t FLASH_OB_GetUser(void)
   */
 void FLASH_PageErase(uint32_t PageAddress)
 {
-  /* Clean the error context */
-  pFlash.ErrorCode = HAL_FLASH_ERROR_NONE;
+	uint32_t timeout = 1000;
 
-    /* Proceed to erase the page */
-    SET_BIT(FLASH->CR, FLASH_CR_PER);
-    WRITE_REG(FLASH->AR, PageAddress);
-    SET_BIT(FLASH->CR, FLASH_CR_STRT);
+    while(FLASH->SR & FLASH_SR_BSY)
+    {
+      if(--timeout == 0)
+      {
+        return -1;
+      }
+    }
+    
+    	FLASH->CR |= FLASH_CR_PER;
+    	FLASH->AR = PageAddress;
+    	FLASH->CR |= FLASH_CR_STRT;
+    
+    	timeout = 1000;
+    	while(FLASH->SR & FLASH_SR_BSY)
+    	{
+    		if(--timeout == 0)
+    		{
+    			return -1;
+    		}
+    	}
+    
+    	if(FLASH->SR & FLASH_SR_EOP)
+    	{
+    		FLASH->SR &= ~FLASH_SR_EOP;
+    		FLASH->CR &= ~FLASH_CR_PER;
+    		return 1;
+    	}
+    	else
+    	{
+    		return -1;
+    	}
 }
 
 /**
