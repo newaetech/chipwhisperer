@@ -115,6 +115,8 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define FLASH_TIMEOUT (2000)
+
 /** @defgroup FLASH_Private_Constants FLASH Private Constants
   * @{
   */
@@ -235,11 +237,56 @@ HAL_StatusTypeDef HAL_FLASH_Program(uint32_t TypeProgram, uint32_t Address, uint
     }
   }
 
+  
+
   /* Process Unlocked */
   __HAL_UNLOCK(&pFlash);
 
   return status;
 }
+
+HAL_StatusTypeDef HAL_FLASH_Write_Word(uint32_t address, uint32_t word)
+{
+  uint32_t timeout = FLASH_TIMEOUT;
+
+	while(FLASH->SR & FLASH_SR_BSY)
+	{
+		if(--timeout == 0)
+		{
+			return HAL_ERROR;
+		}
+	}
+
+	FLASH->CR |= FLASH_CR_PG;
+
+	*(__IO uint16_t*)address = (uint16_t)word;
+
+	timeout = FLASH_TIMEOUT;
+	while(FLASH->SR & FLASH_SR_BSY)
+	{
+		if(--timeout == 0)
+		{
+ 			return HAL_ERROR;
+		}
+	}
+
+	address += 2;
+	*(__IO uint16_t*)address = (uint16_t)(word >> 16);
+
+	timeout = FLASH_TIMEOUT;
+	while(FLASH->SR & FLASH_SR_BSY)
+	{
+		if(--timeout == 0)
+		{
+ 			return HAL_ERROR;
+		}
+	}
+
+	FLASH->CR &= ~FLASH_CR_PG;
+
+	return HAL_OK;
+}
+
 
 /**
   * @brief  Program halfword, word or double word at a specified address  with interrupt enabled.
