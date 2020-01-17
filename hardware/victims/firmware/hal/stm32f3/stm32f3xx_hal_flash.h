@@ -357,6 +357,7 @@ HAL_StatusTypeDef HAL_FLASH_OB_Unlock(void);
 HAL_StatusTypeDef HAL_FLASH_OB_Lock(void);
 HAL_StatusTypeDef HAL_FLASH_OB_Launch(void);
 HAL_StatusTypeDef HAL_FLASH_Write_Word(uint32_t address, uint32_t word);
+HAL_StatusTypeDef HAL_FLASH_PageErase(uint32_t PageAddress);
 
 /**
   * @}

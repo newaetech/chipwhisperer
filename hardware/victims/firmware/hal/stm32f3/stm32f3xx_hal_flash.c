@@ -735,6 +735,50 @@ HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout)
   return HAL_OK;
 }
 
+/**
+  * @brief  Erase the specified FLASH memory page
+  * @param  PageAddress FLASH page to erase
+  *         The value of this parameter depend on device used within the same series      
+  * 
+  * @retval None
+  */
+HAL_StatusTypeDef HAL_FLASH_PageErase(uint32_t PageAddress)
+{
+	uint32_t timeout = FLASH_TIMEOUT_VALUE;
+
+    while(FLASH->SR & FLASH_SR_BSY)
+    {
+      if(--timeout == 0)
+      {
+        return HAL_TIMEOUT;
+      }
+    }
+    
+    	FLASH->CR |= FLASH_CR_PER;
+    	FLASH->AR = PageAddress;
+    	FLASH->CR |= FLASH_CR_STRT;
+    
+    	timeout = FLASH_TIMEOUT_VALUE;
+    	while(FLASH->SR & FLASH_SR_BSY)
+    	{
+    		if(--timeout == 0)
+    		{
+    			return HAL_TIMEOUT;
+    		}
+    	}
+    
+    	if(FLASH->SR & FLASH_SR_EOP)
+    	{
+    		FLASH->SR &= ~FLASH_SR_EOP;
+    		FLASH->CR &= ~FLASH_CR_PER;
+    		return HAL_OK;
+    	}
+    	else
+    	{
+    		return HAL_ERROR;
+    	}
+    return HAL_ERROR;
+}
 
 /**
   * @brief  Set the specific FLASH error flag.

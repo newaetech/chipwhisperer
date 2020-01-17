@@ -473,7 +473,7 @@ HAL_StatusTypeDef  HAL_FLASHEx_OBErase(void);
 HAL_StatusTypeDef  HAL_FLASHEx_OBProgram(FLASH_OBProgramInitTypeDef *pOBInit);
 void               HAL_FLASHEx_OBGetConfig(FLASH_OBProgramInitTypeDef *pOBInit);
 uint32_t           HAL_FLASHEx_OBGetUserData(uint32_t DATAAdress);
-void    FLASH_PageErase(uint32_t PageAddress);
+
 /**
   * @}
   */
