@@ -984,7 +984,7 @@ static uint8_t FLASH_OB_GetUser(void)
   */
 void FLASH_PageErase(uint32_t PageAddress)
 {
-	uint32_t timeout = 1000;
+	uint32_t timeout = FLASH_TIMEOUT_VALUE;
 
     while(FLASH->SR & FLASH_SR_BSY)
     {
@@ -998,7 +998,7 @@ void FLASH_PageErase(uint32_t PageAddress)
     	FLASH->AR = PageAddress;
     	FLASH->CR |= FLASH_CR_STRT;
     
-    	timeout = 1000;
+    	timeout = FLASH_TIMEOUT_VALUE;
     	while(FLASH->SR & FLASH_SR_BSY)
     	{
     		if(--timeout == 0)
