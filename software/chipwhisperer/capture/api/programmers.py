@@ -305,11 +305,11 @@ class STM32FProgrammer(Programmer):
         # logging is done at the lower level
 
     @save_and_restore_pins
-    def program(self, filename, memtype="flash", verify=True):
+    def program(self, filename, memtype="flash", verify=True, offset=0):
         Programmer.lastFlashedFile = filename
         stm32f = self.stm32prog()
         stm32f.scope = self.scope
-        stm32f.program(filename, memtype, verify)
+        stm32f.program(filename, memtype, verify, offset)
 
     @save_and_restore_pins
     def autoProgram(self, hexfile, erase, verify, logfunc, waitfunc):
@@ -318,14 +318,14 @@ class STM32FProgrammer(Programmer):
         stm32f.autoProgram(hexfile, erase, verify, logfunc, waitfunc)
 
     @save_and_restore_pins
-    def erase(self, erase_range = False, filename = None):
+    def erase(self, erase_range = False, filename = None,  offset = 0):
         
         stm32f = self.stm32prog()
         if(erase_range == False):
             self.log("Erasing Chip")
             stm32f.cmdEraseMemory()
         else:                     
-            stm32f.cmdEraseRange(filename)
+            stm32f.cmdEraseRange(filename,offset)
 
     @save_and_restore_pins
     def close(self):

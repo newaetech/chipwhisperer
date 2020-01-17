@@ -182,7 +182,7 @@ class STM32FSerial(object):
         return chip_id, None
 
     @close_on_fail
-    def program(self, filename, memtype="flash", verify=True, logfunc=print_fun, waitfunc=None):
+    def program(self, filename, memtype="flash", verify=True, offset=0, logfunc=print_fun, waitfunc=None):
         """Programs memory type, dealing with opening filename as either .hex or .bin file"""
         self.lastFlashedFile = filename
 
@@ -191,6 +191,8 @@ class STM32FSerial(object):
         fsize = f.maxaddr() - f.minaddr()
         fdata = f.tobinarray(start=f.minaddr())
         startaddr = f.minaddr()
+
+        startaddr += offset
 
         logfunc("Attempting to program %d bytes at 0x%x"% (fsize, startaddr))
 
@@ -444,13 +446,16 @@ class STM32FSerial(object):
         else:
             raise CmdException("Write memory (0x31) failed")
 
-    def cmdEraseRange(self, filename): 
+    def cmdEraseRange(self, filename, offset = 0): 
         f = IntelHex(filename)
 
         fsize = f.maxaddr() - f.minaddr()
         fdata = f.tobinarray(start=f.minaddr())
         start_address = f.minaddr()
         end_address = f.maxaddr()
+        
+        start_address += offset
+        end_address +=offset
         
         num_pages = (end_address - start_address) / self._chip.page_size
         
