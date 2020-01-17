@@ -570,8 +570,9 @@ static void buffer_alloc_free_mutexed( void *ptr )
 
 void mbedtls_memory_buffer_alloc_init( unsigned char *buf, size_t len )
 {
-    memset( &heap, 0, sizeof(buffer_alloc_ctx) );
-    memset( buf, 0, len );
+    //TODO AR!! if below is uncommented the system will crash
+    //memset( &heap, 0, sizeof(buffer_alloc_ctx) );
+    //memset( buf, 0, len );
 
 #if defined(MBEDTLS_THREADING_C)
     mbedtls_mutex_init( &heap.mutex );

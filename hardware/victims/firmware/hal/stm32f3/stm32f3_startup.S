@@ -41,6 +41,30 @@ defined in linker script */
 	.type	Reset_Handler, %function
 Reset_Handler:
 
+
+                LDR.W   R0, =0xE000ED88
+ 
+
+ 
+
+                LDR     R1, [R0]
+ 
+
+ 
+
+                ORR     R1, R1, (0xF << 20)
+ 
+
+ 
+
+                STR     R1, [R0]
+ 
+
+                DSB
+
+ 
+
+                ISB
 /* Copy the data segment initializers from flash to SRAM */
   movs	r1, #0
   b	LoopCopyDataInit

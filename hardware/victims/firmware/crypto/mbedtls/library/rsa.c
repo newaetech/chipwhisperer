@@ -66,10 +66,13 @@
 #define mbedtls_free   free
 #endif
 
+#include "mbedtls/memory_buffer_alloc.h"
+
 /* Implementation that should never be optimized out by the compiler */
 static void mbedtls_zeroize( void *v, size_t n ) {
     volatile unsigned char *p = (unsigned char*)v; while( n-- ) *p++ = 0;
 }
+unsigned char memory_buf[30000];
 
 /*
  * Initialize an RSA context
@@ -81,6 +84,9 @@ void mbedtls_rsa_init( mbedtls_rsa_context *ctx,
     memset( ctx, 0, sizeof( mbedtls_rsa_context ) );
 
     mbedtls_rsa_set_padding( ctx, padding, hash_id );
+
+    mbedtls_memory_buffer_alloc_init( memory_buf, sizeof(memory_buf) );
+
 
 #if defined(MBEDTLS_THREADING_C)
     mbedtls_mutex_init( &ctx->mutex );

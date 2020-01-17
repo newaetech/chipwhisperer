@@ -108,6 +108,8 @@ void mbedtls_mpi_free( mbedtls_mpi *X )
     X->p = NULL;
 }
 
+volatile uint32_t debug_suc_counter = 0;
+
 /*
  * Enlarge to the specified number of limbs
  */
@@ -121,7 +123,10 @@ int mbedtls_mpi_grow( mbedtls_mpi *X, size_t nblimbs )
     if( X->n < nblimbs )
     {
         if( ( p = (mbedtls_mpi_uint*)mbedtls_calloc( nblimbs, ciL ) ) == NULL )
+        {
             return( MBEDTLS_ERR_MPI_ALLOC_FAILED );
+        }
+        debug_suc_counter++;
 
         if( X->p != NULL )
         {

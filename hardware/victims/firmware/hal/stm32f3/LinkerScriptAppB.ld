@@ -62,7 +62,7 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 MEMORY
 {
   RAM (xrw)		: ORIGIN = 0x20000000, LENGTH = 12K
-  ROM (xrw)		: ORIGIN = 0x8006000, LENGTH = 0x10000 /*Has to be twice the size as it also contains the scratch space + scratch*/
+  ROM (xrw)		: ORIGIN = 0x8008000, LENGTH = 64K
 }
 
 /* Sections */
