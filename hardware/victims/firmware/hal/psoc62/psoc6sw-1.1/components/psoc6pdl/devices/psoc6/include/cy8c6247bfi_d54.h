@@ -5,7 +5,7 @@
 * CY8C6247BFI-D54 device header
 *
 * \note
-* Generator version: 1.4.0.1232
+* Generator version: 1.5.0.1286
 *
 ********************************************************************************
 * \copyright
@@ -442,6 +442,9 @@ typedef enum {
 #define __MPU_PRESENT                   1       /*!< MPU present or not */
 #define __FPU_PRESENT                   1       /*!< FPU present or not */
 #define __CM0P_PRESENT                  1       /*!< CM0P present or not */
+#define __DTCM_PRESENT                  0       /*!< DTCM present or not */
+#define __ICACHE_PRESENT                0       /*!< ICACHE present or not */
+#define __DCACHE_PRESENT                0       /*!< DCACHE present or not */
 
 /** \} Configuration_of_CMSIS */
 
@@ -514,7 +517,7 @@ typedef enum {
 #define CY_IP_MXS40PASS_INSTANCES       1u
 #define CY_IP_MXS40PASS_VERSION         1u
 #define CY_IP_MXS40PASS_SAR             1u
-#define CY_IP_MXS40PASS_SAR_INSTANCES   16u
+#define CY_IP_MXS40PASS_SAR_INSTANCES   1u
 #define CY_IP_MXS40PASS_SAR_VERSION     1u
 #define CY_IP_MXS40PASS_CTDAC           1u
 #define CY_IP_MXS40PASS_CTDAC_INSTANCES 1u
