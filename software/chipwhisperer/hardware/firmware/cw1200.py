@@ -1,13 +1,13 @@
 # This file was auto-generated. Do not manually edit or save. What are you doing looking at it? Close it now!
-# Generated on 2017-07-16 14:32:07.071000
+# Generated on 2020-05-01 09:46:01.646839
 #
-import base64
+import binascii
 import io
 
 fwver = [1, 0]
 def getsome(item, filelike=True):
-    data = _contents[item]
-    data = base64.b64decode(data)
+    data = _contents[item].encode('latin-1')
+    data = binascii.a2b_base64(data)
     if filelike:
         data = io.BytesIO(data)
     return data
