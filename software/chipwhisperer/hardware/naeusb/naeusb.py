@@ -427,6 +427,8 @@ class NAEUSB_Backend(NAEUSB_Serializer_base):
                                 else:
                                     raise
             if dictonly:
+                for d in devlist:
+                    d._langids = (1033,)
                 devlist = [{'sn': d.serial_number, 'product': d.product, 'pid': d.idProduct, 'vid': d.idVendor} for d in devlist]
 
             return devlist
