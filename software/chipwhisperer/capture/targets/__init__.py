@@ -9,6 +9,7 @@ Targets:
 * SmartCard - Currently unavailable (tied to GUI)
 """
 from .SimpleSerial import SimpleSerial
+from .Leia import LeiaTarget
 from .CW305 import CW305 #check works
 
 try:
