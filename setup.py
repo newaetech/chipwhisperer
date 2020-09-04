@@ -22,6 +22,7 @@ setup(
         'scipy',
         'fastdtw',
         'Cython',
+        'smartleia',
     ],
     project_urls={
         'Documentation': 'https://chipwhisperer.readthedocs.io',
