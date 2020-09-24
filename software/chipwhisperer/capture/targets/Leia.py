@@ -3,16 +3,17 @@
 #
 # =================================================
 
-import smartleia_target as LEIA
+import smartleia_target as LEIATarget
 from ._base import TargetTemplate
+from chipwhisperer.common.utils.util import dict_to_str
 
-class LeiaTarget(TargetTemplate, LEIA.TargetController):
+class LeiaTarget( LEIATarget.TargetController, TargetTemplate):
     _name= 'LEIA Java Smartcard Target'
     
     connectStatus = False
 
     def __init__(self):
-        LEIA.TargetController.__init__(self)
+        LEIATarget.TargetController.__init__(self)
 
     def __del__(self):
         """Close system if needed"""
@@ -65,7 +66,7 @@ class LeiaTarget(TargetTemplate, LEIA.TargetController):
         raise NotImplementedError("Must define target-specific properties.")
 
     def __repr__(self):
-        return util.dict_to_str(self._dict_repr())
+        return dict_to_str(self._dict_repr())
 
     def __str__(self):
         return self.__repr__()
