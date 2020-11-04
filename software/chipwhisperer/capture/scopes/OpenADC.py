@@ -32,7 +32,7 @@ from . import _qt as openadc_qt
 from .base import ScopeTemplate
 from .openadc_interface.naeusbchip import OpenADCInterface_NAEUSBChip
 from chipwhisperer.common.utils import util
-from chipwhisperer.common.utils.util import dict_to_str
+from chipwhisperer.common.utils.util import dict_to_str, DelayedKeyboardInterrupt
 from collections import OrderedDict
 import time
 
@@ -108,6 +108,10 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
     def fw_version(self):
         a = self.qtadc.sc.serial.readFwVersion()
         return {"major": a[0], "minor": a[1], "debug": a[2]}
+
+    @property
+    def sn(self):
+        return self.scopetype.ser.snum
 
     def _getNAEUSB(self):
         return self.scopetype.dev._cwusb
@@ -289,20 +293,20 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
         """
         if self.connectStatus is False:
             raise OSError("Scope is not connected. Connect it first...")
+        with DelayedKeyboardInterrupt():
+            try:
+                if self.advancedSettings:
+                    self.advancedSettings.armPreScope()
 
-        try:
-            if self.advancedSettings:
-                self.advancedSettings.armPreScope()
+                self.qtadc.arm()
 
-            self.qtadc.arm()
+                if self.advancedSettings:
+                    self.advancedSettings.armPostScope()
 
-            if self.advancedSettings:
-                 self.advancedSettings.armPostScope()
-
-            self.qtadc.startCaptureThread()
-        except Exception:
-            self.dis()
-            raise
+                self.qtadc.startCaptureThread()
+            except Exception:
+                self.dis()
+                raise
 
     def capture(self):
         """Captures trace. Scope must be armed before capturing.
@@ -313,11 +317,12 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
         Raises:
            IOError: Unknown failure.
         """
-        if not self.adc.stream_mode:
-            return self.qtadc.capture(self.adc.offset, self.clock.adc_freq, self.adc.samples)
-        else:
-            return self.qtadc.capture(None)
-        return ret
+        # need adc offset, adc_freq, samples cached
+        with DelayedKeyboardInterrupt():
+            if not self.adc.stream_mode:
+                return self.qtadc.capture(self.adc.offset, self.clock.adc_freq, self.adc.samples)
+            else:
+                return self.qtadc.capture(None)
 
     def get_last_trace(self):
         """Return the last trace captured with this scope.
@@ -331,6 +336,7 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
 
     def _dict_repr(self):
         dict = OrderedDict()
+        dict['sn'] = self.sn
         dict['fw_version'] = self.fw_version
         dict['gain']    = self.gain._dict_repr()
         dict['adc']     = self.adc._dict_repr()

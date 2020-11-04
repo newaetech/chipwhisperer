@@ -134,6 +134,8 @@ OpenADC Scope
         .. autodata:: chipwhisperer.capture.scopes._OpenADCInterface.ClockSettings.clkgen_locked
             :annotation: scope.clock.clkgen_locked
 
+        .. automethod:: chipwhisperer.capture.scopes._OpenADCInterface.ClockSettings.reset_dcms
+
 
     .. attribute:: io
         :annotation: scope.io
@@ -455,6 +457,8 @@ Simple Serial Target
 
     .. automethod:: in_waiting
 
+    .. automethod:: in_waiting_tx
+
     .. automethod:: flush
 
     .. automethod:: close
@@ -469,6 +473,44 @@ Simple Serial Target
 
     .. autoattribute:: simpleserial_last_read
 
+.. _api-target-simpleserial2:
+
+Simple Serial V2 Target
+=======================
+
+.. autoclass:: chipwhisperer.targets.SimpleSerial2
+
+    .. automethod:: write
+
+    .. automethod:: read
+
+    .. automethod:: send_cmd
+
+    .. automethod:: read_cmd
+
+    .. automethod:: reset_comms
+
+    .. automethod:: simpleserial_wait_ack
+
+    .. automethod:: simpleserial_write
+
+    .. automethod:: simpleserial_read
+
+    .. automethod:: simpleserial_read_witherrors
+
+    .. automethod:: set_key
+
+    .. automethod:: in_waiting
+
+    .. automethod:: in_waiting_tx
+
+    .. automethod:: flush
+
+    .. automethod:: close
+
+    .. automethod:: con
+
+    .. autoattribute:: baud
 
 .. _api-target-cw305:
 
@@ -536,6 +578,22 @@ CW305 SPI Program
 
     .. automethod:: read
 
+.. _cw305-fpga-io:
+
+CW305 SAM3U IO Control
+======================
+
+.. autoclass:: chipwhisperer.capture.targets.CW305.FPGAIO
+
+    .. automethod:: pin_set_output
+
+    .. automethod:: pin_set_state
+
+    .. automethod:: spi1_setpins
+
+    .. automethod:: spi1_enable
+
+    .. automethod:: spi1_transfer
 
 .. _api-target-program:
 

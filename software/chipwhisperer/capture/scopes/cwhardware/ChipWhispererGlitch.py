@@ -285,6 +285,8 @@ class GlitchSettings(util.DisableNewAttr):
          * "ext_single": Use the trigger module. One glitch per scope arm.
          * "ext_continuous": Use the trigger module. Many glitches per arm.
 
+         .. warning:: calling :code:`scope.arm()` in manual gitch mode will cause a glitch to trigger.
+
         :Getter: Return the current trigger source.
 
         :Setter: Change the trigger source.
@@ -311,6 +313,7 @@ class GlitchSettings(util.DisableNewAttr):
         If the glitch module is in "ext_single" trigger mode, it must be armed
         when the scope is armed. There are two timings for this event:
 
+         * "no_glitch": The glitch module is not armed. Gives a moderate speedup to capture.
          * "before_scope": The glitch module is armed first.
          * "after_scope": The scope is armed first. This is the default.
 
@@ -327,7 +330,9 @@ class GlitchSettings(util.DisableNewAttr):
            ValueError: if value not listed above
         """
         timing = self.cwg.getArmTiming()
-        if timing == 1:
+        if timing == 0:
+            return "no_glitch"
+        elif timing == 1:
             return "before_scope"
         elif timing == 2:
             return "after_scope"
@@ -336,12 +341,14 @@ class GlitchSettings(util.DisableNewAttr):
 
     @arm_timing.setter
     def arm_timing(self, value):
-        if value == "before_scope":
+        if value == "no_glitch":
+            int_val = 0
+        elif value == "before_scope":
             int_val = 1
         elif value == "after_scope":
             int_val = 2
         else:
-            raise ValueError("Can't set glitch arm timing to %s; valid values: ('before_scope', 'after_scope')" % value, value)
+            raise ValueError("Can't set glitch arm timing to %s; valid values: ('no_glitch', 'before_scope', 'after_scope')" % value, value)
 
         self.cwg.setArmTiming(int_val)
 

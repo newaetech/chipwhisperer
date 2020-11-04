@@ -54,9 +54,13 @@ class SimpleSerial_ChipWhispererLite(SimpleSerialTemplate):
 
         if hasattr(scope, 'qtadc'):
             ser = scope.qtadc.ser
+            
+            # if we don't do this, we get multiple serial objects kicking around
+            # making it hard to save +  restore the baud
+            self.cwlite_usart = scope.scopetype.dev.serialstm32f._cwserial
         else:
             ser = scope._cwusb
-        self.cwlite_usart = CWL_USART(ser)
+            self.cwlite_usart = scope.usart
         self.cwlite_usart.init(baud=self._baud)
 
 
@@ -64,6 +68,10 @@ class SimpleSerial_ChipWhispererLite(SimpleSerialTemplate):
         bwait = self.cwlite_usart.inWaiting()
         if bwait == 127:
             logging.warning('SAM3U Serial buffers OVERRUN - data loss has occurred.')
+        return bwait
+
+    def hardware_inWaitingTX(self):
+        bwait = self.cwlite_usart.in_waiting_tx()
         return bwait
 
     def hardware_write(self, string):

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2015-2019, NewAE Technology Inc
+# Copyright (c) 2015-2020, NewAE Technology Inc
 # All rights reserved.
 #
 # Find this and more at newae.com - this file is part of the chipwhisperer
@@ -28,6 +28,9 @@ import time
 import random
 from datetime import datetime
 import os.path
+import pkg_resources
+import re
+import io
 from ._base import TargetTemplate
 from chipwhisperer.hardware.naeusb.naeusb import NAEUSB,packuint32
 from chipwhisperer.hardware.naeusb.pll_cdce906 import PLLCDCE906
@@ -112,15 +115,80 @@ class CW305(TargetTemplate):
         self.hw = None
         self.oa = None
 
-        self._woffset = 0x400
         self._woffset_sam3U = 0x000
+        self.default_verilog_defines = 'cw305_defines.v'
+        self.default_verilog_defines_full_path = '../../hardware/victims/cw305_artixtarget/fpga/common/' + self.default_verilog_defines
+        self.registers = 12 # number of registers we expect to find
+        self.bytecount_size = 7 # pBYTECNT_SIZE in Verilog
 
         self._clksleeptime = 1
         self._clkusbautooff = True
         self.last_key = bytearray([0]*16)
+        self.target_name = 'AES'
 
     def _getNAEUSB(self):
         return self._naeusb
+
+    def slurp_defines(self, defines_files=None):
+        """ Parse Verilog defines file so we can access register and bit
+        definitions by name and avoid 'magic numbers'.
+        Args:
+            defines_files (list): list of Verilog define files to parse
+        """
+        self.verilog_define_matches = 0
+        if type(defines_files) != list:
+            logging.error('defines_files must be provided as a list (even it it contains a single element)')
+        for i,defines_file in enumerate(defines_files):
+            if type(defines_file) == io.BytesIO:
+                defines = io.TextIOWrapper(defines_file)
+            else:
+                if not os.path.isfile(defines_file):
+                    logging.error('Cannot find %s. Please specify the location of %s on your filesystem.' % 
+                                   (defines_files, self.default_verilog_defines))
+                defines = open(defines_file, 'r')
+            define_regex_base  =   re.compile(r'`define')
+            define_regex_reg   =   re.compile(r'`define\s+?REG_')
+            define_regex_radix =   re.compile(r'`define\s+?(\w+).+?\'([bdh])([0-9a-fA-F]+)')
+            define_regex_noradix = re.compile(r'`define\s+?(\w+?)\s+?(\d+?)')
+            block_offset = 0
+            for define in defines:
+                if define_regex_base.search(define):
+                    reg = define_regex_reg.search(define)
+                    match = define_regex_radix.search(define)
+                    if match:
+                        self.verilog_define_matches += 1
+                        if match.group(2) == 'b':
+                            radix = 2
+                        elif match.group(2) == 'h':
+                            radix = 16
+                        else:
+                            radix = 10
+                        setattr(self, match.group(1), int(match.group(3),radix) + block_offset)
+                    else:
+                        match = define_regex_noradix.search(define)
+                        if match:
+                            self.verilog_define_matches += 1
+                            setattr(self, match.group(1), int(match.group(2),10) + block_offset)
+                        else:
+                            logging.warning("Couldn't parse line: %s", define)
+            defines.close()
+        # make sure everything is cool:
+        if self.verilog_define_matches != self.registers:
+            logging.warning("Trouble parsing Verilog defines files (%s): didn't find the right number of defines; expected %d, got %d.\n" % (defines_file, self.registers, self.verilog_define_matches) +
+                            "Ensure that the Verilog defines files above are the same that were used to build the bitfile.")
+
+
+    def get_fpga_buildtime(self):
+        """Returns date and time when FPGA bitfile was generated.
+        """
+        raw = self.fpga_read(self.REG_BUILDTIME, 4)
+        # definitions: Xilinx XAPP1232
+        day = raw[3] >> 3
+        month = ((raw[3] & 0x7) << 1) + (raw[2] >> 7)
+        year = ((raw[2] >> 1) & 0x3f) + 2000
+        hour = ((raw[2] & 0x1) << 4) + (raw[1] >> 4)
+        minute = ((raw[1] & 0xf) << 2) + (raw[0] >> 6)
+        return "FPGA build time: {}/{}/{}, {}:{}".format(month, day, year, hour, minute)
 
 
     def fpga_write(self, addr, data):
@@ -130,12 +198,8 @@ class CW305(TargetTemplate):
             addr (int): Address to write to
             data (list): Data to write to addr
 
-        Raises:
-            IOError: User attempted to write to a read-only location
         """
-        if addr < self._woffset:
-            raise IOError("Write to read-only location: 0x%04x"%addr)
-
+        addr = addr << self.bytecount_size
         return self._naeusb.cmdWriteMem(addr, data)
 
     def fpga_read(self, addr, readlen):
@@ -148,9 +212,7 @@ class CW305(TargetTemplate):
         Returns:
             Requested data as a list
         """
-        if addr > self._woffset:
-            logging.info('Read from write address, confirm this is not an error')
-
+        addr = addr << self.bytecount_size
         data = self._naeusb.cmdReadMem(addr, readlen)
         return data
 
@@ -192,7 +254,7 @@ class CW305(TargetTemplate):
         resp = self._naeusb.readCtrl(CW305_USB.REQ_VCCINT, dlen=3)
         return float(resp[1] | (resp[2] << 8)) / 1000.0
 
-    def _con(self, scope=None, bsfile=None, force=False, fpga_id=None):
+    def _con(self, scope=None, bsfile=None, force=False, fpga_id=None, defines_files=None, slurp=True):
         """Connect to CW305 board, and download bitstream.
 
         If the target has already been programmed it skips reprogramming
@@ -204,6 +266,8 @@ class CW305(TargetTemplate):
             force (bool): Whether or not to force reprogramming.
             fpga_id (string): '100t', '35t', or None. If bsfile is None and fpga_id specified,
                               program with AES firmware for fpga_id
+            defines_files (list, optional): path to cw305_defines.v
+            slurp (bool, optional): Whether or not to slurp the Verilog defines.
         """
 
         from datetime import datetime
@@ -216,7 +280,10 @@ class CW305(TargetTemplate):
             if bsfile is None:
                 if not fpga_id is None:
                     from chipwhisperer.hardware.firmware.cw305 import getsome
-                    bsdata = getsome(f"AES_{fpga_id}.bit")
+                    if self.target_name == 'AES':
+                        bsdata = getsome(f"AES_{fpga_id}.bit")
+                    elif self.target_name == 'Cryptech ecdsa256-v1 pmul':
+                        bsdata = getsome(f"ECDSA256v1_pmul_{fpga_id}.bit")
                     starttime = datetime.now()
                     status = self.fpga.FPGAProgram(bsdata, exceptOnDoneFailure=False)
                     stoptime = datetime.now()
@@ -236,9 +303,21 @@ class CW305(TargetTemplate):
                     logging.info('FPGA Config OK, time: %s' % str(stoptime - starttime))
                 else:
                     logging.warning('FPGA Done pin failed to go high, check bitstream is for target device.')
+
         self.usb_clk_setenabled(True)
-        self.fpga_write(0x100+self._woffset, [0])
         self.pll.cdce906init()
+
+        if defines_files is None:
+            if fpga_id is None:
+                verilog_defines = [self.default_verilog_defines_full_path]
+            else:
+                from chipwhisperer.hardware.firmware.cw305 import getsome
+                verilog_defines = [getsome(self.default_verilog_defines)]
+        else:
+            verilog_defines = defines_files
+        if slurp:
+            self.slurp_defines(verilog_defines)
+
 
     def _dis(self):
         if self._naeusb:
@@ -252,32 +331,28 @@ class CW305(TargetTemplate):
         """Write encryption key to FPGA"""
         self.key = key
         key = key[::-1]
-        self.fpga_write(0x100+self._woffset, key)
+        self.fpga_write(self.REG_CRYPT_KEY, key)
 
     def loadInput(self, inputtext):
         """Write input to FPGA"""
         self.input = inputtext
         text = inputtext[::-1]
-        self.fpga_write(0x200+self._woffset, text)
+        self.fpga_write(self.REG_CRYPT_TEXTIN, text)
 
     def is_done(self):
         """Check if FPGA is done"""
-        result = self.fpga_read(0x50, 1)[0]
-
-        if result == 0x00:
+        result = self.fpga_read(self.REG_CRYPT_GO, 1)[0]
+        if result == 0x01:
             return False
         else:
-            # Clear trigger
-            self.fpga_write(0x40+self._woffset, [0])
-            # LED Off
-            self.fpga_write(0x10+self._woffset, [0])
+            self.fpga_write(self.REG_USER_LED, [0])
             return True
 
     isDone = camel_case_deprecated(is_done)
 
     def readOutput(self):
         """"Read output from FPGA"""
-        data = self.fpga_read(0x200, 16)
+        data = self.fpga_read(self.REG_CRYPT_CIPHEROUT, 16)
         data = data[::-1]
         #self.newInputData.emit(util.list2hexstr(data))
         return data
@@ -334,13 +409,13 @@ class CW305(TargetTemplate):
         if self.clkusbautooff:
             self.usb_clk_setenabled(False)
 
-        #LED On
-        self.fpga_write(0x10+self._woffset, [0x01])
+        self.fpga_write(self.REG_USER_LED, [0x01])
 
         time.sleep(0.001)
         self.usb_trigger_toggle()
-        # self.FPGAWrite(0x100, [1])
-        # self.FPGAWrite(0x100, [0])
+        # it's also possible to 'go' via register write but that won't take if
+        # the USB clock was turned off:
+        #self.fpga_write(self.REG_CRYPT_GO, [1])
 
         if self.clkusbautooff:
             time.sleep(self.clksleeptime/1000.0)
@@ -507,6 +582,22 @@ class CW305(TargetTemplate):
         spi = FPGASPI(self._naeusb, timeout)
         spi.enable_interface(enable)
         return spi
+
+    @fw_ver_required(0, 40)
+    def gpio_mode(self, timeout=200):
+        """Allow arbitrary GPIO access on SAM3U
+        
+        Allows low-level IO access to SAM3U GPIO, and also SPI transfers.
+        (see documentation on the returned object for more info)
+
+        Args:
+            timeout (int): USB timeout in ms. Defaults to 200.
+
+        Returns:
+            A FPGAIO object which can be used to access IO on the CW305.
+        """
+        io = FPGAIO(self._naeusb, timeout)
+        return io
 
 class FPGASPI:
     """ Programmer for the CW305's onboard SPI flash
@@ -804,4 +895,414 @@ class FPGASPI:
         self.set_cs_pin(True)
         
         self.wait_busy(timeout)
+
+class FPGAIO:
+    """ User IO to override external bus.
+    
+    Allows you to use any pin on the SAM3U as a user IO. This includes pins
+    such as the external IO interface, and basically anything else you can find.
+    
+    The pin names are strings, and come from one of three sources:
+        * SAM3U pin names, such as "PC11", "PB9", etc.
+        * Net names from the CW305 schematic such as "USB_A20".
+        * The FPGA ball location that is connected to the SAM3U pin, such as "M2".
+    
+    Any function taking a pin name assumes you pass a string with one of those. You
+    do not need to specify your source - it will autodetect the pin name (if possible).
+    The SAM3U pin names allow access to every pin, including those which are not actually
+    connected on the PCB itself.
+
+    Beyond simple GPIO toggling, a bit-banged SPI interface can be defined and connected
+    to any of the SAM3U pins. The bit-banged interface is done on the SAM3U microcontroller,
+    with a default SCK frequency of around 1.5 MHz. You can additionally define waitstates
+    to slow down this clock.
+    
+    Basic usage::
+    
+        fpga = cw.target(None, cw.targets.CW305)
+        io = target.gpio_mode()
+        
+        # Take over the SAM3U blue LED (normally controlled by firmware, won't be after this)
+        import time
+        io.pin_set_output("LED_BLUE")
+        io.pin_set_state("LED_BLUE", 0)
+        time.sleep(0.5)
+        io.pin_set_state("LED_BLUE", 1)
+
+        # Example - toggle pin associated with FPGA pin C1 (would be USB_A11)
+        import time
+        io.pin_set_output("C1")
+        io.pin_set_state("C1", 0)
+        time.sleep(0.1)
+        io.pin_set_state("C1", 1)
+
+        # Setup a SPI interface based on schematic net names
+        io.spi1_setpins(sdo="USB_A20", sdi="USB_A19", sck="USB_A18", cs="USB_A17")
+        io.spi1_enable(True)
+
+        somedata = [0x11, 0x22, 0x33]
+
+        response = io.spi1_transfer(somedata)
+        print(response)
+
+    If you want to see all possible pin names, you can access them with:
+        io.SAM3U_PIN_NAMES.keys()
+        io.SCHEMATIC_PIN_NAMES.keys()
+        io.FPGA_PIN_NAMES.keys()
+    """
+
+    REQ_FPGAIO_UTIL      = 0x34
+    REQ_IO_CONFIG        = 0xA0
+    REQ_IO_RELEASE       = 0xA1
+    REQ_IO_OUTPUT        = 0xA2
+
+
+    CONFIG_PIN_INPUT     = 0x01
+    CONFIG_PIN_OUTPUT    = 0x02
+    CONFIG_PIN_SPI1_SDO  = 0x10
+    CONFIG_PIN_SPI1_SDI  = 0x11
+    CONFIG_PIN_SPI1_SCK  = 0x12
+    CONFIG_PIN_SPI1_CS   = 0x13
+
+    REQ_FPGASPI1_XFER    = 0x35
+    REQ_ENABLE_SPI       = 0xA0
+    REQ_DISABLE_SPI      = 0xA1    
+    REQ_CS_LOW           = 0xA2
+    REQ_CS_HIGH          = 0xA3
+    REQ_SEND_DATA        = 0xA4
+    
+    SAM3U_PIN_NAMES = { "PA0":  0,
+                        "PA1":  1,
+                        "PA2":  2,
+                        "PA3":  3,
+                        "PA4":  4,
+                        "PA5":  5,
+                        "PA6":  6,
+                        "PA7":  7,
+                        "PA8":  8,
+                        "PA9":  9,
+                        "PA10": 10,
+                        "PA11": 11,
+                        "PA12": 12,
+                        "PA13": 13,
+                        "PA14": 14,
+                        "PA15": 15,
+                        "PA16": 16,
+                        "PA17": 17,
+                        "PA18": 18,
+                        "PA19": 19,
+                        "PA20": 20,
+                        "PA21": 21,
+                        "PA22": 22,
+                        "PA23": 23,
+                        "PA24": 24,
+                        "PA25": 25,
+                        "PA26": 26,
+                        "PA27": 27,
+                        "PA28": 28,
+                        "PA29": 29,
+                        "PA30": 30,
+                        "PA31": 31,
+                        "PB0":  32,
+                        "PB1":  33,
+                        "PB2":  34,
+                        "PB3":  35,
+                        "PB4":  36,
+                        "PB5":  37,
+                        "PB6":  38,
+                        "PB7":  39,
+                        "PB8":  40,
+                        "PB9":  41,
+                        "PB10": 42,
+                        "PB11": 43,
+                        "PB12": 44,
+                        "PB13": 45,
+                        "PB14": 46,
+                        "PB15": 47,
+                        "PB16": 48,
+                        "PB17": 49,
+                        "PB18": 50,
+                        "PB19": 51,
+                        "PB20": 52,
+                        "PB21": 53,
+                        "PB22": 54,
+                        "PB23": 55,
+                        "PB24": 56,
+                        "PB25": 57,
+                        "PB26": 58,
+                        "PB27": 59,
+                        "PB28": 60,
+                        "PB29": 61,
+                        "PB30": 62,
+                        "PB31": 63,
+                        "PC0":  64,
+                        "PC1":  65,
+                        "PC2":  66,
+                        "PC3":  67,
+                        "PC4":  68,
+                        "PC5":  69,
+                        "PC6":  70,
+                        "PC7":  71,
+                        "PC8":  72,
+                        "PC9":  73,
+                        "PC10": 74,
+                        "PC11": 75,
+                        "PC12": 76,
+                        "PC13": 77,
+                        "PC14": 78,
+                        "PC15": 79,
+                        "PC16": 80,
+                        "PC17": 81,
+                        "PC18": 82,
+                        "PC19": 83,
+                        "PC20": 84,
+                        "PC21": 85,
+                        "PC22": 86,
+                        "PC23": 87,
+                        "PC24": 88,
+                        "PC25": 89,
+                        "PC26": 90,
+                        "PC27": 91,
+                        "PC28": 92,
+                        "PC29": 93,
+                        "PC30": 94,
+                        "PC31": 95}
+
+    FPGA_PIN_NAMES = {"A7":"USB_D0",
+                    "B6":"USB_D1",
+                    "D3":"USB_D2",
+                    "E3":"USB_D3",
+                    "F3":"USB_D4",
+                    "B5":"USB_D5",
+                    "K1":"USB_D6",
+                    "K2":"USB_D7",
+                    "F4":"USB_A0",
+                    "G5":"USB_A1",
+                    "J1":"USB_A2",
+                    "H1":"USB_A3",
+                    "H2":"USB_A4",
+                    "G1":"USB_A5",
+                    "G2":"USB_A6",
+                    "F2":"USB_A7",
+                    "E1":"USB_A8",
+                    "E2":"USB_A9",
+                    "D1":"USB_A10",
+                    "C1":"USB_A11",
+                    "K3":"USB_A12",
+                    "L2":"USB_A13",
+                    "J3":"USB_A14",
+                    "B2":"USB_A15",
+                    "C7":"USB_A16",
+                    "C6":"USB_A17",
+                    "D6":"USB_A18",
+                    "C4":"USB_A19",
+                    "D5":"USB_A20",
+                    "A4":"USBRD",
+                    "C2":"USBWR",
+                    "A3":"USBCE",
+                    "A2":"USBALE",
+                    "A5":"USBSPARE0",
+                    "B4":"USBSPARE1",
+                    "B1":"USBSPARE2"}
+
+    SCHEMATIC_PIN_NAMES = {"USBSPARE0":"PB17",
+                        "USBSPARE1":"PB18",
+                        "USBSPARE2":"PB22",
+                        "USBRD":"PB19",
+                        "USBWR":"PB23",
+                        "USBCE":"PB20",
+                        "USBALE":"PB21",
+                        "USBCK0":"PA27",
+                        "USBCK1":"PB24",
+                        "USB_A0":"PB7",
+                        "USB_A1":"PB8",
+                        "USB_A2":"PC0",
+                        "USB_A3":"PC1",
+                        "USB_A4":"PC2",
+                        "USB_A5":"PC3",
+                        "USB_A6":"PC4",
+                        "USB_A7":"PC5",
+                        "USB_A8":"PC6",
+                        "USB_A9":"PC7",
+                        "USB_A10":"PC8",
+                        "USB_A11":"PC9",
+                        "USB_A12":"PC10",
+                        "USB_A13":"PC11",
+                        "USB_A14":"PC20",
+                        "USB_A15":"PC21",
+                        "USB_A16":"PC22",
+                        "USB_A17":"PC23",
+                        "USB_A18":"PC24",
+                        "USB_A19":"PC25",
+                        "USB_A20":"PC26",
+                        "USB_D0":"PB9",
+                        "USB_D1":"PB10",
+                        "USB_D2":"PB11",
+                        "USB_D3":"PB12",
+                        "USB_D4":"PB13",
+                        "USB_D5":"PB14",
+                        "USB_D6":"PB15",
+                        "USB_D7":"PB16",
+                        "SWSTATE":"PB30",
+                        "PWRON":"PB31",
+                        "FPGA_INITB":"PC29",
+                        "FPGA_DONE":"PA7",
+                        "FPGA_PROGRAM":"PA8",
+                        "SAM_MISO":"PA13",
+                        "SAM_MOSI":"PA14",
+                        "SAM_SCK":"PA15",
+                        "PWR_SDA":"PA9",
+                        "PWR_SCL":"PA10",
+                        "XMEGA_PDIC":"PA17",
+                        "XMEGA_PDID1":"PA18",
+                        "XMEGA_PDID2":"PA19",
+                        "LED_RED":"PC15",
+                        "LED_GREEN":"PC16",
+                        "LED_BLUE":"PC17"}
+
+    def __init__(self, usb, timeout=200):
+        self.sendCtrl = usb.sendCtrl
+        self.readCtrl = usb.readCtrl
+        self._usb = usb
+        self._timeout = timeout
+
+    def pin_name_to_number(self, pinname):
+        """Convert from a user-friendly pin name to the number.
+
+        This function can be passed a name from the schematic (such as "USB_A20"),
+        a name from the SAM3U peripherals (such as "PB22"), or a FPGA pin location
+        (such as "M2"). It will attempt to auto-detect which one you passed.
+
+        Args:
+            pinname (str): Name such as "PB22", "USB_A20", or "M2".
+        """      
+        if isinstance(pinname, int):
+            return datain
+
+        pinname = pinname.upper()
+
+        if pinname in self.SCHEMATIC_PIN_NAMES:
+            return self.SAM3U_PIN_NAMES[self.SCHEMATIC_PIN_NAMES[pinname]]
+
+        if pinname in self.FPGA_PIN_NAMES:
+            return self.SAM3U_PIN_NAMES[self.SCHEMATIC_PIN_NAMES[self.FPGA_PIN_NAMES[pinname]]]
+
+        if pinname in self.SAM3U_PIN_NAMES:
+            return self.SAM3U_PIN_NAMES[pinname]
+        
+        raise ValueError("I don't know what pin this is (sorry): %s"%(pinname))
+        
+    def pin_set_output(self, pinname):
+        """Set a given pin as an output.
+        
+        Args:
+            pinname (str): Name such as "PB22", "USB_A20", or "M2".   
+        """
+        pinnum = self.pin_name_to_number(pinname)
+        self.sendCtrl(self.REQ_FPGAIO_UTIL, self.REQ_IO_CONFIG, [pinnum, self.CONFIG_PIN_OUTPUT])
+
+    def pin_set_state(self, pinname, state):
+        """Set the state of a pin (must have been set as output previously).
+        
+        Args:
+            pinname (str): Name such as "PB22", "USB_A20", or "M2".   
+            state (bool): Set pin high (True) or low (False)
+        """
+        pinnum = self.pin_name_to_number(pinname)
+        if state:
+            state = 1
+        else:
+            state = 0
+        self.sendCtrl(self.REQ_FPGAIO_UTIL, self.REQ_IO_OUTPUT, [pinnum, state])
+
+    def spi1_setpins(self, sdo, sdi, sck, cs):
+        """Set the pins to be used for the SPI1 interface.
+
+         Args:
+            sdo (str): Serial Data Out (output from SAM3U) pin name such as "PB22", "USB_A20", or "M2".       
+            sdi (str): Serial Data In (input to SAM3U) pin name such as "PB22", "USB_A20", or "M2".  
+            sck (str): Serial Clock (output from SAM3U) pin name such as "PB22", "USB_A20", or "M2".  
+            cs (str): Chip Select (output from SAM3U) name such as "PB22", "USB_A20", or "M2".  
+        """
+
+        sdo = self.pin_name_to_number(sdo)
+        sdi = self.pin_name_to_number(sdi)
+        sck = self.pin_name_to_number(sck)
+        cs = self.pin_name_to_number(cs)
+
+        self.sendCtrl(self.REQ_FPGAIO_UTIL, self.REQ_IO_CONFIG, [sdo, self.CONFIG_PIN_SPI1_SDO])
+        self.sendCtrl(self.REQ_FPGAIO_UTIL, self.REQ_IO_CONFIG, [sdi, self.CONFIG_PIN_SPI1_SDI])
+        self.sendCtrl(self.REQ_FPGAIO_UTIL, self.REQ_IO_CONFIG, [sck, self.CONFIG_PIN_SPI1_SCK])
+        self.sendCtrl(self.REQ_FPGAIO_UTIL, self.REQ_IO_CONFIG, [cs, self.CONFIG_PIN_SPI1_CS])
+
+        
+    def spi1_enable(self, enable, waitcycles=0):
+        """Enable or disable the SPI interface.
+        
+        Args:
+            enable (bool): Enable (True) or disable (False) SPI interface
+        """
+        if enable:
+            self.sendCtrl(self.REQ_FPGASPI1_XFER, 0xA0)
+        else:
+            self.sendCtrl(self.REQ_FPGASPI1_XFER, 0xA1)
+        
+        if waitcycles > 0:
+            raise NotImplementedError("💩 - Colin was lazy")
+        
+    def spi1_set_cs_pin(self, status):
+        """Set the SPI pin high or low.
+        
+        Args:
+            status (bool): Set CS pin high (True) or low (False)
+        """
+        if status:
+            self.sendCtrl(self.REQ_FPGASPI1_XFER, 0xA3)
+        else:
+            self.sendCtrl(self.REQ_FPGASPI1_XFER, 0xA2)        
+
+    def spi1_tx_rx(self, data):
+        """Write up to 64 bytes of data to the SPI interface (no CS action).
+        
+        This is a low-level function that performs a single transfer. Does not
+        affect the CS pin.
+
+        Args:
+            data (list): Write data over the SPI interface
+
+        Raises:
+            ValueError: len(data) > 64
+        """
+        if len(data) > 64:
+            raise ValueError("Data is tooooooo long!")
+        self.sendCtrl(self.REQ_FPGASPI1_XFER, 0xA4, data)
+        readdata = self.readCtrl(self.REQ_FPGASPI1_XFER, dlen=len(data))
+        return readdata
+    
+    def spi1_transfer(self, data):
+        """Writes data, dropping CS before and raising after, returns read data.
+
+        Args:
+            data (list): Write data over the SPI interface
+        """
+
+        resp = []
+
+        datalen = len(data)
+
+        self.spi1_set_cs_pin(False)
+
+        for i in range(0, datalen, 64):
+            dataend = i+64
+            
+            if dataend > datalen:
+                dataend = datalen
+            
+            tx = data[i:dataend]
+            rx = self.spi1_tx_rx(tx)
+            resp.append(rx)
+
+        self.spi1_set_cs_pin(True)
+
+        return resp
 
