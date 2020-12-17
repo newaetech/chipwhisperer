@@ -98,7 +98,7 @@
 #define   FLASHCALW_FCMD_CMD_CPB_Val      0x3u   /**< \brief (FLASHCALW_FCMD) Clear Page Buffer */
 #define   FLASHCALW_FCMD_CMD_LP_Val       0x4u   /**< \brief (FLASHCALW_FCMD) Lock Region containing page */
 #define   FLASHCALW_FCMD_CMD_UP_Val       0x5u   /**< \brief (FLASHCALW_FCMD) Unlock Region containing page */
-#define   FLASHCALW_FCMD_CMD_EA_Val       0x6u   /**< \brief (FLASHCALW_FCMD) Erase All, including secuity and fuse bits */
+#define   FLASHCALW_FCMD_CMD_EA_Val       0x6u   /**< \brief (FLASHCALW_FCMD) Erase All, including security and fuse bits */
 #define   FLASHCALW_FCMD_CMD_WGPB_Val     0x7u   /**< \brief (FLASHCALW_FCMD) Write General-Purpose fuse Bit */
 #define   FLASHCALW_FCMD_CMD_EGPB_Val     0x8u   /**< \brief (FLASHCALW_FCMD) Erase General-Purpose fuse Bit */
 #define   FLASHCALW_FCMD_CMD_SSB_Val      0x9u   /**< \brief (FLASHCALW_FCMD) Set Security Bit */
