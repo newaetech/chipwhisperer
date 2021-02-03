@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Vivado v2019.1 (64-bit)
+# SW Build 2552052 on Fri May 24 14:49:42 MDT 2019
+# IP Build 2548770 on Fri May 24 18:01:18 MDT 2019
+# Start of session at: Fri Dec  4 14:54:49 2020
+# Process ID: 23876
+# Current directory: Y:/fpga/vivado_examples/sam3u_feedthrough/sam3u_feedthrough.runs/synth_1
+# Command line: vivado.exe -log cw305_top.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source cw305_top.tcl
+# Log file: Y:/fpga/vivado_examples/sam3u_feedthrough/sam3u_feedthrough.runs/synth_1/cw305_top.vds
+# Journal file: Y:/fpga/vivado_examples/sam3u_feedthrough/sam3u_feedthrough.runs/synth_1\vivado.jou
+#-----------------------------------------------------------
+source cw305_top.tcl -notrace
