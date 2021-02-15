@@ -653,7 +653,7 @@ class Traces:
         self.tm = project._traceManager
 
         # segment management
-        self.cur_seg = self.project.segments.new()
+        self.cur_seg = self.project.get_new_trace_segment()
         self.project.segments.append(self.cur_seg)
         self.cur_trace_num = 0
         self.seg_len = segment_length
@@ -680,7 +680,7 @@ class Traces:
             raise TypeError("Expected Trace object, got {}.".format(trace))
 
         if self.cur_trace_num >= self.seg_len:
-            new_seg = self.project.segments.new()
+            new_seg = self.project.get_new_trace_segment()
             self.project.segments.append(new_seg)
             self.cur_seg.saveAll()
             self.cur_seg = new_seg
