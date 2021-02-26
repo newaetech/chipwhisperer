@@ -13622,7 +13622,7 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin
                 0x0008dcfc                . = ALIGN (0x4)
                 0x0008dcfc                _etext = .
 
-.relocate       0x20000000     0x1090 load address 0x0008dcfc
+.relocate       0x20000000     0x1040 load address 0x0008dcfc
                 0x20000000                . = ALIGN (0x4)
                 0x20000000                _srelocate = .
  *(.ramfunc .ramfunc.*)
@@ -13706,255 +13706,255 @@ LOAD c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin
                 0x200005a8       0x13 src/ASF/common/services/usb/udc/udc.o
  *fill*         0x200005bb        0x1 
  .data.winusb_20_desc
-                0x200005bc       0xf8 src/ASF/common/services/usb/udc/udc.o
+                0x200005bc       0xaa src/ASF/common/services/usb/udc/udc.o
  .data.g_interrupt_enabled
-                0x200006b4        0x1 src/ASF/common/utils/interrupt/interrupt_sam_nvic.o
-                0x200006b4                g_interrupt_enabled
- *fill*         0x200006b5        0x3 
+                0x20000666        0x1 src/ASF/common/utils/interrupt/interrupt_sam_nvic.o
+                0x20000666                g_interrupt_enabled
+ *fill*         0x20000667        0x1 
  .data.SystemCoreClock
-                0x200006b8        0x4 src/ASF/sam/utils/cmsis/sam3u/source/templates/system_sam3u.o
-                0x200006b8                SystemCoreClock
+                0x20000668        0x4 src/ASF/sam/utils/cmsis/sam3u/source/templates/system_sam3u.o
+                0x20000668                SystemCoreClock
  .data.usb_serial_number
-                0x200006bc       0x21 src/main.o
-                0x200006bc                usb_serial_number
- *fill*         0x200006dd        0x3 
+                0x2000066c       0x21 src/main.o
+                0x2000066c                usb_serial_number
+ *fill*         0x2000068d        0x3 
  .data._impure_ptr
-                0x200006e0        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-impure.o)
-                0x200006e0                _impure_ptr
- *fill*         0x200006e4        0x4 
+                0x20000690        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-impure.o)
+                0x20000690                _impure_ptr
+ *fill*         0x20000694        0x4 
  .data.impure_data
-                0x200006e8      0x428 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-impure.o)
+                0x20000698      0x428 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-impure.o)
  .data.__atexit_recursive_mutex
-                0x20000b10        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-__call_atexit.o)
-                0x20000b10                __atexit_recursive_mutex
+                0x20000ac0        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-__call_atexit.o)
+                0x20000ac0                __atexit_recursive_mutex
  .data.__global_locale
-                0x20000b14      0x16c c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-locale.o)
-                0x20000b14                __global_locale
+                0x20000ac4      0x16c c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-locale.o)
+                0x20000ac4                __global_locale
  .data.__malloc_av_
-                0x20000c80      0x408 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-mallocr.o)
-                0x20000c80                __malloc_av_
+                0x20000c30      0x408 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-mallocr.o)
+                0x20000c30                __malloc_av_
  .data.__malloc_sbrk_base
-                0x20001088        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-mallocr.o)
-                0x20001088                __malloc_sbrk_base
+                0x20001038        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-mallocr.o)
+                0x20001038                __malloc_sbrk_base
  .data.__malloc_trim_threshold
-                0x2000108c        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-mallocr.o)
-                0x2000108c                __malloc_trim_threshold
-                0x20001090                . = ALIGN (0x4)
-                0x20001090                _erelocate = .
+                0x2000103c        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-mallocr.o)
+                0x2000103c                __malloc_trim_threshold
+                0x20001040                . = ALIGN (0x4)
+                0x20001040                _erelocate = .
 
-.bss            0x20001090     0x1418 load address 0x0008ed8c
-                0x20001090                . = ALIGN (0x4)
-                0x20001090                _sbss = .
-                0x20001090                _szero = .
+.bss            0x20001040     0x1418 load address 0x0008ed3c
+                0x20001040                . = ALIGN (0x4)
+                0x20001040                _sbss = .
+                0x20001040                _szero = .
  *(.bss .bss.*)
- .bss           0x20001090       0x1c c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7-m/crtbegin.o
+ .bss           0x20001040       0x1c c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/thumb/v7-m/crtbegin.o
  .bss.sof_zlp_counter.7685
-                0x200010ac        0x2 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+                0x2000105c        0x2 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
  .bss.udi_cdc_data_running
-                0x200010ae        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
- *fill*         0x200010af        0x1 
+                0x2000105e        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+ *fill*         0x2000105f        0x1 
  .bss.udi_cdc_line_coding
-                0x200010b0        0x7 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+                0x20001060        0x7 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
  .bss.udi_cdc_nb_comm_enabled
-                0x200010b7        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+                0x20001067        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
  .bss.udi_cdc_nb_data_enabled
-                0x200010b8        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
- *fill*         0x200010b9        0x3 
+                0x20001068        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+ *fill*         0x20001069        0x3 
  .bss.udi_cdc_rx_buf
-                0x200010bc       0x80 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+                0x2000106c       0x80 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
  .bss.udi_cdc_rx_buf_nb
-                0x2000113c        0x4 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+                0x200010ec        0x4 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
  .bss.udi_cdc_rx_buf_sel
-                0x20001140        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
- *fill*         0x20001141        0x3 
+                0x200010f0        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+ *fill*         0x200010f1        0x3 
  .bss.udi_cdc_rx_pos
-                0x20001144        0x2 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
- *fill*         0x20001146        0x2 
+                0x200010f4        0x2 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+ *fill*         0x200010f6        0x2 
  .bss.udi_cdc_rx_trans_ongoing
-                0x20001148        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
- *fill*         0x20001149        0x3 
+                0x200010f8        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+ *fill*         0x200010f9        0x3 
  .bss.udi_cdc_state
-                0x2000114c        0x2 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
- *fill*         0x2000114e        0x2 
+                0x200010fc        0x2 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+ *fill*         0x200010fe        0x2 
  .bss.udi_cdc_tx_both_buf_to_send
-                0x20001150        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
- *fill*         0x20001151        0x3 
+                0x20001100        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+ *fill*         0x20001101        0x3 
  .bss.udi_cdc_tx_buf
-                0x20001154       0x80 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+                0x20001104       0x80 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
  .bss.udi_cdc_tx_buf_nb
-                0x200011d4        0x4 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+                0x20001184        0x4 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
  .bss.udi_cdc_tx_buf_sel
-                0x200011d8        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
- *fill*         0x200011d9        0x3 
+                0x20001188        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+ *fill*         0x20001189        0x3 
  .bss.udi_cdc_tx_sof_num
-                0x200011dc        0x2 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
- *fill*         0x200011de        0x2 
+                0x2000118c        0x2 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+ *fill*         0x2000118e        0x2 
  .bss.udi_cdc_tx_trans_ongoing
-                0x200011e0        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
- *fill*         0x200011e1        0x3 
+                0x20001190        0x1 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+ *fill*         0x20001191        0x3 
  .bss.uid_cdc_state_msg
-                0x200011e4        0xa src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
- .bss.ta1       0x200011ee        0x1 src/scard/iso7816.o
- .bss.tc3       0x200011ef        0x1 src/scard/iso7816.o
- .bss.td1       0x200011f0        0x1 src/scard/iso7816.o
+                0x20001194        0xa src/ASF/common/services/usb/class/cdc/device/udi_cdc.o
+ .bss.ta1       0x2000119e        0x1 src/scard/iso7816.o
+ .bss.tc3       0x2000119f        0x1 src/scard/iso7816.o
+ .bss.td1       0x200011a0        0x1 src/scard/iso7816.o
  .bss._fpga_locked
-                0x200011f1        0x1 src/usb_xmem.o
- *fill*         0x200011f2        0x2 
+                0x200011a1        0x1 src/usb_xmem.o
+ *fill*         0x200011a2        0x2 
  .bss.avr_rambuf.8985
-                0x200011f4      0x100 src/isp/V2Protocol.o
+                0x200011a4      0x100 src/isp/V2Protocol.o
  .bss.status_payload
-                0x200012f4       0x20 src/isp/V2Protocol.o
- .bss.active    0x20001314        0x1 src/usb.o
+                0x200012a4       0x20 src/isp/V2Protocol.o
+ .bss.active    0x200012c4        0x1 src/usb.o
  .bss.blockendpoint_usage
-                0x20001315        0x1 src/usb.o
- *fill*         0x20001316        0x2 
+                0x200012c5        0x1 src/usb.o
+ *fill*         0x200012c6        0x2 
  .bss.ctrlbuffer
-                0x20001318       0x40 src/usb.o
+                0x200012c8       0x40 src/usb.o
  .bss.ctrlmemread_buf
-                0x20001358        0x4 src/usb.o
+                0x20001308        0x4 src/usb.o
  .bss.ctrlmemread_size
-                0x2000135c        0x4 src/usb.o
+                0x2000130c        0x4 src/usb.o
  .bss.enable_cdc_transfer
-                0x20001360        0x2 src/usb.o
-                0x20001360                enable_cdc_transfer
- *fill*         0x20001362        0x2 
+                0x20001310        0x2 src/usb.o
+                0x20001310                enable_cdc_transfer
+ *fill*         0x20001312        0x2 
  .bss.main_buf_loopback
-                0x20001364      0x400 src/usb.o
+                0x20001314      0x400 src/usb.o
  .bss.respbuf.9560
-                0x20001764       0xc8 src/usb.o
- .bss.uart_buf  0x2000182c       0x80 src/usb.o
+                0x20001714       0xc8 src/usb.o
+ .bss.uart_buf  0x200017dc       0x80 src/usb.o
  .bss.timerEnabled
-                0x200018ac        0x1 src/pdi/XPROGTimeout.o
- *fill*         0x200018ad        0x3 
+                0x2000185c        0x1 src/pdi/XPROGTimeout.o
+ *fill*         0x2000185d        0x3 
  .bss.ctrlbuffer.8745
-                0x200018b0       0x10 src/usart_driver.o
+                0x20001860       0x10 src/usart_driver.o
  .bss.status_payload.8965
-                0x200018c0        0x4 src/pdi/XPROGNewAE.o
+                0x20001870        0x4 src/pdi/XPROGNewAE.o
  .bss.xprog_rambuf.8966
-                0x200018c4      0x100 src/pdi/XPROGNewAE.o
+                0x20001874      0x100 src/pdi/XPROGNewAE.o
  .bss.IsSending
-                0x200019c4        0x1 src/pdi/XPROGTarget.o
+                0x20001974        0x1 src/pdi/XPROGTarget.o
  .bss.udi_vendor_alternate_setting
-                0x200019c5        0x1 src/ASF/common/services/usb/class/vendor/device/udi_vendor.o
+                0x20001975        0x1 src/ASF/common/services/usb/class/vendor/device/udi_vendor.o
  .bss.udc_device_status
-                0x200019c6        0x2 src/ASF/common/services/usb/udc/udc.o
+                0x20001976        0x2 src/ASF/common/services/usb/udc/udc.o
  .bss.udc_ep_status.7413
-                0x200019c8        0x2 src/ASF/common/services/usb/udc/udc.o
+                0x20001978        0x2 src/ASF/common/services/usb/udc/udc.o
  .bss.udc_iface_setting.7475
-                0x200019ca        0x1 src/ASF/common/services/usb/udc/udc.o
+                0x2000197a        0x1 src/ASF/common/services/usb/udc/udc.o
  .bss.udc_num_configuration
-                0x200019cb        0x1 src/ASF/common/services/usb/udc/udc.o
+                0x2000197b        0x1 src/ASF/common/services/usb/udc/udc.o
  .bss.udc_ptr_conf
-                0x200019cc        0x4 src/ASF/common/services/usb/udc/udc.o
+                0x2000197c        0x4 src/ASF/common/services/usb/udc/udc.o
  .bss.udc_ptr_iface
-                0x200019d0        0x4 src/ASF/common/services/usb/udc/udc.o
+                0x20001980        0x4 src/ASF/common/services/usb/udc/udc.o
  .bss.cpu_irq_critical_section_counter
-                0x200019d4        0x4 src/ASF/common/utils/interrupt/interrupt_sam_nvic.o
+                0x20001984        0x4 src/ASF/common/utils/interrupt/interrupt_sam_nvic.o
  .bss.cpu_irq_prev_interrupt_state
-                0x200019d8        0x1 src/ASF/common/utils/interrupt/interrupt_sam_nvic.o
- *fill*         0x200019d9        0x3 
+                0x20001988        0x1 src/ASF/common/utils/interrupt/interrupt_sam_nvic.o
+ *fill*         0x20001989        0x3 
  .bss.gs_interrupt_sources
-                0x200019dc       0x70 src/ASF/sam/drivers/pio/pio_handler.o
+                0x2000198c       0x70 src/ASF/sam/drivers/pio/pio_handler.o
  .bss.b_is_sleep_clock_used
-                0x20001a4c        0x1 src/ASF/sam/drivers/pmc/sleep.o
- *fill*         0x20001a4d        0x3 
+                0x200019fc        0x1 src/ASF/sam/drivers/pmc/sleep.o
+ *fill*         0x200019fd        0x3 
  .bss.callback_clocks_restored
-                0x20001a50        0x4 src/ASF/sam/drivers/pmc/sleep.o
+                0x20001a00        0x4 src/ASF/sam/drivers/pmc/sleep.o
  .bss.b_shortpacket.8472
-                0x20001a54        0x1 src/ASF/sam/drivers/udphs/udphs_device.o
+                0x20001a04        0x1 src/ASF/sam/drivers/udphs/udphs_device.o
  .bss.udd_b_idle
-                0x20001a55        0x1 src/ASF/sam/drivers/udphs/udphs_device.o
+                0x20001a05        0x1 src/ASF/sam/drivers/udphs/udphs_device.o
  .bss.udd_ctrl_payload_buf_cnt
-                0x20001a56        0x2 src/ASF/sam/drivers/udphs/udphs_device.o
+                0x20001a06        0x2 src/ASF/sam/drivers/udphs/udphs_device.o
  .bss.udd_ctrl_prev_payload_buf_cnt
-                0x20001a58        0x2 src/ASF/sam/drivers/udphs/udphs_device.o
+                0x20001a08        0x2 src/ASF/sam/drivers/udphs/udphs_device.o
  .bss.udd_ep_control_state
-                0x20001a5a        0x1 src/ASF/sam/drivers/udphs/udphs_device.o
- *fill*         0x20001a5b        0x1 
+                0x20001a0a        0x1 src/ASF/sam/drivers/udphs/udphs_device.o
+ *fill*         0x20001a0b        0x1 
  .bss.udd_ep_job
-                0x20001a5c       0x90 src/ASF/sam/drivers/udphs/udphs_device.o
+                0x20001a0c       0x90 src/ASF/sam/drivers/udphs/udphs_device.o
  .bss.ul_reg_val.7092
-                0x20001aec        0x4 src/ASF/sam/drivers/usart/usart.o
+                0x20001a9c        0x4 src/ASF/sam/drivers/usart/usart.o
  .bss.ul_reg_val.7108
-                0x20001af0        0x4 src/ASF/sam/drivers/usart/usart.o
+                0x20001aa0        0x4 src/ASF/sam/drivers/usart/usart.o
  .bss.ul_reg_val.7129
-                0x20001af4        0x4 src/ASF/sam/drivers/usart/usart.o
+                0x20001aa4        0x4 src/ASF/sam/drivers/usart/usart.o
  .bss.ul_reg_val.7135
-                0x20001af8        0x4 src/ASF/sam/drivers/usart/usart.o
+                0x20001aa8        0x4 src/ASF/sam/drivers/usart/usart.o
  .bss.ul_reg_val.7146
-                0x20001afc        0x4 src/ASF/sam/drivers/usart/usart.o
+                0x20001aac        0x4 src/ASF/sam/drivers/usart/usart.o
  .bss.heap.5297
-                0x20001b00        0x4 src/ASF/sam/utils/syscalls/gcc/syscalls.o
+                0x20001ab0        0x4 src/ASF/sam/utils/syscalls/gcc/syscalls.o
  .bss.__malloc_current_mallinfo
-                0x20001b04       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-mallocr.o)
-                0x20001b04                __malloc_current_mallinfo
+                0x20001ab4       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-mallocr.o)
+                0x20001ab4                __malloc_current_mallinfo
  .bss.__malloc_max_sbrked_mem
-                0x20001b2c        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-mallocr.o)
-                0x20001b2c                __malloc_max_sbrked_mem
+                0x20001adc        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-mallocr.o)
+                0x20001adc                __malloc_max_sbrked_mem
  .bss.__malloc_max_total_mem
-                0x20001b30        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-mallocr.o)
-                0x20001b30                __malloc_max_total_mem
+                0x20001ae0        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-mallocr.o)
+                0x20001ae0                __malloc_max_total_mem
  .bss.__malloc_top_pad
-                0x20001b34        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-mallocr.o)
-                0x20001b34                __malloc_top_pad
+                0x20001ae4        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-mallocr.o)
+                0x20001ae4                __malloc_top_pad
  *(COMMON)
- COMMON         0x20001b38        0x8 src/scard/iso7816.o
-                0x20001b38                g_ul_clk
-                0x20001b3c                gs_ul_rst_pin_idx
- COMMON         0x20001b40      0x244 src/scard_usb.o
-                0x20001b40                scard_tx_buffer
-                0x20001c40                scard_rx_buffer_size
-                0x20001c44                scard_rx_buffer
-                0x20001d44                scard_atr_size
-                0x20001d48                scard_atr
-                0x20001d7f                at88sc102_status
-                0x20001d80                scard_protocol
-                0x20001d82                scard_tx_buffer_size
- COMMON         0x20001d84       0x28 src/isp/V2Protocol.o
-                0x20001d84                MustLoadExtendedAddress
-                0x20001d86                avrisp_status_payload_size
-                0x20001d88                avrisp_status_payload
-                0x20001da8                CurrentAddress
- COMMON         0x20001dac        0x4 src/pdi/XPROGTimeout.o
-                0x20001dac                TimeoutTicksRemaining
- COMMON         0x20001db0      0x6a0 src/usart_driver.o
-                0x20001db0                tx2buf
-                0x20001e84                rx0buf
-                0x20001f58                rx3buf
-                0x2000202c                tx1buf
-                0x20002100                tx3buf
-                0x200021d4                rx2buf
-                0x200022a8                rx1buf
-                0x2000237c                tx0buf
- COMMON         0x20002450        0x1 src/pdi/XPROGNewAE.o
-                0x20002450                XPROG_Status
+ COMMON         0x20001ae8        0x8 src/scard/iso7816.o
+                0x20001ae8                g_ul_clk
+                0x20001aec                gs_ul_rst_pin_idx
+ COMMON         0x20001af0      0x244 src/scard_usb.o
+                0x20001af0                scard_tx_buffer
+                0x20001bf0                scard_rx_buffer_size
+                0x20001bf4                scard_rx_buffer
+                0x20001cf4                scard_atr_size
+                0x20001cf8                scard_atr
+                0x20001d2f                at88sc102_status
+                0x20001d30                scard_protocol
+                0x20001d32                scard_tx_buffer_size
+ COMMON         0x20001d34       0x28 src/isp/V2Protocol.o
+                0x20001d34                MustLoadExtendedAddress
+                0x20001d36                avrisp_status_payload_size
+                0x20001d38                avrisp_status_payload
+                0x20001d58                CurrentAddress
+ COMMON         0x20001d5c        0x4 src/pdi/XPROGTimeout.o
+                0x20001d5c                TimeoutTicksRemaining
+ COMMON         0x20001d60      0x6a0 src/usart_driver.o
+                0x20001d60                tx2buf
+                0x20001e34                rx0buf
+                0x20001f08                rx3buf
+                0x20001fdc                tx1buf
+                0x200020b0                tx3buf
+                0x20002184                rx2buf
+                0x20002258                rx1buf
+                0x2000232c                tx0buf
+ COMMON         0x20002400        0x1 src/pdi/XPROGNewAE.o
+                0x20002400                XPROG_Status
+ *fill*         0x20002401        0x3 
+ COMMON         0x20002404        0x6 src/ASF/common/services/sleepmgr/sam/sleepmgr.o
+                0x20002404                sleepmgr_locks
+ *fill*         0x2000240a        0x2 
+ COMMON         0x2000240c        0x4 src/ASF/common/utils/stdio/read.o
+                0x2000240c                ptr_get
+ COMMON         0x20002410        0x8 src/ASF/common/utils/stdio/write.o
+                0x20002410                ptr_put
+                0x20002414                stdio_base
+ COMMON         0x20002418       0x18 src/ASF/sam/drivers/udphs/udphs_device.o
+                0x20002418                udd_g_ctrlreq
+ COMMON         0x20002430       0x21 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-lock.o)
+                0x20002430                __lock___atexit_recursive_mutex
+                0x20002434                __lock___arc4random_mutex
+                0x20002438                __lock___env_recursive_mutex
+                0x2000243c                __lock___sinit_recursive_mutex
+                0x20002440                __lock___malloc_recursive_mutex
+                0x20002444                __lock___at_quick_exit_mutex
+                0x20002448                __lock___dd_hash_mutex
+                0x2000244c                __lock___tz_mutex
+                0x20002450                __lock___sfp_recursive_mutex
  *fill*         0x20002451        0x3 
- COMMON         0x20002454        0x6 src/ASF/common/services/sleepmgr/sam/sleepmgr.o
-                0x20002454                sleepmgr_locks
- *fill*         0x2000245a        0x2 
- COMMON         0x2000245c        0x4 src/ASF/common/utils/stdio/read.o
-                0x2000245c                ptr_get
- COMMON         0x20002460        0x8 src/ASF/common/utils/stdio/write.o
-                0x20002460                ptr_put
-                0x20002464                stdio_base
- COMMON         0x20002468       0x18 src/ASF/sam/drivers/udphs/udphs_device.o
-                0x20002468                udd_g_ctrlreq
- COMMON         0x20002480       0x21 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-lock.o)
-                0x20002480                __lock___atexit_recursive_mutex
-                0x20002484                __lock___arc4random_mutex
-                0x20002488                __lock___env_recursive_mutex
-                0x2000248c                __lock___sinit_recursive_mutex
-                0x20002490                __lock___malloc_recursive_mutex
-                0x20002494                __lock___at_quick_exit_mutex
-                0x20002498                __lock___dd_hash_mutex
-                0x2000249c                __lock___tz_mutex
-                0x200024a0                __lock___sfp_recursive_mutex
- *fill*         0x200024a1        0x3 
- COMMON         0x200024a4        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-reent.o)
-                0x200024a4                errno
-                0x200024a8                . = ALIGN (0x4)
-                0x200024a8                _ebss = .
-                0x200024a8                _ezero = .
+ COMMON         0x20002454        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/arm/arm-gnu-toolchain/bin/../lib/gcc/arm-none-eabi/6.3.1/../../../../arm-none-eabi/lib/thumb/v7-m\libc.a(lib_a-reent.o)
+                0x20002454                errno
+                0x20002458                . = ALIGN (0x4)
+                0x20002458                _ebss = .
+                0x20002458                _ezero = .
 
 .stack          0x20080000     0x2000
                 0x20080000                . = ALIGN (0x8)

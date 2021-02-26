@@ -7,33 +7,33 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
   1 .ARM.exidx    00000008  0008dcf4  0008dcf4  0001dcf4  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  2 .relocate     00001090  20000000  0008dcfc  00020000  2**3
+  2 .relocate     00001040  20000000  0008dcfc  00020000  2**3
                   CONTENTS, ALLOC, LOAD, CODE
-  3 .bss          00001418  20001090  0008ed8c  00021090  2**2
+  3 .bss          00001418  20001040  0008ed3c  00021040  2**2
                   ALLOC
   4 .stack        00002000  20080000  20080000  00030000  2**0
                   ALLOC
-  5 .ARM.attributes 00000029  00000000  00000000  00021090  2**0
+  5 .ARM.attributes 00000029  00000000  00000000  00021040  2**0
                   CONTENTS, READONLY
-  6 .comment      00000059  00000000  00000000  000210b9  2**0
+  6 .comment      00000059  00000000  00000000  00021069  2**0
                   CONTENTS, READONLY
-  7 .debug_info   00041943  00000000  00000000  00021112  2**0
+  7 .debug_info   00041943  00000000  00000000  000210c2  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_abbrev 00008aca  00000000  00000000  00062a55  2**0
+  8 .debug_abbrev 00008aca  00000000  00000000  00062a05  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_loc    0000f300  00000000  00000000  0006b51f  2**0
+  9 .debug_loc    0000f300  00000000  00000000  0006b4cf  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_aranges 000016d0  00000000  00000000  0007a81f  2**0
+ 10 .debug_aranges 000016d0  00000000  00000000  0007a7cf  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 000017f0  00000000  00000000  0007beef  2**0
+ 11 .debug_ranges 000017f0  00000000  00000000  0007be9f  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_macro  000222d9  00000000  00000000  0007d6df  2**0
+ 12 .debug_macro  000222d9  00000000  00000000  0007d68f  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_line   0002b162  00000000  00000000  0009f9b8  2**0
+ 13 .debug_line   0002b162  00000000  00000000  0009f968  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_str    0006137a  00000000  00000000  000cab1a  2**0
+ 14 .debug_str    0006137a  00000000  00000000  000caaca  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_frame  00004b1c  00000000  00000000  0012be94  2**2
+ 15 .debug_frame  00004b1c  00000000  00000000  0012be44  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -64,7 +64,7 @@ Disassembly of section .text:
    800ce:	2301      	movs	r3, #1
    800d0:	7023      	strb	r3, [r4, #0]
    800d2:	bd10      	pop	{r4, pc}
-   800d4:	20001090 	.word	0x20001090
+   800d4:	20001040 	.word	0x20001040
    800d8:	00000000 	.word	0x00000000
    800dc:	0008dcfc 	.word	0x0008dcfc
 
@@ -95,7 +95,7 @@ Disassembly of section .text:
    80112:	bf00      	nop
    80114:	00000000 	.word	0x00000000
    80118:	0008dcfc 	.word	0x0008dcfc
-   8011c:	20001094 	.word	0x20001094
+   8011c:	20001044 	.word	0x20001044
    80120:	0008dcfc 	.word	0x0008dcfc
    80124:	00000000 	.word	0x00000000
 
@@ -112,7 +112,7 @@ void udi_cdc_comm_disable(void)
    8012e:	b2db      	uxtb	r3, r3
    80130:	7013      	strb	r3, [r2, #0]
    80132:	4770      	bx	lr
-   80134:	200010b7 	.word	0x200010b7
+   80134:	20001067 	.word	0x20001067
 
 00080138 <udi_cdc_data_setup>:
 }
@@ -214,8 +214,8 @@ uint8_t udi_cdc_getsetting(void)
 	return false;  // request Not supported
    801b4:	2000      	movs	r0, #0
    801b6:	4770      	bx	lr
-   801b8:	20002468 	.word	0x20002468
-   801bc:	200010b0 	.word	0x200010b0
+   801b8:	20002418 	.word	0x20002418
+   801bc:	20001060 	.word	0x20001060
    801c0:	000801c5 	.word	0x000801c5
 
 000801c4 <udi_cdc_line_coding_received>:
@@ -280,10 +280,10 @@ static void udi_cdc_line_coding_received(void)
 }
    8020c:	4610      	mov	r0, r2
    8020e:	bd08      	pop	{r3, pc}
-   80210:	200010b7 	.word	0x200010b7
-   80214:	2000114c 	.word	0x2000114c
-   80218:	200011e4 	.word	0x200011e4
-   8021c:	200010b0 	.word	0x200010b0
+   80210:	20001067 	.word	0x20001067
+   80214:	200010fc 	.word	0x200010fc
+   80218:	20001194 	.word	0x20001194
+   8021c:	20001060 	.word	0x20001060
    80220:	00083305 	.word	0x00083305
 
 00080224 <udi_cdc_tx_send>:
@@ -497,18 +497,18 @@ static inline void cpu_irq_restore(irqflags_t flags)
 }
    80328:	b002      	add	sp, #8
    8032a:	bd70      	pop	{r4, r5, r6, pc}
-   8032c:	200011e0 	.word	0x200011e0
+   8032c:	20001190 	.word	0x20001190
    80330:	000862e1 	.word	0x000862e1
-   80334:	200011dc 	.word	0x200011dc
+   80334:	2000118c 	.word	0x2000118c
    80338:	0008632d 	.word	0x0008632d
-   8033c:	200006b4 	.word	0x200006b4
-   80340:	200011d8 	.word	0x200011d8
-   80344:	200011d4 	.word	0x200011d4
-   80348:	200010ac 	.word	0x200010ac
-   8034c:	20001150 	.word	0x20001150
+   8033c:	20000666 	.word	0x20000666
+   80340:	20001188 	.word	0x20001188
+   80344:	20001184 	.word	0x20001184
+   80348:	2000105c 	.word	0x2000105c
+   8034c:	20001100 	.word	0x20001100
    80350:	0008631d 	.word	0x0008631d
    80354:	00080361 	.word	0x00080361
-   80358:	20001154 	.word	0x20001154
+   80358:	20001104 	.word	0x20001104
    8035c:	00086591 	.word	0x00086591
 
 00080360 <udi_cdc_data_sent>:
@@ -534,10 +534,10 @@ static inline void cpu_irq_restore(irqflags_t flags)
    8037e:	4b05      	ldr	r3, [pc, #20]	; (80394 <udi_cdc_data_sent+0x34>)
    80380:	4798      	blx	r3
    80382:	bd08      	pop	{r3, pc}
-   80384:	200011d8 	.word	0x200011d8
-   80388:	200011d4 	.word	0x200011d4
-   8038c:	20001150 	.word	0x20001150
-   80390:	200011e0 	.word	0x200011e0
+   80384:	20001188 	.word	0x20001188
+   80388:	20001184 	.word	0x20001184
+   8038c:	20001100 	.word	0x20001100
+   80390:	20001190 	.word	0x20001190
    80394:	00080225 	.word	0x00080225
 
 00080398 <udi_cdc_data_sof_notify>:
@@ -571,9 +571,9 @@ static inline void cpu_irq_restore(irqflags_t flags)
    803be:	701a      	strb	r2, [r3, #0]
    803c0:	bd08      	pop	{r3, pc}
    803c2:	bf00      	nop
-   803c4:	200010b8 	.word	0x200010b8
+   803c4:	20001068 	.word	0x20001068
    803c8:	00083315 	.word	0x00083315
-   803cc:	200010ae 	.word	0x200010ae
+   803cc:	2000105e 	.word	0x2000105e
 
 000803d0 <udi_cdc_multi_get_nb_received_data>:
   __ASM volatile ("MRS %0, primask" : "=r" (result) );
@@ -616,10 +616,10 @@ static inline void cpu_irq_restore(irqflags_t flags)
 }
    80404:	4770      	bx	lr
    80406:	bf00      	nop
-   80408:	200006b4 	.word	0x200006b4
-   8040c:	20001144 	.word	0x20001144
-   80410:	20001140 	.word	0x20001140
-   80414:	2000113c 	.word	0x2000113c
+   80408:	20000666 	.word	0x20000666
+   8040c:	200010f4 	.word	0x200010f4
+   80410:	200010f0 	.word	0x200010f0
+   80414:	200010ec 	.word	0x200010ec
 
 00080418 <udi_cdc_multi_is_rx_ready>:
 {
@@ -730,14 +730,14 @@ bool udi_cdc_multi_is_rx_ready(uint8_t port)
    804ba:	2000      	movs	r0, #0
    804bc:	e7d7      	b.n	8046e <udi_cdc_rx_start+0x42>
    804be:	bf00      	nop
-   804c0:	200006b4 	.word	0x200006b4
-   804c4:	20001140 	.word	0x20001140
-   804c8:	20001148 	.word	0x20001148
-   804cc:	20001144 	.word	0x20001144
-   804d0:	2000113c 	.word	0x2000113c
+   804c0:	20000666 	.word	0x20000666
+   804c4:	200010f0 	.word	0x200010f0
+   804c8:	200010f8 	.word	0x200010f8
+   804cc:	200010f4 	.word	0x200010f4
+   804d0:	200010ec 	.word	0x200010ec
    804d4:	00080419 	.word	0x00080419
    804d8:	0008057d 	.word	0x0008057d
-   804dc:	200010bc 	.word	0x200010bc
+   804dc:	2000106c 	.word	0x2000106c
    804e0:	00086591 	.word	0x00086591
    804e4:	00083321 	.word	0x00083321
 
@@ -809,19 +809,19 @@ bool udi_cdc_multi_is_rx_ready(uint8_t port)
    80542:	701a      	strb	r2, [r3, #0]
    80544:	e7f9      	b.n	8053a <udi_cdc_data_enable+0x52>
    80546:	bf00      	nop
-   80548:	200010b8 	.word	0x200010b8
-   8054c:	200011e0 	.word	0x200011e0
-   80550:	20001150 	.word	0x20001150
-   80554:	200011d8 	.word	0x200011d8
-   80558:	200011d4 	.word	0x200011d4
-   8055c:	200011dc 	.word	0x200011dc
+   80548:	20001068 	.word	0x20001068
+   8054c:	20001190 	.word	0x20001190
+   80550:	20001100 	.word	0x20001100
+   80554:	20001188 	.word	0x20001188
+   80558:	20001184 	.word	0x20001184
+   8055c:	2000118c 	.word	0x2000118c
    80560:	00080225 	.word	0x00080225
-   80564:	20001148 	.word	0x20001148
-   80568:	20001140 	.word	0x20001140
-   8056c:	2000113c 	.word	0x2000113c
-   80570:	20001144 	.word	0x20001144
+   80564:	200010f8 	.word	0x200010f8
+   80568:	200010f0 	.word	0x200010f0
+   8056c:	200010ec 	.word	0x200010ec
+   80570:	200010f4 	.word	0x200010f4
    80574:	0008042d 	.word	0x0008042d
-   80578:	200010ae 	.word	0x200010ae
+   80578:	2000105e 	.word	0x2000105e
 
 0008057c <udi_cdc_data_received>:
 	if (UDD_EP_TRANSFER_OK != status) {
@@ -863,12 +863,12 @@ bool udi_cdc_multi_is_rx_ready(uint8_t port)
 		return;
    805b8:	e7f3      	b.n	805a2 <udi_cdc_data_received+0x26>
    805ba:	4770      	bx	lr
-   805bc:	20001140 	.word	0x20001140
-   805c0:	2000113c 	.word	0x2000113c
-   805c4:	20001148 	.word	0x20001148
+   805bc:	200010f0 	.word	0x200010f0
+   805c0:	200010ec 	.word	0x200010ec
+   805c4:	200010f8 	.word	0x200010f8
    805c8:	0008042d 	.word	0x0008042d
    805cc:	0008057d 	.word	0x0008057d
-   805d0:	200010bc 	.word	0x200010bc
+   805d0:	2000106c 	.word	0x2000106c
    805d4:	00086591 	.word	0x00086591
 
 000805d8 <udi_cdc_read_no_polling>:
@@ -963,12 +963,12 @@ iram_size_t udi_cdc_read_no_polling(void* buf, iram_size_t size)
 }
    80660:	4620      	mov	r0, r4
    80662:	bd70      	pop	{r4, r5, r6, pc}
-   80664:	200010ae 	.word	0x200010ae
-   80668:	200006b4 	.word	0x200006b4
-   8066c:	20001144 	.word	0x20001144
-   80670:	20001140 	.word	0x20001140
-   80674:	2000113c 	.word	0x2000113c
-   80678:	200010bc 	.word	0x200010bc
+   80664:	2000105e 	.word	0x2000105e
+   80668:	20000666 	.word	0x20000666
+   8066c:	200010f4 	.word	0x200010f4
+   80670:	200010f0 	.word	0x200010f0
+   80674:	200010ec 	.word	0x200010ec
+   80678:	2000106c 	.word	0x2000106c
    8067c:	0008777d 	.word	0x0008777d
    80680:	0008042d 	.word	0x0008042d
 
@@ -1039,11 +1039,11 @@ iram_size_t udi_cdc_read_no_polling(void* buf, iram_size_t size)
 			buf_sel_nb = 0;
    806d8:	2000      	movs	r0, #0
    806da:	e7e3      	b.n	806a4 <udi_cdc_multi_get_free_tx_buffer+0x20>
-   806dc:	200006b4 	.word	0x200006b4
-   806e0:	200011d8 	.word	0x200011d8
-   806e4:	200011d4 	.word	0x200011d4
-   806e8:	200011e0 	.word	0x200011e0
-   806ec:	20001150 	.word	0x20001150
+   806dc:	20000666 	.word	0x20000666
+   806e0:	20001188 	.word	0x20001188
+   806e4:	20001184 	.word	0x20001184
+   806e8:	20001190 	.word	0x20001190
+   806ec:	20001100 	.word	0x20001100
 
 000806f0 <udi_cdc_multi_is_tx_ready>:
 {
@@ -1153,13 +1153,13 @@ udi_cdc_putc_process_one_byte:
 }
    80772:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
    80776:	bf00      	nop
-   80778:	200010b0 	.word	0x200010b0
+   80778:	20001060 	.word	0x20001060
    8077c:	000806f1 	.word	0x000806f1
-   80780:	200006b4 	.word	0x200006b4
-   80784:	200011d4 	.word	0x200011d4
-   80788:	20001154 	.word	0x20001154
-   8078c:	200010ae 	.word	0x200010ae
-   80790:	200011d8 	.word	0x200011d8
+   80780:	20000666 	.word	0x20000666
+   80784:	20001184 	.word	0x20001184
+   80788:	20001104 	.word	0x20001104
+   8078c:	2000105e 	.word	0x2000105e
+   80790:	20001188 	.word	0x20001188
 
 00080794 <udi_cdc_putc>:
 
@@ -2955,7 +2955,7 @@ static uint16_t iso7816_update_crc(uint8_t data, uint16_t crc)
    810d6:	4b02      	ldr	r3, [pc, #8]	; (810e0 <iso7816_icc_power_off+0x10>)
    810d8:	4798      	blx	r3
    810da:	bd08      	pop	{r3, pc}
-   810dc:	20001b3c 	.word	0x20001b3c
+   810dc:	20001aec 	.word	0x20001aec
    810e0:	00084ed9 	.word	0x00084ed9
 
 000810e4 <iso7816_get_char>:
@@ -3066,7 +3066,7 @@ uint32_t iso7816_get_char(Usart* p_usart, uint8_t *p_char_received)
    8116c:	431bde83 	.word	0x431bde83
    81170:	00086d73 	.word	0x00086d73
    81174:	00086d2d 	.word	0x00086d2d
-   81178:	20001b38 	.word	0x20001b38
+   81178:	20001ae8 	.word	0x20001ae8
 
 0008117c <iso7816_send_char>:
  * \param uc_char Char to be sent.
@@ -3779,7 +3779,7 @@ uint16_t iso7816_xfr_block_apdu_t1(Usart* p_usart, const uint8_t *p_apdu,
    8159e:	464d      	mov	r5, r9
    815a0:	e7e4      	b.n	8156c <iso7816_xfr_block_apdu_t1+0x1a4>
    815a2:	bf00      	nop
-   815a4:	200011ef 	.word	0x200011ef
+   815a4:	2000119f 	.word	0x2000119f
    815a8:	000810a1 	.word	0x000810a1
    815ac:	0008117d 	.word	0x0008117d
    815b0:	000810e5 	.word	0x000810e5
@@ -4025,9 +4025,9 @@ void iso7816_data_block_atr(Usart* p_usart, uint8_t *p_atr, uint8_t *p_length)
 			iso7816_get_char(p_usart, &p_atr[i++]);
    81714:	4625      	mov	r5, r4
    81716:	e7de      	b.n	816d6 <iso7816_data_block_atr+0x122>
-   81718:	200011ee 	.word	0x200011ee
-   8171c:	200011f0 	.word	0x200011f0
-   81720:	200011ef 	.word	0x200011ef
+   81718:	2000119e 	.word	0x2000119e
+   8171c:	200011a0 	.word	0x200011a0
+   81720:	2000119f 	.word	0x2000119f
    81724:	000810e5 	.word	0x000810e5
 
 00081728 <iso7816_warm_reset>:
@@ -4098,13 +4098,13 @@ void iso7816_warm_reset(Usart* p_usart)
    81784:	bd10      	pop	{r4, pc}
    81786:	bf00      	nop
    81788:	000810d1 	.word	0x000810d1
-   8178c:	20001b38 	.word	0x20001b38
+   8178c:	20001ae8 	.word	0x20001ae8
    81790:	431bde83 	.word	0x431bde83
    81794:	00086d73 	.word	0x00086d73
    81798:	00086d2d 	.word	0x00086d2d
    8179c:	00086d35 	.word	0x00086d35
    817a0:	00086d3d 	.word	0x00086d3d
-   817a4:	20001b3c 	.word	0x20001b3c
+   817a4:	20001aec 	.word	0x20001aec
    817a8:	00084ebf 	.word	0x00084ebf
 
 000817ac <iso7816_decode_atr>:
@@ -4379,8 +4379,8 @@ uint8_t iso7816_decode_atr(Usart* p_usart, uint8_t *p_atr)
    81946:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
    8194a:	bf00      	nop
    8194c:	0008d7c8 	.word	0x0008d7c8
-   81950:	200011f0 	.word	0x200011f0
-   81954:	200011ee 	.word	0x200011ee
+   81950:	200011a0 	.word	0x200011a0
+   81954:	2000119e 	.word	0x2000119e
    81958:	0008117d 	.word	0x0008117d
    8195c:	000810e5 	.word	0x000810e5
    81960:	00081729 	.word	0x00081729
@@ -4446,9 +4446,9 @@ void iso7816_init(Usart* p_usart, const usart_iso7816_opt_t *p_usart_opt,
    819b2:	4b08      	ldr	r3, [pc, #32]	; (819d4 <iso7816_init+0x5c>)
    819b4:	4798      	blx	r3
    819b6:	bd70      	pop	{r4, r5, r6, pc}
-   819b8:	20001b3c 	.word	0x20001b3c
+   819b8:	20001aec 	.word	0x20001aec
    819bc:	00084ed9 	.word	0x00084ed9
-   819c0:	20001b38 	.word	0x20001b38
+   819c0:	20001ae8 	.word	0x20001ae8
    819c4:	00086ac9 	.word	0x00086ac9
    819c8:	00086d21 	.word	0x00086d21
    819cc:	00086d0d 	.word	0x00086d0d
@@ -4508,9 +4508,9 @@ bool ctrl_scarddata_req(void)
 		offset = 0;
    81a04:	4619      	mov	r1, r3
    81a06:	e7f5      	b.n	819f4 <ctrl_scarddata_req+0x1c>
-   81a08:	20002468 	.word	0x20002468
-   81a0c:	20001c40 	.word	0x20001c40
-   81a10:	20001c44 	.word	0x20001c44
+   81a08:	20002418 	.word	0x20002418
+   81a0c:	20001bf0 	.word	0x20001bf0
+   81a10:	20001bf4 	.word	0x20001bf4
 
 00081a14 <ctrl_scardconfig_req>:
 {
@@ -4568,10 +4568,10 @@ bool ctrl_scarddata_req(void)
 			return true;
    81a4c:	4770      	bx	lr
    81a4e:	bf00      	nop
-   81a50:	20002468 	.word	0x20002468
-   81a54:	20001d48 	.word	0x20001d48
-   81a58:	20001d44 	.word	0x20001d44
-   81a5c:	20001d80 	.word	0x20001d80
+   81a50:	20002418 	.word	0x20002418
+   81a54:	20001cf8 	.word	0x20001cf8
+   81a58:	20001cf4 	.word	0x20001cf4
+   81a5c:	20001d30 	.word	0x20001d30
    81a60:	2000026d 	.word	0x2000026d
 
 00081a64 <ctrl_scardaux_req>:
@@ -4602,8 +4602,8 @@ bool ctrl_scardaux_req(void)
    81a78:	8198      	strh	r0, [r3, #12]
 		return true;
    81a7a:	4770      	bx	lr
-   81a7c:	20002468 	.word	0x20002468
-   81a80:	20001d7f 	.word	0x20001d7f
+   81a7c:	20002418 	.word	0x20002418
+   81a80:	20001d2f 	.word	0x20001d2f
 
 00081a84 <ctrl_scarddata_cb>:
 
@@ -4653,9 +4653,9 @@ void ctrl_scarddata_cb(void)
    81ac6:	e7f0      	b.n	81aaa <ctrl_scarddata_cb+0x26>
    81ac8:	bdf0      	pop	{r4, r5, r6, r7, pc}
    81aca:	4770      	bx	lr
-   81acc:	20002468 	.word	0x20002468
-   81ad0:	20001d82 	.word	0x20001d82
-   81ad4:	20001b40 	.word	0x20001b40
+   81acc:	20002418 	.word	0x20002418
+   81ad0:	20001d32 	.word	0x20001d32
+   81ad4:	20001af0 	.word	0x20001af0
 
 00081ad8 <ctrl_scardaux_cb>:
 	}
@@ -4802,8 +4802,8 @@ void ctrl_scardaux_cb(void)
 				break;
    81b8c:	e7ae      	b.n	81aec <ctrl_scardaux_cb+0x14>
    81b8e:	bf00      	nop
-   81b90:	20002468 	.word	0x20002468
-   81b94:	20001d7f 	.word	0x20001d7f
+   81b90:	20002418 	.word	0x20002418
+   81b94:	20001d2f 	.word	0x20001d2f
    81b98:	00080ffd 	.word	0x00080ffd
    81b9c:	00080ed5 	.word	0x00080ed5
    81ba0:	00080c21 	.word	0x00080c21
@@ -4964,11 +4964,11 @@ void scard_reset_init(void)
    81c90:	05b8d800 	.word	0x05b8d800
    81c94:	00081979 	.word	0x00081979
    81c98:	00081729 	.word	0x00081729
-   81c9c:	20001d44 	.word	0x20001d44
-   81ca0:	20001d48 	.word	0x20001d48
+   81c9c:	20001cf4 	.word	0x20001cf4
+   81ca0:	20001cf8 	.word	0x20001cf8
    81ca4:	000815b5 	.word	0x000815b5
    81ca8:	000817ad 	.word	0x000817ad
-   81cac:	20001d80 	.word	0x20001d80
+   81cac:	20001d30 	.word	0x20001d30
    81cb0:	0008d834 	.word	0x0008d834
    81cb4:	00087755 	.word	0x00087755
    81cb8:	0008d928 	.word	0x0008d928
@@ -5031,13 +5031,13 @@ void scard_reset_init(void)
    81d1e:	bd10      	pop	{r4, pc}
    81d20:	4770      	bx	lr
    81d22:	bf00      	nop
-   81d24:	20002468 	.word	0x20002468
+   81d24:	20002418 	.word	0x20002418
    81d28:	00081bb5 	.word	0x00081bb5
-   81d2c:	20001c40 	.word	0x20001c40
-   81d30:	20001d80 	.word	0x20001d80
-   81d34:	20001d82 	.word	0x20001d82
-   81d38:	20001c44 	.word	0x20001c44
-   81d3c:	20001b40 	.word	0x20001b40
+   81d2c:	20001bf0 	.word	0x20001bf0
+   81d30:	20001d30 	.word	0x20001d30
+   81d34:	20001d32 	.word	0x20001d32
+   81d38:	20001bf4 	.word	0x20001bf4
+   81d3c:	20001af0 	.word	0x20001af0
    81d40:	40098000 	.word	0x40098000
    81d44:	000811ed 	.word	0x000811ed
    81d48:	000813c9 	.word	0x000813c9
@@ -5078,7 +5078,7 @@ int FPGA_setlock(fpga_lockstatus_t lockstatus)
    81d68:	2400      	movs	r4, #0
    81d6a:	e7f9      	b.n	81d60 <FPGA_setlock+0x14>
    81d6c:	00084be1 	.word	0x00084be1
-   81d70:	200011f1 	.word	0x200011f1
+   81d70:	200011a1 	.word	0x200011a1
    81d74:	00084c1d 	.word	0x00084c1d
 
 00081d78 <FPGA_releaselock>:
@@ -5090,7 +5090,7 @@ void FPGA_releaselock(void)
    81d7a:	4b01      	ldr	r3, [pc, #4]	; (81d80 <FPGA_releaselock+0x8>)
    81d7c:	701a      	strb	r2, [r3, #0]
    81d7e:	4770      	bx	lr
-   81d80:	200011f1 	.word	0x200011f1
+   81d80:	200011a1 	.word	0x200011a1
 
 00081d84 <FPGA_lockstatus>:
 }
@@ -5103,7 +5103,7 @@ fpga_lockstatus_t FPGA_lockstatus(void)
 }
    81d88:	4770      	bx	lr
    81d8a:	bf00      	nop
-   81d8c:	200011f1 	.word	0x200011f1
+   81d8c:	200011a1 	.word	0x200011a1
 
 00081d90 <FPGA_setaddr>:
 	FPGA_releaselock();
@@ -5245,7 +5245,7 @@ uint32_t efc_perform_command(Efc *p_efc, uint32_t ul_command,
   __ASM volatile ("cpsie i");
    81e48:	b662      	cpsie	i
    81e4a:	bd38      	pop	{r3, r4, r5, pc}
-   81e4c:	200006b4 	.word	0x200006b4
+   81e4c:	20000666 	.word	0x20000666
    81e50:	2000006d 	.word	0x2000006d
 
 00081e54 <tc_init>:
@@ -5487,7 +5487,7 @@ void add_to_circ_buf(tcirc_buf *cbuf, uint8_t ch, bool block)
    81f3a:	bc10      	pop	{r4}
    81f3c:	4770      	bx	lr
    81f3e:	bf00      	nop
-   81f40:	200006b4 	.word	0x200006b4
+   81f40:	20000666 	.word	0x20000666
 
 00081f44 <get_from_circ_buf>:
 
@@ -5552,7 +5552,7 @@ uint8_t get_from_circ_buf(tcirc_buf *cbuf)
    81f82:	20ff      	movs	r0, #255	; 0xff
    81f84:	4770      	bx	lr
    81f86:	bf00      	nop
-   81f88:	200006b4 	.word	0x200006b4
+   81f88:	20000666 	.word	0x20000666
 
 00081f8c <circ_buf_has_char>:
     @retval false if buffer is empty.
@@ -5603,7 +5603,7 @@ unsigned int circ_buf_count(tcirc_buf *cbuf)
     return (unsigned int)count;
 }
    81fba:	4770      	bx	lr
-   81fbc:	200006b4 	.word	0x200006b4
+   81fbc:	20000666 	.word	0x20000666
 
 00081fc0 <ISPProtocol_ProgramMemory>:
  *  words or pages of data to the attached device.
@@ -5924,14 +5924,14 @@ void ISPProtocol_ProgramMemory(uint8_t V2Command, uint8_t * buffer)
    82206:	3301      	adds	r3, #1
    82208:	6013      	str	r3, [r2, #0]
    8220a:	e7a6      	b.n	8215a <ISPProtocol_ProgramMemory+0x19a>
-   8220c:	20002468 	.word	0x20002468
+   8220c:	20002418 	.word	0x20002418
    82210:	0008d85c 	.word	0x0008d85c
    82214:	00087755 	.word	0x00087755
-   82218:	20001d88 	.word	0x20001d88
-   8221c:	20001d86 	.word	0x20001d86
-   82220:	20001da8 	.word	0x20001da8
+   82218:	20001d38 	.word	0x20001d38
+   8221c:	20001d36 	.word	0x20001d36
+   82220:	20001d58 	.word	0x20001d58
    82224:	000828a9 	.word	0x000828a9
-   82228:	20001d84 	.word	0x20001d84
+   82228:	20001d34 	.word	0x20001d34
    8222c:	40008000 	.word	0x40008000
    82230:	00085617 	.word	0x00085617
    82234:	000828e9 	.word	0x000828e9
@@ -6114,15 +6114,15 @@ static inline uint32_t spi_is_tx_empty(Spi *p_spi)
    8234a:	4b05      	ldr	r3, [pc, #20]	; (82360 <ISPProtocol_ReadMemory+0x128>)
    8234c:	801a      	strh	r2, [r3, #0]
    8234e:	e77e      	b.n	8224e <ISPProtocol_ReadMemory+0x16>
-   82350:	20002468 	.word	0x20002468
+   82350:	20002418 	.word	0x20002418
    82354:	0008d898 	.word	0x0008d898
    82358:	00087755 	.word	0x00087755
-   8235c:	20001d88 	.word	0x20001d88
-   82360:	20001d86 	.word	0x20001d86
+   8235c:	20001d38 	.word	0x20001d38
+   82360:	20001d36 	.word	0x20001d36
    82364:	40008000 	.word	0x40008000
    82368:	000828a9 	.word	0x000828a9
-   8236c:	20001d84 	.word	0x20001d84
-   82370:	20001da8 	.word	0x20001da8
+   8236c:	20001d34 	.word	0x20001d34
+   82370:	20001d58 	.word	0x20001d58
    82374:	00085617 	.word	0x00085617
    82378:	000855e9 	.word	0x000855e9
 
@@ -6221,11 +6221,11 @@ void ISPProtocol_ReadFuseLockSigOSCCAL(uint8_t V2Command)
    82402:	4798      	blx	r3
    82404:	e7f8      	b.n	823f8 <ISPProtocol_ReadFuseLockSigOSCCAL+0x7c>
    82406:	bf00      	nop
-   82408:	20002468 	.word	0x20002468
+   82408:	20002418 	.word	0x20002418
    8240c:	40008000 	.word	0x40008000
    82410:	000855e9 	.word	0x000855e9
-   82414:	20001d88 	.word	0x20001d88
-   82418:	20001d86 	.word	0x20001d86
+   82414:	20001d38 	.word	0x20001d38
+   82418:	20001d36 	.word	0x20001d36
    8241c:	0008d85c 	.word	0x0008d85c
    82420:	00087755 	.word	0x00087755
    82424:	00085617 	.word	0x00085617
@@ -6299,11 +6299,11 @@ void ISPProtocol_WriteFuseLock(uint8_t V2Command)
    82476:	4b07      	ldr	r3, [pc, #28]	; (82494 <ISPProtocol_WriteFuseLock+0x6c>)
    82478:	4798      	blx	r3
    8247a:	e7f8      	b.n	8246e <ISPProtocol_WriteFuseLock+0x46>
-   8247c:	20002468 	.word	0x20002468
+   8247c:	20002418 	.word	0x20002418
    82480:	40008000 	.word	0x40008000
    82484:	00085617 	.word	0x00085617
-   82488:	20001d88 	.word	0x20001d88
-   8248c:	20001d86 	.word	0x20001d86
+   82488:	20001d38 	.word	0x20001d38
+   8248c:	20001d36 	.word	0x20001d36
    82490:	0008d85c 	.word	0x0008d85c
    82494:	00087755 	.word	0x00087755
 
@@ -6501,19 +6501,19 @@ void ISPProtocol_DelayMS(uint8_t DelayMS)
    825e6:	e7ef      	b.n	825c8 <ISPProtocol_EnterISPMode+0xf8>
    825e8:	24c0      	movs	r4, #192	; 0xc0
    825ea:	e7ed      	b.n	825c8 <ISPProtocol_EnterISPMode+0xf8>
-   825ec:	20002468 	.word	0x20002468
+   825ec:	20002418 	.word	0x20002418
    825f0:	0008d85c 	.word	0x0008d85c
    825f4:	00087755 	.word	0x00087755
-   825f8:	20001da8 	.word	0x20001da8
+   825f8:	20001d58 	.word	0x20001d58
    825fc:	0008249d 	.word	0x0008249d
    82600:	00082725 	.word	0x00082725
    82604:	000827e5 	.word	0x000827e5
-   82608:	20001dac 	.word	0x20001dac
+   82608:	20001d5c 	.word	0x20001d5c
    8260c:	40008000 	.word	0x40008000
    82610:	000855e9 	.word	0x000855e9
    82614:	0008d878 	.word	0x0008d878
-   82618:	20001d88 	.word	0x20001d88
-   8261c:	20001d86 	.word	0x20001d86
+   82618:	20001d38 	.word	0x20001d38
+   8261c:	20001d36 	.word	0x20001d36
    82620:	00085617 	.word	0x00085617
 
 00082624 <ISPProtocol_LeaveISPMode>:
@@ -6563,14 +6563,14 @@ void ISPProtocol_DelayMS(uint8_t DelayMS)
    82666:	4b08      	ldr	r3, [pc, #32]	; (82688 <ISPProtocol_LeaveISPMode+0x64>)
    82668:	801a      	strh	r2, [r3, #0]
    8266a:	e7e4      	b.n	82636 <ISPProtocol_LeaveISPMode+0x12>
-   8266c:	20002468 	.word	0x20002468
+   8266c:	20002418 	.word	0x20002418
    82670:	0008d85c 	.word	0x0008d85c
    82674:	00087755 	.word	0x00087755
    82678:	0008249d 	.word	0x0008249d
    8267c:	000827e5 	.word	0x000827e5
    82680:	000827cd 	.word	0x000827cd
-   82684:	20001d88 	.word	0x20001d88
-   82688:	20001d86 	.word	0x20001d86
+   82684:	20001d38 	.word	0x20001d38
+   82688:	20001d36 	.word	0x20001d36
 
 0008268c <ISPProtocol_ChipErase>:
 {
@@ -6634,12 +6634,12 @@ void ISPProtocol_DelayMS(uint8_t DelayMS)
    826fa:	4798      	blx	r3
    826fc:	4681      	mov	r9, r0
    826fe:	e7ec      	b.n	826da <ISPProtocol_ChipErase+0x4e>
-   82700:	20002468 	.word	0x20002468
+   82700:	20002418 	.word	0x20002418
    82704:	40008000 	.word	0x40008000
    82708:	00085617 	.word	0x00085617
    8270c:	0008249d 	.word	0x0008249d
-   82710:	20001d88 	.word	0x20001d88
-   82714:	20001d86 	.word	0x20001d86
+   82710:	20001d38 	.word	0x20001d38
+   82714:	20001d36 	.word	0x20001d36
    82718:	0008d84c 	.word	0x0008d84c
    8271c:	00087755 	.word	0x00087755
    82720:	00082829 	.word	0x00082829
@@ -6900,7 +6900,7 @@ uint8_t ISPTarget_WaitWhileTargetBusy(void)
    82898:	40008000 	.word	0x40008000
    8289c:	00085617 	.word	0x00085617
    828a0:	000855e9 	.word	0x000855e9
-   828a4:	20001dac 	.word	0x20001dac
+   828a4:	20001d5c 	.word	0x20001d5c
 
 000828a8 <ISPTarget_LoadExtendedAddress>:
 /** Sends a low-level LOAD EXTENDED ADDRESS command to the target, for addressing of memory beyond the
@@ -6938,7 +6938,7 @@ void ISPTarget_LoadExtendedAddress(void)
    828da:	bf00      	nop
    828dc:	40008000 	.word	0x40008000
    828e0:	00085617 	.word	0x00085617
-   828e4:	20001da8 	.word	0x20001da8
+   828e4:	20001d58 	.word	0x20001d58
 
 000828e8 <ISPTarget_WaitForProgComplete>:
 uint8_t ISPTarget_WaitForProgComplete(const uint8_t ProgrammingMode,
@@ -7067,7 +7067,7 @@ uint8_t ISPTarget_WaitForProgComplete(const uint8_t ProgrammingMode,
    8299c:	40008000 	.word	0x40008000
    829a0:	00085617 	.word	0x00085617
    829a4:	000855e9 	.word	0x000855e9
-   829a8:	20001dac 	.word	0x20001dac
+   829a8:	20001d5c 	.word	0x20001d5c
    829ac:	0008249d 	.word	0x0008249d
    829b0:	00082829 	.word	0x00082829
 
@@ -7424,22 +7424,22 @@ static void V2Protocol_LoadAddress(void)
    82ba6:	2000      	movs	r0, #0
    82ba8:	bd38      	pop	{r3, r4, r5, pc}
    82baa:	bf00      	nop
-   82bac:	20002468 	.word	0x20002468
-   82bb0:	200012f4 	.word	0x200012f4
+   82bac:	20002418 	.word	0x20002418
+   82bb0:	200012a4 	.word	0x200012a4
    82bb4:	000833c9 	.word	0x000833c9
    82bb8:	0008d8c0 	.word	0x0008d8c0
-   82bbc:	20001d86 	.word	0x20001d86
+   82bbc:	20001d36 	.word	0x20001d36
    82bc0:	00082c39 	.word	0x00082c39
-   82bc4:	20001d88 	.word	0x20001d88
+   82bc4:	20001d38 	.word	0x20001d38
    82bc8:	00082c61 	.word	0x00082c61
    82bcc:	00082c4d 	.word	0x00082c4d
-   82bd0:	20001da8 	.word	0x20001da8
+   82bd0:	20001d58 	.word	0x20001d58
    82bd4:	0008d8d0 	.word	0x0008d8d0
    82bd8:	00087755 	.word	0x00087755
-   82bdc:	20001d84 	.word	0x20001d84
+   82bdc:	20001d34 	.word	0x20001d34
    82be0:	000824d1 	.word	0x000824d1
    82be4:	00082625 	.word	0x00082625
-   82be8:	200011f4 	.word	0x200011f4
+   82be8:	200011a4 	.word	0x200011a4
    82bec:	00081fc1 	.word	0x00081fc1
    82bf0:	00082239 	.word	0x00082239
    82bf4:	0008268d 	.word	0x0008268d
@@ -7580,12 +7580,12 @@ void ctrl_readmem_ctrl(void){
    82c9a:	4b06      	ldr	r3, [pc, #24]	; (82cb4 <ctrl_readmem_ctrl+0x40>)
    82c9c:	601e      	str	r6, [r3, #0]
    82c9e:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
-   82ca0:	20001318 	.word	0x20001318
+   82ca0:	200012c8 	.word	0x200012c8
    82ca4:	00081d79 	.word	0x00081d79
    82ca8:	00081d4d 	.word	0x00081d4d
    82cac:	00081d91 	.word	0x00081d91
-   82cb0:	20001358 	.word	0x20001358
-   82cb4:	2000135c 	.word	0x2000135c
+   82cb0:	20001308 	.word	0x20001308
+   82cb4:	2000130c 	.word	0x2000130c
 
 00082cb8 <ctrl_writemem_ctrl>:
 	
@@ -7644,11 +7644,11 @@ void ctrl_writemem_ctrl(void){
    82cee:	4798      	blx	r3
    82cf0:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
    82cf2:	bf00      	nop
-   82cf4:	20001318 	.word	0x20001318
+   82cf4:	200012c8 	.word	0x200012c8
    82cf8:	00081d79 	.word	0x00081d79
    82cfc:	00081d4d 	.word	0x00081d4d
    82d00:	00081d91 	.word	0x00081d91
-   82d04:	2000131f 	.word	0x2000131f
+   82d04:	200012cf 	.word	0x200012cf
    82d08:	20000270 	.word	0x20000270
 
 00082d0c <ctrl_writemem_bulk>:
@@ -7680,7 +7680,7 @@ void ctrl_writemem_bulk(void){
    82d26:	4798      	blx	r3
    82d28:	bd70      	pop	{r4, r5, r6, pc}
    82d2a:	bf00      	nop
-   82d2c:	20001318 	.word	0x20001318
+   82d2c:	200012c8 	.word	0x200012c8
    82d30:	00081d79 	.word	0x00081d79
    82d34:	00081d4d 	.word	0x00081d4d
    82d38:	00081d91 	.word	0x00081d91
@@ -7714,7 +7714,7 @@ void ctrl_readmem_bulk(void){
    82d62:	4b06      	ldr	r3, [pc, #24]	; (82d7c <ctrl_readmem_bulk+0x40>)
    82d64:	4798      	blx	r3
    82d66:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
-   82d68:	20001318 	.word	0x20001318
+   82d68:	200012c8 	.word	0x200012c8
    82d6c:	00081d79 	.word	0x00081d79
    82d70:	00081d4d 	.word	0x00081d4d
    82d74:	00081d91 	.word	0x00081d91
@@ -7838,7 +7838,7 @@ __STATIC_INLINE void NVIC_DisableIRQ(IRQn_Type IRQn)
    82e14:	47a0      	blx	r4
 }
    82e16:	e7c6      	b.n	82da6 <ctrl_usart2_enabledump+0xe>
-   82e18:	20002468 	.word	0x20002468
+   82e18:	20002418 	.word	0x20002418
    82e1c:	40098000 	.word	0x40098000
    82e20:	00086d17 	.word	0x00086d17
    82e24:	00086d07 	.word	0x00086d07
@@ -7886,7 +7886,7 @@ static void ctrl_usart_cb_data(void)
    82e66:	dcf6      	bgt.n	82e56 <ctrl_usart_cb_data+0x16>
    82e68:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
    82e6a:	bf00      	nop
-   82e6c:	20002468 	.word	0x20002468
+   82e6c:	20002418 	.word	0x20002418
    82e70:	40090000 	.word	0x40090000
    82e74:	0008378d 	.word	0x0008378d
 
@@ -7954,10 +7954,10 @@ void ctrl_progfpga_bulk(void){
 }
    82eb8:	e7f1      	b.n	82e9e <ctrl_progfpga_bulk+0x12>
    82eba:	bf00      	nop
-   82ebc:	20002468 	.word	0x20002468
+   82ebc:	20002418 	.word	0x20002418
    82ec0:	00086ff9 	.word	0x00086ff9
    82ec4:	0008708d 	.word	0x0008708d
-   82ec8:	20001315 	.word	0x20001315
+   82ec8:	200012c5 	.word	0x200012c5
 
 00082ecc <main_vendor_bulk_in_received>:
 	return false;
@@ -8079,12 +8079,12 @@ void main_vendor_bulk_out_received(udd_ep_status_t status,
    82f5e:	d1fa      	bne.n	82f56 <main_vendor_bulk_out_received+0x5a>
    82f60:	e7df      	b.n	82f22 <main_vendor_bulk_out_received+0x26>
    82f62:	bf00      	nop
-   82f64:	20001315 	.word	0x20001315
-   82f68:	20001363 	.word	0x20001363
+   82f64:	200012c5 	.word	0x200012c5
+   82f68:	20001313 	.word	0x20001313
    82f6c:	20000270 	.word	0x20000270
    82f70:	00081d85 	.word	0x00081d85
    82f74:	00082efd 	.word	0x00082efd
-   82f78:	20001364 	.word	0x20001364
+   82f78:	20001314 	.word	0x20001314
    82f7c:	000844d9 	.word	0x000844d9
    82f80:	00081d79 	.word	0x00081d79
    82f84:	0008709d 	.word	0x0008709d
@@ -8169,7 +8169,7 @@ static inline void udc_detach(void)
    82fe2:	6013      	str	r3, [r2, #0]
    82fe4:	e7fe      	b.n	82fe4 <ctrl_sam3ucfg_cb+0x5c>
    82fe6:	bd10      	pop	{r4, pc}
-   82fe8:	20002468 	.word	0x20002468
+   82fe8:	20002418 	.word	0x20002418
    82fec:	000851a1 	.word	0x000851a1
    82ff0:	000851c9 	.word	0x000851c9
    82ff4:	000850d9 	.word	0x000850d9
@@ -8192,7 +8192,7 @@ static inline void udc_detach(void)
    8301a:	4798      	blx	r3
    8301c:	bd08      	pop	{r3, pc}
    8301e:	bf00      	nop
-   83020:	20001314 	.word	0x20001314
+   83020:	200012c4 	.word	0x200012c4
    83024:	00084319 	.word	0x00084319
 
 00083028 <main_resume_action>:
@@ -8242,9 +8242,9 @@ static inline void udc_detach(void)
    8306c:	4620      	mov	r0, r4
    8306e:	bd10      	pop	{r4, pc}
    83070:	20000522 	.word	0x20000522
-   83074:	20001314 	.word	0x20001314
+   83074:	200012c4 	.word	0x200012c4
    83078:	00082efd 	.word	0x00082efd
-   8307c:	20001364 	.word	0x20001364
+   8307c:	20001314 	.word	0x20001314
    83080:	000844d9 	.word	0x000844d9
 
 00083084 <main_vendor_disable>:
@@ -8420,9 +8420,9 @@ static inline void udc_detach(void)
    8318c:	2000      	movs	r0, #0
 }
    8318e:	bd08      	pop	{r3, pc}
-   83190:	20002468 	.word	0x20002468
-   83194:	20001318 	.word	0x20001318
-   83198:	20001315 	.word	0x20001315
+   83190:	20002418 	.word	0x20002418
+   83194:	200012c8 	.word	0x200012c8
+   83198:	200012c5 	.word	0x200012c5
    8319c:	00081d4d 	.word	0x00081d4d
    831a0:	00082d3d 	.word	0x00082d3d
    831a4:	00082c75 	.word	0x00082c75
@@ -8579,12 +8579,12 @@ static inline void udc_detach(void)
    832c2:	2000      	movs	r0, #0
 }
    832c4:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
-   832c8:	20002468 	.word	0x20002468
-   832cc:	20001763 	.word	0x20001763
+   832c8:	20002418 	.word	0x20002418
+   832cc:	20001713 	.word	0x20001713
    832d0:	0008380d 	.word	0x0008380d
-   832d4:	20001764 	.word	0x20001764
-   832d8:	20001358 	.word	0x20001358
-   832dc:	2000135c 	.word	0x2000135c
+   832d4:	20001714 	.word	0x20001714
+   832d8:	20001308 	.word	0x20001308
+   832dc:	2000130c 	.word	0x2000130c
    832e0:	00081d79 	.word	0x00081d79
    832e4:	00084ea3 	.word	0x00084ea3
    832e8:	00083d1d 	.word	0x00083d1d
@@ -8610,7 +8610,7 @@ bool cdc_enable(uint8_t port)
    8330a:	4618      	mov	r0, r3
    8330c:	4770      	bx	lr
    8330e:	bf00      	nop
-   83310:	20001360 	.word	0x20001360
+   83310:	20001310 	.word	0x20001310
 
 00083314 <cdc_disable>:
 
@@ -8621,7 +8621,7 @@ void cdc_disable(uint8_t port)
    83316:	4b01      	ldr	r3, [pc, #4]	; (8331c <cdc_disable+0x8>)
    83318:	541a      	strb	r2, [r3, r0]
    8331a:	4770      	bx	lr
-   8331c:	20001360 	.word	0x20001360
+   8331c:	20001310 	.word	0x20001310
 
 00083320 <my_callback_rx_notify>:
 }
@@ -8654,8 +8654,8 @@ void my_callback_rx_notify(uint8_t port)
    83342:	2800      	cmp	r0, #0
    83344:	d1fa      	bne.n	8333c <my_callback_rx_notify+0x1c>
    83346:	e7ef      	b.n	83328 <my_callback_rx_notify+0x8>
-   83348:	20001360 	.word	0x20001360
-   8334c:	2000182c 	.word	0x2000182c
+   83348:	20001310 	.word	0x20001310
+   8334c:	200017dc 	.word	0x200017dc
    83350:	000805d9 	.word	0x000805d9
    83354:	00080795 	.word	0x00080795
 
@@ -8743,7 +8743,7 @@ __STATIC_INLINE void NVIC_SetPriority(IRQn_Type IRQn, uint32_t priority)
    833b8:	00081e55 	.word	0x00081e55
    833bc:	00081e7d 	.word	0x00081e7d
    833c0:	00081e85 	.word	0x00081e85
-   833c4:	200018ac 	.word	0x200018ac
+   833c4:	2000185c 	.word	0x2000185c
 
 000833c8 <start_timeoutcnt>:
 	
@@ -8781,11 +8781,11 @@ void start_timeoutcnt(void)
    833ee:	4798      	blx	r3
    833f0:	e7ee      	b.n	833d0 <start_timeoutcnt+0x8>
    833f2:	bf00      	nop
-   833f4:	200018ac 	.word	0x200018ac
+   833f4:	2000185c 	.word	0x2000185c
    833f8:	40080000 	.word	0x40080000
    833fc:	00081e75 	.word	0x00081e75
    83400:	20000524 	.word	0x20000524
-   83404:	20001dac 	.word	0x20001dac
+   83404:	20001d5c 	.word	0x20001d5c
    83408:	00081e6d 	.word	0x00081e6d
    8340c:	00083365 	.word	0x00083365
 
@@ -8825,7 +8825,7 @@ ISR(TC0_Handler)
    83436:	4b03      	ldr	r3, [pc, #12]	; (83444 <TC0_Handler+0x20>)
    83438:	4798      	blx	r3
    8343a:	bd08      	pop	{r3, pc}
-   8343c:	20001dac 	.word	0x20001dac
+   8343c:	20001d5c 	.word	0x20001d5c
    83440:	40080000 	.word	0x40080000
    83444:	00081e8d 	.word	0x00081e8d
 
@@ -9254,22 +9254,22 @@ bool ctrl_usart(Usart * usart, bool directionIn)
    83696:	2000      	movs	r0, #0
    83698:	e7b6      	b.n	83608 <ctrl_usart+0x1c0>
    8369a:	bf00      	nop
-   8369c:	20002468 	.word	0x20002468
+   8369c:	20002418 	.word	0x20002418
    836a0:	40090000 	.word	0x40090000
    836a4:	40094000 	.word	0x40094000
    836a8:	40098000 	.word	0x40098000
    836ac:	05b8d800 	.word	0x05b8d800
    836b0:	00086a0d 	.word	0x00086a0d
    836b4:	00085249 	.word	0x00085249
-   836b8:	2000237c 	.word	0x2000237c
+   836b8:	2000232c 	.word	0x2000232c
    836bc:	00081ee5 	.word	0x00081ee5
-   836c0:	20001e84 	.word	0x20001e84
+   836c0:	20001e34 	.word	0x20001e34
    836c4:	0008d8ec 	.word	0x0008d8ec
    836c8:	00087755 	.word	0x00087755
-   836cc:	2000202c 	.word	0x2000202c
-   836d0:	200022a8 	.word	0x200022a8
-   836d4:	20001db0 	.word	0x20001db0
-   836d8:	200021d4 	.word	0x200021d4
+   836cc:	20001fdc 	.word	0x20001fdc
+   836d0:	20002258 	.word	0x20002258
+   836d4:	20001d60 	.word	0x20001d60
+   836d8:	20002184 	.word	0x20002184
    836dc:	0008d900 	.word	0x0008d900
    836e0:	00086d11 	.word	0x00086d11
    836e4:	00086d01 	.word	0x00086d01
@@ -9278,7 +9278,7 @@ bool ctrl_usart(Usart * usart, bool directionIn)
    836f0:	e000e100 	.word	0xe000e100
    836f4:	00086d17 	.word	0x00086d17
    836f8:	00086d21 	.word	0x00086d21
-   836fc:	200018b0 	.word	0x200018b0
+   836fc:	20001860 	.word	0x20001860
    83700:	00081f99 	.word	0x00081f99
 					udd_g_ctrlreq.payload = ctrlbuffer;
    83704:	4b18      	ldr	r3, [pc, #96]	; (83768 <ctrl_usart+0x320>)
@@ -9337,15 +9337,15 @@ bool ctrl_usart(Usart * usart, bool directionIn)
    83762:	e751      	b.n	83608 <ctrl_usart+0x1c0>
    83764:	4608      	mov	r0, r1
    83766:	e74f      	b.n	83608 <ctrl_usart+0x1c0>
-   83768:	20002468 	.word	0x20002468
-   8376c:	200018b0 	.word	0x200018b0
+   83768:	20002418 	.word	0x20002418
+   8376c:	20001860 	.word	0x20001860
    83770:	40090000 	.word	0x40090000
    83774:	40094000 	.word	0x40094000
    83778:	40098000 	.word	0x40098000
-   8377c:	2000237c 	.word	0x2000237c
+   8377c:	2000232c 	.word	0x2000232c
    83780:	00081f99 	.word	0x00081f99
-   83784:	2000202c 	.word	0x2000202c
-   83788:	20001db0 	.word	0x20001db0
+   83784:	20001fdc 	.word	0x20001fdc
+   83788:	20001d60 	.word	0x20001d60
 
 0008378c <usart_driver_putchar>:
 
@@ -9416,9 +9416,9 @@ void usart_driver_putchar(Usart * usart, tcirc_buf * txbuf, uint8_t data)
    837e8:	00081ef1 	.word	0x00081ef1
    837ec:	00086d25 	.word	0x00086d25
    837f0:	40090000 	.word	0x40090000
-   837f4:	20001db0 	.word	0x20001db0
-   837f8:	2000237c 	.word	0x2000237c
-   837fc:	2000202c 	.word	0x2000202c
+   837f4:	20001d60 	.word	0x20001d60
+   837f8:	2000232c 	.word	0x2000232c
+   837fc:	20001fdc 	.word	0x20001fdc
    83800:	00081f45 	.word	0x00081f45
    83804:	00086d61 	.word	0x00086d61
    83808:	00086d1d 	.word	0x00086d1d
@@ -9466,9 +9466,9 @@ uint8_t usart_driver_getchar(Usart * usart)
    83834:	4798      	blx	r3
    83836:	bd08      	pop	{r3, pc}
    83838:	40090000 	.word	0x40090000
-   8383c:	200021d4 	.word	0x200021d4
-   83840:	20001e84 	.word	0x20001e84
-   83844:	200022a8 	.word	0x200022a8
+   8383c:	20002184 	.word	0x20002184
+   83840:	20001e34 	.word	0x20001e34
+   83844:	20002258 	.word	0x20002258
    83848:	00081f45 	.word	0x00081f45
 
 0008384c <generic_isr>:
@@ -9553,8 +9553,8 @@ ISR(USART0_Handler)
    838ba:	4798      	blx	r3
    838bc:	bd08      	pop	{r3, pc}
    838be:	bf00      	nop
-   838c0:	2000237c 	.word	0x2000237c
-   838c4:	20001e84 	.word	0x20001e84
+   838c0:	2000232c 	.word	0x2000232c
+   838c4:	20001e34 	.word	0x20001e34
    838c8:	40090000 	.word	0x40090000
    838cc:	0008384d 	.word	0x0008384d
 
@@ -9572,8 +9572,8 @@ ISR(USART1_Handler)
    838da:	4798      	blx	r3
    838dc:	bd08      	pop	{r3, pc}
    838de:	bf00      	nop
-   838e0:	2000202c 	.word	0x2000202c
-   838e4:	200022a8 	.word	0x200022a8
+   838e0:	20001fdc 	.word	0x20001fdc
+   838e4:	20002258 	.word	0x20002258
    838e8:	40094000 	.word	0x40094000
    838ec:	0008384d 	.word	0x0008384d
 
@@ -9592,8 +9592,8 @@ ISR(USART2_Handler)
    838fa:	4798      	blx	r3
    838fc:	bd08      	pop	{r3, pc}
    838fe:	bf00      	nop
-   83900:	20001db0 	.word	0x20001db0
-   83904:	200021d4 	.word	0x200021d4
+   83900:	20001d60 	.word	0x20001d60
+   83904:	20002184 	.word	0x20002184
    83908:	40098000 	.word	0x40098000
    8390c:	0008384d 	.word	0x0008384d
 
@@ -9693,7 +9693,7 @@ bool XMEGANVM_WaitWhileNVMBusBusy(void)
    83966:	bd70      	pop	{r4, r5, r6, pc}
    83968:	000841a5 	.word	0x000841a5
    8396c:	000841d1 	.word	0x000841d1
-   83970:	20001dac 	.word	0x20001dac
+   83970:	20001d5c 	.word	0x20001d5c
 
 00083974 <XMEGANVM_WaitWhileNVMControllerBusy>:
  *  timeout period expires.
@@ -9753,7 +9753,7 @@ bool XMEGANVM_WaitWhileNVMControllerBusy(void)
    839a0:	000841a5 	.word	0x000841a5
    839a4:	00083931 	.word	0x00083931
    839a8:	000841d1 	.word	0x000841d1
-   839ac:	20001dac 	.word	0x20001dac
+   839ac:	20001d5c 	.word	0x20001d5c
 
 000839b0 <XMEGANVM_EnablePDI>:
 /** Enables the physical PDI interface on the target and enables access to the internal NVM controller.
@@ -9875,7 +9875,7 @@ void XMEGANVM_DisablePDI(void)
    83a54:	00083949 	.word	0x00083949
    83a58:	000841a5 	.word	0x000841a5
    83a5c:	000841d1 	.word	0x000841d1
-   83a60:	20001dac 	.word	0x20001dac
+   83a60:	20001d5c 	.word	0x20001d5c
    83a64:	00084149 	.word	0x00084149
 
 00083a68 <XMEGANVM_ReadMemory>:
@@ -9980,7 +9980,7 @@ bool XMEGANVM_ReadMemory(const uint32_t ReadAddress,
    83af0:	000841a5 	.word	0x000841a5
    83af4:	00083931 	.word	0x00083931
    83af8:	00083911 	.word	0x00083911
-   83afc:	20001dac 	.word	0x20001dac
+   83afc:	20001d5c 	.word	0x20001d5c
    83b00:	000841d1 	.word	0x000841d1
 
 00083b04 <XMEGANVM_WriteByteMemory>:
@@ -10817,15 +10817,15 @@ static void XPROGProtocol_SetParam(void)
    83f56:	701a      	strb	r2, [r3, #0]
    83f58:	e716      	b.n	83d88 <XPROGProtocol_Command+0x6c>
    83f5a:	bf00      	nop
-   83f5c:	20002468 	.word	0x20002468
-   83f60:	200018c0 	.word	0x200018c0
+   83f5c:	20002418 	.word	0x20002418
+   83f60:	20001870 	.word	0x20001870
    83f64:	000833c9 	.word	0x000833c9
    83f68:	000839b1 	.word	0x000839b1
-   83f6c:	20002450 	.word	0x20002450
+   83f6c:	20002400 	.word	0x20002400
    83f70:	00083411 	.word	0x00083411
    83f74:	00083a2d 	.word	0x00083a2d
    83f78:	00083c25 	.word	0x00083c25
-   83f7c:	200018c4 	.word	0x200018c4
+   83f7c:	20001874 	.word	0x20001874
    83f80:	00083a69 	.word	0x00083a69
    83f84:	2000052c 	.word	0x2000052c
    83f88:	20000528 	.word	0x20000528
@@ -10961,12 +10961,12 @@ static void XPROGProtocol_SetParam(void)
    84064:	701a      	strb	r2, [r3, #0]
    84066:	e68f      	b.n	83d88 <XPROGProtocol_Command+0x6c>
    84068:	00083359 	.word	0x00083359
-   8406c:	20002450 	.word	0x20002450
-   84070:	20002468 	.word	0x20002468
-   84074:	200018c4 	.word	0x200018c4
+   8406c:	20002400 	.word	0x20002400
+   84070:	20002418 	.word	0x20002418
+   84074:	20001874 	.word	0x20001874
    84078:	0008777d 	.word	0x0008777d
-   8407c:	200018c0 	.word	0x200018c0
-   84080:	20001dac 	.word	0x20001dac
+   8407c:	20001870 	.word	0x20001870
+   84080:	20001d5c 	.word	0x20001d5c
    84084:	00083b4d 	.word	0x00083b4d
    84088:	00083b05 	.word	0x00083b05
 
@@ -11017,7 +11017,7 @@ static void XPROGTarget_SetRxMode(void)
    840c4:	00086d07 	.word	0x00086d07
    840c8:	00086d11 	.word	0x00086d11
    840cc:	00084ef5 	.word	0x00084ef5
-   840d0:	200019c4 	.word	0x200019c4
+   840d0:	20001974 	.word	0x20001974
 
 000840d4 <XPROGTarget_SetTxMode>:
 {
@@ -11072,12 +11072,12 @@ static void XPROGTarget_SetRxMode(void)
    84128:	701a      	strb	r2, [r3, #0]
    8412a:	bd70      	pop	{r4, r5, r6, pc}
    8412c:	00084ea3 	.word	0x00084ea3
-   84130:	20001dac 	.word	0x20001dac
+   84130:	20001d5c 	.word	0x20001d5c
    84134:	40094000 	.word	0x40094000
    84138:	00086d17 	.word	0x00086d17
    8413c:	00086d01 	.word	0x00086d01
    84140:	00084ef5 	.word	0x00084ef5
-   84144:	200019c4 	.word	0x200019c4
+   84144:	20001974 	.word	0x20001974
 
 00084148 <XPROGTarget_DisableTargetPDI>:
 {
@@ -11123,7 +11123,7 @@ static inline void sysclk_disable_peripheral_clock(uint32_t ul_id)
    84182:	4798      	blx	r3
    84184:	e7e4      	b.n	84150 <XPROGTarget_DisableTargetPDI+0x8>
    84186:	bf00      	nop
-   84188:	200019c4 	.word	0x200019c4
+   84188:	20001974 	.word	0x20001974
    8418c:	40094000 	.word	0x40094000
    84190:	00086d17 	.word	0x00086d17
    84194:	00086d07 	.word	0x00086d07
@@ -11150,7 +11150,7 @@ static inline void sysclk_disable_peripheral_clock(uint32_t ul_id)
    841ba:	4798      	blx	r3
    841bc:	e7f7      	b.n	841ae <XPROGTarget_SendByte+0xa>
    841be:	bf00      	nop
-   841c0:	200019c4 	.word	0x200019c4
+   841c0:	20001974 	.word	0x20001974
    841c4:	40094000 	.word	0x40094000
    841c8:	00086d61 	.word	0x00086d61
    841cc:	000840d5 	.word	0x000840d5
@@ -11184,10 +11184,10 @@ static inline void sysclk_disable_peripheral_clock(uint32_t ul_id)
    841fa:	4798      	blx	r3
    841fc:	e7ed      	b.n	841da <XPROGTarget_ReceiveByte+0xa>
    841fe:	bf00      	nop
-   84200:	200019c4 	.word	0x200019c4
+   84200:	20001974 	.word	0x20001974
    84204:	40094000 	.word	0x40094000
    84208:	00086d73 	.word	0x00086d73
-   8420c:	20001dac 	.word	0x20001dac
+   8420c:	20001d5c 	.word	0x20001d5c
    84210:	0008408d 	.word	0x0008408d
 
 00084214 <XPROGTarget_SendIdle>:
@@ -11238,9 +11238,9 @@ static inline void sysclk_disable_peripheral_clock(uint32_t ul_id)
 }
    8425c:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
    8425e:	bf00      	nop
-   84260:	200019c4 	.word	0x200019c4
+   84260:	20001974 	.word	0x20001974
    84264:	00084ea3 	.word	0x00084ea3
-   84268:	20001dac 	.word	0x20001dac
+   84268:	20001d5c 	.word	0x20001d5c
    8426c:	000840d5 	.word	0x000840d5
 
 00084270 <XPROGTarget_EnableTargetPDI>:
@@ -11307,7 +11307,7 @@ static inline void sysclk_disable_peripheral_clock(uint32_t ul_id)
 }
    842d8:	b006      	add	sp, #24
    842da:	bd70      	pop	{r4, r5, r6, pc}
-   842dc:	200019c4 	.word	0x200019c4
+   842dc:	20001974 	.word	0x20001974
    842e0:	00085249 	.word	0x00085249
    842e4:	00084ef5 	.word	0x00084ef5
    842e8:	20000089 	.word	0x20000089
@@ -11577,7 +11577,7 @@ uint8_t udi_vendor_getsetting(void)
    8443a:	7818      	ldrb	r0, [r3, #0]
    8443c:	4770      	bx	lr
    8443e:	bf00      	nop
-   84440:	200019c5 	.word	0x200019c5
+   84440:	20001975 	.word	0x20001975
 
 00084444 <udi_vendor_enable>:
 {
@@ -11599,7 +11599,7 @@ uint8_t udi_vendor_getsetting(void)
    84458:	4798      	blx	r3
    8445a:	bd08      	pop	{r3, pc}
    8445c:	00084691 	.word	0x00084691
-   84460:	200019c5 	.word	0x200019c5
+   84460:	20001975 	.word	0x20001975
    84464:	00083055 	.word	0x00083055
 
 00084468 <udi_vendor_disable>:
@@ -11615,7 +11615,7 @@ uint8_t udi_vendor_getsetting(void)
    84474:	4798      	blx	r3
 }
    84476:	e7fb      	b.n	84470 <udi_vendor_disable+0x8>
-   84478:	200019c5 	.word	0x200019c5
+   84478:	20001975 	.word	0x20001975
    8447c:	00083085 	.word	0x00083085
 
 00084480 <udi_vendor_setup>:
@@ -11649,7 +11649,7 @@ uint8_t udi_vendor_getsetting(void)
    844aa:	4b03      	ldr	r3, [pc, #12]	; (844b8 <udi_vendor_setup+0x38>)
    844ac:	4798      	blx	r3
    844ae:	bd08      	pop	{r3, pc}
-   844b0:	20002468 	.word	0x20002468
+   844b0:	20002418 	.word	0x20002418
    844b4:	000831d9 	.word	0x000831d9
    844b8:	00083091 	.word	0x00083091
 
@@ -11777,7 +11777,7 @@ static usb_conf_desc_t UDC_DESC_STORAGE *udc_get_eof_conf(void)
 }
    84534:	4770      	bx	lr
    84536:	bf00      	nop
-   84538:	200019cc 	.word	0x200019cc
+   84538:	2000197c 	.word	0x2000197c
 
 0008453c <udc_valid_address>:
 /**
@@ -11794,7 +11794,7 @@ static void udc_valid_address(void)
    84546:	4b02      	ldr	r3, [pc, #8]	; (84550 <udc_valid_address+0x14>)
    84548:	4798      	blx	r3
    8454a:	bd08      	pop	{r3, pc}
-   8454c:	20002468 	.word	0x20002468
+   8454c:	20002418 	.word	0x20002418
    84550:	000862e5 	.word	0x000862e5
 
 00084554 <udc_update_iface_desc>:
@@ -11868,9 +11868,9 @@ static void udc_valid_address(void)
    845b6:	2000      	movs	r0, #0
    845b8:	e7f7      	b.n	845aa <udc_update_iface_desc+0x56>
    845ba:	bf00      	nop
-   845bc:	200019cb 	.word	0x200019cb
-   845c0:	200019cc 	.word	0x200019cc
-   845c4:	200019d0 	.word	0x200019d0
+   845bc:	2000197b 	.word	0x2000197b
+   845c0:	2000197c 	.word	0x2000197c
+   845c4:	20001980 	.word	0x20001980
 
 000845c8 <udc_iface_disable>:
 {
@@ -11927,8 +11927,8 @@ static void udc_valid_address(void)
    8461c:	e7dc      	b.n	845d8 <udc_iface_disable+0x10>
    8461e:	bf00      	nop
    84620:	00084555 	.word	0x00084555
-   84624:	200019cc 	.word	0x200019cc
-   84628:	200019d0 	.word	0x200019d0
+   84624:	2000197c 	.word	0x2000197c
+   84628:	20001980 	.word	0x20001980
    8462c:	000844f5 	.word	0x000844f5
    84630:	00086349 	.word	0x00086349
 
@@ -11977,10 +11977,10 @@ static void udc_valid_address(void)
    84676:	4618      	mov	r0, r3
    84678:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
    8467c:	00084555 	.word	0x00084555
-   84680:	200019d0 	.word	0x200019d0
+   84680:	20001980 	.word	0x20001980
    84684:	000844f5 	.word	0x000844f5
    84688:	0008667d 	.word	0x0008667d
-   8468c:	200019cc 	.word	0x200019cc
+   8468c:	2000197c 	.word	0x2000197c
 
 00084690 <udc_get_interface_desc>:
 }
@@ -11988,7 +11988,7 @@ static void udc_valid_address(void)
    84692:	6818      	ldr	r0, [r3, #0]
    84694:	4770      	bx	lr
    84696:	bf00      	nop
-   84698:	200019d0 	.word	0x200019d0
+   84698:	20001980 	.word	0x20001980
 
 0008469c <udc_start>:
 {
@@ -12040,10 +12040,10 @@ static void udc_valid_address(void)
    846da:	8013      	strh	r3, [r2, #0]
    846dc:	bd70      	pop	{r4, r5, r6, pc}
    846de:	bf00      	nop
-   846e0:	200019cb 	.word	0x200019cb
-   846e4:	200019cc 	.word	0x200019cc
+   846e0:	2000197b 	.word	0x2000197b
+   846e4:	2000197c 	.word	0x2000197c
    846e8:	000845c9 	.word	0x000845c9
-   846ec:	200019c6 	.word	0x200019c6
+   846ec:	20001976 	.word	0x20001976
 
 000846f0 <udc_sof_notify>:
 {
@@ -12083,8 +12083,8 @@ static void udc_valid_address(void)
    84722:	4798      	blx	r3
    84724:	e7f0      	b.n	84708 <udc_sof_notify+0x18>
    84726:	bd38      	pop	{r3, r4, r5, pc}
-   84728:	200019cb 	.word	0x200019cb
-   8472c:	200019cc 	.word	0x200019cc
+   84728:	2000197b 	.word	0x2000197b
+   8472c:	2000197c 	.word	0x2000197c
 
 00084730 <udc_process_setup>:
  *
@@ -12160,7 +12160,7 @@ bool udc_process_setup(void)
    84774:	4618      	mov	r0, r3
    84776:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
 		udd_set_setup_payload(winusb_20_desc, WINUSB_PLATFORM_DESCRIPTOR_LENGTH);
-   84778:	21f8      	movs	r1, #248	; 0xf8
+   84778:	21ae      	movs	r1, #174	; 0xae
    8477a:	487c      	ldr	r0, [pc, #496]	; (8496c <udc_process_setup+0x23c>)
    8477c:	4b7c      	ldr	r3, [pc, #496]	; (84970 <udc_process_setup+0x240>)
    8477e:	4798      	blx	r3
@@ -12432,21 +12432,21 @@ static inline uint8_t get_extra_str_length(uint8_t id)
    84962:	8013      	strh	r3, [r2, #0]
    84964:	e7ed      	b.n	84942 <udc_process_setup+0x212>
    84966:	bf00      	nop
-   84968:	20002468 	.word	0x20002468
+   84968:	20002418 	.word	0x20002418
    8496c:	200005bc 	.word	0x200005bc
    84970:	0008633d 	.word	0x0008633d
-   84974:	200019c6 	.word	0x200019c6
+   84974:	20001976 	.word	0x20001976
    84978:	200001d4 	.word	0x200001d4
    8497c:	0008d92c 	.word	0x0008d92c
-   84980:	200006bc 	.word	0x200006bc
+   84980:	2000066c 	.word	0x2000066c
    84984:	2000058c 	.word	0x2000058c
    84988:	20000590 	.word	0x20000590
-   8498c:	200019cb 	.word	0x200019cb
-   84990:	200019cc 	.word	0x200019cc
+   8498c:	2000197b 	.word	0x2000197b
+   84990:	2000197c 	.word	0x2000197c
    84994:	00084555 	.word	0x00084555
-   84998:	200019ca 	.word	0x200019ca
+   84998:	2000197a 	.word	0x2000197a
    8499c:	0008639d 	.word	0x0008639d
-   849a0:	200019c8 	.word	0x200019c8
+   849a0:	20001978 	.word	0x20001978
    849a4:	0008453d 	.word	0x0008453d
 	if (udd_g_ctrlreq.req.wLength) {
    849a8:	4b7c      	ldr	r3, [pc, #496]	; (84b9c <udc_process_setup+0x46c>)
@@ -12743,12 +12743,12 @@ static inline uint8_t get_extra_str_length(uint8_t id)
 	return CDC_DATA_STRING_0;
    84b98:	4a10      	ldr	r2, [pc, #64]	; (84bdc <udc_process_setup+0x4ac>)
    84b9a:	e674      	b.n	84886 <udc_process_setup+0x156>
-   84b9c:	20002468 	.word	0x20002468
+   84b9c:	20002418 	.word	0x20002418
    84ba0:	0008630d 	.word	0x0008630d
    84ba4:	200001d4 	.word	0x200001d4
    84ba8:	000846a9 	.word	0x000846a9
-   84bac:	200019cb 	.word	0x200019cb
-   84bb0:	200019cc 	.word	0x200019cc
+   84bac:	2000197b 	.word	0x2000197b
+   84bb0:	2000197c 	.word	0x2000197c
    84bb4:	00084635 	.word	0x00084635
    84bb8:	000845c9 	.word	0x000845c9
    84bbc:	00086499 	.word	0x00086499
@@ -12805,9 +12805,9 @@ void cpu_irq_enter_critical(void)
    84c0a:	4b02      	ldr	r3, [pc, #8]	; (84c14 <cpu_irq_enter_critical+0x34>)
    84c0c:	701a      	strb	r2, [r3, #0]
    84c0e:	e7f0      	b.n	84bf2 <cpu_irq_enter_critical+0x12>
-   84c10:	200019d4 	.word	0x200019d4
-   84c14:	200019d8 	.word	0x200019d8
-   84c18:	200006b4 	.word	0x200006b4
+   84c10:	20001984 	.word	0x20001984
+   84c14:	20001988 	.word	0x20001988
+   84c18:	20000666 	.word	0x20000666
 
 00084c1c <cpu_irq_leave_critical>:
 void cpu_irq_leave_critical(void)
@@ -12837,9 +12837,9 @@ void cpu_irq_leave_critical(void)
   __ASM volatile ("cpsie i");
    84c38:	b662      	cpsie	i
    84c3a:	4770      	bx	lr
-   84c3c:	200019d4 	.word	0x200019d4
-   84c40:	200019d8 	.word	0x200019d8
-   84c44:	200006b4 	.word	0x200006b4
+   84c3c:	20001984 	.word	0x20001984
+   84c40:	20001988 	.word	0x20001988
+   84c44:	20000666 	.word	0x20000666
 
 00084c48 <_read>:
 int __attribute__((weak))
@@ -12887,8 +12887,8 @@ _read (int file, char * ptr, int len)
    84c76:	4680      	mov	r8, r0
    84c78:	e7f7      	b.n	84c6a <_read+0x22>
    84c7a:	bf00      	nop
-   84c7c:	20002464 	.word	0x20002464
-   84c80:	2000245c 	.word	0x2000245c
+   84c7c:	20002414 	.word	0x20002414
+   84c80:	2000240c 	.word	0x2000240c
 
 00084c84 <_write>:
 int __attribute__((weak))
@@ -12939,8 +12939,8 @@ _write (int file, const char *ptr, int len)
 }
    84cc6:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
    84cca:	bf00      	nop
-   84ccc:	20002460 	.word	0x20002460
-   84cd0:	20002464 	.word	0x20002464
+   84ccc:	20002410 	.word	0x20002410
+   84cd0:	20002414 	.word	0x20002414
 
 00084cd4 <iopins_normal>:
 	
@@ -13635,7 +13635,7 @@ void pio_handler_process(Pio *p_pio, uint32_t ul_id)
    850a0:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
    850a4:	00084e9b 	.word	0x00084e9b
    850a8:	00084e9f 	.word	0x00084e9f
-   850ac:	200019dc 	.word	0x200019dc
+   850ac:	2000198c 	.word	0x2000198c
 
 000850b0 <PIOA_Handler>:
 /**
@@ -14495,8 +14495,8 @@ void pmc_sleep(int sleep_mode)
    85586:	bf00      	nop
    85588:	400e0400 	.word	0x400e0400
    8558c:	e000ed00 	.word	0xe000ed00
-   85590:	200006b4 	.word	0x200006b4
-   85594:	20001a4c 	.word	0x20001a4c
+   85590:	20000666 	.word	0x20000666
+   85594:	200019fc 	.word	0x200019fc
    85598:	400e0800 	.word	0x400e0800
    8559c:	00085209 	.word	0x00085209
    855a0:	00085229 	.word	0x00085229
@@ -14504,7 +14504,7 @@ void pmc_sleep(int sleep_mode)
    855a8:	fec8fffc 	.word	0xfec8fffc
    855ac:	01370002 	.word	0x01370002
    855b0:	07ff0000 	.word	0x07ff0000
-   855b4:	20001a50 	.word	0x20001a50
+   855b4:	20001a00 	.word	0x20001a00
 
 000855b8 <pmc_is_wakeup_clocks_restored>:
 	}
@@ -14519,7 +14519,7 @@ bool pmc_is_wakeup_clocks_restored(void)
    855bc:	f080 0001 	eor.w	r0, r0, #1
    855c0:	4770      	bx	lr
    855c2:	bf00      	nop
-   855c4:	20001a4c 	.word	0x20001a4c
+   855c4:	200019fc 	.word	0x200019fc
 
 000855c8 <spi_enable_clock>:
  * \brief Enable SPI clock.
@@ -14819,9 +14819,9 @@ static void udd_sleep_mode(bool b_idle)
 }
    85714:	4770      	bx	lr
    85716:	bf00      	nop
-   85718:	20001a55 	.word	0x20001a55
-   8571c:	200006b4 	.word	0x200006b4
-   85720:	20002454 	.word	0x20002454
+   85718:	20001a05 	.word	0x20001a05
+   8571c:	20000666 	.word	0x20000666
+   85720:	20002404 	.word	0x20002404
 
 00085724 <udd_ctrl_init>:
   __ASM volatile ("MRS %0, primask" : "=r" (result) );
@@ -14872,10 +14872,10 @@ static void udd_sleep_mode(bool b_idle)
    85762:	7013      	strb	r3, [r2, #0]
    85764:	4770      	bx	lr
    85766:	bf00      	nop
-   85768:	200006b4 	.word	0x200006b4
+   85768:	20000666 	.word	0x20000666
    8576c:	400a4000 	.word	0x400a4000
-   85770:	20002468 	.word	0x20002468
-   85774:	20001a5a 	.word	0x20001a5a
+   85770:	20002418 	.word	0x20002418
+   85774:	20001a0a 	.word	0x20001a0a
 
 00085778 <udd_ctrl_stall_data>:
 
@@ -14892,7 +14892,7 @@ static void udd_ctrl_stall_data(void)
    85780:	4b02      	ldr	r3, [pc, #8]	; (8578c <udd_ctrl_stall_data+0x14>)
    85782:	f8c3 2114 	str.w	r2, [r3, #276]	; 0x114
    85786:	4770      	bx	lr
-   85788:	20001a5a 	.word	0x20001a5a
+   85788:	20001a0a 	.word	0x20001a0a
    8578c:	400a4000 	.word	0x400a4000
 
 00085790 <udd_ctrl_send_zlp_in>:
@@ -14943,8 +14943,8 @@ static void udd_ctrl_send_zlp_in(void)
   __ASM volatile ("cpsie i");
    857d4:	b662      	cpsie	i
    857d6:	4770      	bx	lr
-   857d8:	20001a5a 	.word	0x20001a5a
-   857dc:	200006b4 	.word	0x200006b4
+   857d8:	20001a0a 	.word	0x20001a0a
+   857dc:	20000666 	.word	0x20000666
    857e0:	400a4000 	.word	0x400a4000
 
 000857e4 <udd_ctrl_endofrequest>:
@@ -14963,7 +14963,7 @@ static void udd_ctrl_endofrequest(void)
 		udd_g_ctrlreq.callback();
    857ec:	4798      	blx	r3
    857ee:	bd08      	pop	{r3, pc}
-   857f0:	20002468 	.word	0x20002468
+   857f0:	20002418 	.word	0x20002418
 
 000857f4 <udd_ctrl_in_sent>:
 {
@@ -15156,13 +15156,13 @@ static void udd_ctrl_endofrequest(void)
    85930:	701a      	strb	r2, [r3, #0]
 		return; // Exit of IN DATA phase
    85932:	bd38      	pop	{r3, r4, r5, pc}
-   85934:	200006b4 	.word	0x200006b4
+   85934:	20000666 	.word	0x20000666
    85938:	400a4000 	.word	0x400a4000
-   8593c:	20001a5a 	.word	0x20001a5a
-   85940:	20001a56 	.word	0x20001a56
-   85944:	20002468 	.word	0x20002468
-   85948:	20001a58 	.word	0x20001a58
-   8594c:	20001a54 	.word	0x20001a54
+   8593c:	20001a0a 	.word	0x20001a0a
+   85940:	20001a06 	.word	0x20001a06
+   85944:	20002418 	.word	0x20002418
+   85948:	20001a08 	.word	0x20001a08
+   8594c:	20001a04 	.word	0x20001a04
    85950:	20180000 	.word	0x20180000
    85954:	000857e5 	.word	0x000857e5
    85958:	00085725 	.word	0x00085725
@@ -15435,9 +15435,9 @@ static void udd_ep_trans_done(udd_ep_id_t ep)
    85b00:	6118      	str	r0, [r3, #16]
 			return;
    85b02:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
-   85b04:	20001a5c 	.word	0x20001a5c
+   85b04:	20001a0c 	.word	0x20001a0c
    85b08:	400a4300 	.word	0x400a4300
-   85b0c:	200006b4 	.word	0x200006b4
+   85b0c:	20000666 	.word	0x20000666
    85b10:	400a4000 	.word	0x400a4000
    85b14:	0008595d 	.word	0x0008595d
 
@@ -15814,16 +15814,16 @@ static void udd_ep_trans_done(udd_ep_id_t ep)
    85dbc:	000855b9 	.word	0x000855b9
    85dc0:	400a4000 	.word	0x400a4000
    85dc4:	00083035 	.word	0x00083035
-   85dc8:	200006b4 	.word	0x200006b4
+   85dc8:	20000666 	.word	0x20000666
    85dcc:	000846f1 	.word	0x000846f1
-   85dd0:	20001a5a 	.word	0x20001a5a
-   85dd4:	20002467 	.word	0x20002467
+   85dd0:	20001a0a 	.word	0x20001a0a
+   85dd4:	20002417 	.word	0x20002417
    85dd8:	20180000 	.word	0x20180000
    85ddc:	20180008 	.word	0x20180008
    85de0:	00084731 	.word	0x00084731
-   85de4:	20002468 	.word	0x20002468
-   85de8:	20001a58 	.word	0x20001a58
-   85dec:	20001a56 	.word	0x20001a56
+   85de4:	20002418 	.word	0x20002418
+   85de8:	20001a08 	.word	0x20001a08
+   85dec:	20001a06 	.word	0x20001a06
    85df0:	000857e5 	.word	0x000857e5
    85df4:	00085725 	.word	0x00085725
    85df8:	00085779 	.word	0x00085779
@@ -16181,19 +16181,19 @@ static void udd_ep_trans_done(udd_ep_id_t ep)
 		goto udd_interrupt_end;
    860c2:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
    860c6:	bf00      	nop
-   860c8:	20002468 	.word	0x20002468
-   860cc:	20001a58 	.word	0x20001a58
-   860d0:	20001a56 	.word	0x20001a56
+   860c8:	20002418 	.word	0x20002418
+   860cc:	20001a08 	.word	0x20001a08
+   860d0:	20001a06 	.word	0x20001a06
    860d4:	00085779 	.word	0x00085779
    860d8:	400a4000 	.word	0x400a4000
-   860dc:	20001a5a 	.word	0x20001a5a
+   860dc:	20001a0a 	.word	0x20001a0a
    860e0:	00085791 	.word	0x00085791
    860e4:	400a4300 	.word	0x400a4300
-   860e8:	20001a5c 	.word	0x20001a5c
+   860e8:	20001a0c 	.word	0x20001a0c
    860ec:	00085995 	.word	0x00085995
    860f0:	0008595d 	.word	0x0008595d
    860f4:	000846a9 	.word	0x000846a9
-   860f8:	200006b4 	.word	0x200006b4
+   860f8:	20000666 	.word	0x20000666
    860fc:	00085725 	.word	0x00085725
    86100:	0008527d 	.word	0x0008527d
    86104:	00083011 	.word	0x00083011
@@ -16296,7 +16296,7 @@ static void udd_ep_trans_done(udd_ep_id_t ep)
    861ba:	b662      	cpsie	i
    861bc:	bd10      	pop	{r4, pc}
    861be:	bf00      	nop
-   861c0:	200006b4 	.word	0x200006b4
+   861c0:	20000666 	.word	0x20000666
    861c4:	000856b5 	.word	0x000856b5
    861c8:	00085249 	.word	0x00085249
    861cc:	400a4000 	.word	0x400a4000
@@ -16397,13 +16397,13 @@ static void udd_ep_trans_done(udd_ep_id_t ep)
    8627e:	bf00      	nop
    86280:	00084389 	.word	0x00084389
    86284:	00085249 	.word	0x00085249
-   86288:	200006b4 	.word	0x200006b4
+   86288:	20000666 	.word	0x20000666
    8628c:	400a4000 	.word	0x400a4000
    86290:	e000e100 	.word	0xe000e100
-   86294:	20001a5c 	.word	0x20001a5c
+   86294:	20001a0c 	.word	0x20001a0c
    86298:	000852c5 	.word	0x000852c5
-   8629c:	20001a55 	.word	0x20001a55
-   862a0:	20002454 	.word	0x20002454
+   8629c:	20001a05 	.word	0x20001a05
+   862a0:	20002404 	.word	0x20002404
    862a4:	00086145 	.word	0x00086145
 
 000862a8 <udd_detach>:
@@ -16497,7 +16497,7 @@ static void udd_ep_trans_done(udd_ep_id_t ep)
 	udd_g_ctrlreq.payload_size = payload_size;
    86340:	8199      	strh	r1, [r3, #12]
    86342:	4770      	bx	lr
-   86344:	20002468 	.word	0x20002468
+   86344:	20002418 	.word	0x20002418
 
 00086348 <udd_ep_free>:
 	uint8_t ep_index = ep & USB_EP_ADDR_MASK;
@@ -16534,7 +16534,7 @@ static void udd_ep_trans_done(udd_ep_id_t ep)
    8638c:	f36f 0382 	bfc	r3, #2, #1
    86390:	7523      	strb	r3, [r4, #20]
    86392:	bd70      	pop	{r4, r5, r6, pc}
-   86394:	20001a5c 	.word	0x20001a5c
+   86394:	20001a0c 	.word	0x20001a0c
    86398:	0008595d 	.word	0x0008595d
 
 0008639c <udd_ep_is_halted>:
@@ -16558,7 +16558,7 @@ static void udd_ep_trans_done(udd_ep_id_t ep)
    863c8:	2001      	movs	r0, #1
 }
    863ca:	4770      	bx	lr
-   863cc:	20001a5c 	.word	0x20001a5c
+   863cc:	20001a0c 	.word	0x20001a0c
 
 000863d0 <udd_ep_set_halt>:
 	uint8_t ep_index = ep & USB_EP_ADDR_MASK;
@@ -16648,7 +16648,7 @@ static void udd_ep_trans_done(udd_ep_id_t ep)
 		return false; // Job on going, stall impossible
    8648c:	2000      	movs	r0, #0
    8648e:	e7fb      	b.n	86488 <udd_ep_set_halt+0xb8>
-   86490:	20001a5c 	.word	0x20001a5c
+   86490:	20001a0c 	.word	0x20001a0c
    86494:	400a4000 	.word	0x400a4000
 
 00086498 <udd_ep_clear_halt>:
@@ -16757,7 +16757,7 @@ static void udd_ep_trans_done(udd_ep_id_t ep)
 }
    86584:	bd38      	pop	{r3, r4, r5, pc}
    86586:	bf00      	nop
-   86588:	20001a5c 	.word	0x20001a5c
+   86588:	20001a0c 	.word	0x20001a0c
    8658c:	400a4000 	.word	0x400a4000
 
 00086590 <udd_ep_run>:
@@ -16876,8 +16876,8 @@ static void udd_ep_trans_done(udd_ep_id_t ep)
    8666c:	2000      	movs	r0, #0
 }
    8666e:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
-   86670:	20001a5c 	.word	0x20001a5c
-   86674:	200006b4 	.word	0x200006b4
+   86670:	20001a0c 	.word	0x20001a0c
+   86674:	20000666 	.word	0x20000666
    86678:	00085995 	.word	0x00085995
 
 0008667c <udd_ep_alloc>:
@@ -17162,7 +17162,7 @@ static void udd_ep_trans_done(udd_ep_id_t ep)
    86910:	e6f4      	b.n	866fc <udd_ep_alloc+0x80>
    86912:	bf00      	nop
    86914:	400a4000 	.word	0x400a4000
-   86918:	20001a5c 	.word	0x20001a5c
+   86918:	20001a0c 	.word	0x20001a0c
    8691c:	00086591 	.word	0x00086591
 
 00086920 <udd_ep_abort>:
@@ -17207,7 +17207,7 @@ static void udd_ep_trans_done(udd_ep_id_t ep)
    86970:	e7f2      	b.n	86958 <udd_ep_abort+0x38>
    86972:	bf00      	nop
    86974:	400a4300 	.word	0x400a4300
-   86978:	20001a5c 	.word	0x20001a5c
+   86978:	20001a0c 	.word	0x20001a0c
    8697c:	0008595d 	.word	0x0008595d
    86980:	400a4000 	.word	0x400a4000
 
@@ -17370,7 +17370,7 @@ void usart_disable_writeprotect(Usart *p_usart)
    86a50:	e7f9      	b.n	86a46 <usart_init_rs232+0x3a>
    86a52:	bf00      	nop
    86a54:	000869dd 	.word	0x000869dd
-   86a58:	20001aec 	.word	0x20001aec
+   86a58:	20001a9c 	.word	0x20001a9c
    86a5c:	00086985 	.word	0x00086985
 
 00086a60 <usart_init_sync_master>:
@@ -17433,7 +17433,7 @@ void usart_disable_writeprotect(Usart *p_usart)
    86abc:	bd70      	pop	{r4, r5, r6, pc}
    86abe:	bf00      	nop
    86ac0:	000869dd 	.word	0x000869dd
-   86ac4:	20001af0 	.word	0x20001af0
+   86ac4:	20001aa0 	.word	0x20001aa0
 
 00086ac8 <usart_init_iso7816>:
 {
@@ -17558,7 +17558,7 @@ void usart_disable_writeprotect(Usart *p_usart)
    86b90:	bd70      	pop	{r4, r5, r6, pc}
    86b92:	bf00      	nop
    86b94:	000869dd 	.word	0x000869dd
-   86b98:	20001af4 	.word	0x20001af4
+   86b98:	20001aa4 	.word	0x20001aa4
 
 00086b9c <usart_init_spi_master>:
 {
@@ -17656,7 +17656,7 @@ void usart_disable_writeprotect(Usart *p_usart)
    86c4c:	bd70      	pop	{r4, r5, r6, pc}
    86c4e:	bf00      	nop
    86c50:	000869dd 	.word	0x000869dd
-   86c54:	20001af8 	.word	0x20001af8
+   86c54:	20001aa8 	.word	0x20001aa8
 
 00086c58 <usart_init_spi_slave>:
 {
@@ -17745,7 +17745,7 @@ void usart_disable_writeprotect(Usart *p_usart)
    86cf0:	bd38      	pop	{r3, r4, r5, pc}
    86cf2:	bf00      	nop
    86cf4:	000869dd 	.word	0x000869dd
-   86cf8:	20001afc 	.word	0x20001afc
+   86cf8:	20001aac 	.word	0x20001aac
    86cfc:	0001010f 	.word	0x0001010f
 
 00086d00 <usart_enable_tx>:
@@ -18079,9 +18079,9 @@ void Reset_Handler(void)
    86e6a:	e7fe      	b.n	86e6a <Reset_Handler+0x72>
    86e6c:	20000000 	.word	0x20000000
    86e70:	0008dcfc 	.word	0x0008dcfc
-   86e74:	20001090 	.word	0x20001090
-   86e78:	200024a8 	.word	0x200024a8
-   86e7c:	20001090 	.word	0x20001090
+   86e74:	20001040 	.word	0x20001040
+   86e78:	20002458 	.word	0x20002458
+   86e7c:	20001040 	.word	0x20001040
    86e80:	00080000 	.word	0x00080000
    86e84:	e000ed00 	.word	0xe000ed00
    86e88:	00087705 	.word	0x00087705
@@ -18240,7 +18240,7 @@ void SystemCoreClockUpdate(void)
    86f86:	bf00      	nop
    86f88:	400e0400 	.word	0x400e0400
    86f8c:	400e1210 	.word	0x400e1210
-   86f90:	200006b8 	.word	0x200006b8
+   86f90:	20000668 	.word	0x20000668
    86f94:	00b71b00 	.word	0x00b71b00
    86f98:	003d0900 	.word	0x003d0900
    86f9c:	007a1200 	.word	0x007a1200
@@ -18289,7 +18289,7 @@ void SystemCoreClockUpdate(void)
 }
    86fd0:	4770      	bx	lr
    86fd2:	bf00      	nop
-   86fd4:	20001b00 	.word	0x20001b00
+   86fd4:	20001ab0 	.word	0x20001ab0
    86fd8:	2007fffc 	.word	0x2007fffc
    86fdc:	20082000 	.word	0x20082000
 
@@ -18981,21 +18981,21 @@ static inline void sleepmgr_enter_sleep(void)
    8734c:	00081e95 	.word	0x00081e95
    87350:	00085249 	.word	0x00085249
    87354:	400e0600 	.word	0x400e0600
-   87358:	20002464 	.word	0x20002464
+   87358:	20002414 	.word	0x20002414
    8735c:	00087141 	.word	0x00087141
-   87360:	20002460 	.word	0x20002460
+   87360:	20002410 	.word	0x20002410
    87364:	000870b5 	.word	0x000870b5
-   87368:	2000245c 	.word	0x2000245c
+   87368:	2000240c 	.word	0x2000240c
    8736c:	05b8d800 	.word	0x05b8d800
    87370:	00086d9f 	.word	0x00086d9f
-   87374:	200006e0 	.word	0x200006e0
+   87374:	20000690 	.word	0x20000690
    87378:	00087905 	.word	0x00087905
-   8737c:	200006b4 	.word	0x200006b4
-   87380:	20002454 	.word	0x20002454
+   8737c:	20000666 	.word	0x20000666
+   87380:	20002404 	.word	0x20002404
    87384:	000843bd 	.word	0x000843bd
    87388:	00084d59 	.word	0x00084d59
    8738c:	00084149 	.word	0x00084149
-   87390:	200006bc 	.word	0x200006bc
+   87390:	2000066c 	.word	0x2000066c
    87394:	0008d97c 	.word	0x0008d97c
    87398:	00087aa5 	.word	0x00087aa5
    8739c:	0008d984 	.word	0x0008d984
@@ -19349,7 +19349,7 @@ static inline void sleepmgr_enter_sleep(void)
    87770:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
    87774:	b004      	add	sp, #16
    87776:	4770      	bx	lr
-   87778:	200006e0 	.word	0x200006e0
+   87778:	20000690 	.word	0x20000690
 
 0008777c <memcpy>:
    8777c:	4684      	mov	ip, r0
@@ -19689,7 +19689,7 @@ static inline void sleepmgr_enter_sleep(void)
    87a9a:	e792      	b.n	879c2 <setvbuf+0xae>
    87a9c:	464e      	mov	r6, r9
    87a9e:	e783      	b.n	879a8 <setvbuf+0x94>
-   87aa0:	200006e0 	.word	0x200006e0
+   87aa0:	20000690 	.word	0x20000690
 
 00087aa4 <sprintf>:
    87aa4:	b40e      	push	{r1, r2, r3}
@@ -19720,7 +19720,7 @@ static inline void sleepmgr_enter_sleep(void)
    87ae4:	e8bd 40f0 	ldmia.w	sp!, {r4, r5, r6, r7, lr}
    87ae8:	b003      	add	sp, #12
    87aea:	4770      	bx	lr
-   87aec:	200006e0 	.word	0x200006e0
+   87aec:	20000690 	.word	0x20000690
 
 00087af0 <_svfprintf_r>:
    87af0:	e92d 4ff0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
@@ -23179,7 +23179,7 @@ static inline void sleepmgr_enter_sleep(void)
    89e3e:	81a2      	strh	r2, [r4, #12]
    89e40:	bd38      	pop	{r3, r4, r5, pc}
    89e42:	bf00      	nop
-   89e44:	200006e0 	.word	0x200006e0
+   89e44:	20000690 	.word	0x20000690
 
 00089e48 <register_fini>:
    89e48:	4b02      	ldr	r3, [pc, #8]	; (89e54 <register_fini+0xc>)
@@ -24976,20 +24976,20 @@ static inline void sleepmgr_enter_sleep(void)
    8b00a:	4802      	ldr	r0, [pc, #8]	; (8b014 <__sinit+0x58>)
    8b00c:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
    8b010:	f000 bba4 	b.w	8b75c <__retarget_lock_release_recursive>
-   8b014:	2000248c 	.word	0x2000248c
+   8b014:	2000243c 	.word	0x2000243c
    8b018:	0008af61 	.word	0x0008af61
 
 0008b01c <__sfp_lock_acquire>:
    8b01c:	4801      	ldr	r0, [pc, #4]	; (8b024 <__sfp_lock_acquire+0x8>)
    8b01e:	f000 bb9b 	b.w	8b758 <__retarget_lock_acquire_recursive>
    8b022:	bf00      	nop
-   8b024:	200024a0 	.word	0x200024a0
+   8b024:	20002450 	.word	0x20002450
 
 0008b028 <__sfp_lock_release>:
    8b028:	4801      	ldr	r0, [pc, #4]	; (8b030 <__sfp_lock_release+0x8>)
    8b02a:	f000 bb97 	b.w	8b75c <__retarget_lock_release_recursive>
    8b02e:	bf00      	nop
-   8b030:	200024a0 	.word	0x200024a0
+   8b030:	20002450 	.word	0x20002450
 
 0008b034 <__libc_fini_array>:
    8b034:	b538      	push	{r3, r4, r5, lr}
@@ -25182,9 +25182,9 @@ static inline void sleepmgr_enter_sleep(void)
    8b1f6:	6008      	str	r0, [r1, #0]
    8b1f8:	e7d5      	b.n	8b1a6 <_malloc_trim_r+0x3e>
    8b1fa:	bf00      	nop
-   8b1fc:	20000c80 	.word	0x20000c80
-   8b200:	20001b04 	.word	0x20001b04
-   8b204:	20001088 	.word	0x20001088
+   8b1fc:	20000c30 	.word	0x20000c30
+   8b200:	20001ab4 	.word	0x20001ab4
+   8b204:	20001038 	.word	0x20001038
 
 0008b208 <_free_r>:
    8b208:	2900      	cmp	r1, #0
@@ -25371,10 +25371,10 @@ static inline void sleepmgr_enter_sleep(void)
    8b3be:	6061      	str	r1, [r4, #4]
    8b3c0:	6013      	str	r3, [r2, #0]
    8b3c2:	e763      	b.n	8b28c <_free_r+0x84>
-   8b3c4:	20000c80 	.word	0x20000c80
-   8b3c8:	20000c88 	.word	0x20000c88
-   8b3cc:	2000108c 	.word	0x2000108c
-   8b3d0:	20001b34 	.word	0x20001b34
+   8b3c4:	20000c30 	.word	0x20000c30
+   8b3c8:	20000c38 	.word	0x20000c38
+   8b3cc:	2000103c 	.word	0x2000103c
+   8b3d0:	20001ae4 	.word	0x20001ae4
 
 0008b3d4 <__sfvwrite_r>:
    8b3d4:	6893      	ldr	r3, [r2, #8]
@@ -25728,8 +25728,8 @@ static inline void sleepmgr_enter_sleep(void)
    8b724:	4613      	moveq	r3, r2
    8b726:	f893 0128 	ldrb.w	r0, [r3, #296]	; 0x128
    8b72a:	4770      	bx	lr
-   8b72c:	200006e0 	.word	0x200006e0
-   8b730:	20000b14 	.word	0x20000b14
+   8b72c:	20000690 	.word	0x20000690
+   8b730:	20000ac4 	.word	0x20000ac4
 
 0008b734 <_localeconv_r>:
    8b734:	4a04      	ldr	r2, [pc, #16]	; (8b748 <_localeconv_r+0x14>)
@@ -25742,8 +25742,8 @@ static inline void sleepmgr_enter_sleep(void)
    8b742:	30f0      	adds	r0, #240	; 0xf0
    8b744:	4770      	bx	lr
    8b746:	bf00      	nop
-   8b748:	200006e0 	.word	0x200006e0
-   8b74c:	20000b14 	.word	0x20000b14
+   8b748:	20000690 	.word	0x20000690
+   8b74c:	20000ac4 	.word	0x20000ac4
 
 0008b750 <__retarget_lock_init_recursive>:
    8b750:	4770      	bx	lr
@@ -25867,7 +25867,7 @@ static inline void sleepmgr_enter_sleep(void)
    8b854:	6818      	ldr	r0, [r3, #0]
    8b856:	f000 b803 	b.w	8b860 <_malloc_r>
    8b85a:	bf00      	nop
-   8b85c:	200006e0 	.word	0x200006e0
+   8b85c:	20000690 	.word	0x20000690
 
 0008b860 <_malloc_r>:
    8b860:	e92d 4ff0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
@@ -26164,13 +26164,13 @@ static inline void sleepmgr_enter_sleep(void)
    8bb80:	f103 0e6e 	add.w	lr, r3, #110	; 0x6e
    8bb84:	00c1      	lsls	r1, r0, #3
    8bb86:	e68d      	b.n	8b8a4 <_malloc_r+0x44>
-   8bb88:	20000c80 	.word	0x20000c80
-   8bb8c:	20001b34 	.word	0x20001b34
-   8bb90:	20001b04 	.word	0x20001b04
-   8bb94:	20001b2c 	.word	0x20001b2c
-   8bb98:	20001b30 	.word	0x20001b30
-   8bb9c:	20000c88 	.word	0x20000c88
-   8bba0:	20001088 	.word	0x20001088
+   8bb88:	20000c30 	.word	0x20000c30
+   8bb8c:	20001ae4 	.word	0x20001ae4
+   8bb90:	20001ab4 	.word	0x20001ab4
+   8bb94:	20001adc 	.word	0x20001adc
+   8bb98:	20001ae0 	.word	0x20001ae0
+   8bb9c:	20000c38 	.word	0x20000c38
+   8bba0:	20001038 	.word	0x20001038
    8bba4:	0a5a      	lsrs	r2, r3, #9
    8bba6:	2a04      	cmp	r2, #4
    8bba8:	d95b      	bls.n	8bc62 <_malloc_r+0x402>
@@ -26364,7 +26364,7 @@ static inline void sleepmgr_enter_sleep(void)
    8bd98:	f106 0308 	add.w	r3, r6, #8
    8bd9c:	e60e      	b.n	8b9bc <_malloc_r+0x15c>
    8bd9e:	bf00      	nop
-   8bda0:	20001b04 	.word	0x20001b04
+   8bda0:	20001ab4 	.word	0x20001ab4
 
 0008bda4 <__ascii_mbtowc>:
    8bda4:	b082      	sub	sp, #8
@@ -26532,13 +26532,13 @@ static inline void sleepmgr_enter_sleep(void)
    8bf24:	4801      	ldr	r0, [pc, #4]	; (8bf2c <__malloc_lock+0x8>)
    8bf26:	f7ff bc17 	b.w	8b758 <__retarget_lock_acquire_recursive>
    8bf2a:	bf00      	nop
-   8bf2c:	20002490 	.word	0x20002490
+   8bf2c:	20002440 	.word	0x20002440
 
 0008bf30 <__malloc_unlock>:
    8bf30:	4801      	ldr	r0, [pc, #4]	; (8bf38 <__malloc_unlock+0x8>)
    8bf32:	f7ff bc13 	b.w	8b75c <__retarget_lock_release_recursive>
    8bf36:	bf00      	nop
-   8bf38:	20002490 	.word	0x20002490
+   8bf38:	20002440 	.word	0x20002440
 
 0008bf3c <_Balloc>:
    8bf3c:	6cc3      	ldr	r3, [r0, #76]	; 0x4c
@@ -27480,7 +27480,7 @@ static inline void sleepmgr_enter_sleep(void)
    8c87a:	f104 0110 	add.w	r1, r4, #16
    8c87e:	f10a 0218 	add.w	r2, sl, #24
    8c882:	e76e      	b.n	8c762 <_realloc_r+0x22e>
-   8c884:	20000c80 	.word	0x20000c80
+   8c884:	20000c30 	.word	0x20000c30
    8c888:	6922      	ldr	r2, [r4, #16]
    8c88a:	f104 0118 	add.w	r1, r4, #24
    8c88e:	f8ca 2018 	str.w	r2, [sl, #24]
@@ -27506,7 +27506,7 @@ static inline void sleepmgr_enter_sleep(void)
    8c8ba:	d0fb      	beq.n	8c8b4 <_sbrk_r+0x14>
    8c8bc:	602b      	str	r3, [r5, #0]
    8c8be:	bd38      	pop	{r3, r4, r5, pc}
-   8c8c0:	200024a4 	.word	0x200024a4
+   8c8c0:	20002454 	.word	0x20002454
 
 0008c8c4 <__sread>:
    8c8c4:	b510      	push	{r4, lr}
@@ -27814,8 +27814,8 @@ static inline void sleepmgr_enter_sleep(void)
    8cb9a:	47a0      	blx	r4
    8cb9c:	e7e9      	b.n	8cb72 <_wcrtomb_r+0x1e>
    8cb9e:	bf00      	nop
-   8cba0:	200006e0 	.word	0x200006e0
-   8cba4:	20000b14 	.word	0x20000b14
+   8cba0:	20000690 	.word	0x20000690
+   8cba4:	20000ac4 	.word	0x20000ac4
 
 0008cba8 <__ascii_wctomb>:
    8cba8:	b119      	cbz	r1, 8cbb2 <__ascii_wctomb+0xa>
@@ -27850,7 +27850,7 @@ static inline void sleepmgr_enter_sleep(void)
    8cbe2:	603b      	str	r3, [r7, #0]
    8cbe4:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
    8cbe6:	bf00      	nop
-   8cbe8:	200024a4 	.word	0x200024a4
+   8cbe8:	20002454 	.word	0x20002454
 
 0008cbec <__register_exitproc>:
    8cbec:	e92d 43f8 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, lr}
@@ -27918,7 +27918,7 @@ static inline void sleepmgr_enter_sleep(void)
    8cc9a:	f04f 30ff 	mov.w	r0, #4294967295
    8cc9e:	e8bd 83f8 	ldmia.w	sp!, {r3, r4, r5, r6, r7, r8, r9, pc}
    8cca2:	bf00      	nop
-   8cca4:	20000b10 	.word	0x20000b10
+   8cca4:	20000ac0 	.word	0x20000ac0
    8cca8:	0008da24 	.word	0x0008da24
    8ccac:	0008b851 	.word	0x0008b851
 
@@ -27980,7 +27980,7 @@ static inline void sleepmgr_enter_sleep(void)
    8cd2a:	d0fb      	beq.n	8cd24 <_close_r+0x14>
    8cd2c:	602b      	str	r3, [r5, #0]
    8cd2e:	bd38      	pop	{r3, r4, r5, pc}
-   8cd30:	200024a4 	.word	0x200024a4
+   8cd30:	20002454 	.word	0x20002454
 
 0008cd34 <_fclose_r>:
    8cd34:	b570      	push	{r4, r5, r6, lr}
@@ -28084,7 +28084,7 @@ static inline void sleepmgr_enter_sleep(void)
    8ce16:	d0fb      	beq.n	8ce10 <_fstat_r+0x18>
    8ce18:	6033      	str	r3, [r6, #0]
    8ce1a:	bd70      	pop	{r4, r5, r6, pc}
-   8ce1c:	200024a4 	.word	0x200024a4
+   8ce1c:	20002454 	.word	0x20002454
 
 0008ce20 <_isatty_r>:
    8ce20:	b538      	push	{r3, r4, r5, lr}
@@ -28102,7 +28102,7 @@ static inline void sleepmgr_enter_sleep(void)
    8ce3a:	d0fb      	beq.n	8ce34 <_isatty_r+0x14>
    8ce3c:	602b      	str	r3, [r5, #0]
    8ce3e:	bd38      	pop	{r3, r4, r5, pc}
-   8ce40:	200024a4 	.word	0x200024a4
+   8ce40:	20002454 	.word	0x20002454
 
 0008ce44 <_lseek_r>:
    8ce44:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
@@ -28124,7 +28124,7 @@ static inline void sleepmgr_enter_sleep(void)
    8ce66:	603b      	str	r3, [r7, #0]
    8ce68:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
    8ce6a:	bf00      	nop
-   8ce6c:	200024a4 	.word	0x200024a4
+   8ce6c:	20002454 	.word	0x20002454
 
 0008ce70 <_read_r>:
    8ce70:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
@@ -28146,7 +28146,7 @@ static inline void sleepmgr_enter_sleep(void)
    8ce92:	603b      	str	r3, [r7, #0]
    8ce94:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
    8ce96:	bf00      	nop
-   8ce98:	200024a4 	.word	0x200024a4
+   8ce98:	20002454 	.word	0x20002454
 
 0008ce9c <__aeabi_drsub>:
    8ce9c:	f081 4100 	eor.w	r1, r1, #2147483648	; 0x80000000
@@ -29022,12 +29022,12 @@ static inline void sleepmgr_enter_sleep(void)
 
 0008d92c <BOS_DESC>:
    8d92c:	00210f05 05101c01 dd60df00 c74589d8     ..!.......`...E.
-   8d93c:	65d29c4c 8a649e9d 0300009f 0100f806     L..e..d.........
+   8d93c:	65d29c4c 8a649e9d 0300009f 0100ae06     L..e..d.........
    8d94c:	00000000 694c5743 55206574 54524153     ....CWLite USART
    8d95c:	00000000 694c5743 6c206574 73756269     ....CWLite libus
    8d96c:	49206b62 7265746e 65636166 00000000     bk Interface....
-   8d97c:	78383025 00000000 20626546 32203532     %08x....Feb 25 2
-   8d98c:	00313230 313a3232 31303a30 00000000     021.22:10:01....
+   8d97c:	78383025 00000000 20626546 32203632     %08x....Feb 26 2
+   8d98c:	00313230 343a3830 39313a32 00000000     021.08:42:19....
    8d99c:	70696843 73696857 65726570 694c2d72     ChipWhisperer-Li
    8d9ac:	4f206574 6e696c6e 46202e65 776d7269     te Online. Firmw
    8d9bc:	20657261 6c697562 25203a64 73252f73     are build: %s/%s
@@ -29039,7 +29039,7 @@ static inline void sleepmgr_enter_sleep(void)
    8da1c:	2e676e69 000a2e2e                       ing.....
 
 0008da24 <_global_impure_ptr>:
-   8da24:	200006e8 00464e49 00666e69 004e414e     ... INF.inf.NAN.
+   8da24:	20000698 00464e49 00666e69 004e414e     ... INF.inf.NAN.
    8da34:	006e616e 33323130 37363534 42413938     nan.0123456789AB
    8da44:	46454443 00000000 33323130 37363534     CDEF....01234567
    8da54:	62613938 66656463 00000000 6c756e28     89abcdef....(nul
@@ -29356,7 +29356,7 @@ void portable_delay_cycles(unsigned long n)
 2000012c:	01370809 	.word	0x01370809
 20000130:	200f3f01 	.word	0x200f3f01
 20000134:	05b8d800 	.word	0x05b8d800
-20000138:	200006b8 	.word	0x200006b8
+20000138:	20000668 	.word	0x20000668
 
 2000013c <system_init_flash>:
 __no_inline
@@ -29553,73 +29553,73 @@ void system_init_flash(uint32_t ul_clk)
 200005b8:	00006574                                te..
 
 200005bc <winusb_20_desc>:
-200005bc:	0000000a 06030000 000800f8 00000002     ................
-200005cc:	001400ee 494c0003 42535542 0000004b     ......LIBUSBK...
-200005dc:	00000000 00d20000 00070004 0044002a     ............*.D.
+200005bc:	0000000a 06030000 000800ae 00000002     ................
+200005cc:	001400a4 49570003 4253554e 00000000     ......WINUSB....
+200005dc:	00000000 00880000 00070004 0044002a     ............*.D.
 200005ec:	00760065 00630069 00490065 0074006e     e.v.i.c.e.I.n.t.
 200005fc:	00720065 00610066 00650063 00550047     e.r.f.a.c.e.G.U.
-2000060c:	00440049 00000073 007b009e 00610063     I.D.s.....{.c.a.
-2000061c:	00350066 00610061 00630031 0061002d     f.5.a.a.1.c.-.a.
-2000062c:	00390036 002d0061 00390034 00350039     6.9.a.-.4.9.9.5.
-2000063c:	0061002d 00630062 002d0032 00610032     -.a.b.c.2.-.2.a.
-2000064c:	00350065 00610037 00310035 00640061     e.5.7.a.5.1.a.d.
-2000065c:	00390065 0000007d 0061007b 00650063     e.9.}...{.a.c.e.
-2000066c:	00610063 00310061 002d0063 00360061     c.a.a.1.c.-.a.6.
-2000067c:	00660039 0034002d 00390039 002d0035     9.f.-.4.9.9.5.-.
-2000068c:	00340061 00320063 0032002d 00650061     a.4.c.2.-.2.a.e.
-2000069c:	00370035 00350061 00610031 00650064     5.7.a.5.1.a.d.e.
-200006ac:	007d0039 00000000                       9.}.....
+2000060c:	00440049 00000073 007b0050 00410043     I.D.s...P.{.C.A.
+2000061c:	00350046 00410041 00430031 0041002d     F.5.A.A.1.C.-.A.
+2000062c:	00390036 002d0041 00390034 00350039     6.9.A.-.4.9.9.5.
+2000063c:	0041002d 00430042 002d0032 00410032     -.A.B.C.2.-.2.A.
+2000064c:	00350045 00410037 00310035 00440041     E.5.7.A.5.1.A.D.
+2000065c:	00390045 0000007d 00010000                       E.9.}.....
 
-200006b4 <g_interrupt_enabled>:
-200006b4:	00000001                                ....
+20000666 <g_interrupt_enabled>:
+20000666:	09000001                                         ..
 
-200006b8 <SystemCoreClock>:
-200006b8:	003d0900                                ..=.
+20000668 <SystemCoreClock>:
+20000668:	003d0900                                ..=.
 
-200006bc <usb_serial_number>:
-200006bc:	30303030 30303030 30303030 44414544     000000000000DEAD
-200006cc:	46454542 00000000 00000000 00000000     BEEF............
-200006dc:	00000000                                ....
+2000066c <usb_serial_number>:
+2000066c:	30303030 30303030 30303030 44414544     000000000000DEAD
+2000067c:	46454542 00000000 00000000 00000000     BEEF............
+2000068c:	00000000                                ....
 
-200006e0 <_impure_ptr>:
-200006e0:	200006e8 00000000                       ... ....
+20000690 <_impure_ptr>:
+20000690:	20000698 00000000                       ... ....
 
-200006e8 <impure_data>:
-200006e8:	00000000 200009d4 20000a3c 20000aa4     ....... <.. ... 
+20000698 <impure_data>:
+20000698:	00000000 20000984 200009ec 20000a54     ....... ... T.. 
 	...
-20000790:	00000001 00000000 abcd330e e66d1234     .........3..4.m.
-200007a0:	0005deec 0000000b 00000000 00000000     ................
+20000740:	00000001 00000000 abcd330e e66d1234     .........3..4.m.
+20000750:	0005deec 0000000b 00000000 00000000     ................
 	...
 
-20000b10 <__atexit_recursive_mutex>:
-20000b10:	20002480                                .$. 
+20000ac0 <__atexit_recursive_mutex>:
+20000ac0:	20002430                                0$. 
 
-20000b14 <__global_locale>:
-20000b14:	00000043 00000000 00000000 00000000     C...............
+20000ac4 <__global_locale>:
+20000ac4:	00000043 00000000 00000000 00000000     C...............
 	...
-20000b34:	00000043 00000000 00000000 00000000     C...............
+20000ae4:	00000043 00000000 00000000 00000000     C...............
 	...
-20000b54:	00000043 00000000 00000000 00000000     C...............
+20000b04:	00000043 00000000 00000000 00000000     C...............
 	...
-20000b74:	00000043 00000000 00000000 00000000     C...............
+20000b24:	00000043 00000000 00000000 00000000     C...............
 	...
-20000b94:	00000043 00000000 00000000 00000000     C...............
+20000b44:	00000043 00000000 00000000 00000000     C...............
 	...
-20000bb4:	00000043 00000000 00000000 00000000     C...............
+20000b64:	00000043 00000000 00000000 00000000     C...............
 	...
-20000bd4:	00000043 00000000 00000000 00000000     C...............
+20000b84:	00000043 00000000 00000000 00000000     C...............
 	...
-20000bf4:	0008cba9 0008bda5 00000000 0008dbcc     ................
-20000c04:	0008dac8 0008d8fc 0008d8fc 0008d8fc     ................
-20000c14:	0008d8fc 0008d8fc 0008d8fc 0008d8fc     ................
-20000c24:	0008d8fc 0008d8fc ffffffff ffffffff     ................
-20000c34:	ffffffff 0000ffff 53410001 00494943     ..........ASCII.
+20000ba4:	0008cba9 0008bda5 00000000 0008dbcc     ................
+20000bb4:	0008dac8 0008d8fc 0008d8fc 0008d8fc     ................
+20000bc4:	0008d8fc 0008d8fc 0008d8fc 0008d8fc     ................
+20000bd4:	0008d8fc 0008d8fc ffffffff ffffffff     ................
+20000be4:	ffffffff 0000ffff 53410001 00494943     ..........ASCII.
 	...
-20000c5c:	53410000 00494943 00000000 00000000     ..ASCII.........
+20000c0c:	53410000 00494943 00000000 00000000     ..ASCII.........
 	...
 
-20000c80 <__malloc_av_>:
+20000c30 <__malloc_av_>:
 	...
+20000c38:	20000c30 20000c30 20000c38 20000c38     0.. 0.. 8.. 8.. 
+20000c48:	20000c40 20000c40 20000c48 20000c48     @.. @.. H.. H.. 
+20000c58:	20000c50 20000c50 20000c58 20000c58     P.. P.. X.. X.. 
+20000c68:	20000c60 20000c60 20000c68 20000c68     `.. `.. h.. h.. 
+20000c78:	20000c70 20000c70 20000c78 20000c78     p.. p.. x.. x.. 
 20000c88:	20000c80 20000c80 20000c88 20000c88     ... ... ... ... 
 20000c98:	20000c90 20000c90 20000c98 20000c98     ... ... ... ... 
 20000ca8:	20000ca0 20000ca0 20000ca8 20000ca8     ... ... ... ... 
@@ -29679,14 +29679,9 @@ void system_init_flash(uint32_t ul_clk)
 20001008:	20001000 20001000 20001008 20001008     ... ... ... ... 
 20001018:	20001010 20001010 20001018 20001018     ... ... ... ... 
 20001028:	20001020 20001020 20001028 20001028      ..  .. (.. (.. 
-20001038:	20001030 20001030 20001038 20001038     0.. 0.. 8.. 8.. 
-20001048:	20001040 20001040 20001048 20001048     @.. @.. H.. H.. 
-20001058:	20001050 20001050 20001058 20001058     P.. P.. X.. X.. 
-20001068:	20001060 20001060 20001068 20001068     `.. `.. h.. h.. 
-20001078:	20001070 20001070 20001078 20001078     p.. p.. x.. x.. 
 
-20001088 <__malloc_sbrk_base>:
-20001088:	ffffffff                                ....
+20001038 <__malloc_sbrk_base>:
+20001038:	ffffffff                                ....
 
-2000108c <__malloc_trim_threshold>:
-2000108c:	00020000                                ....
+2000103c <__malloc_trim_threshold>:
+2000103c:	00020000                                ....
