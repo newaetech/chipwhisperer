@@ -59,5 +59,8 @@ docs/tutorials/img/*
 __pycache__/
 
 # for building the project as a sdist and wheel for pypi
-build/
-dist/
+/build/
+/dist/
+hardware/victims/firmware/hal/rx65n/include/r_tsip_rx_if.h
+hardware/victims/firmware/hal/rx65n/*.lib
+docs/*.msi

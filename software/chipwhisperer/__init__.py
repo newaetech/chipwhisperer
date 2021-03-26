@@ -9,7 +9,7 @@
 Main module for ChipWhisperer.
 """
 
-__version__ = '5.3.1'
+__version__ = '5.5.0'
 import os, os.path, time
 import warnings
 from zipfile import ZipFile
@@ -17,7 +17,7 @@ from zipfile import ZipFile
 from chipwhisperer.capture import scopes, targets
 from chipwhisperer.capture.api import programmers
 from chipwhisperer.capture import acq_patterns as key_text_patterns
-from chipwhisperer.common.utils.util import camel_case_deprecated
+from chipwhisperer.common.utils.util import camel_case_deprecated, fw_ver_compare
 from chipwhisperer.common.api import ProjectFormat as project
 from chipwhisperer.common.traces import Trace
 from chipwhisperer.common.utils import util
@@ -56,13 +56,23 @@ def program_target(scope, prog_type, fw_path, **kwargs):
     if prog_type is None: #[makes] automating notebooks much easier
         return
     prog = prog_type(**kwargs)
-    prog.scope = scope
-    prog._logging = None
-    prog.open()
-    prog.find()
-    prog.erase()
-    prog.program(fw_path, memtype="flash", verify=True)
-    prog.close()
+
+    try:
+        prog.scope = scope
+        prog._logging = None
+        prog.open()
+        prog.find()
+        prog.erase()
+        prog.program(fw_path, memtype="flash", verify=True)
+        prog.close()
+    except:
+        if isinstance(prog, programmers.XMEGAProgrammer) and isinstance(scope, scopes.OpenADC):
+            scope.io.pdic = 0
+            time.sleep(0.05)
+            scope.io.pdic = None
+            time.sleep(0.05)
+        raise
+
 
 
 programTarget = camel_case_deprecated(program_target)
@@ -217,7 +227,14 @@ def scope(scope_type=None, sn=None):
     if scope_type is None:
         scope_type = get_cw_type(sn)
     scope = scope_type()
-    scope.con(sn)
+    try:
+        scope.con(sn)
+    except IOError:
+        logging.error("ChipWhisperer error state detected. Resetting and retrying connection...")
+        scope._getNAEUSB().reset()
+        time.sleep(2)
+        scope = scope_type()
+        scope.con(sn)
     return scope
 
 
@@ -238,6 +255,12 @@ def target(scope, target_type=targets.SimpleSerial, **kwargs):
     """
     target = target_type()
     target.con(scope, **kwargs)
+
+    # need to check 
+    if scope and (isinstance(target, targets.SimpleSerial) or isinstance(target, targets.SimpleSerial2)):
+        if isinstance(scope, scopes.CWNano) and not fw_ver_compare(scope.fw_version, {"major": 0, "minor": 24}):
+            target.ser.cwlite_usart._max_read = 128
+            print("Limiting max read")
     return target
 
 def capture_trace(scope, target, plaintext, key=None, ack=True):
@@ -302,31 +325,31 @@ def capture_trace(scope, target, plaintext, key=None, ack=True):
             signal.signal(signal.SIGINT, self.old_handler)
             if self.signal_received:
                 self.old_handler(*self.signal_received)
-    with DelayedKeyboardInterrupt():
-        if key:
-            target.set_key(key, ack=ack)
+    # with DelayedKeyboardInterrupt():
+    if key:
+        target.set_key(key, ack=ack)
 
-        scope.arm()
+    scope.arm()
 
-        if plaintext:
-            target.simpleserial_write('p', plaintext)
+    if plaintext:
+        target.simpleserial_write('p', plaintext)
 
-        ret = scope.capture()
+    ret = scope.capture()
 
-        i = 0
-        while not target.is_done():
-            i += 1
-            time.sleep(0.05)
-            if i > 100:
-                warnings.warn("Target did not finish operation")
-                return None
-
-        if ret:
-            warnings.warn("Timeout happened during capture")
+    i = 0
+    while not target.is_done():
+        i += 1
+        time.sleep(0.05)
+        if i > 100:
+            warnings.warn("Target did not finish operation")
             return None
 
-        response = target.simpleserial_read('r', target.output_len, ack=ack)
-        wave = scope.get_last_trace()
+    if ret:
+        warnings.warn("Timeout happened during capture")
+        return None
+
+    response = target.simpleserial_read('r', target.output_len, ack=ack)
+    wave = scope.get_last_trace()
 
     if len(wave) >= 1:
         return Trace(wave, plaintext, response, key)
