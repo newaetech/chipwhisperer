@@ -42,6 +42,7 @@ ADDR_DRP_ADDR   = 30
 ADDR_DRP_DATA   = 31
 ADDR_SEGMENTS   = 32
 ADDR_SEGMENT_CYCLES = 33
+ADDR_STREAM_SEGMENT_SIZE = 35
 ADDR_FAST_FIFO_READ = 36
 
 ADDR_XADC_DRP_ADDR = 41
@@ -651,6 +652,7 @@ class TriggerSettings(util.DisableNewAttr):
         self.presampleTempMargin = 24
         self._timeout = 2
         self._stream_mode = False
+        self._stream_segment_size = 32768
         self._test_mode = False
         self._bits_per_sample = 10
         self._support_get_duration = True
@@ -675,9 +677,10 @@ class TriggerSettings(util.DisableNewAttr):
         dict['trig_count'] = self.trig_count
         if self._is_pro or self._is_lite:
             dict['fifo_fill_mode'] = self.fifo_fill_mode
-        if self._is_pro:
+        if self._is_pro or self._is_husky:
             dict['stream_mode'] = self.stream_mode
         if self._is_husky:
+            dict['stream segment size'] = self.stream_segment_size
             dict['test_mode'] = self.test_mode
             dict['bits_per_sample'] = self.bits_per_sample
             dict['segments'] = self.segments
@@ -705,7 +708,7 @@ class TriggerSettings(util.DisableNewAttr):
 
     @property
     def stream_mode(self):
-        """The ChipWhisperer's streaming status. Only available on CW1200.
+        """The ChipWhisperer's streaming status. Only available on CW1200 and CW-Husky.
 
         When stream mode is enabled, the ChipWhisperer sends back ADC data as
         soon as it is recorded. In this mode, there is no hardware limit on the
@@ -725,6 +728,18 @@ class TriggerSettings(util.DisableNewAttr):
     @stream_mode.setter
     def stream_mode(self, enabled):
         self._set_stream_mode(enabled)
+
+    @property
+    def stream_segment_size(self):
+        """Only available on CW-Husky.
+        TODO: when stable, document (including limits), or maybe hide?
+        """
+        return self._get_stream_segment_size()
+
+    @stream_segment_size.setter
+    def stream_segment_size(self, size):
+        self._set_stream_segment_size(size)
+
 
     @property
     def decimate(self):
@@ -1129,6 +1144,18 @@ class TriggerSettings(util.DisableNewAttr):
 
     def _get_stream_mode(self):
         return self._stream_mode
+
+
+    def _set_stream_segment_size(self, size):
+        self._stream_segment_size = size
+        #Write to FPGA
+        self.oa.sendMessage(CODE_WRITE, ADDR_STREAM_SEGMENT_SIZE, list(int.to_bytes(size, length=4, byteorder='little')))
+        #Notify capture system
+        self.oa.setStreamSegmentSize(size)
+
+
+    def _get_stream_segment_size(self):
+        return self._stream_segment_size
 
 
     def _set_test_mode(self, enabled):
@@ -1899,7 +1926,8 @@ class ClockSettings(util.DisableNewAttr):
         if self.oa.hwInfo.is_cwhusky():
             self._set_husky_clkgen_div(div)
         else:
-            # TODO: valueerror
+            if hasattr(div, "__getitem__"):
+                div = div[0]
             if div < 1:
                 div = 1
 
@@ -2240,6 +2268,7 @@ class OpenADCInterface(object):
         self.presamples_actual = 0
         self.presampleTempMargin = 24
         self._stream_mode = False
+        self._stream_segment_size = 32768
         self._support_get_duration = True
         self._is_husky = False
         self._fast_fifo_read = True
@@ -2257,6 +2286,10 @@ class OpenADCInterface(object):
     def setStreamMode(self, stream):
         self._stream_mode = stream
         self.updateStreamBuffer()
+
+    def setStreamSegmentSize(self, size):
+        self._stream_segment_size = size
+
 
     def setFastSMC(self, fast):
         self.serial.set_smc_speed(fast)
@@ -2466,7 +2499,8 @@ class OpenADCInterface(object):
         if self._stream_mode:
             bufsizebytes = 0
             #Save the number we will return
-            bufsizebytes, self._stream_len_act = self.serial.cmdReadStream_bufferSize(self._stream_len, self._is_husky, self._bits_per_sample)
+            #bufsizebytes, self._stream_len_act = self.serial.cmdReadStream_bufferSize(self._stream_len, self._is_husky, self._bits_per_sample)
+            bufsizebytes = self._stream_segment_size # XXX- temporary
             #Generate the buffer to save buffer
             self._sbuf = array.array('B', [0]) * bufsizebytes
 
@@ -2584,7 +2618,7 @@ class OpenADCInterface(object):
             scope_logger.debug("Stream on!")
             self.sendMessage(CODE_WRITE, ADDR_FAST_FIFO_READ, [1])
             self.serial.set_smc_speed(1)
-            self.serial.initStreamModeCapture(self._stream_len, self._sbuf, timeout_ms=int(self._timeout * 1000) + 500, is_husky=self._is_husky)
+            self.serial.initStreamModeCapture(self._stream_len, self._sbuf, timeout_ms=int(self._timeout * 1000) + 500, is_husky=self._is_husky, segment_size=self._stream_segment_size)
 
     def capture(self, offset=None, adc_freq=29.53E6, samples=24400):
         timeout = False
