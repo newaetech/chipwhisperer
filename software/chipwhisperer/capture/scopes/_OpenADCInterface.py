@@ -2500,7 +2500,7 @@ class OpenADCInterface(object):
             bufsizebytes = 0
             #Save the number we will return
             #bufsizebytes, self._stream_len_act = self.serial.cmdReadStream_bufferSize(self._stream_len, self._is_husky, self._bits_per_sample)
-            bufsizebytes = self._stream_segment_size # XXX- temporary
+            #bufsizebytes = self._stream_segment_size # XXX- temporary
             #Generate the buffer to save buffer
             self._sbuf = array.array('B', [0]) * bufsizebytes
 
