@@ -2499,9 +2499,7 @@ class OpenADCInterface(object):
         if self._stream_mode:
             bufsizebytes = 0
             #Save the number we will return
-            #bufsizebytes, self._stream_len_act = self.serial.cmdReadStream_bufferSize(self._stream_len, self._is_husky, self._bits_per_sample)
-            bufsizebytes = self._stream_segment_size # XXX- temporary
-            #Generate the buffer to save buffer
+            bufsizebytes, self._stream_len_act = self.serial.cmdReadStream_bufferSize(self._stream_len, self._is_husky, self._bits_per_sample)
             self._sbuf = array.array('B', [0]) * bufsizebytes
 
 
@@ -2647,15 +2645,19 @@ class OpenADCInterface(object):
             self.sendMessage(CODE_WRITE, ADDR_FAST_FIFO_READ, [0])
             self.serial.set_smc_speed(0)
 
-            self._stream_rx_bytes, stream_timeout = self.serial.cmdReadStream()
+            self._stream_rx_bytes, stream_timeout = self.serial.cmdReadStream(self._is_husky)
             timeout |= stream_timeout
             #Check the status now
-            # TODO XXX-Husky? bytes_left, overflow_bytes_left, unknown_overflow = self.serial.cmdReadStream_getStatus()
-            #scope_logger.debug("Streaming done, results: rx_bytes = %d, bytes_left = %d, overflow_bytes_left = %d"%(self._stream_rx_bytes, bytes_left, overflow_bytes_left))
-            scope_logger.debug("Streaming done, results: rx_bytes = %d"%(self._stream_rx_bytes))
+            if self._is_husky:
+                scope_logger.debug("Streaming done, results: rx_bytes = %d"%(self._stream_rx_bytes))
+            else:
+            # TODO later-Husky? 
+                bytes_left, overflow_bytes_left, unknown_overflow = self.serial.cmdReadStream_getStatus()
+                scope_logger.debug("Streaming done, results: rx_bytes = %d, bytes_left = %d, overflow_bytes_left = %d"%(self._stream_rx_bytes, bytes_left, overflow_bytes_left))
             self.arm(False)
 
             if stream_timeout:
+                # TODO later- adjust messages/checks for Husky?
                 if self._stream_rx_bytes == 0: # == (self._stream_len - 3072):
                     scope_logger.warning("Streaming mode OVERFLOW occured as trigger too fast - Adjust offset upward (suggest = 200 000)")
                 else:
