@@ -2499,10 +2499,10 @@ class OpenADCInterface(object):
         if self._stream_mode:
             bufsizebytes = 0
             #Save the number we will return
-            #bufsizebytes, self._stream_len_act = self.serial.cmdReadStream_bufferSize(self._stream_len, self._is_husky, self._bits_per_sample)
+            # bufsizebytes, self._stream_len_act = self.serial.cmdReadStream_bufferSize(self._stream_len, self._is_husky, self._bits_per_sample)
             #bufsizebytes = self._stream_segment_size # XXX- temporary
             #Generate the buffer to save buffer
-            self._sbuf = array.array('B', [0]) * bufsizebytes
+            self._sbuf = array.array('B', [0]) * self._stream_len
 
 
     def setDecimate(self, decsamples):
