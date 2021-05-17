@@ -2502,7 +2502,7 @@ class OpenADCInterface(object):
             # bufsizebytes, self._stream_len_act = self.serial.cmdReadStream_bufferSize(self._stream_len, self._is_husky, self._bits_per_sample)
             #bufsizebytes = self._stream_segment_size # XXX- temporary
             #Generate the buffer to save buffer
-            self._sbuf = array.array('B', [0]) * self._stream_len
+            self._sbuf = array.array('B', [0]) * int(self._stream_len * self._bits_per_sample / 8)
 
 
     def setDecimate(self, decsamples):
@@ -2633,7 +2633,7 @@ class OpenADCInterface(object):
             starttime = datetime.datetime.now()
             while self.serial.cmdReadStream_isDone() == False:
                 # Wait for a moment before re-running the loop
-                #time.sleep(0.05)
+                time.sleep(0.05)
                 diff = datetime.datetime.now() - starttime
 
                 # If we've timed out, don't wait any longer for a trigger
