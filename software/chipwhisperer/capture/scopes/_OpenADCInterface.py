@@ -2639,6 +2639,7 @@ class OpenADCInterface(object):
                     scope_logger.warning('Timeout in OpenADC capture(), no trigger seen! Trigger forced, data is invalid')
                     timeout = True
                     self.triggerNow()
+                    self.serial.streamModeCaptureStream.stop = True
                     break
 
             scope_logger.debug("DISABLING fast fifo read")
