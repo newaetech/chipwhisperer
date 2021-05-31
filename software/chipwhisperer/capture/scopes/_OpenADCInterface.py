@@ -38,8 +38,8 @@ ADDR_TRIGGERDUR = 20
 ADDR_MULTIECHO  = 34
 ADDR_DATA_SOURCE = 27
 ADDR_ADC_LOW_RES = 29
-ADDR_DRP_ADDR   = 30
-ADDR_DRP_DATA   = 31
+ADDR_CLKGEN_DRP_ADDR = 30
+ADDR_CLKGEN_DRP_DATA = 31
 ADDR_SEGMENTS   = 32
 ADDR_SEGMENT_CYCLES = 33
 ADDR_STREAM_SEGMENT_SIZE = 35
@@ -53,6 +53,11 @@ ADDR_NO_CLIP_ERRORS = 45
 
 ADDR_HUSKY_ADC_CTRL = 60
 ADDR_HUSKY_VMAG_CTRL = 61
+
+ADDR_CG1_DRP_ADDR = 62
+ADDR_CG1_DRP_DATA = 63
+ADDR_CG2_DRP_ADDR = 64
+ADDR_CG2_DRP_DATA = 65
 
 CODE_READ       = 0x80
 CODE_WRITE      = 0xC0
@@ -163,6 +168,150 @@ class HWInformation(util.DisableNewAttr):
         self.oa.hwInfo = None
 
 
+class XilinxDRP(util.DisableNewAttr):
+    ''' Read/write methods for DRP port in Xilinx primitives such as MMCM and XADC.
+        Husky only.
+        Talks to something like reg_mmcm_drp.v.
+    '''
+    _name = 'Xilinx DRP Access'
+    def __init__(self, oaiface, data_address, address_address):
+        self.oa = oaiface
+        self.data = data_address
+        self.addr = address_address
+        self.disable_newattr()
+
+    def write(self, addr, data):
+        """Write XADC DRP register. UG480 for register definitions.
+        Args:
+            addr (int): 6-bit address
+            data (int): 16-bit write data
+        """
+        self.oa.sendMessage(CODE_WRITE, self.data, [data  & 0xff, data >> 8])
+        self.oa.sendMessage(CODE_WRITE, self.addr, [addr + 0x80])
+
+    def read(self, addr):
+        """Read XADC DRP register. UG480 for register definitions.
+        Args:
+            addr (int): 6-bit address
+        Returns:
+            A 16-bit integer.
+        """
+        self.oa.sendMessage(CODE_WRITE, self.addr, [addr])
+        raw = self.oa.sendMessage(CODE_READ, self.data, maxResp=2)
+        return int.from_bytes(raw, byteorder='little')
+
+
+class XilinxMMCMDRP(util.DisableNewAttr):
+    ''' Methods for dynamically programming Xilinx MMCM via its DRP.
+        Husky only.
+    '''
+    _name = 'Xilinx MMCM DRP'
+    def __init__(self, drp):
+        self.drp = drp
+        self.disable_newattr()
+
+    def set_mul(self, mul):
+        muldiv2 = int(mul/2)
+        lo = muldiv2
+        if mul%2:
+            hi = lo+1
+        else:
+            hi = lo
+        if hi >= 2**6:
+            raise ValueError("Internal error: calculated hi/lo value exceeding range")
+        raw = lo + (hi<<6) + 0x1000
+        self.drp.write(0x14, raw)
+
+
+    def set_main_div(self, div):
+        if type(div) != int:
+            raise ValueError("Only integers are supported")
+        # Set main divider:
+        if div == 1:
+            raw = 0x1000
+        else:
+            div2 = int(div/2)
+            lo = div2
+            if div % 2:
+                hi = lo+1
+            else:
+                hi = lo
+            raw = lo + (hi<<6)
+        self.drp.write(0x16, raw)
+
+
+    def set_sec_div(self, div, clock=0):
+        if type(div) != int:
+            raise ValueError("Only integers are supported")
+        if clock > 5:
+            raise ValueError("Clock must be in range [0,5]")
+        addr = 0x08 + clock*2
+        # Set secondary divider:
+        if div == 1:
+            self.drp.write(addr+1, 0x0040)
+        else:
+            div2 = int(div/2)
+            lo = div2
+            if div % 2:
+                hi = lo+1
+            else:
+                hi = lo
+            raw = lo + (hi<<6) + 0x1000
+            self.drp.write(addr, raw)
+
+
+    def get_mul(self):
+        # 1. read CLKFBOUT2 to ensure fractional mode is disabled:
+        raw = list(int.to_bytes(self.drp.read(0x11), length=2, byteorder='little'))
+        if raw[1] & 0x08:
+            print('WARNING: fractional mode is enabled. This is unexpected. Reported multiplier value will be incorrect.')
+        # 2. check "NO COUNT" bit:
+        if raw[0] & 0x04:
+            mul = 1
+        else:
+            # 3. read CLKFBOUT:
+            raw = list(int.to_bytes(self.drp.read(0x14), length=2, byteorder='little'))
+            # extract high time and low time
+            lo = (raw[0] & 0x3f)
+            hi = (raw[0]>>6) + ((raw[1] & 0x0f)<<2)
+            mul = lo + hi
+            #if lo != hi: print('WARNING: high and low times unequal (%d, %d) ! Duty cycle is not 50/50. This is unexpected. % (hi, lo))
+        return mul
+
+
+    def get_main_div(self):
+        raw = list(int.to_bytes(self.drp.read(0x16), length=2, byteorder='little'))
+        if raw[1] & 0x10:
+            maindiv = 1
+        else:
+            # extract high time and low time
+            lo = (raw[0] & 0x3f)
+            hi = (raw[0]>>6) + ((raw[1] & 0x0f)<<2)
+            maindiv = lo + hi
+        return maindiv
+
+
+    def get_sec_div(self, clock=0):
+        if clock > 5:
+            raise ValueError("Clock must be in range [0,5]")
+        addr = 0x08 + clock*2
+        #  read CLKOUT2 to ensure fractional mode is disabled and check NO_COUNT bit for CLKOUT divider:
+        raw = list(int.to_bytes(self.drp.read(addr+1), length=2, byteorder='little'))
+        if raw[1] & 0x08:
+            logging.error('CLKGEN fractional mode is enabled. This is unexpected.')
+        if raw[0] & 0x40:
+            secdiv = 1
+        else:
+            # read CLKOUT divider:
+            raw = list(int.to_bytes(self.drp.read(addr), length=2, byteorder='little'))
+            # extract high time and low time
+            lo = (raw[0] & 0x3f)
+            hi = (raw[0]>>6) + ((raw[1] & 0x0f)<<2)
+            secdiv = lo + hi
+        return secdiv
+
+
+
 class XADCSettings(util.DisableNewAttr):
     ''' Husky FPGA XADC temperature and voltage monitoring.
     '''
@@ -170,6 +319,7 @@ class XADCSettings(util.DisableNewAttr):
 
     def __init__(self, oaiface):
         self.oa = oaiface
+        self.drp = XilinxDRP(oaiface, ADDR_XADC_DRP_DATA, ADDR_XADC_DRP_ADDR)
         self.disable_newattr()
 
     def _dict_repr(self):
@@ -189,26 +339,6 @@ class XADCSettings(util.DisableNewAttr):
 
     def __str__(self):
         return self.__repr__()
-
-    def _drp_write(self, addr, data):
-        """Write XADC DRP register. UG480 for register definitions.
-        Args:
-            addr (int): 6-bit address
-            data (int): 16-bit write data
-        """
-        self.oa.sendMessage(CODE_WRITE, ADDR_XADC_DRP_DATA, [data  & 0xff, data >> 8])
-        self.oa.sendMessage(CODE_WRITE, ADDR_XADC_DRP_ADDR, [addr + 0x80])
-
-    def _drp_read(self, addr):
-        """Read XADC DRP register. UG480 for register definitions.
-        Args:
-            addr (int): 6-bit address
-        Returns:
-            A 16-bit integer.
-        """
-        self.oa.sendMessage(CODE_WRITE, ADDR_XADC_DRP_ADDR, [addr])
-        raw = self.oa.sendMessage(CODE_READ, ADDR_XADC_DRP_DATA, maxResp=2)
-        return int.from_bytes(raw, byteorder='little')
 
     @property
     def status(self):
@@ -259,7 +389,7 @@ class XADCSettings(util.DisableNewAttr):
         Returns:
             Temperature in celcius (float).
         """
-        raw = self._drp_read(addr)
+        raw = self.drp.read(addr)
         return (raw>>4) * 503.975/4096 - 273.15 # ref: UG480
 
     def set_temp(self, temp, addr=0):
@@ -271,8 +401,7 @@ class XADCSettings(util.DisableNewAttr):
             Temperature in celcius (float).
         """
         raw = (int((temp + 273.15)*4096/503.975) << 4) & 0xffff
-        self.oa.sendMessage(CODE_WRITE, ADDR_XADC_DRP_DATA, list(int.to_bytes(raw, length=2, byteorder='little')))
-        self.oa.sendMessage(CODE_WRITE, ADDR_XADC_DRP_ADDR, [0x80 + addr])
+        self.drp.write(addr, raw)
 
 
     @property
@@ -303,7 +432,7 @@ class XADCSettings(util.DisableNewAttr):
             addr = 6
         else:
             raise ValueError("Invalid rail")
-        raw = self._drp_read(addr)
+        raw = self.drp.read(addr)
         return (raw>>4)/4096 * 3 # ref: UG480
 
 
@@ -1413,6 +1542,8 @@ class ClockSettings(util.DisableNewAttr):
         self.oa = oaiface
         self._hwinfo = hwinfo
         self._freqExt = 10e6
+        self.drp = XilinxDRP(oaiface, ADDR_CLKGEN_DRP_DATA, ADDR_CLKGEN_DRP_ADDR)
+        self.mmcm = XilinxMMCMDRP(self.drp)
         self.disable_newattr()
 
     def _dict_repr(self):
@@ -1819,17 +1950,7 @@ class ClockSettings(util.DisableNewAttr):
         # calculate register value:
         if type(mul) != int:
             raise ValueError("Only integers are supported")
-        muldiv2 = int(mul/2)
-        lo = muldiv2
-        if mul%2:
-            hi = lo+1
-        else:
-            hi = lo
-        raw = list(int.to_bytes(lo + (hi<<6) + 0x1000, length=2, byteorder='little'))
-        # data to write:
-        self.oa.sendMessage(CODE_WRITE, ADDR_DRP_DATA, raw)
-        # write data to addres 0x14:
-        self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x94])
+        self.mmcm.set_mul(mul)
 
 
     @property
@@ -1883,43 +2004,8 @@ class ClockSettings(util.DisableNewAttr):
     def _set_husky_clkgen_div(self, div):
         main_div = div[0]
         sec_div = div[1]
-        if type(main_div) != int or type(sec_div) != int:
-            raise ValueError("Only integers are supported")
-        # 1. Set main divider:
-        if main_div == 1:
-            raw = list(int.to_bytes(0x1000, length=2, byteorder='little'))
-        else:
-            div2 = int(main_div/2)
-            lo = div2
-            if main_div % 2:
-                hi = lo+1
-            else:
-                hi = lo
-            raw = list(int.to_bytes(lo + (hi<<6), length=2, byteorder='little'))
-        # data to write:
-        self.oa.sendMessage(CODE_WRITE, ADDR_DRP_DATA, raw)
-        # write data to addres 0x16:
-        self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x96])
-
-        # 2. Set clkout0 secondary divider:
-        if sec_div == 1:
-            raw = list(int.to_bytes(0x0040, length=2, byteorder='little'))
-            # data to write:
-            self.oa.sendMessage(CODE_WRITE, ADDR_DRP_DATA, raw)
-            # write data to address 0x09:
-            self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x89])
-        else:
-            div2 = int(sec_div/2)
-            lo = div2
-            if sec_div%2:
-                hi = lo+1
-            else:
-                hi = lo
-            raw = list(int.to_bytes(lo + (hi<<6) + 0x1000, length=2, byteorder='little'))
-            # data to write:
-            self.oa.sendMessage(CODE_WRITE, ADDR_DRP_DATA, raw)
-            # write data to address 0x08:
-            self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x88])
+        self.mmcm.set_main_div(div[0])
+        self.mmcm.set_sec_div(div[1],0)
 
 
     def _setClkgenDivWrapper(self, div):
@@ -1941,53 +2027,14 @@ class ClockSettings(util.DisableNewAttr):
 
 
     def _get_husky_clkgen_div(self):
-        # 1. read DIVREG to get main divider:
-        self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x16])
-        raw = self.oa.sendMessage(CODE_READ, ADDR_DRP_DATA, maxResp=2)
-        if raw[1] & 0x10:
-            maindiv = 1
-        else:
-            # extract high time and low time
-            lo = (raw[0] & 0x3f)
-            hi = (raw[0]>>6) + ((raw[1] & 0x0f)<<2)
-            maindiv = lo + hi
-        # 2. read CLKOUT2 to ensure fractional mode is disabled and check NO_COUNT bit for CLKOUT divider:
-        self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x9])
-        raw = self.oa.sendMessage(CODE_READ, ADDR_DRP_DATA, maxResp=2)
-        if raw[1] & 0x08:
-            logging.error('CLKGEN fractional mode is enabled. This is unexpected.')
-        if raw[0] & 0x40:
-            secdiv = 1
-        else:
-            # 3. read CLKOUT divider:
-            self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x8])
-            raw = self.oa.sendMessage(CODE_READ, ADDR_DRP_DATA, maxResp=2)
-            # extract high time and low time
-            lo = (raw[0] & 0x3f)
-            hi = (raw[0]>>6) + ((raw[1] & 0x0f)<<2)
-            secdiv = lo + hi
+        maindiv = self.mmcm.get_main_div()
+        secdiv = self.mmcm.get_sec_div()
         return maindiv*secdiv
 
 
     def _get_husky_clkgen_mul(self):
-        # 1. read CLKFBOUT2 to ensure fractional mode is disabled:
-        self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x11])
-        raw = self.oa.sendMessage(CODE_READ, ADDR_DRP_DATA, maxResp=2)
-        if raw[1] & 0x08:
-            print('WARNING: fractional mode is enabled. This is unexpected. Reported multiplier value will be incorrect.')
-        # 2. check "NO COUNT" bit:
-        if raw[0] & 0x04:
-            mul = 1
-        else:
-            # 3. read CLKFBOUT:
-            self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x14])
-            raw = self.oa.sendMessage(CODE_READ, ADDR_DRP_DATA, maxResp=2)
-            # extract high time and low time
-            lo = (raw[0] & 0x3f)
-            hi = (raw[0]>>6) + ((raw[1] & 0x0f)<<2)
-            mul = lo + hi
-            #if lo != hi: print('WARNING: high and low times unequal (%d, %d) ! Duty cycle is not 50/50. This is unexpected. % (hi, lo))
-        return mul
+        return self.mmcm.get_mul()
+
 
     def reset_adc(self):
         """Reset the ADC DCM.
