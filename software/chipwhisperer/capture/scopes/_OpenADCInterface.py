@@ -88,6 +88,7 @@ class HWInformation(util.DisableNewAttr):
     _name = 'HW Information'
 
     def __init__(self, oaiface):
+        # oaiface = OpenADCInterface
         self.oa = oaiface
         self.oa.hwInfo = self
         self.sysFreq = 0
@@ -169,6 +170,7 @@ class XADCSettings(util.DisableNewAttr):
     _name = 'Husky XADC Setting'
 
     def __init__(self, oaiface):
+        # oaiface = OpenADCInterface
         self.oa = oaiface
         self.disable_newattr()
 
@@ -313,6 +315,7 @@ class ADS4128Settings(util.DisableNewAttr):
     _name = 'Husky ADS4128 ADC Setting'
 
     def __init__(self, oaiface):
+        # oaiface = OpenADCInterface
         self.oa = oaiface
         self.adc_reset()
         self.set_default_settings()
@@ -425,6 +428,7 @@ class GainSettings(util.DisableNewAttr):
     _name = 'Gain Setting'
 
     def __init__(self, oaiface):
+        # oaiface = OpenADCInterface
         self.oa = oaiface
         self.gainlow_cached = False
         self.gain_cached = 0
@@ -644,6 +648,7 @@ class TriggerSettings(util.DisableNewAttr):
     _name = 'Trigger Setup'
 
     def __init__(self, oaiface):
+        # oaiface = OpenADCInterface
         self._new_attributes_disabled = False
         self.oa = oaiface
         self._numSamples = 0
@@ -2250,7 +2255,7 @@ class ClockSettings(util.DisableNewAttr):
         return self._getAdcFrequency() / self.oa.decimate()
 
 
-class OpenADCInterface(object):
+class OpenADCInterface:
 
     cached_settings = None
     def __init__(self, serial_instance):
