@@ -1407,15 +1407,17 @@ class TriggerSettings(util.DisableNewAttr):
     def _set_presamples(self, samples):
         if self._is_husky:
             min_samples = 8
-            max_samples = min(self.samples, 32768)
+            max_samples = min(self.samples, 32767)
+            presamp_bytes = 2
         else:
             min_samples = 0
             max_samples = self.samples
+            presamp_bytes = 4
         if samples < min_samples and samples != 0:
             raise ValueError("Number of pre-trigger samples cannot be less than %d" % min_samples)
         if samples > max_samples:
             if self._is_husky:
-                raise ValueError("Number of pre-trigger samples cannot be larger than the lesser of [total number of samples, 32768] (%d)." % max_samples)
+                raise ValueError("Number of pre-trigger samples cannot be larger than the lesser of [total number of samples, 32767] (%d)." % max_samples)
             else:
                 raise ValueError("Number of pre-trigger samples cannot be larger than the total number of samples (%d)." % max_samples)
 
@@ -1440,7 +1442,7 @@ class TriggerSettings(util.DisableNewAttr):
 
             self.presamples_actual = samplesact * 3
 
-        self.oa.sendMessage(CODE_WRITE, ADDR_PRESAMPLES, list(int.to_bytes(samplesact, length=4, byteorder='little')))
+        self.oa.sendMessage(CODE_WRITE, ADDR_PRESAMPLES, list(int.to_bytes(samplesact, length=presamp_bytes, byteorder='little')))
 
 
         #print "Requested presamples: %d, actual: %d"%(samples, self.presamples_actual)
