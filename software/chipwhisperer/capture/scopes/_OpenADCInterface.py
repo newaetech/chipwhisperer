@@ -1544,6 +1544,7 @@ class ClockSettings(util.DisableNewAttr):
         self.oa = oaiface
         self._hwinfo = hwinfo
         self._freqExt = 10e6
+        self._is_husky = False
         self.drp = XilinxDRP(oaiface, ADDR_CLKGEN_DRP_DATA, ADDR_CLKGEN_DRP_ADDR)
         self.mmcm = XilinxMMCMDRP(self.drp)
         self.disable_newattr()
@@ -1635,7 +1636,7 @@ class ClockSettings(util.DisableNewAttr):
         :Setter: Set a new phase offset
 
         Raises:
-           ValueError: if offset not in [-255, 255]
+           ValueError: if offset not in [-32767, 32767] (Husky) or [-255, 255] (others)
            TypeError: if offset not integer
         """
         return self._get_phase()
@@ -2174,15 +2175,20 @@ class ClockSettings(util.DisableNewAttr):
         except ValueError:
             raise TypeError("Can't convert %s to int" % phase)
 
-        if phase_int < -255 or phase_int > 255:
+        if self._is_husky:
+            if phase_int < -32767 or phase_int > 32767:
+                raise ValueError("Phase %d is outside range [-32767, 32767]" % phase_int)
+        elif phase_int < -255 or phase_int > 255:
             raise ValueError("Phase %d is outside range [-255, 255]" % phase_int)
 
-        LSB = phase_int & 0x00FF
-        MSB = (phase_int & 0x0100) >> 8
-
         cmd = bytearray(2)
-        cmd[0] = LSB
-        cmd[1] = MSB | 0x02
+        cmd[0] = phase_int & 0x00FF
+        if self._is_husky:
+            cmd[1] = (phase_int & 0xFF00) >> 8
+        else:
+            MSB = (phase_int & 0x0100) >> 8
+            cmd[1] = MSB | 0x02 # TODO: hmm why is this being done?
+
         self.oa.sendMessage(CODE_WRITE, ADDR_PHASE, cmd, False)
 
     def _get_phase(self):
@@ -2197,12 +2203,18 @@ class ClockSettings(util.DisableNewAttr):
 
         if phase_valid:
             LSB = result[0]
-            MSB = result[1] & 0x01
+            if self._is_husky:
+                MSB = result[1]
+            else:
+                MSB = result[1] & 0x01
 
             phase = LSB | (MSB << 8)
 
             #Sign Extend
-            phase = SIGNEXT(phase, 9)
+            if self._is_husky:
+                phase = SIGNEXT(phase, 16)
+            else:
+                phase = SIGNEXT(phase, 9)
 
             return phase
         else:
