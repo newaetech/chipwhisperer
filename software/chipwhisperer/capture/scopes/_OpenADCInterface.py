@@ -1451,6 +1451,7 @@ class ClockSettings(util.DisableNewAttr):
         """The clock source for the ADC module.
 
         The ADC can be clocked by one of five possible sources:
+
          * "clkgen_x1": CLKGEN output via DCM
          * "clkgen_x4": CLKGEN output via DCM with x4 clk multiplier
          * "extclk_x1": External clock input via DCM
@@ -1598,6 +1599,7 @@ class ClockSettings(util.DisableNewAttr):
         """The input source for the CLKGEN DCM.
 
         This DCM can receive input from one of two places:
+
         - "extclk": The external clock input
         - "system" or "internal": The system clock (96 MHz)
 
