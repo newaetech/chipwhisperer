@@ -10,8 +10,6 @@ from ._base import TargetTemplate
 from chipwhisperer.hardware.naeusb.naeusb import NAEUSB,packuint32
 from chipwhisperer.hardware.naeusb.pll_cdce906 import PLLCDCE906
 from chipwhisperer.hardware.naeusb.fpga import FPGA
-from chipwhisperer.common.utils import util
-from chipwhisperer.common.utils.util import camel_case_deprecated, fw_ver_required
 
 from chipwhisperer.logging import *
 

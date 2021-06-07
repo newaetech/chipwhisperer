@@ -34,8 +34,6 @@ from ._base import TargetTemplate
 from chipwhisperer.hardware.naeusb.naeusb import NAEUSB,packuint32
 from chipwhisperer.hardware.naeusb.pll_cdce906 import PLLCDCE906
 from chipwhisperer.hardware.naeusb.fpga import FPGA
-from chipwhisperer.common.utils import util
-from chipwhisperer.common.utils.util import camel_case_deprecated, fw_ver_required
 
 from chipwhisperer.logging import *
 
@@ -362,7 +360,6 @@ class CW305(TargetTemplate):
             self.fpga_write(self.REG_USER_LED, [0])
             return True
 
-    isDone = camel_case_deprecated(is_done)
 
     def readOutput(self):
         """"Read output from FPGA"""
@@ -559,7 +556,6 @@ class CW305(TargetTemplate):
 
         return self._naeusb.cmdWriteSam3U(addr, data)
 
-    @fw_ver_required(0, 30)
     def spi_mode(self, enable=True, timeout=200, bsfile=None):
         """Enter programming mode for the onboard SPI chip
         
@@ -600,7 +596,6 @@ class CW305(TargetTemplate):
         spi.enable_interface(enable)
         return spi
 
-    @fw_ver_required(0, 40)
     def gpio_mode(self, timeout=200):
         """Allow arbitrary GPIO access on SAM3U
         
