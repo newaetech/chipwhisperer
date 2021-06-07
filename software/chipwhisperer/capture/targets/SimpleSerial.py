@@ -25,7 +25,6 @@
 import logging
 
 import random
-from usb import USBError
 
 import binascii
 from ._base import TargetTemplate
@@ -238,12 +237,9 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
 
         try:
             self.ser.write(data)
-        except USBError:
+        except:
             self.dis()
-            raise Warning("Error in target. It may have been disconnected")
-        except Exception as e:
-            self.dis()
-            raise e
+            raise
 
     def read(self, num_char = 0, timeout = 250):
         """ Reads data from the target over serial.
@@ -266,12 +262,9 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
             if num_char == 0:
                 num_char = self.ser.inWaiting()
             return self.ser.read(num_char, timeout)
-        except USBError:
+        except:
             self.dis()
-            raise Warning("Error in target. It may have been disconnected")
-        except Exception as e:
-            self.dis()
-            raise e
+            raise
 
     def simpleserial_wait_ack(self, timeout=500):
         """Waits for an ack from the target for timeout ms
