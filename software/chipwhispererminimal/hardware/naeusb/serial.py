@@ -26,8 +26,7 @@
 import time
 import os
 from .naeusb import packuint32
-from chipwhisperer.common.utils.util import fw_ver_required
-from chipwhisperer.logging import *
+from chipwhispererminimal.logging import *
 class USART(object):
     """
     USART Class communicates with NewAE USB Interface to read/write data over control endpoint.

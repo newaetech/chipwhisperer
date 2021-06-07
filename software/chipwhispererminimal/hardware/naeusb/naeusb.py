@@ -29,11 +29,11 @@ from threading import Thread
 import usb1
 import array
 
-from chipwhisperer.hardware.firmware import cwlite as fw_cwlite
-from chipwhisperer.hardware.firmware import cw1200 as fw_cw1200
-from chipwhisperer.hardware.firmware import cw305  as fw_cw305
-from chipwhisperer.hardware.firmware import cwnano  as fw_nano
-from chipwhisperer.hardware.firmware import cwhusky as fw_cwhusky
+from chipwhispererminimal.hardware.firmware import cwlite as fw_cwlite
+from chipwhispererminimal.hardware.firmware import cw1200 as fw_cw1200
+from chipwhispererminimal.hardware.firmware import cw305  as fw_cw305
+from chipwhispererminimal.hardware.firmware import cwnano  as fw_nano
+from chipwhispererminimal.hardware.firmware import cwhusky as fw_cwhusky
 
 from chipwhisperer.logging import *
 
