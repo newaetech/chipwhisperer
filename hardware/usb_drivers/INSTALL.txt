@@ -1,0 +1,9 @@
+The attached USB drivers should work on any Windows system, both 32 and 64-bit. They are signed by NewAE Technology Inc.
+
+To install them:
+ 1) Open your Device Manager.
+ 2) Find the device in the list, it should appear with a yellow exclamation mark under "Other devices".
+ 3) Double-click on the device.
+ 4) Hit "Update Driver"
+ 5) Select "Browse my computer for driver software".
+ 6) Point the wizard to this folder, ensure the "look in subfolders" option is selected.
