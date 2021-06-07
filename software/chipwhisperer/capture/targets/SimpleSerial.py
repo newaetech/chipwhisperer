@@ -237,9 +237,9 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
 
         try:
             self.ser.write(data)
-        except:
+        except Exception as e:
             self.dis()
-            raise
+            raise e
 
     def read(self, num_char = 0, timeout = 250):
         """ Reads data from the target over serial.
@@ -262,9 +262,9 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
             if num_char == 0:
                 num_char = self.ser.inWaiting()
             return self.ser.read(num_char, timeout)
-        except:
+        except Exception as e:
             self.dis()
-            raise
+            raise e
 
     def simpleserial_wait_ack(self, timeout=500):
         """Waits for an ack from the target for timeout ms
