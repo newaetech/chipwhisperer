@@ -14,17 +14,12 @@ import os, os.path, time
 from zipfile import ZipFile
 
 from chipwhisperer.capture import targets
-from chipwhisperer.capture.scopes.cwhardware.ChipWhispererSAM3Update import SAMFWLoader
 import logging
 from chipwhisperer.logging import *
 
 # replace bytearray with inherited class with better repr and str.
 import builtins
-builtins.bytearray = util.bytearray
 
-# from chipwhisperer.capture.scopes.cwhardware import ChipWhispererSAM3Update as CWFirmwareUpdate
-
-ktp = key_text_patterns #alias
 
 def program_target(scope, prog_type, fw_path, **kwargs):
     """Program the target using the programmer <type>
