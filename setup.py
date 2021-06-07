@@ -15,14 +15,8 @@ setup(
     packages=find_packages('software'),
     package_dir={'': 'software'},
     install_requires=[
-        'configobj',
-        'pyserial',
-        'numpy',
         'libusb1',
-        'ECpy',
-        'fastdtw',
         'Cython',
-        'tqdm'
     ],
     project_urls={
         'Documentation': 'https://chipwhisperer.readthedocs.io',
