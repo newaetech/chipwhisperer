@@ -50,7 +50,6 @@ class TargetTemplate:
 
     def con(self, scope=None, **kwargs):
         """Connect to target"""
-        Programmer.lastFlashedFile = "unknown"
         try:
             self.connectStatus = True
             self._con(scope, **kwargs)
