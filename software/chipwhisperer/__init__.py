@@ -135,7 +135,7 @@ def scope(scope_type=None, **kwargs):
     raise NotImplementedError("Install chipwhisperer full for this function")
 
 
-def target(scope, target_type=targets.SimpleSerial, **kwargs):
+def target(scope, target_type, **kwargs):
     """Create a target object and connect to it.
 
     Args:
@@ -152,12 +152,6 @@ def target(scope, target_type=targets.SimpleSerial, **kwargs):
     """
     target = target_type()
     target.con(scope, **kwargs)
-
-    # need to check 
-    if scope and (isinstance(target, targets.SimpleSerial) or isinstance(target, targets.SimpleSerial2)):
-        if isinstance(scope, scopes.CWNano) and not fw_ver_compare(scope.fw_version, {"major": 0, "minor": 24}):
-            target.ser.cwlite_usart._max_read = 128
-            target_logger.warning("Old firmware: limiting max serial read")
     return target
 
 def capture_trace(scope, target, plaintext, key=None, ack=True):
