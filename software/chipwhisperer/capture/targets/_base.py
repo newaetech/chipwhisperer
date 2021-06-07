@@ -149,7 +149,7 @@ class TargetTemplate:
         raise NotImplementedError("Must define target-specific properties.")
 
     def __repr__(self):
-        return util.dict_to_str(self._dict_repr())
+        return self._dict_repr()
 
     def __str__(self):
         return self.__repr__()
