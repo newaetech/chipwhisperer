@@ -13,13 +13,7 @@ __version__ = '5.6.0'
 import os, os.path, time
 from zipfile import ZipFile
 
-from chipwhisperer.capture import scopes, targets
-from chipwhisperer.capture.api import programmers
-from chipwhisperer.capture import acq_patterns as key_text_patterns
-from chipwhisperer.common.utils.util import fw_ver_compare
-from chipwhisperer.common.api import ProjectFormat as project
-from chipwhisperer.common.traces import Trace
-from chipwhisperer.common.utils import util
+from chipwhisperer.capture import targets
 from chipwhisperer.capture.scopes.cwhardware.ChipWhispererSAM3Update import SAMFWLoader
 import logging
 from chipwhisperer.logging import *
@@ -46,26 +40,7 @@ def program_target(scope, prog_type, fw_path, **kwargs):
     .. versionadded:: 5.0.1
         Simplified programming target
     """
-    if prog_type is None: #[makes] automating notebooks much easier
-        return
-    prog = prog_type(**kwargs)
-
-    try:
-        prog.scope = scope
-        prog._logging = None
-        prog.open()
-        prog.find()
-        prog.erase()
-        prog.program(fw_path, memtype="flash", verify=True)
-        prog.close()
-    except:
-        if isinstance(prog, programmers.XMEGAProgrammer) and isinstance(scope, scopes.OpenADC):
-            target_logger.info("XMEGA error detected, resetting XMEGA")
-            scope.io.pdic = 0
-            time.sleep(0.05)
-            scope.io.pdic = None
-            time.sleep(0.05)
-        raise
+    raise NotImplementedError("Install chipwhisperer full for this function")
 
 
 
@@ -81,11 +56,7 @@ def open_project(filename):
     Raises:
        OSError: filename does not exist.
     """
-    filename = project.ensure_cwp_extension(filename)
-
-    proj = project.Project()
-    proj.load(filename)
-    return proj
+    raise NotImplementedError("Install chipwhisperer full for this function")
 
 
 def create_project(filename, overwrite=False):
@@ -105,18 +76,7 @@ def create_project(filename, overwrite=False):
     Raises:
        OSError: filename exists and overwrite is False.
     """
-    filename = project.ensure_cwp_extension(filename)
-
-    if os.path.isfile(filename) and (overwrite == False):
-        raise OSError("File " + filename + " already exists")
-
-    # If the user gives a relative path including ~, expand to the absolute path
-    filename = os.path.abspath(os.path.expanduser(filename))
-
-    proj = project.Project()
-    proj.setFilename(filename)
-
-    return proj
+    raise NotImplementedError("Install chipwhisperer full for this function")
 
 
 def import_project(filename, file_type='zip', overwrite=False):
@@ -138,38 +98,7 @@ def import_project(filename, file_type='zip', overwrite=False):
     .. versionadded:: 5.1
         Add **import_project** function.
     """
-    # extract name from input file
-    input_dir, input_file = os.path.split(filename)
-    input_file_root, input_file_ext = os.path.splitext(input_file)
-    input_abs_path = os.path.abspath(filename)
-
-    # use the appropriate type of import
-    if file_type == 'zip':
-        with ZipFile(input_abs_path, 'r') as project_zip:
-            output_path = None
-            for path in project_zip.namelist():
-                root, ext = os.path.splitext(path)
-                if ext == '.cwp':
-                    directory, project_name = os.path.split(root)
-                    output_path = ''.join([project_name, '.cwp'])
-
-                    # check if name already exists in projects
-                    if os.path.isfile(output_path) and (overwrite == False):
-                        raise OSError("File " + output_path + " already exists")
-
-                    # extract the project.cwp file and project_data directory to
-                    # the PROJECT_DIR
-                    project_zip.extractall(path=os.getcwd())
-
-            if output_path is None:
-                raise ValueError('Zipfile does not contain a .cwp file, so it cannot be imported')
-    else:
-        raise ValueError('Import from file type not supported: {}'.format(file_type))
-
-    proj = project.Project()
-    proj.load(output_path)
-
-    return proj
+    raise NotImplementedError("Install chipwhisperer full for this function")
 
 
 def scope(scope_type=None, **kwargs):
@@ -208,19 +137,7 @@ def scope(scope_type=None, **kwargs):
     .. versionchanged:: 5.1
         Added autodetection of scope_type
     """
-    from chipwhisperer.common.utils.util import get_cw_type
-    if scope_type is None:
-        scope_type = get_cw_type(**kwargs)
-    scope = scope_type()
-    try:
-        scope.con(**kwargs)
-    except IOError:
-        scope_logger.error("ChipWhisperer error state detected. Resetting and retrying connection...")
-        scope._getNAEUSB().reset()
-        time.sleep(2)
-        scope = scope_type()
-        scope.con(sn)
-    return scope
+    raise NotImplementedError("Install chipwhisperer full for this function")
 
 
 def target(scope, target_type=targets.SimpleSerial, **kwargs):
@@ -291,55 +208,7 @@ def capture_trace(scope, target, plaintext, key=None, ack=True):
     .. versionchanged:: 5.2
         Added ack parameter and use of target.output_len
     """
-
-    import signal, logging
-
-    # useful to delay keyboard interrupt here,
-    # since could interrupt a USB operation
-    # and kill CW until unplugged+replugged
-    class DelayedKeyboardInterrupt:
-        def __enter__(self):
-            self.signal_received = False
-            self.old_handler = signal.signal(signal.SIGINT, self.handler)
-
-        def handler(self, sig, frame):
-            self.signal_received = (sig, frame)
-            scope_logger.debug('SIGINT received. Delaying KeyboardInterrupt.')
-
-        def __exit__(self, type, value, traceback):
-            signal.signal(signal.SIGINT, self.old_handler)
-            if self.signal_received:
-                self.old_handler(*self.signal_received)
-    # with DelayedKeyboardInterrupt():
-    if key:
-        target.set_key(key, ack=ack)
-
-    scope.arm()
-
-    if plaintext:
-        target.simpleserial_write('p', plaintext)
-
-    ret = scope.capture()
-
-    i = 0
-    while not target.is_done():
-        i += 1
-        time.sleep(0.05)
-        if i > 100:
-            scope_logger.warning("Target did not finish operation")
-            return None
-
-    if ret:
-        scope_logger.warning("Timeout happened during capture")
-        return None
-
-    response = target.simpleserial_read('r', target.output_len, ack=ack)
-    wave = scope.get_last_trace()
-
-    if len(wave) >= 1:
-        return Trace(wave, plaintext, response, key)
-    else:
-        return None
+    raise NotImplementedError("Install chipwhisperer full for this function")
 
 def plot(*args, **kwargs):
     """Get a plotting object for use in Jupyter.
@@ -362,6 +231,4 @@ def plot(*args, **kwargs):
     Returns:
         A holoviews Curve object
     """
-    import holoviews as hv
-    hv.extension('bokeh', logo=False) #don't display logo, otherwise it pops up everytime this func is called.
-    return hv.Curve(*args, **kwargs).opts(width=800, height=600)
+    raise NotImplementedError("Install chipwhisperer full for this function")
