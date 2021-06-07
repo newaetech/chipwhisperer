@@ -26,13 +26,14 @@
 import logging
 import time
 import random
+from datetime import datetime
 import os.path
 import re
 import io
 from ._base import TargetTemplate
-from chipwhispererminimal.hardware.naeusb.naeusb import NAEUSB,packuint32
-from chipwhispererminimal.hardware.naeusb.pll_cdce906 import PLLCDCE906
-from chipwhispererminimal.hardware.naeusb.fpga import FPGA
+from chipwhisperer.hardware.naeusb.naeusb import NAEUSB,packuint32
+from chipwhisperer.hardware.naeusb.pll_cdce906 import PLLCDCE906
+from chipwhisperer.hardware.naeusb.fpga import FPGA
 
 from chipwhisperer.logging import *
 
