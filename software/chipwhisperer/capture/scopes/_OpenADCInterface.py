@@ -1210,6 +1210,7 @@ class TriggerSettings(util.DisableNewAttr):
         if raw & 8:  stat += 'fast FIFO overflow, '
         if raw & 16: stat += 'presample error, '
         if raw & 32: stat += 'ADC clipped, '
+        if raw & 64: stat += 'invalid downsample setting, '
         if stat == '':
             stat = 'no errors'
         return stat
@@ -1357,6 +1358,8 @@ class TriggerSettings(util.DisableNewAttr):
         return self.oa.getStatus() & STATUS_OVERFLOW_MASK
 
     def _set_decimate(self, decsamples):
+        if self.presamples > 0 and decsamples > 1 and self._is_husky:
+            raise Warning("Decimating with presamples is not supported on Husky.")
         self.oa.setDecimate(decsamples)
 
     def _get_decimate(self):
@@ -1409,6 +1412,8 @@ class TriggerSettings(util.DisableNewAttr):
             min_samples = 8
             max_samples = min(self.samples, 32767)
             presamp_bytes = 2
+            if self.decimate > 1:
+                raise Warning("Decimating with presamples is not supported on Husky.")
         else:
             min_samples = 0
             max_samples = self.samples
@@ -1459,7 +1464,12 @@ class TriggerSettings(util.DisableNewAttr):
         if cached:
             return self.presamples_desired
 
-        temp = self.oa.sendMessage(CODE_READ, ADDR_PRESAMPLES, maxResp=4)
+        if self._is_husky:
+            presamp_bytes = 2
+        else:
+            presamp_bytes = 4
+
+        temp = self.oa.sendMessage(CODE_READ, ADDR_PRESAMPLES, maxResp=presamp_bytes)
         samples = int.from_bytes(temp, byteorder='little')
 
         #CW1200/CW-Lite/Husky reports presamples using different method
@@ -2595,9 +2605,12 @@ class OpenADCInterface(object):
         return samples
 
     def getBytesInFifo(self):
-        temp = self.sendMessage(CODE_READ, ADDR_BYTESTORX, maxResp=4)
-        samples = int.from_bytes(temp, byteorder='little')
-        return samples
+        if self._is_husky:
+            scope_logger.error("Shouldn't be calling getBytesInFifo on Husky: associated register doesn't exist.")
+        else:
+            temp = self.sendMessage(CODE_READ, ADDR_BYTESTORX, maxResp=4)
+            samples = int.from_bytes(temp, byteorder='little')
+            return samples
 
     def flushInput(self):
         try:
