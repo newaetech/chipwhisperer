@@ -13,9 +13,9 @@ __version__ = '5.6.0'
 import os, os.path, time
 from zipfile import ZipFile
 
-from chipwhisperer.capture import targets
+from chipwhispererminimal.capture import targets
 import logging
-from chipwhisperer.logging import *
+from chipwhispererminimal.logging import *
 
 # replace bytearray with inherited class with better repr and str.
 import builtins
