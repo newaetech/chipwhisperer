@@ -88,6 +88,7 @@ class HWInformation(util.DisableNewAttr):
     _name = 'HW Information'
 
     def __init__(self, oaiface):
+        # oaiface = OpenADCInterface
         self.oa = oaiface
         self.oa.hwInfo = self
         self.sysFreq = 0
@@ -169,6 +170,7 @@ class XADCSettings(util.DisableNewAttr):
     _name = 'Husky XADC Setting'
 
     def __init__(self, oaiface):
+        # oaiface = OpenADCInterface
         self.oa = oaiface
         self.disable_newattr()
 
@@ -313,6 +315,7 @@ class ADS4128Settings(util.DisableNewAttr):
     _name = 'Husky ADS4128 ADC Setting'
 
     def __init__(self, oaiface):
+        # oaiface = OpenADCInterface
         self.oa = oaiface
         self.adc_reset()
         self.set_default_settings()
@@ -425,6 +428,7 @@ class GainSettings(util.DisableNewAttr):
     _name = 'Gain Setting'
 
     def __init__(self, oaiface):
+        # oaiface = OpenADCInterface
         self.oa = oaiface
         self.gainlow_cached = False
         self.gain_cached = 0
@@ -644,6 +648,7 @@ class TriggerSettings(util.DisableNewAttr):
     _name = 'Trigger Setup'
 
     def __init__(self, oaiface):
+        # oaiface = OpenADCInterface
         self._new_attributes_disabled = False
         self.oa = oaiface
         self._numSamples = 0
@@ -1446,6 +1451,7 @@ class ClockSettings(util.DisableNewAttr):
         """The clock source for the ADC module.
 
         The ADC can be clocked by one of five possible sources:
+
          * "clkgen_x1": CLKGEN output via DCM
          * "clkgen_x4": CLKGEN output via DCM with x4 clk multiplier
          * "extclk_x1": External clock input via DCM
@@ -1593,6 +1599,7 @@ class ClockSettings(util.DisableNewAttr):
         """The input source for the CLKGEN DCM.
 
         This DCM can receive input from one of two places:
+
         - "extclk": The external clock input
         - "system" or "internal": The system clock (96 MHz)
 
@@ -2250,7 +2257,7 @@ class ClockSettings(util.DisableNewAttr):
         return self._getAdcFrequency() / self.oa.decimate()
 
 
-class OpenADCInterface(object):
+class OpenADCInterface:
 
     cached_settings = None
     def __init__(self, serial_instance):
