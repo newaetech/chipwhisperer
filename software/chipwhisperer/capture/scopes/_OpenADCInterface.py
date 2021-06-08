@@ -50,6 +50,7 @@ ADDR_XADC_DRP_DATA = 42
 ADDR_XADC_STAT     = 43
 ADDR_FIFO_STAT     = 44
 ADDR_NO_CLIP_ERRORS = 45
+ADDR_CLKGEN_POWERDOWN = 48
 
 ADDR_HUSKY_ADC_CTRL = 60
 ADDR_HUSKY_VMAG_CTRL = 61
@@ -1561,6 +1562,8 @@ class ClockSettings(util.DisableNewAttr):
 
     def _dict_repr(self):
         dict = OrderedDict()
+        if self._is_husky:
+            dict['enabled'] = self.enabled
         dict['adc_src']    = self.adc_src
         dict['adc_phase']  = self.adc_phase
         dict['adc_freq']   = self.adc_freq
@@ -1584,6 +1587,25 @@ class ClockSettings(util.DisableNewAttr):
 
     def __str__(self):
         return self.__repr__()
+
+    @property
+    def enabled(self):
+        """Whether the Xilinx MMCMs used to generate glitches are powered on or not.
+        7-series MMCMs are power hungry. In the Husky FPGA, MMCMs are estimated to
+        consume half of the FPGA's power. If you run into temperature issues and don't
+        require glitching, you can power down these MMCMs.
+
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        return self._getEnabled()
+
+    @enabled.setter
+    def enabled(self, enable):
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        self._setEnabled(enable)
+
 
     @property
     def adc_src(self):
@@ -2092,6 +2114,24 @@ class ClockSettings(util.DisableNewAttr):
         self.oa.sendMessage(CODE_WRITE, ADDR_ADVCLK, result, readMask=self._readMask)
         result[3] &= ~(0x01)
         self.oa.sendMessage(CODE_WRITE, ADDR_ADVCLK, result, readMask=self._readMask)
+
+
+    def _setEnabled(self, enable):
+        if enable:
+            val = [0]
+        else:
+            val = [3]
+        self.oa.sendMessage(CODE_WRITE, ADDR_CLKGEN_POWERDOWN, val, Validate=False)
+
+    def _getEnabled(self):
+        raw = self.oa.sendMessage(CODE_READ, ADDR_CLKGEN_POWERDOWN, Validate=False, maxResp=1)[0]
+        if raw == 3:
+            return False
+        elif raw == 0:
+            return True
+        else:
+            raise ValueError("Unexpected: read %d" % raw)
+
 
     def _getAdcSource(self):
         if self.oa is None:
