@@ -38,8 +38,8 @@ ADDR_TRIGGERDUR = 20
 ADDR_MULTIECHO  = 34
 ADDR_DATA_SOURCE = 27
 ADDR_ADC_LOW_RES = 29
-ADDR_DRP_ADDR   = 30
-ADDR_DRP_DATA   = 31
+ADDR_CLKGEN_DRP_ADDR = 30
+ADDR_CLKGEN_DRP_DATA = 31
 ADDR_SEGMENTS   = 32
 ADDR_SEGMENT_CYCLES = 33
 ADDR_STREAM_SEGMENT_SIZE = 35
@@ -50,9 +50,15 @@ ADDR_XADC_DRP_DATA = 42
 ADDR_XADC_STAT     = 43
 ADDR_FIFO_STAT     = 44
 ADDR_NO_CLIP_ERRORS = 45
+ADDR_CLKGEN_POWERDOWN = 48
 
 ADDR_HUSKY_ADC_CTRL = 60
 ADDR_HUSKY_VMAG_CTRL = 61
+
+ADDR_GLITCH1_DRP_ADDR = 62
+ADDR_GLITCH1_DRP_DATA = 63
+ADDR_GLITCH2_DRP_ADDR = 64
+ADDR_GLITCH2_DRP_DATA = 65
 
 CODE_READ       = 0x80
 CODE_WRITE      = 0xC0
@@ -164,6 +170,150 @@ class HWInformation(util.DisableNewAttr):
         self.oa.hwInfo = None
 
 
+class XilinxDRP(util.DisableNewAttr):
+    ''' Read/write methods for DRP port in Xilinx primitives such as MMCM and XADC.
+        Husky only.
+        Talks to something like reg_mmcm_drp.v.
+    '''
+    _name = 'Xilinx DRP Access'
+    def __init__(self, oaiface, data_address, address_address):
+        self.oa = oaiface
+        self.data = data_address
+        self.addr = address_address
+        self.disable_newattr()
+
+    def write(self, addr, data):
+        """Write XADC DRP register. UG480 for register definitions.
+        Args:
+            addr (int): 6-bit address
+            data (int): 16-bit write data
+        """
+        self.oa.sendMessage(CODE_WRITE, self.data, [data  & 0xff, data >> 8])
+        self.oa.sendMessage(CODE_WRITE, self.addr, [addr + 0x80])
+
+    def read(self, addr):
+        """Read XADC DRP register. UG480 for register definitions.
+        Args:
+            addr (int): 6-bit address
+        Returns:
+            A 16-bit integer.
+        """
+        self.oa.sendMessage(CODE_WRITE, self.addr, [addr])
+        raw = self.oa.sendMessage(CODE_READ, self.data, maxResp=2)
+        return int.from_bytes(raw, byteorder='little')
+
+
+class XilinxMMCMDRP(util.DisableNewAttr):
+    ''' Methods for dynamically programming Xilinx MMCM via its DRP.
+        Husky only.
+    '''
+    _name = 'Xilinx MMCM DRP'
+    def __init__(self, drp):
+        self.drp = drp
+        self.disable_newattr()
+
+    def set_mul(self, mul):
+        muldiv2 = int(mul/2)
+        lo = muldiv2
+        if mul%2:
+            hi = lo+1
+        else:
+            hi = lo
+        if hi >= 2**6:
+            raise ValueError("Internal error: calculated hi/lo value exceeding range")
+        raw = lo + (hi<<6) + 0x1000
+        self.drp.write(0x14, raw)
+
+
+    def set_main_div(self, div):
+        if type(div) != int:
+            raise ValueError("Only integers are supported")
+        # Set main divider:
+        if div == 1:
+            raw = 0x1000
+        else:
+            div2 = int(div/2)
+            lo = div2
+            if div % 2:
+                hi = lo+1
+            else:
+                hi = lo
+            raw = lo + (hi<<6)
+        self.drp.write(0x16, raw)
+
+
+    def set_sec_div(self, div, clock=0):
+        if type(div) != int:
+            raise ValueError("Only integers are supported")
+        if clock > 5:
+            raise ValueError("Clock must be in range [0,5]")
+        addr = 0x08 + clock*2
+        # Set secondary divider:
+        if div == 1:
+            self.drp.write(addr+1, 0x0040)
+        else:
+            div2 = int(div/2)
+            lo = div2
+            if div % 2:
+                hi = lo+1
+            else:
+                hi = lo
+            raw = lo + (hi<<6) + 0x1000
+            self.drp.write(addr, raw)
+
+
+    def get_mul(self):
+        # 1. read CLKFBOUT2 to ensure fractional mode is disabled:
+        raw = list(int.to_bytes(self.drp.read(0x11), length=2, byteorder='little'))
+        if raw[1] & 0x08:
+            print('WARNING: fractional mode is enabled. This is unexpected. Reported multiplier value will be incorrect.')
+        # 2. check "NO COUNT" bit:
+        if raw[0] & 0x04:
+            mul = 1
+        else:
+            # 3. read CLKFBOUT:
+            raw = list(int.to_bytes(self.drp.read(0x14), length=2, byteorder='little'))
+            # extract high time and low time
+            lo = (raw[0] & 0x3f)
+            hi = (raw[0]>>6) + ((raw[1] & 0x0f)<<2)
+            mul = lo + hi
+            #if lo != hi: print('WARNING: high and low times unequal (%d, %d) ! Duty cycle is not 50/50. This is unexpected. % (hi, lo))
+        return mul
+
+
+    def get_main_div(self):
+        raw = list(int.to_bytes(self.drp.read(0x16), length=2, byteorder='little'))
+        if raw[1] & 0x10:
+            maindiv = 1
+        else:
+            # extract high time and low time
+            lo = (raw[0] & 0x3f)
+            hi = (raw[0]>>6) + ((raw[1] & 0x0f)<<2)
+            maindiv = lo + hi
+        return maindiv
+
+
+    def get_sec_div(self, clock=0):
+        if clock > 5:
+            raise ValueError("Clock must be in range [0,5]")
+        addr = 0x08 + clock*2
+        #  read CLKOUT2 to ensure fractional mode is disabled and check NO_COUNT bit for CLKOUT divider:
+        raw = list(int.to_bytes(self.drp.read(addr+1), length=2, byteorder='little'))
+        if raw[1] & 0x08:
+            logging.error('CLKGEN fractional mode is enabled. This is unexpected.')
+        if raw[0] & 0x40:
+            secdiv = 1
+        else:
+            # read CLKOUT divider:
+            raw = list(int.to_bytes(self.drp.read(addr), length=2, byteorder='little'))
+            # extract high time and low time
+            lo = (raw[0] & 0x3f)
+            hi = (raw[0]>>6) + ((raw[1] & 0x0f)<<2)
+            secdiv = lo + hi
+        return secdiv
+
+
+
 class XADCSettings(util.DisableNewAttr):
     ''' Husky FPGA XADC temperature and voltage monitoring.
     '''
@@ -172,6 +322,7 @@ class XADCSettings(util.DisableNewAttr):
     def __init__(self, oaiface):
         # oaiface = OpenADCInterface
         self.oa = oaiface
+        self.drp = XilinxDRP(oaiface, ADDR_XADC_DRP_DATA, ADDR_XADC_DRP_ADDR)
         self.disable_newattr()
 
     def _dict_repr(self):
@@ -191,26 +342,6 @@ class XADCSettings(util.DisableNewAttr):
 
     def __str__(self):
         return self.__repr__()
-
-    def _drp_write(self, addr, data):
-        """Write XADC DRP register. UG480 for register definitions.
-        Args:
-            addr (int): 6-bit address
-            data (int): 16-bit write data
-        """
-        self.oa.sendMessage(CODE_WRITE, ADDR_XADC_DRP_DATA, [data  & 0xff, data >> 8])
-        self.oa.sendMessage(CODE_WRITE, ADDR_XADC_DRP_ADDR, [addr + 0x80])
-
-    def _drp_read(self, addr):
-        """Read XADC DRP register. UG480 for register definitions.
-        Args:
-            addr (int): 6-bit address
-        Returns:
-            A 16-bit integer.
-        """
-        self.oa.sendMessage(CODE_WRITE, ADDR_XADC_DRP_ADDR, [addr])
-        raw = self.oa.sendMessage(CODE_READ, ADDR_XADC_DRP_DATA, maxResp=2)
-        return int.from_bytes(raw, byteorder='little')
 
     @property
     def status(self):
@@ -261,7 +392,7 @@ class XADCSettings(util.DisableNewAttr):
         Returns:
             Temperature in celcius (float).
         """
-        raw = self._drp_read(addr)
+        raw = self.drp.read(addr)
         return (raw>>4) * 503.975/4096 - 273.15 # ref: UG480
 
     def set_temp(self, temp, addr=0):
@@ -273,8 +404,7 @@ class XADCSettings(util.DisableNewAttr):
             Temperature in celcius (float).
         """
         raw = (int((temp + 273.15)*4096/503.975) << 4) & 0xffff
-        self.oa.sendMessage(CODE_WRITE, ADDR_XADC_DRP_DATA, list(int.to_bytes(raw, length=2, byteorder='little')))
-        self.oa.sendMessage(CODE_WRITE, ADDR_XADC_DRP_ADDR, [0x80 + addr])
+        self.drp.write(addr, raw)
 
 
     @property
@@ -305,7 +435,7 @@ class XADCSettings(util.DisableNewAttr):
             addr = 6
         else:
             raise ValueError("Invalid rail")
-        raw = self._drp_read(addr)
+        raw = self.drp.read(addr)
         return (raw>>4)/4096 * 3 # ref: UG480
 
 
@@ -1086,6 +1216,7 @@ class TriggerSettings(util.DisableNewAttr):
         if raw & 8:  stat += 'fast FIFO overflow, '
         if raw & 16: stat += 'presample error, '
         if raw & 32: stat += 'ADC clipped, '
+        if raw & 64: stat += 'invalid downsample setting, '
         if stat == '':
             stat = 'no errors'
         return stat
@@ -1233,6 +1364,8 @@ class TriggerSettings(util.DisableNewAttr):
         return self.oa.getStatus() & STATUS_OVERFLOW_MASK
 
     def _set_decimate(self, decsamples):
+        if self.presamples > 0 and decsamples > 1 and self._is_husky:
+            raise Warning("Decimating with presamples is not supported on Husky.")
         self.oa.setDecimate(decsamples)
 
     def _get_decimate(self):
@@ -1283,15 +1416,19 @@ class TriggerSettings(util.DisableNewAttr):
     def _set_presamples(self, samples):
         if self._is_husky:
             min_samples = 8
-            max_samples = min(self.samples, 32768)
+            max_samples = min(self.samples, 32767)
+            presamp_bytes = 2
+            if self.decimate > 1:
+                raise Warning("Decimating with presamples is not supported on Husky.")
         else:
             min_samples = 0
             max_samples = self.samples
+            presamp_bytes = 4
         if samples < min_samples and samples != 0:
             raise ValueError("Number of pre-trigger samples cannot be less than %d" % min_samples)
         if samples > max_samples:
             if self._is_husky:
-                raise ValueError("Number of pre-trigger samples cannot be larger than the lesser of [total number of samples, 32768] (%d)." % max_samples)
+                raise ValueError("Number of pre-trigger samples cannot be larger than the lesser of [total number of samples, 32767] (%d)." % max_samples)
             else:
                 raise ValueError("Number of pre-trigger samples cannot be larger than the total number of samples (%d)." % max_samples)
 
@@ -1316,7 +1453,7 @@ class TriggerSettings(util.DisableNewAttr):
 
             self.presamples_actual = samplesact * 3
 
-        self.oa.sendMessage(CODE_WRITE, ADDR_PRESAMPLES, list(int.to_bytes(samplesact, length=4, byteorder='little')))
+        self.oa.sendMessage(CODE_WRITE, ADDR_PRESAMPLES, list(int.to_bytes(samplesact, length=presamp_bytes, byteorder='little')))
 
 
         #print "Requested presamples: %d, actual: %d"%(samples, self.presamples_actual)
@@ -1333,7 +1470,12 @@ class TriggerSettings(util.DisableNewAttr):
         if cached:
             return self.presamples_desired
 
-        temp = self.oa.sendMessage(CODE_READ, ADDR_PRESAMPLES, maxResp=4)
+        if self._is_husky:
+            presamp_bytes = 2
+        else:
+            presamp_bytes = 4
+
+        temp = self.oa.sendMessage(CODE_READ, ADDR_PRESAMPLES, maxResp=presamp_bytes)
         samples = int.from_bytes(temp, byteorder='little')
 
         #CW1200/CW-Lite/Husky reports presamples using different method
@@ -1418,10 +1560,15 @@ class ClockSettings(util.DisableNewAttr):
         self.oa = oaiface
         self._hwinfo = hwinfo
         self._freqExt = 10e6
+        self._is_husky = False
+        self.drp = XilinxDRP(oaiface, ADDR_CLKGEN_DRP_DATA, ADDR_CLKGEN_DRP_ADDR)
+        self.mmcm = XilinxMMCMDRP(self.drp)
         self.disable_newattr()
 
     def _dict_repr(self):
         dict = OrderedDict()
+        if self._is_husky:
+            dict['enabled'] = self.enabled
         dict['adc_src']    = self.adc_src
         dict['adc_phase']  = self.adc_phase
         dict['adc_freq']   = self.adc_freq
@@ -1445,6 +1592,25 @@ class ClockSettings(util.DisableNewAttr):
 
     def __str__(self):
         return self.__repr__()
+
+    @property
+    def enabled(self):
+        """Whether the Xilinx MMCMs used to generate glitches are powered on or not.
+        7-series MMCMs are power hungry. In the Husky FPGA, MMCMs are estimated to
+        consume half of the FPGA's power. If you run into temperature issues and don't
+        require glitching, you can power down these MMCMs.
+
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        return self._getEnabled()
+
+    @enabled.setter
+    def enabled(self, enable):
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        self._setEnabled(enable)
+
 
     @property
     def adc_src(self):
@@ -1508,7 +1674,7 @@ class ClockSettings(util.DisableNewAttr):
         :Setter: Set a new phase offset
 
         Raises:
-           ValueError: if offset not in [-255, 255]
+           ValueError: if offset not in [-32767, 32767] (Husky) or [-255, 255] (others)
            TypeError: if offset not integer
         """
         return self._get_phase()
@@ -1826,17 +1992,7 @@ class ClockSettings(util.DisableNewAttr):
         # calculate register value:
         if type(mul) != int:
             raise ValueError("Only integers are supported")
-        muldiv2 = int(mul/2)
-        lo = muldiv2
-        if mul%2:
-            hi = lo+1
-        else:
-            hi = lo
-        raw = list(int.to_bytes(lo + (hi<<6) + 0x1000, length=2, byteorder='little'))
-        # data to write:
-        self.oa.sendMessage(CODE_WRITE, ADDR_DRP_DATA, raw)
-        # write data to addres 0x14:
-        self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x94])
+        self.mmcm.set_mul(mul)
 
 
     @property
@@ -1890,43 +2046,8 @@ class ClockSettings(util.DisableNewAttr):
     def _set_husky_clkgen_div(self, div):
         main_div = div[0]
         sec_div = div[1]
-        if type(main_div) != int or type(sec_div) != int:
-            raise ValueError("Only integers are supported")
-        # 1. Set main divider:
-        if main_div == 1:
-            raw = list(int.to_bytes(0x1000, length=2, byteorder='little'))
-        else:
-            div2 = int(main_div/2)
-            lo = div2
-            if main_div % 2:
-                hi = lo+1
-            else:
-                hi = lo
-            raw = list(int.to_bytes(lo + (hi<<6), length=2, byteorder='little'))
-        # data to write:
-        self.oa.sendMessage(CODE_WRITE, ADDR_DRP_DATA, raw)
-        # write data to addres 0x16:
-        self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x96])
-
-        # 2. Set clkout0 secondary divider:
-        if sec_div == 1:
-            raw = list(int.to_bytes(0x0040, length=2, byteorder='little'))
-            # data to write:
-            self.oa.sendMessage(CODE_WRITE, ADDR_DRP_DATA, raw)
-            # write data to address 0x09:
-            self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x89])
-        else:
-            div2 = int(sec_div/2)
-            lo = div2
-            if sec_div%2:
-                hi = lo+1
-            else:
-                hi = lo
-            raw = list(int.to_bytes(lo + (hi<<6) + 0x1000, length=2, byteorder='little'))
-            # data to write:
-            self.oa.sendMessage(CODE_WRITE, ADDR_DRP_DATA, raw)
-            # write data to address 0x08:
-            self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x88])
+        self.mmcm.set_main_div(div[0])
+        self.mmcm.set_sec_div(div[1],0)
 
 
     def _setClkgenDivWrapper(self, div):
@@ -1948,53 +2069,14 @@ class ClockSettings(util.DisableNewAttr):
 
 
     def _get_husky_clkgen_div(self):
-        # 1. read DIVREG to get main divider:
-        self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x16])
-        raw = self.oa.sendMessage(CODE_READ, ADDR_DRP_DATA, maxResp=2)
-        if raw[1] & 0x10:
-            maindiv = 1
-        else:
-            # extract high time and low time
-            lo = (raw[0] & 0x3f)
-            hi = (raw[0]>>6) + ((raw[1] & 0x0f)<<2)
-            maindiv = lo + hi
-        # 2. read CLKOUT2 to ensure fractional mode is disabled and check NO_COUNT bit for CLKOUT divider:
-        self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x9])
-        raw = self.oa.sendMessage(CODE_READ, ADDR_DRP_DATA, maxResp=2)
-        if raw[1] & 0x08:
-            logging.error('CLKGEN fractional mode is enabled. This is unexpected.')
-        if raw[0] & 0x40:
-            secdiv = 1
-        else:
-            # 3. read CLKOUT divider:
-            self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x8])
-            raw = self.oa.sendMessage(CODE_READ, ADDR_DRP_DATA, maxResp=2)
-            # extract high time and low time
-            lo = (raw[0] & 0x3f)
-            hi = (raw[0]>>6) + ((raw[1] & 0x0f)<<2)
-            secdiv = lo + hi
+        maindiv = self.mmcm.get_main_div()
+        secdiv = self.mmcm.get_sec_div()
         return maindiv*secdiv
 
 
     def _get_husky_clkgen_mul(self):
-        # 1. read CLKFBOUT2 to ensure fractional mode is disabled:
-        self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x11])
-        raw = self.oa.sendMessage(CODE_READ, ADDR_DRP_DATA, maxResp=2)
-        if raw[1] & 0x08:
-            print('WARNING: fractional mode is enabled. This is unexpected. Reported multiplier value will be incorrect.')
-        # 2. check "NO COUNT" bit:
-        if raw[0] & 0x04:
-            mul = 1
-        else:
-            # 3. read CLKFBOUT:
-            self.oa.sendMessage(CODE_WRITE, ADDR_DRP_ADDR, [0x14])
-            raw = self.oa.sendMessage(CODE_READ, ADDR_DRP_DATA, maxResp=2)
-            # extract high time and low time
-            lo = (raw[0] & 0x3f)
-            hi = (raw[0]>>6) + ((raw[1] & 0x0f)<<2)
-            mul = lo + hi
-            #if lo != hi: print('WARNING: high and low times unequal (%d, %d) ! Duty cycle is not 50/50. This is unexpected. % (hi, lo))
-        return mul
+        return self.mmcm.get_mul()
+
 
     def reset_adc(self):
         """Reset the ADC DCM.
@@ -2039,6 +2121,24 @@ class ClockSettings(util.DisableNewAttr):
         self.oa.sendMessage(CODE_WRITE, ADDR_ADVCLK, result, readMask=self._readMask)
         result[3] &= ~(0x01)
         self.oa.sendMessage(CODE_WRITE, ADDR_ADVCLK, result, readMask=self._readMask)
+
+
+    def _setEnabled(self, enable):
+        if enable:
+            val = [0]
+        else:
+            val = [3]
+        self.oa.sendMessage(CODE_WRITE, ADDR_CLKGEN_POWERDOWN, val, Validate=False)
+
+    def _getEnabled(self):
+        raw = self.oa.sendMessage(CODE_READ, ADDR_CLKGEN_POWERDOWN, Validate=False, maxResp=1)[0]
+        if raw == 3:
+            return False
+        elif raw == 0:
+            return True
+        else:
+            raise ValueError("Unexpected: read %d" % raw)
+
 
     def _getAdcSource(self):
         if self.oa is None:
@@ -2132,15 +2232,20 @@ class ClockSettings(util.DisableNewAttr):
         except ValueError:
             raise TypeError("Can't convert %s to int" % phase)
 
-        if phase_int < -255 or phase_int > 255:
+        if self._is_husky:
+            if phase_int < -32767 or phase_int > 32767:
+                raise ValueError("Phase %d is outside range [-32767, 32767]" % phase_int)
+        elif phase_int < -255 or phase_int > 255:
             raise ValueError("Phase %d is outside range [-255, 255]" % phase_int)
 
-        LSB = phase_int & 0x00FF
-        MSB = (phase_int & 0x0100) >> 8
-
         cmd = bytearray(2)
-        cmd[0] = LSB
-        cmd[1] = MSB | 0x02
+        cmd[0] = phase_int & 0x00FF
+        if self._is_husky:
+            cmd[1] = (phase_int & 0xFF00) >> 8
+        else:
+            MSB = (phase_int & 0x0100) >> 8
+            cmd[1] = MSB | 0x02 # TODO: hmm why is this being done?
+
         self.oa.sendMessage(CODE_WRITE, ADDR_PHASE, cmd, False)
 
     def _get_phase(self):
@@ -2155,12 +2260,18 @@ class ClockSettings(util.DisableNewAttr):
 
         if phase_valid:
             LSB = result[0]
-            MSB = result[1] & 0x01
+            if self._is_husky:
+                MSB = result[1]
+            else:
+                MSB = result[1] & 0x01
 
             phase = LSB | (MSB << 8)
 
             #Sign Extend
-            phase = SIGNEXT(phase, 9)
+            if self._is_husky:
+                phase = SIGNEXT(phase, 16)
+            else:
+                phase = SIGNEXT(phase, 9)
 
             return phase
         else:
@@ -2543,9 +2654,12 @@ class OpenADCInterface:
         return samples
 
     def getBytesInFifo(self):
-        temp = self.sendMessage(CODE_READ, ADDR_BYTESTORX, maxResp=4)
-        samples = int.from_bytes(temp, byteorder='little')
-        return samples
+        if self._is_husky:
+            scope_logger.error("Shouldn't be calling getBytesInFifo on Husky: associated register doesn't exist.")
+        else:
+            temp = self.sendMessage(CODE_READ, ADDR_BYTESTORX, maxResp=4)
+            samples = int.from_bytes(temp, byteorder='little')
+            return samples
 
     def flushInput(self):
         try:
@@ -2655,15 +2769,19 @@ class OpenADCInterface:
             self.sendMessage(CODE_WRITE, ADDR_FAST_FIFO_READ, [0])
             self.serial.set_smc_speed(0)
 
-            self._stream_rx_bytes, stream_timeout = self.serial.cmdReadStream()
+            self._stream_rx_bytes, stream_timeout = self.serial.cmdReadStream(self._is_husky)
             timeout |= stream_timeout
             #Check the status now
-            # TODO XXX-Husky? bytes_left, overflow_bytes_left, unknown_overflow = self.serial.cmdReadStream_getStatus()
-            #scope_logger.debug("Streaming done, results: rx_bytes = %d, bytes_left = %d, overflow_bytes_left = %d"%(self._stream_rx_bytes, bytes_left, overflow_bytes_left))
-            scope_logger.debug("Streaming done, results: rx_bytes = %d"%(self._stream_rx_bytes))
+            if self._is_husky:
+                scope_logger.debug("Streaming done, results: rx_bytes = %d"%(self._stream_rx_bytes))
+            else:
+            # TODO later-Husky? 
+                bytes_left, overflow_bytes_left, unknown_overflow = self.serial.cmdReadStream_getStatus()
+                scope_logger.debug("Streaming done, results: rx_bytes = %d, bytes_left = %d, overflow_bytes_left = %d"%(self._stream_rx_bytes, bytes_left, overflow_bytes_left))
             self.arm(False)
 
             if stream_timeout:
+                # TODO later- adjust messages/checks for Husky?
                 if self._stream_rx_bytes == 0: # == (self._stream_len - 3072):
                     scope_logger.warning("Streaming mode OVERFLOW occured as trigger too fast - Adjust offset upward (suggest = 200 000)")
                 else:
