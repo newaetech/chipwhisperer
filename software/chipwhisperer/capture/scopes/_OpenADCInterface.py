@@ -346,8 +346,9 @@ class XADCSettings(util.DisableNewAttr):
     @property
     def status(self):
         """Read XADC alarm status bits
-        Args: none
-        Returns: status string
+        :Getter: Returns status string.
+
+        :Setter: Clear the status error bits (they are sticky).
         """
         raw = self.oa.sendMessage(CODE_READ, ADDR_XADC_STAT, maxResp=1)[0]
         stat = ''
@@ -359,6 +360,11 @@ class XADCSettings(util.DisableNewAttr):
         if stat == '':
             stat = 'good'
         return stat
+
+    @status.setter
+    def status(self, clear):
+        self.oa.sendMessage(CODE_WRITE, ADDR_XADC_STAT, [0x0])
+
 
     @property
     def temp(self):
