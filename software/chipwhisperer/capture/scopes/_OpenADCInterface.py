@@ -326,6 +326,7 @@ class LEDSettings(util.DisableNewAttr):
     def _dict_repr(self):
         dict = OrderedDict()
         dict['setting'] = self.setting
+        dict['error_flag'] = self.error_flag
         return dict
 
     def __repr__(self):
@@ -357,6 +358,22 @@ class LEDSettings(util.DisableNewAttr):
         if val < 0 or val > 3:
             raise ValueError
         self.oa.sendMessage(CODE_WRITE, ADDR_LED_SELECT, [val])
+
+    @property
+    def error_flag(self):
+        """Reflects whether internal errors have caused the red LEDs to flash.
+        See scope.XADC.status and scope.adc.errors for more information on error sources.
+        Write any value to clear the error and stop the flashing lights.
+
+        """
+        xadc = self.oa.sendMessage(CODE_READ, ADDR_XADC_STAT, maxResp=1)[0]
+        fifo = self.oa.sendMessage(CODE_READ, ADDR_FIFO_STAT, maxResp=1)[0]
+        return xadc | fifo
+
+    @error_flag.setter
+    def error_flag(self, val):
+        self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [1])
+        self.oa.sendMessage(CODE_WRITE, ADDR_XADC_STAT, [0])
 
 
 class XADCSettings(util.DisableNewAttr):
