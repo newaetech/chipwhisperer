@@ -42,6 +42,7 @@ ADDR_CLKGEN_DRP_ADDR = 30
 ADDR_CLKGEN_DRP_DATA = 31
 ADDR_SEGMENTS   = 32
 ADDR_SEGMENT_CYCLES = 33
+ADDR_LED_SELECT = 34
 ADDR_STREAM_SEGMENT_SIZE = 35
 ADDR_FAST_FIFO_READ = 36
 
@@ -313,6 +314,50 @@ class XilinxMMCMDRP(util.DisableNewAttr):
         return secdiv
 
 
+class LEDSettings(util.DisableNewAttr):
+    ''' Set source of Husky front-panel LEDs
+    '''
+    _name = 'Husky LEDs Setting'
+
+    def __init__(self, oaiface):
+        self.oa = oaiface
+        self.disable_newattr()
+
+    def _dict_repr(self):
+        dict = OrderedDict()
+        dict['setting'] = self.setting
+        return dict
+
+    def __repr__(self):
+        return util.dict_to_str(self._dict_repr())
+
+    def __str__(self):
+        return self.__repr__()
+
+    @property
+    def setting(self):
+        """Front-panel LED sources.
+            0: default: green=armed, blue=capture, top red=PLL lock fail, bottom red=glitch
+            1: green: USB clock heartbeat, blue=CLKGEN clock heartbeat
+            2: green: ADC input clock heartbeat, blue=ADC output clock heartbeat (*if* FPGA-sourced)
+            3: green: PLL clock heartbeat
+        In all cases, fast-flashing red lights indicate an error; 
+        see scope.XADC.status and scope.adc.errors for more information.
+
+        """
+        raw = self.oa.sendMessage(CODE_READ, ADDR_LED_SELECT, maxResp=1)[0]
+        if raw == 0:   return "0 (default, as labelled)"
+        elif raw == 1: return "1 (USB and CLKGEN clock heartbeats)"
+        elif raw == 2: return "2 (ADC clock heartbeats)"
+        elif raw == 3: return "3 (PLL clock heartbeat)"
+        else: return ValueError
+
+    @setting.setter
+    def setting(self, val):
+        if val < 0 or val > 3:
+            raise ValueError
+        self.oa.sendMessage(CODE_WRITE, ADDR_LED_SELECT, [val])
+
 
 class XADCSettings(util.DisableNewAttr):
     ''' Husky FPGA XADC temperature and voltage monitoring.
@@ -320,7 +365,6 @@ class XADCSettings(util.DisableNewAttr):
     _name = 'Husky XADC Setting'
 
     def __init__(self, oaiface):
-        # oaiface = OpenADCInterface
         self.oa = oaiface
         self.drp = XilinxDRP(oaiface, ADDR_XADC_DRP_DATA, ADDR_XADC_DRP_ADDR)
         self.disable_newattr()
