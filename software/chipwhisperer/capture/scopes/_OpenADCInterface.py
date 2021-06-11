@@ -2687,7 +2687,15 @@ class OpenADCInterface:
             # bufsizebytes, self._stream_len_act = self.serial.cmdReadStream_bufferSize(self._stream_len, self._is_husky, self._bits_per_sample)
             #bufsizebytes = self._stream_segment_size # XXX- temporary
             #Generate the buffer to save buffer
-            self._sbuf = array.array('B', [0]) * int(self._stream_len * self._bits_per_sample / 8)
+            sbuf_len = int(self._stream_len * self._bits_per_sample / 8)
+            if self._is_husky and sbuf_len % 3:
+                # need to capture a multiple of 3 otherwise processHuskyData may fail
+                sbuf_len += 3 - sbuf_len % 3
+            self._sbuf = array.array('B', [0]) * sbuf_len
+            # For CW-Pro, _stream_len is the number of (10-bit) samples (which was previously set), whereas for Husky, to accomodate 8/12-bit samples, 
+            # it's the total number of bytes, so we need to update _stream_len accordingly:
+            if self._is_husky:
+                self._stream_len = sbuf_len
 
 
     def setDecimate(self, decsamples):
@@ -3076,6 +3084,7 @@ class OpenADCInterface:
             datapoints = self.processHuskyData(NumberPoints, data)
         if datapoints is None:
             return []
+        #scope_logger.debug("YYY got datapoints size %d, returning %d elements; last few: %s" % (len(datapoints), NumberPoints, datapoints[-10:-1]))
         return datapoints[:NumberPoints]
 
 
