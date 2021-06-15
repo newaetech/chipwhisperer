@@ -1277,13 +1277,14 @@ class TriggerSettings(util.DisableNewAttr):
             return 0
         raw = self.oa.sendMessage(CODE_READ, ADDR_FIFO_STAT, maxResp=1)[0]
         stat = ''
-        if raw & 1:  stat += 'slow FIFO underflow, '
-        if raw & 2:  stat += 'slow FIFO overflow, '
-        if raw & 4:  stat += 'fast FIFO underflow, '
-        if raw & 8:  stat += 'fast FIFO overflow, '
-        if raw & 16: stat += 'presample error, '
-        if raw & 32: stat += 'ADC clipped, '
-        if raw & 64: stat += 'invalid downsample setting, '
+        if raw & 1:   stat += 'slow FIFO underflow, '
+        if raw & 2:   stat += 'slow FIFO overflow, '
+        if raw & 4:   stat += 'fast FIFO underflow, '
+        if raw & 8:   stat += 'fast FIFO overflow, '
+        if raw & 16:  stat += 'presample error, '
+        if raw & 32:  stat += 'ADC clipped, '
+        if raw & 64:  stat += 'invalid downsample setting, '
+        if raw & 128: stat += 'segmenting error, '
         if stat == '':
             stat = 'no errors'
         return stat
