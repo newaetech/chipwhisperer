@@ -43,7 +43,7 @@ ADDR_CLKGEN_DRP_DATA = 31
 ADDR_SEGMENTS   = 32
 ADDR_SEGMENT_CYCLES = 33
 ADDR_LED_SELECT = 34
-ADDR_STREAM_SEGMENT_SIZE = 35
+ADDR_STREAM_SEGMENT_THRESHOLD = 35
 ADDR_FAST_FIFO_READ = 36
 
 ADDR_XADC_DRP_ADDR = 41
@@ -854,7 +854,8 @@ class TriggerSettings(util.DisableNewAttr):
         self.presampleTempMargin = 24
         self._timeout = 2
         self._stream_mode = False
-        self._stream_segment_size = 32768
+        self._stream_segment_size = 65536
+        self._stream_segment_threshold = 65536
         self._test_mode = False
         self._bits_per_sample = 10
         self._support_get_duration = True
@@ -882,12 +883,14 @@ class TriggerSettings(util.DisableNewAttr):
         if self._is_pro or self._is_husky:
             dict['stream_mode'] = self.stream_mode
         if self._is_husky:
-            dict['stream segment size'] = self.stream_segment_size
             dict['test_mode'] = self.test_mode
             dict['bits_per_sample'] = self.bits_per_sample
             dict['segments'] = self.segments
             dict['segment_cycles'] = self.segment_cycles
             dict['errors'] = self.errors
+            # keep these hidden:
+            #dict['stream_segment_size'] = self.stream_segment_size
+            #dict['stream_segment_threshold'] = self.stream_segment_threshold
 
         return dict
 
@@ -932,6 +935,18 @@ class TriggerSettings(util.DisableNewAttr):
         self._set_stream_mode(enabled)
 
     @property
+    def stream_segment_threshold(self):
+        """Only available on CW-Husky.
+        TODO: when stable, document (including limits), or maybe hide?
+        """
+        return self._get_stream_segment_threshold()
+
+    @stream_segment_threshold.setter
+    def stream_segment_threshold(self, size):
+        self._set_stream_segment_threshold(size)
+
+
+    @property
     def stream_segment_size(self):
         """Only available on CW-Husky.
         TODO: when stable, document (including limits), or maybe hide?
@@ -941,6 +956,7 @@ class TriggerSettings(util.DisableNewAttr):
     @stream_segment_size.setter
     def stream_segment_size(self, size):
         self._set_stream_segment_size(size)
+
 
 
     @property
@@ -1350,17 +1366,24 @@ class TriggerSettings(util.DisableNewAttr):
         return self._stream_mode
 
 
+    def _set_stream_segment_threshold(self, size):
+        self._stream_segment_threshold = size
+        #Write to FPGA
+        self.oa.sendMessage(CODE_WRITE, ADDR_STREAM_SEGMENT_THRESHOLD, list(int.to_bytes(size, length=4, byteorder='little')))
+
+
     def _set_stream_segment_size(self, size):
         self._stream_segment_size = size
-        #Write to FPGA
-        self.oa.sendMessage(CODE_WRITE, ADDR_STREAM_SEGMENT_SIZE, list(int.to_bytes(size, length=4, byteorder='little')))
         #Notify capture system
         self.oa.setStreamSegmentSize(size)
 
 
+    def _get_stream_segment_threshold(self):
+        raw = self.oa.sendMessage(CODE_READ, ADDR_STREAM_SEGMENT_THRESHOLD, maxResp=4)
+        return int.from_bytes(raw, byteorder='little')
+
     def _get_stream_segment_size(self):
         return self._stream_segment_size
-
 
     def _set_test_mode(self, enabled):
         self._test_mode = enabled
@@ -2454,7 +2477,7 @@ class OpenADCInterface:
         self.presamples_actual = 0
         self.presampleTempMargin = 24
         self._stream_mode = False
-        self._stream_segment_size = 32768
+        self._stream_segment_size = 65536
         self._support_get_duration = True
         self._is_husky = False
         self._fast_fifo_read = True
