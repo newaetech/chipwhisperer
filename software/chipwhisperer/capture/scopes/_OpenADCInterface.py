@@ -10,7 +10,7 @@ import logging
 import sys
 import time
 import datetime
-from chipwhisperer.common.utils import util
+from ...common.utils import util
 import array
 import numpy as np
 from collections import OrderedDict
