@@ -1370,12 +1370,14 @@ class TriggerSettings(util.DisableNewAttr):
 
 
     def _set_stream_segment_threshold(self, size):
+        scope_logger.warning('Changing this parameter can degrade performance and/or cause reads to fail entirely; use at your own risk.')
         self._stream_segment_threshold = size
         #Write to FPGA
         self.oa.sendMessage(CODE_WRITE, ADDR_STREAM_SEGMENT_THRESHOLD, list(int.to_bytes(size, length=4, byteorder='little')))
 
 
     def _set_stream_segment_size(self, size):
+        scope_logger.warning('Changing this parameter can degrade performance and/or cause reads to fail entirely; use at your own risk.')
         self._stream_segment_size = size
         #Notify capture system
         self.oa.setStreamSegmentSize(size)
