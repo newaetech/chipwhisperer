@@ -61,6 +61,9 @@ ADDR_GLITCH1_DRP_DATA = 63
 ADDR_GLITCH2_DRP_ADDR = 64
 ADDR_GLITCH2_DRP_DATA = 65
 
+ADDR_FIFO_UNDERFLOW_COUNT = 66
+ADDR_FIFO_NO_UNDERFLOW_ERROR = 67
+
 CODE_READ       = 0x80
 CODE_WRITE      = 0xC0
 
@@ -1480,6 +1483,18 @@ class TriggerSettings(util.DisableNewAttr):
             return self._numSamples
         else:
             return self.oa.numSamples()
+
+
+    def _get_underflow_reads(self):
+        """ Number of slow FIFO underflow reads. HW resets this on every capture.
+        Count is valid even when the associated error flag is disabled.
+        8 bits only, doesn't overflow. Meant for debugging.
+        Husky only.
+        """
+        if self.oa is None or not self._is_husky:
+            return 0
+        return self.oa.sendMessage(CODE_READ, ADDR_FIFO_UNDERFLOW_COUNT, maxResp=1)[0]
+
 
     def _set_timeout(self, timeout):
         self._timeout = timeout
