@@ -1399,9 +1399,12 @@ class TriggerSettings(util.DisableNewAttr):
         if enabled:
             self.oa.sendMessage(CODE_WRITE, ADDR_DATA_SOURCE, [0])
             self.oa.sendMessage(CODE_WRITE, ADDR_NO_CLIP_ERRORS, [1])
+            if self._bits_per_sample == 8:
+                self.oa.sendMessage(CODE_WRITE, ADDR_ADC_LOW_RES, [3]) # store LSB instead of MSB
         else:
             self.oa.sendMessage(CODE_WRITE, ADDR_DATA_SOURCE, [1])
             self.oa.sendMessage(CODE_WRITE, ADDR_NO_CLIP_ERRORS, [0])
+            self.bits_per_sample = self._bits_per_sample #shorthand to clear the LSB setting
 
 
     def _get_test_mode(self):
@@ -1429,7 +1432,10 @@ class TriggerSettings(util.DisableNewAttr):
         self._bits_per_sample = bits
         # update FPGA:
         if bits == 8:
-            val = 1
+            if self.test_mode:
+                val = 3 # store LSB instead of MSB
+            else:
+                val = 1
         else:
             val = 0
         self.oa.sendMessage(CODE_WRITE, ADDR_ADC_LOW_RES, [val])
