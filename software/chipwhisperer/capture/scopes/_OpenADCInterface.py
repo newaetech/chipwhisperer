@@ -867,6 +867,7 @@ class TriggerSettings(util.DisableNewAttr):
         self._is_husky = False
         self._cached_samples = None
         self._cached_offset = None
+        self._cached_segments = None
         self._is_sakura_g = None
 
         self.disable_newattr()
@@ -1263,18 +1264,21 @@ class TriggerSettings(util.DisableNewAttr):
            ValueError: if segments is outside of range [1, 2^16-1]
         """
 
-        return self._get_segments()
+        if self._cached_segments is None:
+            self._cached_segments = self._get_segments()
+        return self._cached_segments
+
 
     @segments.setter
     def segments(self, num):
         if num < 1 or num > 2**16-1:
             raise ValueError("Number of segments must be in range [1, 2^16-1]")
+        self._cached_segments = num
         self._set_segments(num)
 
     def _get_segments(self):
         if self.oa is None:
             return 0
-
         cmd = self.oa.sendMessage(CODE_READ, ADDR_SEGMENTS, maxResp=2)
         segments = int.from_bytes(cmd, byteorder='little')
         return segments
@@ -2486,7 +2490,6 @@ class OpenADCInterface:
         self.sysFreq = 0
         self._bits_per_sample = 10
         self._sbuf = []
-        self.settings()
         self._support_decimate = True
         self._nosampletimeout = 100
         self._timeout = 2
@@ -2497,7 +2500,10 @@ class OpenADCInterface:
         self._stream_segment_size = 65536
         self._support_get_duration = True
         self._is_husky = False
-        self._fast_fifo_read = True
+        self._fast_fifo_read_enable = True
+        self._fast_fifo_read_active = False
+
+        self.settings()
 
         # Send clearing function if using streaming mode
         if hasattr(self.serial, "stream") and self.serial.stream == False:
@@ -2575,6 +2581,9 @@ class OpenADCInterface:
                     datalen = 65000
                 else:
                     datalen = 1
+
+                if self._fast_fifo_read_active and address != ADDR_ADCDATA:
+                    raise ValueError('Internal error: in fast read mode but not reading FIFO! (address=%0d, datalen=%0d). Need to add a cached setting?' % (address, datalen))
 
                 data = bytearray(self.serial.cmdReadMem(address, datalen))
                 return data
@@ -2700,7 +2709,7 @@ class OpenADCInterface:
             self.setSettings(self.settings() & ~SETTINGS_RESET)
 
     def triggerNow(self):
-        initial = self.settings()
+        initial = self.settings(True)
         self.setSettings(initial | SETTINGS_TRIG_NOW)
         time.sleep(0.05)
         self.setSettings(initial & ~SETTINGS_TRIG_NOW)
@@ -2848,12 +2857,20 @@ class OpenADCInterface:
         else:
             self.setSettings(self.settings() & ~SETTINGS_ARM)
 
+    def setFastFIFORead(self, active):
+        if active:
+            self.sendMessage(CODE_WRITE, ADDR_FAST_FIFO_READ, [1])
+            self._fast_fifo_read_active = True
+        else:
+            self.sendMessage(CODE_WRITE, ADDR_FAST_FIFO_READ, [0])
+            self._fast_fifo_read_active = False
+
     def startCaptureThread(self):
         # Then init the stream mode stuff
         if self._stream_mode:
             # Stream mode adds 500mS of extra timeout on USB traffic itself...
             scope_logger.debug("Stream on!")
-            self.sendMessage(CODE_WRITE, ADDR_FAST_FIFO_READ, [1])
+            self.setFastFIFORead(1)
             self.serial.set_smc_speed(1)
             self.serial.initStreamModeCapture(self._stream_len, self._sbuf, timeout_ms=int(self._timeout * 1000) + 500, is_husky=self._is_husky, segment_size=self._stream_segment_size)
 
@@ -2882,7 +2899,7 @@ class OpenADCInterface:
                     break
 
             scope_logger.debug("DISABLING fast fifo read")
-            self.sendMessage(CODE_WRITE, ADDR_FAST_FIFO_READ, [0])
+            self.setFastFIFORead(0)
             self.serial.set_smc_speed(0)
 
             self._stream_rx_bytes, stream_timeout = self.serial.cmdReadStream(self._is_husky)
@@ -2962,7 +2979,7 @@ class OpenADCInterface:
         self.sendMessage(CODE_READ, ADDR_ADCDATA, None, False, None)
 
     def readData(self, NumberPoints=None, progressDialog=None):
-        scope_logger.debug("Reading data from OpenADC...")
+        scope_logger.debug("Reading data from OpenADC (NumberPoints=%d)..." % NumberPoints)
         if self._is_husky: 
             return self.readHuskyData(NumberPoints)
         elif self._stream_mode:
@@ -3109,13 +3126,13 @@ class OpenADCInterface:
             data = self._sbuf
             scope_logger.debug('stream: got data len = %d' % len(data))
         else:
-            if self._fast_fifo_read:
+            if self._fast_fifo_read_enable:
                 # switch FPGA and SAM3U into fast read timing mode
-                self.sendMessage(CODE_WRITE, ADDR_FAST_FIFO_READ, [1])
+                self.setFastFIFORead(1)
                 self.serial.set_smc_speed(1)
             data = self.sendMessage(CODE_READ, ADDR_ADCDATA, None, False, bytesToRead)
             # switch FPGA and SAM3U back to regular read timing mode
-            self.sendMessage(CODE_WRITE, ADDR_FAST_FIFO_READ, [0])
+            self.setFastFIFORead(0)
             self.serial.set_smc_speed(0)
 
         # XXX Husky debug:
