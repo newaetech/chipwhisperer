@@ -29,6 +29,7 @@ ADDR_SYSFREQ    = 7
 ADDR_ADCFREQ    = 8
 ADDR_PHASE      = 9
 ADDR_VERSIONS   = 10
+ADDR_FPGA_BUILDTIME = 11
 ADDR_OFFSET     = 26
 ADDR_DECIMATE   = 15
 ADDR_SAMPLES    = 16
@@ -151,6 +152,21 @@ class HWInformation(util.DisableNewAttr):
             return True
         else:
             return False
+
+    def get_fpga_buildtime(self):
+        """Returns date and time when FPGA bitfile was generated.
+        """
+        if self.is_cwhusky():
+            raw = self.oa.sendMessage(CODE_READ, ADDR_FPGA_BUILDTIME, maxResp=4)
+            # definitions: Xilinx XAPP1232
+            day = raw[3] >> 3
+            month = ((raw[3] & 0x7) << 1) + (raw[2] >> 7)
+            year = ((raw[2] >> 1) & 0x3f) + 2000
+            hour = ((raw[2] & 0x1) << 4) + (raw[1] >> 4)
+            minute = ((raw[1] & 0xf) << 2) + (raw[0] >> 6)
+            return "FPGA build time: {}/{}/{}, {}:{}".format(month, day, year, hour, minute)
+        else:
+            return None
 
 
     def synthDate(self):
