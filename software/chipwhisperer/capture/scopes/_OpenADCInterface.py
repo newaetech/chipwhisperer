@@ -1004,6 +1004,17 @@ class TriggerSettings(util.DisableNewAttr):
         self._set_decimate(decfactor)
 
     @property
+    def clip_errors_disabled(self):
+        """TODO
+        """
+        return self._get_clip_errors_disabled()
+
+    @clip_errors_disabled.setter
+    def clip_errors_disabled(self, disable):
+        self._set_clip_errors_disabled(disable)
+
+
+    @property
     def samples(self):
         """The number of ADC samples to record in a single capture.
 
@@ -1492,6 +1503,13 @@ class TriggerSettings(util.DisableNewAttr):
 
     def _get_decimate(self):
         return self.oa.decimate()
+
+    def _set_clip_errors_disabled(self, disable):
+        self.oa.set_clip_errors_disabled(disable)
+
+    def _get_clip_errors_disabled(self):
+        return self.oa.clip_errors_disabled()
+
 
     def _set_num_samples(self, samples):
         if samples < 0:
@@ -2793,6 +2811,22 @@ class OpenADCInterface:
         else:
             decnum = 1
         return decnum
+
+    def set_clip_errors_disabled(self, disable):
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        if disable:
+            val = [1]
+        else:
+            val = [0]
+        self.sendMessage(CODE_WRITE, ADDR_NO_CLIP_ERRORS, val)
+
+
+    def clip_errors_disabled(self):
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        return self.sendMessage(CODE_READ, ADDR_NO_CLIP_ERRORS, maxResp=1)[0]
+
 
     def numSamples(self):
         """Return the number of samples captured in one go. Returns max after resetting the hardware"""
