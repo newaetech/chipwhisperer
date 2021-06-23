@@ -1842,7 +1842,8 @@ class ClockSettings(util.DisableNewAttr):
         This clock frequency is derived from one of the ADC clock sources as
         described in adc_src.
 
-        :Getter: Return the current frequency in MHz (float)
+        :Getter: Return the current frequency in MHz (float). May take
+                up to 0.5s to stabilize after adc_locked is True.
         """
         return self._getAdcFrequency()
 
@@ -1971,7 +1972,8 @@ class ClockSettings(util.DisableNewAttr):
         :Getter:
             Return the current calculated CLKGEN output frequency in Hz
             (float). Note that this is the theoretical frequency - use the
-            freq counter to determine the actual output.
+            freq counter to determine the actual output. May take up to 0.5s
+            to stabilize after clkgen_locked is True.
 
         :Setter:
             Attempt to set a new CLKGEN frequency in Hz. When this value is
