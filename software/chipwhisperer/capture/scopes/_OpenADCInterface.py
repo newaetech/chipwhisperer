@@ -1468,6 +1468,8 @@ class TriggerSettings(util.DisableNewAttr):
         self.oa.sendMessage(CODE_WRITE, ADDR_ADC_LOW_RES, [val])
         # Notify capture system:
         self.oa.setBitsPerSample(bits)
+        # necessary for streaming to work:
+        self.oa.setNumSamples(self.samples)
 
     def _get_bits_per_sample(self):
         return self._bits_per_sample
