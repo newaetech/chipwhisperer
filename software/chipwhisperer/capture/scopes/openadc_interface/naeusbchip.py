@@ -21,11 +21,14 @@
 import logging
 import sys
 import traceback
+import time
+import os.path
 # import chipwhisperer.capture.scopes._qt as openadc_qt
 from .. import _qt as openadc_qt
-from chipwhisperer.capture.scopes.cwhardware.ChipWhispererFWLoader import CWLite_Loader, CW1200_Loader
+from chipwhisperer.capture.scopes.cwhardware.ChipWhispererFWLoader import CWLite_Loader, CW1200_Loader, CWHusky_Loader
 from chipwhisperer.capture.scopes.cwhardware.ChipWhispererFWLoader import FWLoaderConfig
 from chipwhisperer.common.utils.util import DictType, camel_case_deprecated
+
 
 try:
     from chipwhisperer.capture.scopes.cwhardware import ChipWhispererLite as CWL
@@ -59,7 +62,8 @@ class OpenADCInterface_NAEUSBChip(object):
         else:
             self.cwFirmwareConfig = {
                 0xACE2:FWLoaderConfig(CWLite_Loader()),
-                0xACE3:FWLoaderConfig(CW1200_Loader())
+                0xACE3:FWLoaderConfig(CW1200_Loader()),
+                0xACE5:FWLoaderConfig(CWHusky_Loader())
             }
             self.scope = oadcInstance
 
@@ -68,7 +72,7 @@ class OpenADCInterface_NAEUSBChip(object):
             self.dev = CWL.CWLiteUSB()
 
             try:
-                nae_products = [0xACE2, 0xACE3]
+                nae_products = [0xACE2, 0xACE3, 0xACE5]
                 possible_sn = self.dev.get_possible_devices(nae_products)
                 serial_numbers = []
                 if len(possible_sn) > 1:
@@ -93,12 +97,14 @@ class OpenADCInterface_NAEUSBChip(object):
             self.last_id = found_id
 
             self.getFWConfig().setInterface(self.dev.fpga)
+            # XXX: need to comment this out?
             try:
                 self.getFWConfig().loadRequired()
             except:
                 self.dev.dis()
                 self.dev.usbdev().close()
                 raise
+
             self.ser = self.dev.usbdev()
 
         try:
@@ -107,6 +113,33 @@ class OpenADCInterface_NAEUSBChip(object):
         except IOError as e:
             exctype, value = sys.exc_info()[:2]
             raise IOError("OpenADC: " + (str(exctype) + str(value)))
+
+    def reload_fpga(self, bitstream, reconnect=True):
+
+        if bitstream is None:
+            raise NotImplementedError("Oops I forgot about that")
+        
+        bsdate = time.ctime(os.path.getmtime(bitstream))
+        logging.debug("FPGA: Using file %s"%bitstream)
+        logging.debug("FPGA: File modification date %s"%bsdate)
+
+        bsdata = open(bitstream, "rb")
+
+        try:
+            self.dev.fpga.FPGAProgram(bsdata)
+        except:
+            self.dev.dis()
+            self.dev.usbdev().close()
+            raise
+        self.ser = self.dev.usbdev()
+
+        if reconnect:
+            try:
+                self.scope.con(self.ser)
+                logging.info('OpenADC Found, Connecting')
+            except IOError as e:
+                exctype, value = sys.exc_info()[:2]
+                raise IOError("OpenADC: " + (str(exctype) + str(value)))
 
     def dis(self):
         if self.ser is not None:

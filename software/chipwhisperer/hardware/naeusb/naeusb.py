@@ -40,7 +40,9 @@ from chipwhisperer.hardware.firmware import cwlite as fw_cwlite
 from chipwhisperer.hardware.firmware import cw1200 as fw_cw1200
 from chipwhisperer.hardware.firmware import cw305  as fw_cw305
 from chipwhisperer.hardware.firmware import cwnano  as fw_nano
+from chipwhisperer.hardware.firmware import cwhusky as fw_cwhusky
 
+from chipwhisperer.logging import *
 
 
 def packuint32(data):
@@ -73,6 +75,7 @@ NEWAE_PIDS = {
     0xACE3: {'name': "ChipWhisperer-CW1200",   'fwver': fw_cw1200.fwver},
     0xC305: {'name': "CW305 Artix FPGA Board", 'fwver': fw_cw305.fwver},
     0xACE0: {'name': "ChipWhisperer-Nano", 'fwver': fw_nano.fwver},
+    0xACE5: {'name': "ChipWhisperer-Husky",   'fwver': fw_cwhusky.fwver},
 }
 
 class NAEUSB_Serializer_base(object):
@@ -294,22 +297,31 @@ class NAEUSB_Backend(NAEUSB_Serializer_base):
 
             if cmd == self.READ_CTRL:
                 response = self.usbdev().ctrl_transfer(payload[0], payload[1], payload[2], payload[3], payload[4], timeout=self._timeout)
+                naeusb_logger.debug("READ_CTRL: bmRequestType: {:02X}, \
+                    bRequest: {:02X}, wValue: {:04X}, wIndex: {:04X}, data_len: {:04X}, response: {}".format(payload[0], payload[1], \
+                        payload[2], payload[3], payload[4], response))
             elif cmd == self.WRITE_CTRL:
                 if payload[4] != len(payload[5:]):
                     raise ValueError("Specified payload length & actual do not match")
                 self.usbdev().ctrl_transfer(payload[0], payload[1], payload[2], payload[3], payload[5:], timeout=self._timeout)
+                naeusb_logger.debug("READ_CTRL: bmRequestType: {:02X}, \
+                    bRequest: {:02X}, wValue: {:04X}, wIndex: {:04X}, payload: {}".format(payload[0], payload[1], payload[2], payload[3],\
+                         payload[4], payload[5:]))
             elif cmd == self.CMD_READ_MEM:
                 addr = payload[0]
                 dlen = payload[1]
                 response = self.cmdReadMem(addr, dlen)
+                naeusb_logger.debug("CMD_READ_MEM: addr: {:08X}, dlen: {:08X}, response: {}".format(addr, dlen, response))
             elif cmd == self.CMD_WRITE_MEM:
                 addr = payload[0]
                 data = payload[1:]
                 self.cmdWriteMem(addr, data)
+                naeusb_logger.debug("CMD_WRITE_MEM: addr: {:08X}, data: {}".format(addr, data))
             elif cmd == self.CMD_WRITE_MEM_SAM3U:
                 addr = payload[0]
                 data = payload[1:]
                 self.cmdWriteSam3U(addr, data)
+                #naeusb_logger.debug("CMD_WRITE_MEM_SAM3U: addr: {}") #skip this one for now
             elif cmd == self.GET_POSSIBLE_DEVICES:
                 response = self.get_possible_devices(payload)
             elif cmd == self.OPEN:
@@ -326,7 +338,8 @@ class NAEUSB_Backend(NAEUSB_Serializer_base):
             else:
                 raise ValueError("Unknown Command: %02x"%cmd)
         except Exception as e:
-            traceback.print_exc()
+            #traceback.print_exc()
+            raise #ugg
             return self.make_cmd(self.ERROR, e)
 
         return self.make_cmd(self.ACK, response)
@@ -362,14 +375,6 @@ class NAEUSB_Backend(NAEUSB_Serializer_base):
             else:
                 #User did not help us out - throw it in their face
                 raise Warning("Found multiple potential USB devices. Please specify device to use. Possible S/Ns:\n" + snlist)
-        try:
-            try:
-                dev.set_configuration(0)
-            except:
-                pass #test
-            dev.set_configuration()
-        except ValueError:
-            raise OSError("NAEUSB: Could not configure USB device")
 
         # Get serial number
         try:
@@ -389,11 +394,19 @@ class NAEUSB_Backend(NAEUSB_Serializer_base):
             name = "Unknown (PID = %04x)"%foundId
             fw_latest = [0, 0]
 
-        logging.info('Found %s, Serial Number = %s' % (name, self.snum))
+        naeusb_logger.info('Found %s, Serial Number = %s' % (name, self.snum))
 
         self._usbdev = dev
-        self.rep = 0x81
-        self.wep = 0x02
+        # TODO: how to tell if we're Husky at this point? maybe a try block?
+        # for husky:
+        # TEMPORARY: fix rep/wep in the notebook instead, so that the old values can be used for the CW305 target
+        # self.rep = 0x85
+        # self.wep = 0x06
+        # for older capture HW:
+        # self.rep = 0x81
+        # self.wep = 0x02
+        self.rep = None
+        self.wep = None
         self._timeout = 200
 
         return foundId
@@ -403,10 +416,10 @@ class NAEUSB_Backend(NAEUSB_Serializer_base):
         try:
             usb.util.dispose_resources(self.usbdev())
         except usb.USBError as e:
-            logging.info('USB Failure calling dispose_resources: %s' % str(e))
+            naeusb_logger.info('USB Failure calling dispose_resources: %s' % str(e))
 
 
-    def get_possible_devices(self, idProduct=None, dictonly=True):
+    def get_possible_devices(self, idProduct=None, dictonly=True, backend="libusb1"):
         """
         Get a list of matching devices being based a list of PIDs. Returns list of usbdev that match (or empty if none)
         """
@@ -416,10 +429,15 @@ class NAEUSB_Backend(NAEUSB_Serializer_base):
         my_kwargs = {'find_all': True, 'idVendor': 0x2B3E}
         if os.name == "nt":
             #on windows, need to manually load libusb because of 64bit python loading the wrong one
-            libusb_backend = libusb1.get_backend()
+            libusb_backend = None
+            if backend == "libusb1":
+                import pathlib
+                libusb_dir = pathlib.Path(__file__).parent.absolute()
+                libusb_path = pathlib.Path(libusb_dir, "libusb-1.0.dll")
+                libusb_backend = libusb1.get_backend(find_library=lambda x: str(libusb_path))
             if not libusb_backend:
                 libusb_backend = libusb0.get_backend(find_library=lambda x: r"c:\Windows\System32\libusb0.dll")
-                logging.info("Using libusb0 backend")
+                naeusb_logger.info("Using libusb0 backend")
             my_kwargs['backend'] = libusb_backend
         devlist = []
         try:
@@ -428,6 +446,7 @@ class NAEUSB_Backend(NAEUSB_Serializer_base):
                     dev = list(usb.core.find(idProduct=id, **my_kwargs))
                 else:
                     dev = list(usb.core.find(**my_kwargs))
+                #naeusb_logger.info("Devices found: {}".format(dev))
                 if len(dev) > 0:
                     if len(dev) == 1:
                         devlist.extend(dev)
@@ -444,16 +463,29 @@ class NAEUSB_Backend(NAEUSB_Serializer_base):
                                 devlist.append(d)
                             except ValueError as e:
                                 if "langid" in str(e):
-                                    logging.info('A device raised the "no langid" error, it is being skipped')
+                                    naeusb_logger.info('A device raised the "no langid" error, it is being skipped')
                                 else:
                                     raise
             if dictonly:
                 devlist = [{'sn': d.serial_number, 'product': d.product, 'pid': d.idProduct, 'vid': d.idVendor} for d in devlist]
 
+            try:
+                naeusb_logger.info("Devices found: {}".format(devlist))
+                if len(devlist) > 0:
+                    if dictonly:
+                        devlist[0]['sn']
+                    else:
+                        devlist[0].serial_number
+            except ValueError as e:
+                if backend == "libusb1":
+                    return self.get_possible_devices(idProduct, dictonly, "libusb0")
+                raise
             return devlist
         except ValueError as e:
             if "langid" not in str(e):
                 raise
+            if backend == "libusb1":
+                return self.get_possible_devices(idProduct, dictonly, "libusb0")
             raise OSError("Unable to communicate with found ChipWhisperer. Check that another process isn't connected to it and that you have permission to communicate with it.")
 
     def sendCtrl(self, cmd, value=0, data=[]):
@@ -486,11 +518,25 @@ class NAEUSB_Backend(NAEUSB_Serializer_base):
         # ADDR/LEN written LSB first
         pload = packuint32(dlen)
         pload.extend(packuint32(addr))
-        self.sendCtrl(cmd, data=pload)
-
+        try:
+            self.sendCtrl(cmd, data=pload)
+        except usb.USBError as e:
+            if "Pipe error" in str(e):
+                naeusb_logger.info("Attempting pipe error fix - typically safe to ignore")
+                self.sendCtrl(0x22, 0x11)
+                self.sendCtrl(cmd, data=pload)
+            else:
+                raise
+        if (self.rep is None):
+            if self.usbdev().idProduct == 0xACE5: 
+                self.rep = 0x85
+            else:
+                self.rep = 0x81
         # Get data
         if cmd == self.CMD_READMEM_BULK:
             data = self.usbdev().read(self.rep, dlen, timeout=self._timeout)
+            # XXX Husky debug:
+            naeusb_logger.info('YYY BULK rep=%d, dlen=%d, got len=%d' % (self.rep, dlen, len(data)))
         else:
             data = self.readCtrl(cmd, dlen=dlen)
 
@@ -519,6 +565,13 @@ class NAEUSB_Backend(NAEUSB_Serializer_base):
         self.sendCtrl(cmd, data=pload)
 
         # Get data
+        if (self.rep is None) or (self.wep is None):
+            if self.usbdev().idProduct == 0xACE5: 
+                self.rep = 0x85
+                self.wep = 0x06
+            else:
+                self.rep = 0x81
+                self.wep = 0x02
         if cmd == self.CMD_WRITEMEM_BULK:
             data = self.usbdev().write(self.wep, data, timeout=self._timeout)
         else:
@@ -549,7 +602,6 @@ class NAEUSB_Backend(NAEUSB_Serializer_base):
         
         return data
 
-
     def cmdWriteBulk(self, data):
         """
         Write data directly to the bulk endpoint.
@@ -557,18 +609,38 @@ class NAEUSB_Backend(NAEUSB_Serializer_base):
         :return:
         """
 
+        if (self.rep is None) or (self.wep is None):
+            if self.usbdev().idProduct == 0xACE5: 
+                self.rep = 0x85
+                self.wep = 0x06
+            else:
+                self.rep = 0x81
+                self.wep = 0x02
         self.usbdev().write(self.wep, data, timeout=self._timeout)
-
 
     def flushInput(self):
         """Dump all the crap left over"""
         try:
             # TODO: This probably isn't needed, and causes slow-downs on Mac OS X.
+            if (self.rep is None) or (self.wep is None):
+                if self.usbdev().idProduct == 0xACE5: 
+                    self.rep = 0x85
+                    self.wep = 0x06
+                else:
+                    self.rep = 0x81
+                    self.wep = 0x02
             self.usbdev().read(self.rep, 1000, timeout=0.010)
         except:
             pass
 
     def read(self, dbuf, timeout):
+        if (self.rep is None) or (self.wep is None):
+            if self.usbdev().idProduct == 0xACE5: 
+                self.rep = 0x85
+                self.wep = 0x06
+            else:
+                self.rep = 0x81
+                self.wep = 0x02
         return self.usbdev().read(self.rep, dbuf, timeout)
 
 class NAEUSB(object):
@@ -578,6 +650,7 @@ class NAEUSB(object):
     """
 
     CMD_FW_VERSION = 0x17
+    CMD_CDC_SETTINGS_EN = 0x31
 
     CMD_READMEM_BULK = 0x10
     CMD_WRITEMEM_BULK = 0x11
@@ -585,6 +658,7 @@ class NAEUSB(object):
     CMD_WRITEMEM_CTRL = 0x13
     CMD_MEMSTREAM = 0x14
     CMD_WRITEMEM_CTRL_SAM3U = 0x15
+    CMD_SMC_READ_SPEED = 0x27
 
     stream = False
 
@@ -597,6 +671,36 @@ class NAEUSB(object):
 
     def get_possible_devices(self, idProduct):
         return self.usbseralizer.get_possible_devices(idProduct)
+
+    def get_cdc_settings(self):
+        return self.usbtx.readCtrl(self.CMD_CDC_SETTINGS_EN, dlen=2)
+
+    def set_cdc_settings(self, port=[1, 1]):
+        if isinstance(port, int):
+            port = [port, port]
+        self.usbtx.sendCtrl(self.CMD_CDC_SETTINGS_EN, (port[0]) | (port[1] << 1))
+
+    def set_smc_speed(self, val):
+        """
+        val = 0: normal read timing
+        val = 1: fast read timing, should only be used for reading ADC samples; FPGA must also be set in fast FIFO
+                 read mode for this to work correctly.
+        """
+        self.usbtx.sendCtrl(self.CMD_SMC_READ_SPEED, data=[val])
+
+    def get_serial_ports(self):
+        """May have multiple com ports associated with one device, so returns a list of port + interface
+        """
+        if not self.usbtx._usbdev:
+            raise OSError("Connect to device before calling this")
+        import serial.tools.list_ports
+        if serial.__version__ < '3.5':
+            raise OSError("Pyserial >= 3.5 (found {}) required for this method".format(serial.__version__))
+        devices = []
+        for port in serial.tools.list_ports.comports():
+            if port.serial_number == self.usbtx._usbdev.serial_number.upper():
+                devices.append({"port": port.device, "interface": port.location.split('.')[-1]})
+        return devices
 
     def con(self, idProduct=[0xACE2], connect_to_first=False, serial_number=None):
         """
@@ -643,16 +747,16 @@ class NAEUSB(object):
 
         self.snum = dev['sn']
 
-        logging.info('Found %s, Serial Number = %s' % (name, self.snum))
+        naeusb_logger.info('Found %s, Serial Number = %s' % (name, self.snum))
 
         fwver = self.readFwVersion()
-        logging.info('SAM3U Firmware version = %d.%d b%d' % (fwver[0], fwver[1], fwver[2]))
+        naeusb_logger.info('SAM3U Firmware version = %d.%d b%d' % (fwver[0], fwver[1], fwver[2]))
 
         latest = fwver[0] > fw_latest[0] or (fwver[0] == fw_latest[0] and fwver[1] >= fw_latest[1])
         if not latest:
-            logging.warning('Your firmware is outdated - latest is %d.%d' % (fw_latest[0], fw_latest[1]) +
-                            '. Suggested to update firmware, as you may experience errors' +
-                            '\nSee https://chipwhisperer.readthedocs.io/en/latest/api.html#firmware-update')
+            naeusb_logger.warning('Your firmware is outdated - latest is %d.%d' % (fw_latest[0], fw_latest[1]) +
+                             '. Suggested to update firmware, as you may experience errors' +
+                             '\nSee https://chipwhisperer.readthedocs.io/en/latest/api.html#firmware-update')
         return foundId
 
     def usbdev(self):
@@ -662,6 +766,13 @@ class NAEUSB(object):
         """Close USB connection."""
         self.usbseralizer.close(self.snum)
         self.snum = None
+
+    def readCDCSettings(self):
+        try:
+            data = self.readCtrl(self.CMD_FW_VERSION, dlen=3)
+            return data
+        except usb.USBError:
+            return [0, 0]
 
     def readFwVersion(self):
         try:
@@ -806,6 +917,11 @@ class NAEUSB(object):
         if forreal:
             self.sendCtrl(0x22, 3)
 
+    def reset(self):
+        """ Reset the SAM3U. Requires firmware 0.30 or later
+        """
+        self.sendCtrl(0x22, 0x10)
+
     def read(self, dlen, timeout=2000):
         self.usbserializer.read(dlen, timeout)
 
@@ -831,14 +947,14 @@ class NAEUSB(object):
             self.drx = 0
 
         def run(self):
-            logging.debug("Streaming: starting USB read")
+            naeusb_logger.info("Streaming: starting USB read")
             start = time.time()
             try:
                 self.drx = self.serial.usbtx.read(self.dbuf_temp, timeout=self.timeout_ms)
             except IOError as e:
-                logging.warning('Streaming: USB stream read timed out')
+                naeusb_logger.warning('Streaming: USB stream read timed out')
             diff = time.time() - start
-            logging.debug("Streaming: Received %d bytes in time %.20f)" % (self.drx, diff))
+            naeusb_logger.info("Streaming: Received %d bytes in time %.20f)" % (self.drx, diff))
 
 
 if __name__ == '__main__':

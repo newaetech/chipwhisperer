@@ -9,12 +9,13 @@ Targets:
 * SmartCard - Currently unavailable (tied to GUI)
 """
 from .SimpleSerial import SimpleSerial
-from .Leia import LeiaTarget
-from .CW305 import CW305 #check works
+from .CW305 import CW305
+from .SimpleSerial2 import SimpleSerial2, SimpleSerial2_CDC
+from .CW305_ECC import CW305_ECC
+from .CW310 import CW310
 
 try:
-    from .SAKURAG import SakuraG #needs ftdi module
-    from .SASEBOGII import SaseboGII
+    from .sakura_g import SakuraG #needs ftdi module
 except ImportError:
     pass
 

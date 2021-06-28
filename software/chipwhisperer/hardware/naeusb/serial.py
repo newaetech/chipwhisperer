@@ -27,7 +27,7 @@ import time
 import os
 from .naeusb import packuint32
 from chipwhisperer.common.utils.util import fw_ver_required
-
+from chipwhisperer.logging import *
 class USART(object):
     """
     USART Class communicates with NewAE USB Interface to read/write data over control endpoint.
@@ -46,6 +46,7 @@ class USART(object):
         """
         Set the USB communications instance.
         """
+        self._max_read = 256
 
         self._usb = usb
         self.timeout = timeout
@@ -58,6 +59,7 @@ class USART(object):
         # but this obj gets created a lot,
         # and don't want to spam them
         self.tx_buf_in_wait = False
+        self.fw_read = None
 
     def init(self, baud=115200, stopbits=1, parity="none"):
         """
@@ -97,7 +99,7 @@ class USART(object):
 
         self._usartTxCmd(self.USART_CMD_INIT, cmdbuf)
         self._usartTxCmd(self.USART_CMD_ENABLE)
-        print("Serial baud rate = {}".format(baud))
+        target_logger.info("Serial baud rate = {}".format(baud))
 
         try:
             self.tx_buf_in_wait = False
@@ -133,8 +135,7 @@ class USART(object):
             # Can probably elimiate some USB communication
             # to make this faster, but okay for now...
             if self.tx_buf_in_wait:
-                while (datatosend + self.in_waiting_tx()) > 128:
-                    pass
+                datatosend = min(datatosend, 128-self.in_waiting_tx())
             self._usb.sendCtrl(self.CMD_USART0_DATA, 0, data[datasent:(datasent + datatosend)])
             datasent += datatosend
 
@@ -181,9 +182,10 @@ class USART(object):
 
         resp = []
 
+        # * 10 does nothing
         while dlen and (timeout * 10) > 0:
             if waiting > 0:
-                newdata = self._usb.readCtrl(self.CMD_USART0_DATA, 0, min(waiting, dlen))
+                newdata = self._usb.readCtrl(self.CMD_USART0_DATA, 0, min(min(waiting, dlen), self._max_read))
                 resp.extend(newdata)
                 dlen -= len(newdata)
             waiting = self.inWaiting()
@@ -209,5 +211,6 @@ class USART(object):
 
     @property
     def fw_version(self):
-        a = self._usb.readFwVersion()
-        return {"major": a[0], "minor": a[1], "debug": a[2]}
+        if not self.fw_read:
+            self.fw_read = self._usb.readFwVersion()
+        return {"major": self.fw_read[0], "minor": self.fw_read[1], "debug": self.fw_read[2]}
