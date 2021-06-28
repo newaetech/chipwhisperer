@@ -38,6 +38,8 @@ glitchreadbackaddr = 56
 CODE_READ       = 0x80
 CODE_WRITE      = 0xC0
 
+from chipwhisperer.logging import *
+
 # sign extend b low bits in x
 # from "Bit Twiddling Hacks"
 def SIGNEXT(x, b):
@@ -242,7 +244,7 @@ class GlitchSettings(util.DisableNewAttr):
             raise UserWarning("Can't use glitch offset %s - rounding into [%s, %s]" % (value, self.cwg._min_offset, self.cwg._max_offset))
 
         if value < -45:
-            logging.warning("Negative offsets <-45 may result in double glitches!")
+            glitch_logger.warning("Negative offsets <-45 may result in double glitches!")
         self.cwg.setGlitchOffset(value)
 
     @property
@@ -285,6 +287,8 @@ class GlitchSettings(util.DisableNewAttr):
          * "ext_single": Use the trigger module. One glitch per scope arm.
          * "ext_continuous": Use the trigger module. Many glitches per arm.
 
+         .. warning:: calling :code:`scope.arm()` in manual gitch mode will cause a glitch to trigger.
+
         :Getter: Return the current trigger source.
 
         :Setter: Change the trigger source.
@@ -311,6 +315,7 @@ class GlitchSettings(util.DisableNewAttr):
         If the glitch module is in "ext_single" trigger mode, it must be armed
         when the scope is armed. There are two timings for this event:
 
+         * "no_glitch": The glitch module is not armed. Gives a moderate speedup to capture.
          * "before_scope": The glitch module is armed first.
          * "after_scope": The scope is armed first. This is the default.
 
@@ -327,7 +332,9 @@ class GlitchSettings(util.DisableNewAttr):
            ValueError: if value not listed above
         """
         timing = self.cwg.getArmTiming()
-        if timing == 1:
+        if timing == 0:
+            return "no_glitch"
+        elif timing == 1:
             return "before_scope"
         elif timing == 2:
             return "after_scope"
@@ -336,12 +343,14 @@ class GlitchSettings(util.DisableNewAttr):
 
     @arm_timing.setter
     def arm_timing(self, value):
-        if value == "before_scope":
+        if value == "no_glitch":
+            int_val = 0
+        elif value == "before_scope":
             int_val = 1
         elif value == "after_scope":
             int_val = 2
         else:
-            raise ValueError("Can't set glitch arm timing to %s; valid values: ('before_scope', 'after_scope')" % value, value)
+            raise ValueError("Can't set glitch arm timing to %s; valid values: ('no_glitch', 'before_scope', 'after_scope')" % value, value)
 
         self.cwg.setArmTiming(int_val)
 
@@ -496,10 +505,14 @@ class ChipWhispererGlitch(object):
                 settingprefix = "cw1200"
                 partialbasename = "cw1200"
                 self.glitchPR = pr.PartialReconfigDataMulti()
+            elif cwtype == "cwhusky":
+                settingprefix = "cwhusky"
+                partialbasename = "cwhusky"
+                self.glitchPR = None
             else:
                 raise ValueError("Invalid ChipWhisperer Mode: %s" % cwtype)
 
-            if scope.getFWConfig().loader._release_mode != "debug":
+            if scope.getFWConfig().loader._release_mode != "debug" and cwtype != "cwhusky": # TODO- temporary
 
                 if scope.getFWConfig().loader._release_mode == "builtin":
                     filelike = scope.getFWConfig().loader._bsBuiltinData
@@ -509,10 +522,10 @@ class ChipWhispererGlitch(object):
                     if zipfile.is_zipfile(fileloc):
                         zfile = zipfile.ZipFile(fileloc, "r")
                     else:
-                        logging.warning('Partial Reconfiguration DISABLED: no zip-file for FPGA')
+                        glitch_logger.warning('Partial Reconfiguration DISABLED: no zip-file for FPGA')
                         zfile = None
                 else:
-                    logging.warning('Partial Reconfiguration DISABLED: no PR data for FPGA')
+                    glitch_logger.warning('Partial Reconfiguration DISABLED: no PR data for FPGA')
                     zfile = None
                     raise ValueError("Unknown FPGA mode: %s"%scope.getFWConfig().loader._release_mode)
 
@@ -523,17 +536,17 @@ class ChipWhispererGlitch(object):
                 else:
                     self.prEnabled = False
             else:
-                logging.warning('Partial Reconfiguration DISABLED: Debug bitstream mode')
+                glitch_logger.warning('Partial Reconfiguration DISABLED: Debug bitstream mode')
                 self.prEnabled = False
 
         except IOError as e:
-            logging.error(str(e))
+            glitch_logger.error(str(e))
             self.prEnabled = False
         except ValueError as e:
-            logging.error(str(e))
+            glitch_logger.error(str(e))
             self.prEnabled = False
         except OSError as e:  # Also catches WindowsError
-            logging.error(str(e))
+            glitch_logger.error(str(e))
             self.prEnabled = False
 
         if self.prEnabled:
@@ -554,7 +567,7 @@ class ChipWhispererGlitch(object):
             # Check this is actually working
             if self.prCon.isPresent() == False:
                 self.prEnabled = False
-                logging.warning('Partial Reconfiguration block not detected, PR disabled')
+                glitch_logger.warning('Partial Reconfiguration block not detected, PR disabled')
                 return
 
             # Reset FPGA back to defaults in case previous bitstreams loaded
@@ -571,10 +584,10 @@ class ChipWhispererGlitch(object):
             return
 
         if self._width == 0:
-            logging.warning('Partial reconfiguration for width = 0 may not work')
+            glitch_logger.warning('Partial reconfiguration for width = 0 may not work')
 
         if self._offset == 0:
-            logging.warning('Partial reconfiguration for offset = 0 may not work')
+            glitch_logger.warning('Partial reconfiguration for offset = 0 may not work')
 
         bs = self.glitchPR.getPartialBitstream([self._width, self._offset])
 
@@ -661,7 +674,7 @@ class ChipWhispererGlitch(object):
         current = self.oa.sendMessage(CODE_READ, glitchaddr, Validate=False, maxResp=8)
 
         if current is None or len(current) < 8:
-            logging.warning('Glitch Module not present?')
+            glitch_logger.warning('Glitch Module not present?')
             return
 
         LSB = fine & 0x00FF
@@ -685,7 +698,7 @@ class ChipWhispererGlitch(object):
         current = self.oa.sendMessage(CODE_READ, glitchaddr, Validate=False, maxResp=8)
 
         if current is None or len(current) < 8:
-            logging.warning('Glitch Module not present?')
+            glitch_logger.warning('Glitch Module not present?')
             return
 
         LSB = fine & 0x00FF
@@ -744,8 +757,8 @@ class ChipWhispererGlitch(object):
         """Check if the DCMs are locked and print results """
 
         stat = self.getDCMStatus()
-        logging.info('DCM1: Phase %d, Locked %r' % (stat[0], stat[2]))
-        logging.info('DCM2: Phase %d, Locked %r' % (stat[1], stat[3]))
+        glitch_logger.info('DCM1: Phase %d, Locked %r' % (stat[0], stat[2]))
+        glitch_logger.info('DCM2: Phase %d, Locked %r' % (stat[1], stat[3]))
 
     def setNumGlitches(self, num):
         """Set number of glitches to occur after a trigger"""
@@ -753,7 +766,7 @@ class ChipWhispererGlitch(object):
         resp = self.oa.sendMessage(CODE_READ, glitchaddr, Validate=False, maxResp=8)
 
         if resp is None or len(resp) < 8:
-            logging.warning('Glitch Module not present?')
+            glitch_logger.warning('Glitch Module not present?')
             return
 
         if num < 1:

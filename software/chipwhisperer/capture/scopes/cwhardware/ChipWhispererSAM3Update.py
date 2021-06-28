@@ -34,6 +34,7 @@ except ImportError:
             return ["pyserial not installed"]
 from chipwhisperer.common.utils import util
 from chipwhisperer.hardware.naeusb.bootloader_sam3u import Samba
+from chipwhisperer.logging import *
 
 #The firmware files, may still be useful
 
@@ -46,6 +47,31 @@ class SAMFWLoader(object):
     the Nano. If the ChipWhisperer has already been erased, pass None instead
     of the scope object and skip the enter_bootloader() call. Will also work
     for the CW305.
+
+    Can autoprogram if the ChipWhisperer's firmware has not already been erased.
+
+    Autoprogram Example:
+
+     #. Attach the scope part of the hardware to your computer.
+
+     #. Connect to the scope using::
+
+            import chipwhisperer as cw
+
+            # Connect to scope
+            scope = cw.scope()
+
+            # If using CW305, connect to target as well
+            # Can ignore msg about no bitstream
+            target = cw.target(None, cw.targets.CW305)
+
+    #. Call the auto_program() method::
+
+            programmer = cw.SAMFWLoader(scope=scope)
+            # if CW305
+            # programmer = cw.SAMFWLoader(scope=target)
+
+            programmer.auto_program()
 
     Example:
 
@@ -60,7 +86,7 @@ class SAMFWLoader(object):
 
             # If using CW305, connect to target as well
             # Can ignore msg about no bitstream
-            target = cw.target(scope, cw.targets.CW305)
+            target = cw.target(None, cw.targets.CW305)
 
      #. Place the hardware in bootloader mode using::
 
@@ -99,15 +125,21 @@ class SAMFWLoader(object):
                 programmer.program(<port>, hardware_type='cwlite')
                 programmer.program(<port>, hardware_type='cwnano')
                 programmer.program(<port>, hardware_type='cw305')
+                programmer.program(<port>, hardware_type='cw1200')
 
         On Linux instead of 'COM#' use the Linux equivalent (usually /dev/ttyACM# or /dev/ttyUSB#)
 
      #. Once the programming is done. Unplug then plug in the hardware into your
         computer again. The device should show up as a ChipWhisperer again.
     """
-    def __init__(self, scope=None):
+    def __init__(self, scope=None, logfunc=print):
+        self._hw_type = None
         if scope:
             self.usb = scope._getNAEUSB()
+            self._hw_type = scope._getCWType()
+        if logfunc is None:
+            logfunc = lambda *args, **kwargs: None
+        self.logfunc = logfunc
         self._warning_seen = False
 
     def enter_bootloader(self, really_enter=False):
@@ -140,21 +172,50 @@ class SAMFWLoader(object):
 
 
         else:
-            print("""Entering bootloader mode...
+            self.logfunc("""Entering bootloader mode...
             Please wait until the ChipWhisperer shows up as a serial port. Once it has, call
             the program(COMPORT, FWPATH) to program the ChipWhisperer
 
             Default firmware can be found at chipwhisperer/hardware/capture/chipwhisperer-lite/sam3u_fw/SAM3U_VendorExample/Debug/SAM3U_CW1173.bin""")
             self.usb.enterBootloader(True)
 
-    def program(self, port, fw_path=None, hardware_type=None):
+    def auto_program(self):
+        """Erase and program firmware of ChipWhisperer
+
+        Autodetects comport and hardware type.
+        """
+        import time, serial.tools.list_ports
+        if not self._hw_type:
+            raise OSError("Unable to detect chipwhisperer hardware type")
+        before = serial.tools.list_ports.comports()
+        before = [b.device for b in before]
+        time.sleep(0.5)
+        self.enter_bootloader(True)
+        time.sleep(1.5)
+        candidate = []
+        i = 0
+        while (candidate == []) and (i < 10):
+            after = serial.tools.list_ports.comports()
+            after = [a.device for a in after]
+            candidate = list((set(before) ^ set(after)) & set(after)) # make sure we only grab the serial ports from after
+        if len(candidate) == 0:
+            raise OSError("Could not detect COMPORT. Continue using programmer.program()")
+        com = candidate[0]
+        print("Detected com port {}".format(com))
+        self.program(com, hardware_type=self._hw_type)
+
+
+    def program(self, port, fw_path=None, hardware_type=None, bypass_warning=False):
         """ Program the ChipWhisperer with new firmware.
 
         Args:
             port (str): Serial port that the ChipWhisperer bootloader is on
             fw_path (str): Path to firmware, if specified leave out hardware type.
             hardware_type (str): The type of hardware that you want to program.
-                If specified leave out fw_path. Valid types: (cwlite, )
+                If specified leave out fw_path. Valid types: (cwlite, cwnano, cw305, cw1200)
+
+        Returns:
+            True if programming succeeded, False if it didn't
 
         """
         type_whitelist = [
@@ -164,11 +225,17 @@ class SAMFWLoader(object):
             'cw1200'
         ]
 
+
         if fw_path and hardware_type:
             raise TypeError('Only one or the other can be specified for fw_path, and hardware_type.')
 
         if not fw_path and not hardware_type:
             TypeError('Either the fw_path or the hardware_type needs to be given.')
+
+        if hardware_type and (not bypass_warning):
+            if self._hw_type and self._hw_type != hardware_type:
+                raise ValueError("ChipWhisperer hardware type mismatch (expected {}, got {}). If you're sure you have the correct hardware_type, call this again with bypass_warning=True".format(self._hw_type, hardware_type))
+
 
         if hardware_type:
             if hardware_type not in type_whitelist:
@@ -187,29 +254,32 @@ class SAMFWLoader(object):
                 elif hardware_type == 'cw1200':
                     from chipwhisperer.hardware.firmware.cw1200 import getsome as getsome
                     name = 'CW1200_SAM3UFW.bin'
-                print('Loading {} firmware...'.format(hardware_type))
+                self.logfunc('Loading {} firmware...'.format(hardware_type))
                 fw_data = getsome(name).read()
 
         if fw_path:
-            print("Opening firmware...")
+            self.logfunc("Opening firmware...")
             fw_data = open(fw_path, "rb").read()
             name = fw_path
 
         sam = Samba()
 
-        print("Opened!\nConnecting...")
+        self.logfunc("Opened!\nConnecting...")
         sam.con(port)
-        print("Connected!\nErasing...")
+        self.logfunc("Connected!\nErasing...")
         sam.erase()
-        print("Erased!\nProgramming file {}...".format(name))
+        self.logfunc("Erased!\nProgramming file {}...".format(name))
         sam.write(fw_data)
-        print("Programmed!\nVerifying...")
+        self.logfunc("Programmed!\nVerifying...")
         if sam.verify(fw_data):
-            print("Verify OK!")
+            self.logfunc("Verify OK!")
             sam.flash.setBootFlash(True)
-            print("Bootloader disabled. Please power cycle device.")
+            self.logfunc("Bootloader disabled. Please power cycle device.")
+            sam.ser.close()
+            return True
         else:
-            print("Verify FAILED!")
+            self.logfunc("Verify FAILED!")
+            sam.ser.close()
+            return False
 
-        sam.ser.close()
 

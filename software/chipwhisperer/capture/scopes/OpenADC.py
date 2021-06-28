@@ -27,14 +27,17 @@
 #=================================================
 import logging
 from usb import USBError
-from .cwhardware import ChipWhispererDecodeTrigger, ChipWhispererDigitalPattern, ChipWhispererExtra, ChipWhispererSAD
+from .cwhardware import ChipWhispererDecodeTrigger, ChipWhispererDigitalPattern, ChipWhispererExtra, ChipWhispererSAD, ChipWhispererHuskyPLL
 from . import _qt as openadc_qt
 from .base import ScopeTemplate
 from .openadc_interface.naeusbchip import OpenADCInterface_NAEUSBChip
 from chipwhisperer.common.utils import util
-from chipwhisperer.common.utils.util import dict_to_str
+from chipwhisperer.common.utils.util import dict_to_str, DelayedKeyboardInterrupt
 from collections import OrderedDict
 import time
+import numpy as np
+
+from chipwhisperer.logging import *
 
 class OpenADC(ScopeTemplate, util.DisableNewAttr):
     """OpenADC scope object.
@@ -70,6 +73,7 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
      *  :meth:`scope.dis <.OpenADC.dis>`
      *  :meth:`scope.arm <.OpenADC.arm>`
      *  :meth:`scope.get_last_trace <.OpenADC.get_last_trace>`
+     *  :meth:`scope.get_serial_ports <.OpenADC.get_serial_ports>`
 
     If you have a CW1200 ChipWhisperer Pro, you have access to some additional features:
 
@@ -109,8 +113,29 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
         a = self.qtadc.sc.serial.readFwVersion()
         return {"major": a[0], "minor": a[1], "debug": a[2]}
 
+    @property
+    def sn(self):
+        return self.scopetype.ser.snum
+
+    def reload_fpga(self, bitstream=None, reconnect=True):
+        """(Re)loads a FPGA bitstream (even if already configured).
+
+        Will cause a reconnect event, all settings become default again.
+        If no bitstream specified default is used based on current
+        configuration settings.
+        """        
+        self.scopetype.reload_fpga(bitstream, reconnect)
+
     def _getNAEUSB(self):
         return self.scopetype.dev._cwusb
+
+    def get_serial_ports(self):
+        """ Get the CDC serial ports associated with this scope
+
+        Returns:
+            A list of a dict with elements {'port', 'interface'}
+        """
+        return self._getNAEUSB().get_serial_ports()
 
     def default_setup(self):
         """Sets up sane capture defaults for this scope
@@ -123,6 +148,7 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
          *  4*7.37MHz ADC clock
          *  tio1 = serial rx
          *  tio2 = serial tx
+         *  CDC settings change off
 
         .. versionadded:: 5.1
             Added default setup for OpenADC
@@ -138,6 +164,7 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
         self.io.hs2 = "clkgen"
 
         self.clock.adc_src = "clkgen_x4"
+        self.io.cdc_settings = 0
 
         count = 0
         while not self.clock.clkgen_locked:            
@@ -146,7 +173,7 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
             count += 1
 
             if count == 5:
-                logging.info("Could not lock clock for scope. This is typically safe to ignore. Reconnecting and retrying...")
+                scope_logger.info("Could not lock clock for scope. This is typically safe to ignore. Reconnecting and retrying...")
                 self.dis()
                 time.sleep(0.25)
                 self.con()
@@ -197,6 +224,8 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
                 return "cwlite"
             elif "CW1200" in hwInfoVer:
                 return "cw1200"
+            elif "Husky" in hwInfoVer:
+                return "cwhusky"
             else:
                 return "cwrev2"
         return ""
@@ -217,10 +246,14 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
         if self.scopetype is not None:
             self.scopetype.con(sn)
 
-            self.qtadc.sc.usbcon = self.scopetype.ser._usbdev
+            if hasattr(self.scopetype, "ser") and hasattr(self.scopetype.ser, "_usbdev"):
+                self.qtadc.sc.usbcon = self.scopetype.ser._usbdev
+            #self.qtadc.sc.usbcon = self.scopetype.ser._usbdev
 
             cwtype = self._getCWType()
+            self.pll = None
             if cwtype != "":
+                #if cwtype != "cwhusky":
                 self.advancedSettings = ChipWhispererExtra.ChipWhispererExtra(cwtype, self.scopetype, self.qtadc.sc)
 
                 util.chipwhisperer_extra = self.advancedSettings
@@ -235,15 +268,27 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
                 if cwtype == "cwcrev2":
                     self.digitalPattern = ChipWhispererDigitalPattern.ChipWhispererDigitalPattern(self.qtadc.sc)
 
+                if cwtype == "cwhusky":
+                    self.pll = ChipWhispererHuskyPLL.CDCI6214(self)
             self.adc = self.qtadc.parm_trigger
             self.gain = self.qtadc.parm_gain
             self.clock = self.qtadc.parm_clock
 
             if cwtype == "cw1200":
                 self.adc._is_pro = True
+            if cwtype == "cwlite":
+                self.adc._is_lite = True
+            elif cwtype == "cwhusky":
+                self.adc._is_husky = True
+                self.gain._is_husky = True
+                self.adc.oa._is_husky = True
+                self.adc.bits_per_sample = 12
+                self.ADS4128 = self.qtadc.parm_ads4128
+                self.XADC = self.qtadc.parm_xadc
             if self.advancedSettings:
                 self.io = self.advancedSettings.cwEXTRA.gpiomux
                 self.trigger = self.advancedSettings.cwEXTRA.triggermux
+                #if cwtype != "cwhusky":
                 self.glitch = self.advancedSettings.glitch.glitchSettings
                 if cwtype == "cw1200":
                     self.trigger = self.advancedSettings.cwEXTRA.protrigger
@@ -289,7 +334,7 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
         """
         if self.connectStatus is False:
             raise OSError("Scope is not connected. Connect it first...")
-
+        # with DelayedKeyboardInterrupt():
         try:
             if self.advancedSettings:
                 self.advancedSettings.armPreScope()
@@ -297,7 +342,7 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
             self.qtadc.arm()
 
             if self.advancedSettings:
-                 self.advancedSettings.armPostScope()
+                self.advancedSettings.armPostScope()
 
             self.qtadc.startCaptureThread()
         except Exception:
@@ -313,11 +358,12 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
         Raises:
            IOError: Unknown failure.
         """
+        # need adc offset, adc_freq, samples cached
+        # with DelayedKeyboardInterrupt():
         if not self.adc.stream_mode:
             return self.qtadc.capture(self.adc.offset, self.clock.adc_freq, self.adc.samples)
         else:
             return self.qtadc.capture(None)
-        return ret
 
     def get_last_trace(self):
         """Return the last trace captured with this scope.
@@ -325,12 +371,51 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
         Returns:
            Numpy array of the last capture trace.
         """
-        return self.qtadc.datapoints
+        return self.qtadc.datapoints    
 
     getLastTrace = util.camel_case_deprecated(get_last_trace)
 
+    def capture_segmented(self):
+        """Captures trace in segment mode, returns as many segments as buffer holds.
+
+        Timeouts not handled yet properly (function will lock). Be sure you are generating
+        enough triggers for segmented mode.
+
+        Returns:
+           True if capture timed out, false if it didn't.
+
+        Raises:
+           IOError: Unknown failure.
+        """
+
+        if self.adc.fifo_fill_mode != "segment":
+            raise IOError("ADC is not in 'segment' mode - aborting.")
+
+        with DelayedKeyboardInterrupt():
+            max_fifo_size = self.adc.oa.hwMaxSamples
+            #self.adc.offset should maybe be ignored - passing for now but untested
+            timeout = self.qtadc.sc.capture(self.adc.offset, self.clock.adc_freq, max_fifo_size)
+            timeout2 = self.qtadc.read(max_fifo_size-256)
+
+            return timeout or timeout2 
+
+    def get_last_trace_segmented(self):
+        """Return last trace assuming it was captued with segmented mode.
+
+        NOTE: The length of each returned trace is 1 less sample than requested.
+
+        Returns:
+            2-D numpy array of the last captured traces.
+        """
+
+        seg_len = self.adc.samples-1
+        num_seg = int(len(self.qtadc.datapoints) / seg_len)
+
+        return np.reshape(self.qtadc.datapoints[:num_seg*seg_len], (num_seg, seg_len))
+
     def _dict_repr(self):
         dict = OrderedDict()
+        dict['sn'] = self.sn
         dict['fw_version'] = self.fw_version
         dict['gain']    = self.gain._dict_repr()
         dict['adc']     = self.adc._dict_repr()
@@ -341,6 +426,10 @@ class OpenADC(ScopeTemplate, util.DisableNewAttr):
         if self._getCWType() == "cw1200":
             dict['SAD'] = self.SAD._dict_repr()
             dict['decode_IO'] = self.decode_IO._dict_repr()
+        if self._getCWType() == "cwhusky":
+            dict['ADS4128'] = self.ADS4128._dict_repr()
+            dict['pll'] = self.pll._dict_repr()
+            dict['XADC'] = self.XADC._dict_repr()
 
         return dict
 

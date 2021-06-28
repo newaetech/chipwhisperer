@@ -22,11 +22,15 @@
 
 #include "simpleserial.h"
 
-uint8_t infinite_loop(uint8_t* in);
-uint8_t glitch_loop(uint8_t* in);
-uint8_t password(uint8_t* pw);
+//uint8_t infinite_loop(uint8_t* in);
+//uint8_t glitch_loop(uint8_t* in);
+//uint8_t password(uint8_t* pw);
 
-uint8_t glitch_loop(uint8_t* in)
+#if SS_VER == SS_VER_2_0
+uint8_t glitch_loop(uint8_t cmd, uint8_t scmd, uint8_t len, uint8_t* in)
+#else
+uint8_t glitch_loop(uint8_t* in, uint8_t len)
+#endif
 {
     volatile uint16_t i, j;
     volatile uint32_t cnt;
@@ -39,12 +43,20 @@ uint8_t glitch_loop(uint8_t* in)
     }
     trigger_low();
     simpleserial_put('r', 4, (uint8_t*)&cnt);
+#if SS_VER == SS_VER_2_0
+    return (cnt != 2500) ? 0x10 : 0x00;
+#else
     return (cnt != 2500);
+#endif
 }
 
-uint8_t glitch_comparison1(uint8_t* in)
+#if SS_VER == SS_VER_2_0
+uint8_t glitch_comparison(uint8_t cmd, uint8_t scmd, uint8_t len, uint8_t* in)
+#else
+uint8_t glitch_comparison(uint8_t* in, uint8_t len)
+#endif
 {
-    uint8_t ok = 5;    
+    uint8_t ok = 5;
     trigger_high();
     if (*in == 0xA2){
         ok = 1;
@@ -53,10 +65,14 @@ uint8_t glitch_comparison1(uint8_t* in)
     }
     trigger_low();
     simpleserial_put('r', 1, (uint8_t*)&ok);
-    return ok;
+    return 0x00;
 }
 
-uint8_t password(uint8_t* pw)
+#if SS_VER == SS_VER_2_0
+uint8_t password(uint8_t cmd, uint8_t scmd, uint8_t len, uint8_t* pw)
+#else
+uint8_t password(uint8_t* pw, uint8_t len)
+#endif
 {
     char passwd[] = "touch";
     char passok = 1;
@@ -70,15 +86,18 @@ uint8_t password(uint8_t* pw)
             passok = 0;
         }
     }
-    
+
     trigger_low();
-    
+
     simpleserial_put('r', 1, (uint8_t*)&passok);
-    return passok;
+    return 0x00;
 }
 
-
-uint8_t infinite_loop(uint8_t* in)
+#if SS_VER == SS_VER_2_0
+uint8_t infinite_loop(uint8_t cmd, uint8_t scmd, uint8_t len, uint8_t* in)
+#else
+uint8_t infinite_loop(uint8_t* in, uint8_t len)
+#endif
 {
     led_ok(1);
     led_error(0);
@@ -124,7 +143,7 @@ uint8_t infinite_loop(uint8_t* in)
     led_error(1);
     led_error(1);
     led_error(1);
-    
+
     return 0;
 }
 
@@ -133,7 +152,7 @@ int main(void)
     platform_init();
     init_uart();
     trigger_setup();
-    
+
     /* Device reset detected */
     putch('r');
     putch('R');
@@ -145,11 +164,15 @@ int main(void)
     putch(' ');
     putch(' ');
     putch('\n');
-    
+
     simpleserial_init();
     simpleserial_addcmd('g', 0, glitch_loop);
-    simpleserial_addcmd('c', 1, glitch_comparison1);
+    simpleserial_addcmd('c', 1, glitch_comparison);
+    #if SS_VER == SS_VER_2_0
+    simpleserial_addcmd(0x01, 5, password);
+    #else
     simpleserial_addcmd('p', 5, password);
+    #endif
     simpleserial_addcmd('i', 0, infinite_loop);
     while(1)
         simpleserial_get();

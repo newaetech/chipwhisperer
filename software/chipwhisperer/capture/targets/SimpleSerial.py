@@ -34,6 +34,7 @@ from chipwhisperer.common.utils import util
 from collections import OrderedDict
 from chipwhisperer.common.utils.util import camel_case_deprecated, dict_to_str
 
+from chipwhisperer.logging import *
 
 class SimpleSerial(TargetTemplate, util.DisableNewAttr):
     """SimpleSerial target object.
@@ -65,12 +66,13 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
       * :meth:`target.set_key <.SimpleSerial.set_key>`
       * :meth:`target.close <.SimpleSerial.close>`
       * :meth:`target.con <.SimpleSerial.con>`
+      * :meth:`target.get_simpleserial_commands <.SimpleSerial.get_simpleserial_commands>`
 
     .. warning::
         The CWLite, CW1200, and CWNano have a 128 byte read buffer and a 128 
         byte send buffer. If the read buffer overflows, a warning message
         will be printed. Prior to firmware 0.20, the send buffer can silently
-        overflow.
+        overflow. In ChipWhisperer 5.4, this is upgraded to a 200 byte read/send buffer.
     """
     _name = "Simple Serial"
 
@@ -191,6 +193,32 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
         """Always returns True"""
         return True
 
+    def get_simpleserial_commands(self, timeout=250, ack=True):
+        """Gets available simpleserial commands for target
+
+        Args:
+            timeout (int, optional): Value to use for timeouts during initial
+                read of expected data in ms. If 0, block until all expected
+                data is returned. Defaults to 250.
+            ack (bool, optional): Wait for ack after sending key. Defaults to
+                True.
+
+        Returns:
+            List of dics with fields 'cmd' command_byte, 'len' command_length, 'flags' command_flags
+        """
+        self.flush()
+        self.simpleserial_write('y', bytearray())
+        num_commands = self.simpleserial_read('r', 1, timeout=timeout, ack=ack)
+        self.simpleserial_write('w', bytearray())
+        
+        cmd_packet = self.simpleserial_read('r', num_commands[0]*3, timeout=timeout, ack=ack)
+        command_list = []
+        for i in range(num_commands[0]):
+            command_list.append({"cmd": bytes([cmd_packet[3*i]]), "len": cmd_packet[1+3*i], "flags": cmd_packet[2+3*i]})
+
+        return command_list
+
+
 
 
     def write(self, data):
@@ -224,7 +252,7 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
             num_char (int, optional): Number of byte to read. If 0, read all
                 data available. Defaults to 0.
             timeout (int, optional): How long in ms to wait before returning.
-                If 0, block until data received. Defaults to 250.
+                If 0, block for a long time. Defaults to 250.
 
         Returns:
             String of received data.
@@ -234,6 +262,8 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
         """
         if not self.connectStatus:
             raise Warning("Target not connected")
+        if timeout == 0:
+            timeout = 10000000000
         try:
             if num_char == 0:
                 num_char = self.ser.inWaiting()
@@ -268,16 +298,16 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
 
         data = self.read(4, timeout = timeout)
         if len(data) < 4:
-            logging.error("Target did not ack")
+            target_logger.error("Target did not ack")
             return None
         if data[0] != 'z':
-            logging.error("Ack error: {}".format(data))
+            target_logger.error("Ack error: {}".format(data))
             return None
         ret = None
         try:
             ret = int(data[1:3], 16)
         except ValueError:
-            logging.error("Ack error, couldn't decode return {}".format(data))
+            target_logger.error("Ack error, couldn't decode return {}".format(data))
             return None
         return ret
 
@@ -312,6 +342,7 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
         if cmd:
             cmd += binascii.hexlify(num).decode()
         cmd += end
+        target_logger.debug("Sending: {}".format(cmd))
         self.write(cmd)
         self._simpleserial_last_sent = cmd
 
@@ -361,7 +392,7 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
         payload = bytearray(pay_len)
         if cmd_len > 0:
             if response[0:cmd_len] != cmd:
-                logging.warning("Unexpected start to command: {}".format(
+                target_logger.warning("Unexpected start to command: {}".format(
                     response[0:cmd_len]
                 ))
                 return None
@@ -370,12 +401,12 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
             try:
                 payload[i] = int(response[idx:(idx + 2)], 16)
             except ValueError as e:
-                logging.warning("ValueError: {}".format(e))
+                target_logger.warning("ValueError: {}".format(e))
             idx += 2
 
         if len(end) > 0:
             if response[(idx):(idx + len(end))] != end:
-                logging.warning("Unexpected end to command: {}".format(
+                target_logger.warning("Unexpected end to command: {}".format(
                     response[(idx):(idx+len(end))]))
                 return None
 
@@ -461,13 +492,13 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
                     payload = None
                     valid = False
                     break
-                    #logging.warning("ValueError: {}".format(e))
+                    #target_logger.warning("ValueError: {}".format(e))
 
                 idx += 2
 
             if valid and (len(end) > 0):
                 if response[(idx):(idx + len(end))] != end:
-                    logging.warning("Unexpected end to command: {}".format(
+                    target_logger.warning("Unexpected end to command: {}".format(
                         response[(idx):(idx + len(end))]))
                     payload = None
 
@@ -502,6 +533,8 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
             if ack:
                 if self.simpleserial_wait_ack(timeout) is None:
                     raise Warning("Device failed to ack")
+        else:
+            target_logger.debug("Key unchanged, skipping send")
 
     def in_waiting(self):
         """Returns the number of characters available from the serial buffer.

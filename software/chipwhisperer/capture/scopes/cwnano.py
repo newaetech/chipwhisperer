@@ -26,11 +26,14 @@
 #    along with chipwhisperer.  If not, see <http://www.gnu.org/licenses/>.
 #=================================================
 import logging
+
+from chipwhisperer.logging import *
+
 import numpy as np
 from usb import USBError
 from .base import ScopeTemplate
 from chipwhisperer.capture.scopes.openadc_interface.naeusbchip import OpenADCInterface_NAEUSBChip
-from chipwhisperer.common.utils import util, timer
+from chipwhisperer.common.utils import util
 from chipwhisperer.common.utils.util import dict_to_str
 from collections import OrderedDict
 
@@ -39,7 +42,7 @@ from chipwhisperer.hardware.naeusb.naeusb import NAEUSB, packuint32, unpackuint3
 from chipwhisperer.hardware.naeusb.programmer_avr import AVRISP
 from chipwhisperer.hardware.naeusb.programmer_xmega import XMEGAPDI
 from chipwhisperer.hardware.naeusb.programmer_stm32fserial import STM32FSerial
-from chipwhisperer.common.utils.util import camel_case_deprecated
+from chipwhisperer.common.utils.util import camel_case_deprecated, DelayedKeyboardInterrupt
 import time
 import datetime
 
@@ -66,6 +69,7 @@ class ADCSettings(util.DisableNewAttr):
 
     def __str__(self):
         return self.__repr__()
+
 
 
     @property
@@ -263,6 +267,8 @@ class GPIOSettings(util.DisableNewAttr):
         #dict['glitch_lp'] = self.glitch_lp
 
         dict['clkout'] = self.clkout
+
+        dict['cdc_settings'] = self.cdc_settings
 
         return dict
 
@@ -503,6 +509,31 @@ class GPIOSettings(util.DisableNewAttr):
 
         return state
 
+    @property
+    def cdc_settings(self):
+        """Check or set whether USART settings can be changed via the USB CDC connection
+
+        i.e. whether you can change USART settings (baud rate, 8n1) via a serial client like PuTTY
+
+        :getter: An array of length two for two possible CDC serial ports (though only one is used)
+
+        :setter: Can set either via an integer (which sets both ports) or an array of length 2 (which sets each port)
+
+        Returns None if using firmware before the CDC port was added
+        """
+        rawver = self.usb.readFwVersion()
+        ver = '{}.{}'.format(rawver[0], rawver[1])
+        if ver < '0.30':
+            return None
+        return self.usb.get_cdc_settings()
+
+    @cdc_settings.setter
+    def cdc_settings(self, port):
+        rawver = self.usb.readFwVersion()
+        ver = '{}.{}'.format(rawver[0], rawver[1])
+        if ver < '0.30':
+            return None
+        return self.usb.set_cdc_settings(port)
 
 class CWNano(ScopeTemplate, util.DisableNewAttr):
     """CWNano scope object.
@@ -531,6 +562,7 @@ class CWNano(ScopeTemplate, util.DisableNewAttr):
       * :meth:`scope.get_last_trace <.CWNano.get_last_trace>`
       * :meth:`scope.arm <.CWNano.arm>`
       * :meth:`scope.capture <.CWNano.capture>`
+      * :meth:`scope.get_serial_ports <.CWNano.get_serial_ports>`
     """
 
     _name = "ChipWhisperer Nano"
@@ -588,6 +620,21 @@ class CWNano(ScopeTemplate, util.DisableNewAttr):
     def _getNAEUSB(self):
         return self._cwusb
 
+    def _getCWType(self):
+        return 'cwnano'
+
+    def get_serial_ports(self):
+        """ Get the CDC serial ports associated with this scope
+
+        Returns:
+            A list of a dict with elements {'port', 'interface'}
+        """
+        return self._getNAEUSB().get_serial_ports()
+
+    @property
+    def sn(self):
+        return self._cwusb.snum
+
     @property
     def latest_fw(self):
         from chipwhisperer.hardware.firmware.cwnano import fwver
@@ -618,48 +665,51 @@ class CWNano(ScopeTemplate, util.DisableNewAttr):
 
     def _dis(self):
         self.enable_newattr()
+        self.usbdev().close()
         self._is_connected = False
         return True
 
     def arm(self):
         """Arm the ADC, the trigger will be GPIO4 rising edge (fixed trigger)."""
-        if self.connectStatus is False:
-            raise Warning("Scope \"" + self.getName() + "\" is not connected. Connect it first...")
+        with DelayedKeyboardInterrupt():
+            if self.connectStatus is False:
+                raise Warning("Scope \"" + self.getName() + "\" is not connected. Connect it first...")
 
-        self._cwusb.sendCtrl(self.REQ_ARM, 1)
+            self._cwusb.sendCtrl(self.REQ_ARM, 1)
 
 
     def capture(self):
         """Raises IOError if unknown failure, returns 'True' if timeout, 'False' if no timeout"""
 
-        starttime = datetime.datetime.now()
-        while self._cwusb.readCtrl(self.REQ_ARM, dlen=1)[0] == 0:
-            # Wait for a moment before re-running the loop
-            time.sleep(0.05)
-            diff = datetime.datetime.now() - starttime
+        with DelayedKeyboardInterrupt():
+            starttime = datetime.datetime.now()
+            while self._cwusb.readCtrl(self.REQ_ARM, dlen=1)[0] == 0:
+                # Wait for a moment before re-running the loop
+                time.sleep(0.001)
+                diff = datetime.datetime.now() - starttime
 
-            # If we've timed out, don't wait any longer for a trigger
-            if (diff.total_seconds() > self._timeout):
-                logging.warning('Timeout in cwnano capture()')
-                return True
-
-        self._lasttrace = self._cwusb.cmdReadMem(0, self.adc.samples)
-
-        # can just keep rerunning this until it works I think
-        i = 0
-        while len(self._lasttrace) < self.adc.samples:
-            logging.debug("couldn't read ADC data from Nano, retrying...")
+                # If we've timed out, don't wait any longer for a trigger
+                if (diff.total_seconds() > self._timeout):
+                    scope_logger.warning('Timeout in cwnano capture()')
+                    return True
 
             self._lasttrace = self._cwusb.cmdReadMem(0, self.adc.samples)
-            i+= 1
-            if i > 20:
-                logging.warning("Couldn't read trace data back from Nano")
-                return True
-        self._lasttrace = np.array(self._lasttrace) / 256.0 - 0.5
 
-        #self.newDataReceived(0, self._lasttrace, 0, self.adc.clk_freq)
+            # can just keep rerunning this until it works I think
+            i = 0
+            while len(self._lasttrace) < self.adc.samples:
+                scope_logger.debug("couldn't read ADC data from Nano, retrying...")
 
-        return False
+                self._lasttrace = self._cwusb.cmdReadMem(0, self.adc.samples)
+                i+= 1
+                if i > 20:
+                    scope_logger.warning("Couldn't read trace data back from Nano")
+                    return True
+            self._lasttrace = np.array(self._lasttrace) / 256.0 - 0.5
+
+            #self.newDataReceived(0, self._lasttrace, 0, self.adc.clk_freq)
+
+            return False
 
 
     def get_last_trace(self):

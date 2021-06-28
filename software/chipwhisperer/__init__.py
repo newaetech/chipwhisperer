@@ -8,6 +8,8 @@
 
 Main module for ChipWhisperer.
 """
+
+__version__ = '5.5.0'
 import os, os.path, time
 import warnings
 from zipfile import ZipFile
@@ -15,11 +17,19 @@ from zipfile import ZipFile
 from chipwhisperer.capture import scopes, targets
 from chipwhisperer.capture.api import programmers
 from chipwhisperer.capture import acq_patterns as key_text_patterns
-from chipwhisperer.common.utils.util import camel_case_deprecated
+from chipwhisperer.common.utils.util import camel_case_deprecated, fw_ver_compare
 from chipwhisperer.common.api import ProjectFormat as project
 from chipwhisperer.common.traces import Trace
 from chipwhisperer.common.utils import util
 from chipwhisperer.capture.scopes.cwhardware.ChipWhispererSAM3Update import SAMFWLoader
+import logging
+import usb
+from chipwhisperer.logging import *
+if usb.__version__ < '1.1.0':
+    print(f"---------------------------------------------------------")
+    print(f"ChipWhisperer requires pyusb >= 1.1.0, but you have {usb.__version__}")
+    print(f"---------------------------------------------------------")
+    scope_logger.warning(f"ChipWhisperer requires pyusb >= 1.1.0, but you have {usb.__version__}")
 
 # replace bytearray with inherited class with better repr and str.
 import builtins
@@ -28,7 +38,6 @@ builtins.bytearray = util.bytearray
 # from chipwhisperer.capture.scopes.cwhardware import ChipWhispererSAM3Update as CWFirmwareUpdate
 
 ktp = key_text_patterns #alias
-
 
 def program_target(scope, prog_type, fw_path, **kwargs):
     """Program the target using the programmer <type>
@@ -47,13 +56,24 @@ def program_target(scope, prog_type, fw_path, **kwargs):
     if prog_type is None: #[makes] automating notebooks much easier
         return
     prog = prog_type(**kwargs)
-    prog.scope = scope
-    prog._logging = None
-    prog.open()
-    prog.find()
-    prog.erase()
-    prog.program(fw_path, memtype="flash", verify=True)
-    prog.close()
+
+    try:
+        prog.scope = scope
+        prog._logging = None
+        prog.open()
+        prog.find()
+        prog.erase()
+        prog.program(fw_path, memtype="flash", verify=True)
+        prog.close()
+    except:
+        if isinstance(prog, programmers.XMEGAProgrammer) and isinstance(scope, scopes.OpenADC):
+            target_logger.info("XMEGA error detected, resetting XMEGA")
+            scope.io.pdic = 0
+            time.sleep(0.05)
+            scope.io.pdic = None
+            time.sleep(0.05)
+        raise
+
 
 
 programTarget = camel_case_deprecated(program_target)
@@ -208,7 +228,14 @@ def scope(scope_type=None, sn=None):
     if scope_type is None:
         scope_type = get_cw_type(sn)
     scope = scope_type()
-    scope.con(sn)
+    try:
+        scope.con(sn)
+    except IOError:
+        scope_logger.error("ChipWhisperer error state detected. Resetting and retrying connection...")
+        scope._getNAEUSB().reset()
+        time.sleep(2)
+        scope = scope_type()
+        scope.con(sn)
     return scope
 
 
@@ -229,6 +256,12 @@ def target(scope, target_type=targets.SimpleSerial, **kwargs):
     """
     target = target_type()
     target.con(scope, **kwargs)
+
+    # need to check 
+    if scope and (isinstance(target, targets.SimpleSerial) or isinstance(target, targets.SimpleSerial2)):
+        if isinstance(scope, scopes.CWNano) and not fw_ver_compare(scope.fw_version, {"major": 0, "minor": 24}):
+            target.ser.cwlite_usart._max_read = 128
+            target_logger.warning("Old firmware: limiting max serial read")
     return target
 
 def capture_trace(scope, target, plaintext, key=None, ack=True):
@@ -274,6 +307,26 @@ def capture_trace(scope, target, plaintext, key=None, ack=True):
     .. versionchanged:: 5.2
         Added ack parameter and use of target.output_len
     """
+
+    import signal, logging
+
+    # useful to delay keyboard interrupt here,
+    # since could interrupt a USB operation
+    # and kill CW until unplugged+replugged
+    class DelayedKeyboardInterrupt:
+        def __enter__(self):
+            self.signal_received = False
+            self.old_handler = signal.signal(signal.SIGINT, self.handler)
+
+        def handler(self, sig, frame):
+            self.signal_received = (sig, frame)
+            scope_logger.debug('SIGINT received. Delaying KeyboardInterrupt.')
+
+        def __exit__(self, type, value, traceback):
+            signal.signal(signal.SIGINT, self.old_handler)
+            if self.signal_received:
+                self.old_handler(*self.signal_received)
+    # with DelayedKeyboardInterrupt():
     if key:
         target.set_key(key, ack=ack)
 
@@ -289,11 +342,11 @@ def capture_trace(scope, target, plaintext, key=None, ack=True):
         i += 1
         time.sleep(0.05)
         if i > 100:
-            warnings.warn("Target did not finish operation")
+            scope_logger.warning("Target did not finish operation")
             return None
 
     if ret:
-        warnings.warn("Timeout happened during capture")
+        scope_logger.warning("Timeout happened during capture")
         return None
 
     response = target.simpleserial_read('r', target.output_len, ack=ack)
@@ -307,4 +360,27 @@ def capture_trace(scope, target, plaintext, key=None, ack=True):
 
 captureTrace = camel_case_deprecated(capture_trace)
 
+def plot(*args, **kwargs):
+    """Get a plotting object for use in Jupyter.
+    
+    Uses a Holoviews/Bokeh plot with a width of 800 and
+    a height of 600. You must have Holoviews and Bokeh
+    installed, as well as be working in a Jupyter
+    environment.
 
+    args and kwargs are the same as a typical Holoviews plot.
+
+    Plotting a trace in a Jupyter environment::
+
+        import chipwhisperer as cw
+        scope = cw.scope()
+        ...
+        trace = cw.capture_trace(scope, target, text, key)
+        display(cw.plot(trace.wave))
+
+    Returns:
+        A holoviews Curve object
+    """
+    import holoviews as hv
+    hv.extension('bokeh', logo=False) #don't display logo, otherwise it pops up everytime this func is called.
+    return hv.Curve(*args, **kwargs).opts(width=800, height=600)

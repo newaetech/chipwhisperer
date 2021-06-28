@@ -152,24 +152,13 @@ def bytearray2binarylist(bytes, nrBits=8):
     return init
 
 
-def getPyFiles(dir, extension=False):
-    scriptList = []
-    if os.path.isdir(dir):
-        for fn in os.listdir(dir):
-            fnfull = dir + '/' + fn
-            if os.path.isfile(fnfull) and fnfull.lower().endswith('.py') and (not fnfull.endswith('__init__.py')) and (not fn.startswith('_')):
-                if extension:
-                    scriptList.append(fn)
-                else:
-                    scriptList.append(os.path.splitext(fn)[0])
-    return scriptList
-
 def _make_id(target):
     if hasattr(target, '__func__'):
         return (id(target.__self__))
     return id(target)
 
 
+# all over analyzer stuff
 class Signal(object):
     class Cleanup(object):
         def __init__(self, key, d):
@@ -235,6 +224,22 @@ class Signal(object):
                         method(targetObj, *args, **kwargs)
 
 
+import signal, logging
+class DelayedKeyboardInterrupt:
+    def __enter__(self):
+        self.signal_received = False
+        self.old_handler = signal.signal(signal.SIGINT, self.handler)
+
+    def handler(self, sig, frame):
+        self.signal_received = (sig, frame)
+        logging.debug('SIGINT received. Delaying KeyboardInterrupt.')
+
+    def __exit__(self, type, value, traceback):
+        signal.signal(signal.SIGINT, self.old_handler)
+        if self.signal_received:
+            self.old_handler(*self.signal_received)
+
+# removing breaks projects
 class Observable(Signal):
     def __init__(self, value):
         super(Observable, self).__init__()
@@ -258,25 +263,7 @@ class ConsoleBreakException(BaseException):
     """
     pass
 
-def requestConsoleBreak():
-    global _consoleBreakRequested
-    _consoleBreakRequested = True
-
 _uiupdateFunction = None
-
-def setUIupdateFunction(func):
-    global _uiupdateFunction
-    _uiupdateFunction= func
-
-def updateUI():
-    if _uiupdateFunction:
-        _uiupdateFunction()
-
-    # If an event handler has asked for a console break, raise an exception now
-    global _consoleBreakRequested
-    if _consoleBreakRequested:
-        _consoleBreakRequested = False
-        raise ConsoleBreakException()
 
 class WeakMethod(object):
     """A callable object. Takes one argument to init: 'object.method'.
@@ -422,17 +409,21 @@ class NoneTypeTarget(object):
     def __getattr__(self, item):
         raise AttributeError('Target has not been connected')
 
+def fw_ver_compare(a, b):
+    #checks that a is newer or as new as b
+    if a["major"] > b["major"]:
+        return True
+    elif (a["major"] == b["major"]) and (a["minor"] >= b["minor"]):
+        return True
+    return False
+
+
 def fw_ver_required(major, minor):
     def decorator(func):
         @wraps(func)
         def func_wrapper(self, *args, **kwargs):
             fw_ver = self.fw_version
-            good = False
-            if fw_ver["major"] > major:
-                good = True
-            elif (fw_ver["major"] == major) and (fw_ver["minor"] >= minor):
-                good = True
-
+            good = fw_ver_compare(fw_ver, {"major": major, "minor": minor})
             if good:
                 return func(self, *args, **kwargs)
             else:
@@ -503,7 +494,7 @@ def get_cw_type(sn=None):
     """
     from chipwhisperer.hardware.naeusb.naeusb import NAEUSB
     from chipwhisperer.capture import scopes
-    possible_ids = [0xace0, 0xace2, 0xace3]
+    possible_ids = [0xace0, 0xace2, 0xace3, 0xace5]
 
     cwusb = NAEUSB()
     possible_sn = cwusb.get_possible_devices(idProduct=possible_ids)
@@ -525,7 +516,7 @@ def get_cw_type(sn=None):
         name = possible_sn[0]['product']
 
     #print(name)
-    if (name == "ChipWhisperer Lite") or (name == "ChipWhisperer CW1200"):
+    if (name == "ChipWhisperer Lite") or (name == "ChipWhisperer CW1200") or (name == "ChipWhisperer Husky"):
         return scopes.OpenADC
     elif name == "ChipWhisperer Nano":
         return scopes.CWNano
