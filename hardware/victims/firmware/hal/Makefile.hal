@@ -102,6 +102,9 @@ define KNOWN_PLATFORMS
 +-------------------------------------------------------+
 | CW308_FE310   | CW308T-FE310-G002 (RISC-V)            |
 +-------------------------------------------------------+
+| CW308_        | CW308T-MPC5676R (NXP MPC5676R)        |
+|   MPC5676R    |                                       |
++---------------|---------------------------------------+
 
 Options to define platform:
 (1) Run make with PLATFORM specified as follows:
@@ -218,10 +221,15 @@ else ifeq ($(PLATFORM),CW308_EFM32GG11)
  PLTNAME = CW308T: EFM32GG11 Target
  else ifeq ($(PLATFORM),CW308_STM32L4)
  HAL = stm32l4
- PLTNAME = CW308T: STM32L5 Target
+ PLTNAME = CW308T: STM32L4 Target
 else ifeq ($(PLATFORM),CW308_STM32L5)
  HAL = stm32l5
  PLTNAME = CW308T: STM32L5 Target
+else ifeq ($(PLATFORM),CW308_RX65N)
+ HAL = rx65n
+ PLTNAME = CW308T: RX65N
+else ifeq ($(PLATFORM),CW308_MPC5676R)
+ HAL = mpc5676r
 else
   $(error Invalid or empty PLATFORM: $(PLATFORM). Known platforms: $(KNOWN_PLATFORMS))
 endif

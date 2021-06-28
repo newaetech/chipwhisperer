@@ -31,6 +31,8 @@ from functools import partial
 from . import ChipWhispererGlitch
 from chipwhisperer.common.utils import util
 
+from chipwhisperer.logging import *
+
 CODE_READ = 0x80
 CODE_WRITE = 0xC0
 ADDR_DATA = 33
@@ -117,6 +119,8 @@ class GPIOSettings(util.DisableNewAttr):
 
         dict['tio_states'] = self.tio_states
 
+        dict['cdc_settings'] = self.cdc_settings
+
         return dict
 
     @property
@@ -188,6 +192,32 @@ class GPIOSettings(util.DisableNewAttr):
                 return _tio_api_alias[tio_setting]
         except KeyError:
             return "?"
+
+    @property
+    def cdc_settings(self):
+        """Check or set whether USART settings can be changed via the USB CDC connection
+
+        i.e. whether you can change USART settings (baud rate, 8n1) via a serial client like PuTTY
+
+        :getter: An array of length two for two possible CDC serial ports (though only one is used)
+
+        :setter: Can set either via an integer (which sets both ports) or an array of length 2 (which sets each port)
+
+        Returns None if using firmware before the CDC port was added
+        """
+        rawver = self.cwe.oa.serial.readFwVersion()
+        ver = '{}.{}'.format(rawver[0], rawver[1])
+        if ver < '0.30':
+            return None
+        return self.cwe.oa.serial.get_cdc_settings()
+
+    @cdc_settings.setter
+    def cdc_settings(self, port):
+        rawver = self.cwe.oa.serial.readFwVersion()
+        ver = '{}.{}'.format(rawver[0], rawver[1])
+        if ver < '0.30':
+            return None
+        return self.cwe.oa.serial.set_cdc_settings(port)
 
     @property
     def tio1(self):
@@ -721,6 +751,7 @@ class ProTrigger(TriggerSettings):
     def _dict_repr(self):
         dict = super()._dict_repr()
         dict['module'] = self.module
+        dict['aux_out'] = self.aux_out
         return dict
 
     @property
@@ -733,33 +764,16 @@ class ProTrigger(TriggerSettings):
 
         Available trigger modules:
          * 'basic': Trigger on a logic level or edge
-         * 'SAD':   Trigger from SAD module
-         * 'DECODEIO': Trigger from decode_IO module
-
+         * 'SAD':   Trigger from SAD module (CWPro only)
+         * 'DECODEIO': Trigger from decode_IO module (CWPro only)
 
         :Getter: Return the active trigger module
 
         :Setter: Sets the active trigger module
 
-        .. todo:: add support for CW1200 serial data trigger
-        .. todo:: Fix getter so that we don't have to store the module anymore
-
         Raises:
             ValueError: module isn't one of the available strings
         """
-        '''
-        resp = self.cwe.oa.sendMessage(CODE_READ, ADDR_TRIGMOD,
-                                       Validate=False, maxResp=1)
-        module = resp[0] & 0xF8
-        if module == self.cwe.MODULE_BASIC:
-            return "basic"
-        elif module == self.cwe.MODULE_SADPATTERN:
-            return "SAD"
-        elif module == self.cwe.MODULE_DECODEIO:
-            return "DECODEIO"
-        else:
-            return "Unknown"
-        '''
         return self.last_module
 
     @module.setter
@@ -781,6 +795,28 @@ class ProTrigger(TriggerSettings):
                                        resp)
         self.last_module = mode
 
+    @property
+    def aux_out(self):
+        """Controls AUX out on the CWPro
+
+        CWPro only
+
+        :Getter: Returns True if yes, False if no
+
+        :Setter: Set True to enable aux_out, False to disable
+        """
+        resp = self.cwe.oa.sendMessage(CODE_READ, ADDR_TRIGMOD, Validate=False, maxResp=1)
+        return bool(resp[0] & 0x08)
+
+    @aux_out.setter
+    def aux_out(self, enabled):
+        resp = self.cwe.oa.sendMessage(CODE_READ, ADDR_TRIGMOD, Validate=False, maxResp=1)
+        resp[0] &= 0xE7
+        if enabled:
+            resp[0] |= 0x08
+        self.cwe.oa.sendMessage(CODE_WRITE, ADDR_TRIGMOD, resp)
+
+
 
 
 class SADTrigger(util.DisableNewAttr):
@@ -798,7 +834,10 @@ class ChipWhispererExtra(object):
         #self.cwADV = CWAdvTrigger()
 
         self.cwEXTRA = CWExtraSettings(oa, cwtype)
-        self.enableGlitch = True
+        if cwtype == "cwhusky":
+            self.enableGlitch = True # TODO: temporary
+        else:
+            self.enableGlitch = True
         if self.enableGlitch:
             self.glitch = ChipWhispererGlitch.ChipWhispererGlitch(cwtype, scope, oa)
 
@@ -868,6 +907,11 @@ class CWExtraSettings(object):
             hasGlitchOut=True
             hasPLL=False
             hasAux=True
+        elif cwtype == "cwhusky":
+            hasFPAFPB=False
+            hasGlitchOut=False # TODO-temporary
+            hasPLL=False
+            hasAux=False
         else:
             raise ValueError("Unknown ChipWhisperer: %s" % cwtype)
 
@@ -1346,7 +1390,7 @@ class CWPLLDriver(object):
         if bnew != bold:
             self.writeByte(11, bnew)
 
-        logging.debug('%x, %x' % (bnew, self.readByte(11)))
+        scope_logger.debug('%x, %x' % (bnew, self.readByte(11)))
 
     def readByte(self, regaddr, slaveaddr=0x69):
         d = bytearray([0x00, 0x80 | 0x69, 0x80 |  regaddr])
