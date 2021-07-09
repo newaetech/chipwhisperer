@@ -65,6 +65,18 @@ ADDR_GLITCH2_DRP_DATA = 65
 ADDR_FIFO_UNDERFLOW_COUNT = 66
 ADDR_FIFO_NO_UNDERFLOW_ERROR = 67
 
+ADDR_LA_DRP_ADDR       = 68
+ADDR_LA_DRP_DATA       = 69
+ADDR_LA_STATUS         = 70
+ADDR_LA_CLOCK_SOURCE   = 71
+ADDR_LA_TRIGGER_SOURCE = 72
+ADDR_LA_POWERDOWN      = 73
+ADDR_LA_MMCM_RESET     = 74
+ADDR_LA_EXISTS         = 75
+ADDR_LA_CAPTURE_GROUP  = 76
+ADDR_LA_CAPTURE_DEPTH  = 77
+ADDR_LA_READ_SELECT    = 78
+
 CODE_READ       = 0x80
 CODE_WRITE      = 0xC0
 
@@ -523,6 +535,299 @@ class XADCSettings(util.DisableNewAttr):
             raise ValueError("Invalid rail")
         raw = self.drp.read(addr)
         return (raw>>4)/4096 * 3 # ref: UG480
+
+
+class LASettings(util.DisableNewAttr):
+    ''' Husky logic analyzer settings. For accessing recorded glitch generation, IO, and USERIO signals.
+    '''
+    _name = 'Husky Logic Analyzer Setting'
+
+    def __init__(self, oaiface, mmcm):
+        # oaiface = OpenADCInterface
+        self.oa = oaiface
+        self._mmcm = mmcm
+        self.disable_newattr()
+
+    def _dict_repr(self):
+        dict = OrderedDict()
+        dict['present'] = self.present
+        dict['enabled'] = self.enabled
+        dict['locked'] = self.locked
+        dict['clk_source'] = self.clk_source
+        dict['trigger_source'] = self.trigger_source
+        dict['oversampling_factor'] = self.oversampling_factor
+        dict['capture_group'] = self.capture_group
+        dict['capture_depth'] = self.capture_depth
+        return dict
+
+    def __repr__(self):
+        return util.dict_to_str(self._dict_repr())
+
+    def __str__(self):
+        return self.__repr__()
+
+    def read_capture(self, source, length=None):
+        """Returns captured data for specified signal source.
+        What you get depends on the capture group; see the capture_group documentation.
+        Args:
+           source (int): signal to read
+           length (int): number of byte to read. If unspecified, returns the full capture size 
+                         (which is implementation-dependent and can be learned from capture_depth)
+        Returns:
+            Numpy array of binary values.
+        Raises:
+           ValueError: invalid source
+        """
+        if source > 8:
+            raise ValueError('Source must be in range 0-8')
+        if length == None:
+            length = self.capture_depth // 8
+        self.oa.sendMessage(CODE_WRITE, ADDR_LA_READ_SELECT, [source], Validate=False)
+        raw = self.oa.sendMessage(CODE_READ, ADDR_LA_READ_SELECT, Validate=False, maxResp=length)
+        return self._bytes_to_bits(raw)
+
+    @staticmethod
+    def _bytes_to_bits(bytelist):
+        bitlist = []
+        for x in bytelist:
+            for bit in range(8):
+                bitlist.append(x & 0x01)
+                x = x >> 1
+        return np.asarray(bitlist)
+
+    @property
+    def present(self):
+        """ Return whether the logic analyzer functionality is present in this build (True or False).
+        If it is not present, none of the functionality of this class is available.
+        """
+        raw = self.oa.sendMessage(CODE_READ, ADDR_LA_EXISTS, Validate=False, maxResp=2)
+        if raw == bytearray([0, 0]):
+            return False
+        elif raw == bytearray([0x41, 0x4c]):
+            return True
+        else:
+            raise ValueError("Unexpected: read %s" % raw)
+
+    @property
+    def locked(self):
+        """ Return whether the sampling clock MMCM is locked (True or False).
+        """
+        raw = self.oa.sendMessage(CODE_READ, ADDR_LA_STATUS, Validate=False, maxResp=1)[0]
+        if raw & 1:
+            return True
+        else:
+            return False
+
+    @property
+    def capture_depth(self):
+        """Returns the number of bits captured for each signal. This is a buildtime-defined parameter,
+        so use this method to learn how much data this particular build can capture.
+        """
+        raw = self.oa.sendMessage(CODE_READ, ADDR_LA_CAPTURE_DEPTH, Validate=False, maxResp=2)
+        return int.from_bytes(raw, byteorder='little')
+
+    @property
+    def enabled(self):
+        """Controls whether the Xilinx MMCM used to generate the samplign clock
+        is powered on or not.  7-series MMCMs are power hungry. In the Husky
+        FPGA, MMCMs are estimated to consume close to half of the FPGA's power.
+        If you run into temperature issues and don't require the logic analyzer
+        functionality, power down this MMCM.
+        """
+        return self._getEnabled()
+
+    @enabled.setter
+    def enabled(self, enable):
+        self._setEnabled(enable)
+
+    @property
+    def clk_source(self):
+        """The clock signal that the logic analyzer is using to generate its sampling clock.
+
+        There are three different sources:
+         * "target": The HS1 clock from the target device.
+         * "clkgen": The CLKGEN DCM output.
+         * "pll": Husky's on-board PLL clock.
+
+        :Getter:
+           Return the clock signal currently in use
+
+        :Setter:
+           Change the clock source
+
+        Raises:
+           ValueError: New value not one of "target", "clkgen" or "pll"
+        """
+
+        return self._getClkSource()
+
+    @clk_source.setter
+    def clk_source(self, enable):
+        self._setClkSource(enable)
+
+    @property
+    def trigger_source(self):
+        """The trigger used by the logic analyzer to capture.
+
+        There are two different sources:
+         * "glitch": The internal glitch trigger.
+         * "capture": The internal ADC capture trigger.
+
+        :Getter:
+           Return the trigger source currently in use
+
+        :Setter:
+           Change the trigger source
+
+        Raises:
+           ValueError: New value not one of "glitch" or "capture"
+        """
+
+        return self._getTriggerSource()
+
+    @trigger_source.setter
+    def trigger_source(self, enable):
+        self._setTriggerSource(enable)
+
+    @property
+    def oversampling_factor(self):
+        """Multiplier for the sampling clock.
+        Integer in range [2,64].
+
+        :Getter:
+           Return the oversampling factor currently in use.
+
+        :Setter:
+           Change the oversampling factor.
+        """
+        return self._getOversamplingFactor()
+
+    @oversampling_factor.setter
+    def oversampling_factor(self, factor):
+        self._setOversamplingFactor(factor)
+
+    @property
+    def capture_group(self):
+        """Sets which group of signals are captured.
+
+        There are three groups. The signals captured for each group are as follows:
+        group 0 (glitch):
+            0: glitch output
+            1: source clock of glitch module
+            2: glitch internal MMCM1 (offset) output
+            3: glitch internal MMCM2 (width) output
+            4: glitch trigger
+            5: capture trigger
+        group 1 (20-pin connector):
+            0: IO1
+            1: IO2
+            2: IO3
+            3: IO4
+            4: HS1
+            5: HS2
+            6: AUX MCX
+            7: TRIG MCX
+        group 2 (front USERIO header):
+            0: D0
+            1: D1
+            2: D2
+            3: D3
+            4: D4
+            5: D5
+            6: D6
+            7: D7
+            8: CK
+
+        :Getter:
+           Return the capture group currently in use.
+
+        :Setter:
+           Change the capture group.
+
+        Raises:
+           ValueError: invalid capture group.
+        """
+        return self._getCaptureGroup()
+
+    @capture_group.setter
+    def capture_group(self, factor):
+        self._setCaptureGroup(factor)
+
+
+    def _setEnabled(self, enable):
+        if enable:
+            val = [0]
+        else:
+            val = [1]
+        self.oa.sendMessage(CODE_WRITE, ADDR_LA_POWERDOWN, val, Validate=False)
+
+    def _getEnabled(self):
+        raw = self.oa.sendMessage(CODE_READ, ADDR_LA_POWERDOWN, Validate=False, maxResp=1)[0]
+        if raw == 1:
+            return False
+        elif raw == 0:
+            return True
+        else:
+            raise ValueError("Unexpected: read %d" % raw)
+
+    def _setClkSource(self, source):
+        if source == 'target':
+            val = [0]
+        elif source == 'clkgen':
+            val = [1]
+        elif source == 'pll':
+            val = [2]
+        else:
+            raise ValueError("Must be one of 'target', 'clkgen', or 'pll'")
+        self.oa.sendMessage(CODE_WRITE, ADDR_LA_CLOCK_SOURCE, val, Validate=False)
+
+    def _getClkSource(self):
+        raw = self.oa.sendMessage(CODE_READ, ADDR_LA_CLOCK_SOURCE, Validate=False, maxResp=1)[0]
+        if raw == 0:
+            return 'target'
+        elif raw == 1:
+            return 'clkgen'
+        elif raw == 2:
+            return 'pll'
+        else:
+            raise ValueError("Unexpected: read %d" % raw)
+
+    def _setTriggerSource(self, source):
+        if source == 'glitch':
+            val = [0]
+        elif source == 'capture':
+            val = [1]
+        else:
+            raise ValueError("Must be one of 'glitch', or 'capture'")
+        self.oa.sendMessage(CODE_WRITE, ADDR_LA_TRIGGER_SOURCE, val, Validate=False)
+
+    def _getTriggerSource(self):
+        raw = self.oa.sendMessage(CODE_READ, ADDR_LA_TRIGGER_SOURCE, Validate=False, maxResp=1)[0]
+        if raw == 0:
+            return 'glitch'
+        elif raw == 1:
+            return 'capture'
+        else:
+            raise ValueError("Unexpected: read %d" % raw)
+
+    def _setOversamplingFactor(self, factor):
+        # NOTE: assuming we would only ever a multiplicative factor of the source clock;
+        # otherwise, dividers can come into play.
+        self._mmcm.set_mul(factor)
+        self._mmcm.set_main_div(1)
+        self._mmcm.set_sec_div(1)
+
+    def _getOversamplingFactor(self):
+        return self._mmcm.get_mul()
+
+    def _setCaptureGroup(self, group):
+        if group > 2:
+            raise ValueError("Group must be in range 0-2")
+        self.oa.sendMessage(CODE_WRITE, ADDR_LA_CAPTURE_GROUP, [group], Validate=False)
+
+    def _getCaptureGroup(self):
+        return self.oa.sendMessage(CODE_READ, ADDR_LA_CAPTURE_GROUP, Validate=False, maxResp=1)[0]
+
 
 
 class ADS4128Settings(util.DisableNewAttr):
@@ -1749,10 +2054,11 @@ class ClockSettings(util.DisableNewAttr):
 
     @property
     def enabled(self):
-        """Whether the Xilinx MMCMs used to generate glitches are powered on or not.
-        7-series MMCMs are power hungry. In the Husky FPGA, MMCMs are estimated to
-        consume half of the FPGA's power. If you run into temperature issues and don't
-        require glitching, you can power down these MMCMs.
+        """Controls whether the Xilinx MMCMs used to generate glitches are
+        powered on or not.  7-series MMCMs are power hungry. In the Husky FPGA,
+        MMCMs are estimated to consume close to half of the FPGA's power. If
+        you run into temperature issues and don't require glitching, you can
+        power down these MMCMs.
 
         """
         if not self._is_husky:
