@@ -71,11 +71,14 @@ ADDR_LA_STATUS         = 70
 ADDR_LA_CLOCK_SOURCE   = 71
 ADDR_LA_TRIGGER_SOURCE = 72
 ADDR_LA_POWERDOWN      = 73
-ADDR_LA_MMCM_RESET     = 74
+ADDR_LA_DRP_RESET      = 74
 ADDR_LA_EXISTS         = 75
 ADDR_LA_CAPTURE_GROUP  = 76
 ADDR_LA_CAPTURE_DEPTH  = 77
 ADDR_LA_READ_SELECT    = 78
+ADDR_GLITCH1_DRP_RESET = 79
+ADDR_GLITCH2_DRP_RESET = 80
+ADDR_CLKGEN_DRP_RESET  = 81
 
 CODE_READ       = 0x80
 CODE_WRITE      = 0xC0
@@ -208,14 +211,15 @@ class XilinxDRP(util.DisableNewAttr):
         Talks to something like reg_mmcm_drp.v.
     '''
     _name = 'Xilinx DRP Access'
-    def __init__(self, oaiface, data_address, address_address):
+    def __init__(self, oaiface, data_address, address_address, reset_address = None):
         self.oa = oaiface
         self.data = data_address
         self.addr = address_address
+        self.reset_address = reset_address
         self.disable_newattr()
 
     def write(self, addr, data):
-        """Write XADC DRP register. UG480 for register definitions.
+        """Write DRP register. UG480 for register definitions.
         Args:
             addr (int): 6-bit address
             data (int): 16-bit write data
@@ -224,7 +228,7 @@ class XilinxDRP(util.DisableNewAttr):
         self.oa.sendMessage(CODE_WRITE, self.addr, [addr + 0x80])
 
     def read(self, addr):
-        """Read XADC DRP register. UG480 for register definitions.
+        """Read DRP register. UG480 for register definitions.
         Args:
             addr (int): 6-bit address
         Returns:
@@ -233,6 +237,15 @@ class XilinxDRP(util.DisableNewAttr):
         self.oa.sendMessage(CODE_WRITE, self.addr, [addr])
         raw = self.oa.sendMessage(CODE_READ, self.data, maxResp=2)
         return int.from_bytes(raw, byteorder='little')
+
+    def reset(self):
+        """Pulse reset to associated IP block (intended for MMCM blocks, which
+        need to be reset when their M/D parameters are updated).
+        """
+        if self.reset_address == None:
+            raise ValueError("Reset not defined for this DRP interface")
+        self.oa.sendMessage(CODE_WRITE, self.reset_address, [1])
+        self.oa.sendMessage(CODE_WRITE, self.reset_address, [0])
 
 
 class XilinxMMCMDRP(util.DisableNewAttr):
@@ -255,6 +268,7 @@ class XilinxMMCMDRP(util.DisableNewAttr):
             raise ValueError("Internal error: calculated hi/lo value exceeding range")
         raw = lo + (hi<<6) + 0x1000
         self.drp.write(0x14, raw)
+        self.drp.reset()
 
 
     def set_main_div(self, div):
@@ -272,6 +286,7 @@ class XilinxMMCMDRP(util.DisableNewAttr):
                 hi = lo
             raw = lo + (hi<<6)
         self.drp.write(0x16, raw)
+        self.drp.reset()
 
 
     def set_sec_div(self, div, clock=0):
@@ -292,6 +307,7 @@ class XilinxMMCMDRP(util.DisableNewAttr):
                 hi = lo
             raw = lo + (hi<<6) + 0x1000
             self.drp.write(addr, raw)
+        self.drp.reset()
 
 
     def get_mul(self):
@@ -586,6 +602,11 @@ class LASettings(util.DisableNewAttr):
         raw = self.oa.sendMessage(CODE_READ, ADDR_LA_READ_SELECT, Validate=False, maxResp=length)
         return self._bytes_to_bits(raw)
 
+    def reset_MMCM(self):
+        """Reset the sampling clock's MMCM.
+        """
+        self._mmcm.drp.reset()
+
     @staticmethod
     def _bytes_to_bits(bytelist):
         bitlist = []
@@ -639,6 +660,7 @@ class LASettings(util.DisableNewAttr):
     @enabled.setter
     def enabled(self, enable):
         self._setEnabled(enable)
+        self.reset_MMCM()
 
     @property
     def clk_source(self):
@@ -664,6 +686,7 @@ class LASettings(util.DisableNewAttr):
     @clk_source.setter
     def clk_source(self, enable):
         self._setClkSource(enable)
+        self.reset_MMCM()
 
     @property
     def trigger_source(self):
@@ -2020,7 +2043,7 @@ class ClockSettings(util.DisableNewAttr):
         self._hwinfo = hwinfo
         self._freqExt = 10e6
         self._is_husky = False
-        self.drp = XilinxDRP(oaiface, ADDR_CLKGEN_DRP_DATA, ADDR_CLKGEN_DRP_ADDR)
+        self.drp = XilinxDRP(oaiface, ADDR_CLKGEN_DRP_DATA, ADDR_CLKGEN_DRP_ADDR, ADDR_CLKGEN_DRP_RESET)
         self.mmcm = XilinxMMCMDRP(self.drp)
         self.disable_newattr()
 
