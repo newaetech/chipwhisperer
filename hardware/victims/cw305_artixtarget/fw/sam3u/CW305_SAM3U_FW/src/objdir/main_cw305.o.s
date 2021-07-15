@@ -980,10 +980,10 @@ fpga_pins:
 	.ascii	"%08x\000"
 	.align	2
 .LC1:
-	.ascii	"Jul 13 2021\000"
+	.ascii	"Jul 16 2021\000"
 	.align	2
 .LC2:
-	.ascii	"00:02:17\000"
+	.ascii	"00:03:10\000"
 	.align	2
 .LC3:
 	.ascii	"ChipWhisperer-CW305 Online. Firmware build: %s/%s\012"

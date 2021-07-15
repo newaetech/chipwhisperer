@@ -491,14 +491,14 @@ cpu_irq_prev_interrupt_state:
 	.type	BUILD_DATE, %object
 	.size	BUILD_DATE, 12
 BUILD_DATE:
-	.ascii	"Jul 13 2021\000"
+	.ascii	"Jul 16 2021\000"
 	.section	.rodata.BUILD_TIME,"a"
 	.align	2
 	.set	.LANCHOR0,. + 0
 	.type	BUILD_TIME, %object
 	.size	BUILD_TIME, 9
 BUILD_TIME:
-	.ascii	"00:02:20\000"
+	.ascii	"00:03:12\000"
 	.text
 .Letext0:
 	.file 5 "c:\\program files (x86)\\gnu arm embedded toolchain\\9 2020-q2-update\\arm-none-eabi\\include\\machine\\_default_types.h"
