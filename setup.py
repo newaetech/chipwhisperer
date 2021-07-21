@@ -16,7 +16,7 @@ setup(
     package_dir={'': 'software'},
     install_requires=[
         'configobj',
-        'pyserial',
+        'pyserial>=3.5',
         'numpy',
         'libusb1',
         'ECpy',
