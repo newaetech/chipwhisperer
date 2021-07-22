@@ -695,6 +695,9 @@ class LASettings(util.DisableNewAttr):
         There are two different sources:
          * "glitch": The internal glitch trigger.
          * "capture": The internal ADC capture trigger.
+         * "glitch_source": The internal glitch trigger in the source clock
+                            domain. This comes before "glitch", since there is
+                            a clock domain crossing from "glitch_source" to "glitch"
 
         :Getter:
            Return the trigger source currently in use
@@ -741,6 +744,7 @@ class LASettings(util.DisableNewAttr):
             3: glitch internal MMCM2 (width) output
             4: glitch trigger
             5: capture trigger
+            6: glitch enable
         group 1 (20-pin connector):
             0: IO1
             1: IO2
@@ -820,6 +824,8 @@ class LASettings(util.DisableNewAttr):
             val = [0]
         elif source == 'capture':
             val = [1]
+        elif source == 'glitch_source':
+            val = [2]
         else:
             raise ValueError("Must be one of 'glitch', or 'capture'")
         self.oa.sendMessage(CODE_WRITE, ADDR_LA_TRIGGER_SOURCE, val, Validate=False)
@@ -830,6 +836,8 @@ class LASettings(util.DisableNewAttr):
             return 'glitch'
         elif raw == 1:
             return 'capture'
+        elif raw == 2:
+            return 'glitch_source'
         else:
             raise ValueError("Unexpected: read %d" % raw)
 
