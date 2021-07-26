@@ -698,6 +698,7 @@ class LASettings(util.DisableNewAttr):
          * "glitch_source": The internal glitch trigger in the source clock
                             domain. This comes before "glitch", since there is
                             a clock domain crossing from "glitch_source" to "glitch"
+         * "HS1": The HS1 input clock.
 
         :Getter:
            Return the trigger source currently in use
@@ -826,8 +827,10 @@ class LASettings(util.DisableNewAttr):
             val = [1]
         elif source == 'glitch_source':
             val = [2]
+        elif source == 'HS1':
+            val = [3]
         else:
-            raise ValueError("Must be one of 'glitch', or 'capture'")
+            raise ValueError("Must be one of 'glitch', 'capture', 'glitch_source', or 'HS1'")
         self.oa.sendMessage(CODE_WRITE, ADDR_LA_TRIGGER_SOURCE, val, Validate=False)
 
     def _getTriggerSource(self):
@@ -838,6 +841,8 @@ class LASettings(util.DisableNewAttr):
             return 'capture'
         elif raw == 2:
             return 'glitch_source'
+        elif raw == 3:
+            return 'HS1'
         else:
             raise ValueError("Unexpected: read %d" % raw)
 
