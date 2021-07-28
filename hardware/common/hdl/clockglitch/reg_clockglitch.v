@@ -61,6 +61,8 @@ module reg_clockglitch(
 	 assign reset = reset_i;
 	 assign reg_stream = 1'b0;
 
+	 wire [31:0] clockglitch_cnt;
+
 `ifdef CHIPSCOPE
    wire [127:0] cs_data;   
    wire [35:0]  chipscope_control;
@@ -255,29 +257,14 @@ module reg_clockglitch(
 	 end
 	
 	 reg [12:0] glitch_cnt;
-	 reg glitch_go;
+	 reg glitch_go_local;
 	 always @(posedge sourceclk) begin
 		if (glitch_trigger)
-			glitch_go <= 'b1;
-	 	else if (glitch_cnt >= max_glitches)
-			glitch_go <= 'b0;
+			glitch_go_local <= 'b1;
+	 	else
+			glitch_go_local <= 'b0;
 	 end
 	
-	 always @(posedge sourceclk) begin
-		if (glitch_go)
-			glitch_cnt <= glitch_cnt + 13'd1;
-		else
-			glitch_cnt <= 0;
-	 end
-	 	 
-	 reg [31:0] clockglitch_cnt;
-	 reg clockglitch_cnt_rst;
-	 always @(posedge sourceclk) begin
-		/*if ((clockglitch_cnt_rst == 1'b1) || (reset == 1'b1))
-				clockglitch_cnt <= 32'd0;
-		else*/ if (glitch_go)
-				clockglitch_cnt <= clockglitch_cnt + 32'd1;
-		end
 	 
 	 assign clockglitch_settings_read[18:0] = clockglitch_settings_reg[18:0];
 	 assign clockglitch_settings_read[36:19] = {phase2_actual, phase1_actual};
@@ -339,7 +326,6 @@ module reg_clockglitch(
 		if (reset) begin
 			clockglitch_settings_reg <= 0;
 			clockglitch_offset_reg <= 0;
-			clockglitch_cnt_rst <= 0;
 `ifdef SUPPORT_GLITCH_READBACK
 			clockglitch_readback_reg <= {8'd0, 8'd10, 8'd0, 8'd10, 16'd0, 16'd0};
 `endif
@@ -372,10 +358,13 @@ module reg_clockglitch(
 
 	 /* Glitch Hardware */
 	 clockglitch_s6 gc(
+        .reset(reset),
 		.source_clk(sourceclk),
 		.glitched_clk(glitchclk),
-		.glitch_next(glitch_go),
+		.glitch_trigger(glitch_trigger),
+        .max_glitches(max_glitches),
 		.glitch_type(glitch_type),
+	    .clockglitch_cnt(clockglitch_cnt),
 		.phase_clk(clk),
 		.dcm_rst(dcm_rst),
 		.phase1_requested(phase1_requested),
@@ -394,7 +383,7 @@ module reg_clockglitch(
 	reg [18:0] led_extend;
 	reg led_on;
 	always @(posedge sourceclk) begin
-		if (glitch_go) begin
+		if (glitch_go_local) begin
 			led_extend <= 0;			
 		end else if (led_on == 1'b1) begin
 			led_extend <= led_extend + 19'b1;
@@ -402,7 +391,7 @@ module reg_clockglitch(
 	end
 	
 	always@(posedge sourceclk) begin
-		if (glitch_go)
+		if (glitch_go_local)
 			led_on <= 1'b1;
 		else if (led_extend == 19'h7FFFF)
 			led_on <= 1'b0;
