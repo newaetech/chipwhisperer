@@ -387,7 +387,7 @@ class LEDSettings(util.DisableNewAttr):
         """Front-panel LED sources.
             0: default: green=armed, blue=capture, top red=PLL lock fail, bottom red=glitch
             1: green: USB clock heartbeat, blue=CLKGEN clock heartbeat
-            2: green: ADC input clock heartbeat, blue=ADC output clock heartbeat (*if* FPGA-sourced)
+            2: green: ADC sampling clock heartbeat, blue=PLL reference clock heartbeat
             3: green: PLL clock heartbeat
         In all cases, fast-flashing red lights indicate an error; 
         see scope.XADC.status and scope.adc.errors for more information.
