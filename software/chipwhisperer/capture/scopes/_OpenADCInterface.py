@@ -1224,7 +1224,7 @@ class TriggerSettings(util.DisableNewAttr):
         self._is_husky = False
         self._cached_samples = None
         self._cached_offset = None
-        self._cached_segments = None
+        self._cached_segments = 1 # Husky streaming capture breaks if left as None
         self._is_sakura_g = None
 
         self.disable_newattr()
