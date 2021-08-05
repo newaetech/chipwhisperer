@@ -875,12 +875,14 @@ class ADS4128Settings(util.DisableNewAttr):
         # oaiface = OpenADCInterface
         self.oa = oaiface
         self.adc_reset()
-        self.set_default_settings()
+        self.set_defaults()
         self.disable_newattr()
 
     def _dict_repr(self):
         dict = OrderedDict()
         dict['mode'] = self.mode
+        dict['low_speed'] = self.low_speed
+        dict['hi_perf'] = self.hi_perf
         return dict
 
     def __repr__(self):
@@ -937,19 +939,46 @@ class ADS4128Settings(util.DisableNewAttr):
         self._adc_write(0x0, 0x0)
         return data
 
-    def set_default_settings(self):
+    def set_defaults(self):
+        self.set_normal_settings()
+        self.set_low_speed(True)
+        self.set_hi_perf(2)
+        self._adc_write(0x3d, 0xc0) # set offset binary output
+
+    def set_normal_settings(self):
         self._adc_write(0x42, 0x00) # enable low-latency mode
         self._adc_write(0x25, 0x00) # disable test patterns
-        self._adc_write(0x03, 0x03) # set high performance mode
-        self._adc_write(0x4a, 0x01) # set high performance mode
         self._adc_write(0x3d, 0xc0) # set offset binary output
-        self.mode_cached = "normal"
+        self._mode_cached = "normal"
 
     def set_test_settings(self):
         self._adc_write(0x42, 0x08) # disable low-latency mode
         self._adc_write(0x25, 0x04) # set test pattern to ramp
         self._adc_write(0x3d, 0xc0) # set offset binary output
-        self.mode_cached = "test ramp"
+        self._mode_cached = "test ramp"
+
+    def set_low_speed(self, val):
+        if val:
+            self._adc_write(0xdf, 0x30)
+            self._low_speed_cached = True
+        else:
+            self._adc_write(0xdf, 0x00)
+            self._low_speed_cached = False
+
+    def set_hi_perf(self, val):
+        if val == 0:
+            self._adc_write(0x03, 0x00)
+            self._adc_write(0x4a, 0x00)
+        elif val == 1:
+            self._adc_write(0x03, 0x03)
+            self._adc_write(0x4a, 0x00)
+        elif val == 2:
+            self._adc_write(0x03, 0x03)
+            self._adc_write(0x4a, 0x01)
+        else:
+            raise ValueError("Must be 0, 1 or 2")
+        self._hi_perf_cached = val
+
 
     @property
     def mode(self):
@@ -962,7 +991,7 @@ class ADS4128Settings(util.DisableNewAttr):
         Raises:
             ValueError: if mode not one of "normal" or "test ramp"
         """
-        return self.mode_cached
+        return self._mode_cached
 
     @mode.setter
     def mode(self, val):
@@ -970,7 +999,7 @@ class ADS4128Settings(util.DisableNewAttr):
 
     def setMode(self, mode):
         if mode == "normal":
-            self.set_default_settings()
+            self.set_normal_settings()
             self.oa.sendMessage(CODE_WRITE, ADDR_NO_CLIP_ERRORS, [0])
         elif mode == "test ramp":
             self.set_test_settings()
@@ -978,6 +1007,35 @@ class ADS4128Settings(util.DisableNewAttr):
         else:
             raise ValueError("Invalid mode, only 'normal' or 'test ramp' allowed")
 
+
+    @property
+    def low_speed(self):
+        """Whether the ADC is set to "low speed" operation; recommended for sampling rates below 80 MS/s.
+
+        :Getter: Return whether the ADC is set to low speed mode.
+
+        :Setter: Set the low speed mode.
+        """
+        return self._low_speed_cached
+
+    @low_speed.setter
+    def low_speed(self, val):
+        return self.set_low_speed(val)
+
+    @property
+    def hi_perf(self):
+        """High performance mode setting.
+        Valid values are 0 (high performance off), 1, and 2. See ADS4128 datasheet for more information.
+
+        :Getter: Return the high performance mode setting.
+
+        :Setter: Set the high performance mode setting.
+        """
+        return self._hi_perf_cached
+
+    @hi_perf.setter
+    def hi_perf(self, val):
+        return self.set_hi_perf(val)
 
 
 
@@ -1411,7 +1469,7 @@ class TriggerSettings(util.DisableNewAttr):
 
     @property
     def offset(self):
-        """The number of samples to before recording data after seeing a
+        """The number of samples to wait before recording data after seeing a
         trigger event.
 
         This offset is useful for long operations. For instance, if an
