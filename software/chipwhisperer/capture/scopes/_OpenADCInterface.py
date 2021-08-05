@@ -746,6 +746,7 @@ class LASettings(util.DisableNewAttr):
             4: glitch trigger
             5: capture trigger
             6: glitch enable
+            7. glitch trigger in its source clock domain (e.g. signal 1 of this group)
         group 1 (20-pin connector):
             0: IO1
             1: IO2
@@ -755,6 +756,7 @@ class LASettings(util.DisableNewAttr):
             5: HS2
             6: AUX MCX
             7: TRIG MCX
+            8: ADC sampling clock
         group 2 (front USERIO header):
             0: D0
             1: D1
@@ -1907,6 +1909,14 @@ class TriggerSettings(util.DisableNewAttr):
 
     def _set_clip_errors_disabled(self, disable):
         self.oa.set_clip_errors_disabled(disable)
+
+    def clear_clip_errors(self):
+        """ADC clipping errors are sticky until manually cleared by calling this.
+        """
+        self._set_clip_errors_disabled(True)
+        self._set_clip_errors_disabled(False)
+        self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [1])
+
 
     def _get_clip_errors_disabled(self):
         return self.oa.clip_errors_disabled()
