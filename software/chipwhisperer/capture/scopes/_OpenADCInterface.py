@@ -373,7 +373,6 @@ class LEDSettings(util.DisableNewAttr):
     def _dict_repr(self):
         dict = OrderedDict()
         dict['setting'] = self.setting
-        dict['error_flag'] = self.error_flag
         return dict
 
     def __repr__(self):
@@ -388,9 +387,12 @@ class LEDSettings(util.DisableNewAttr):
             0: default: green=armed, blue=capture, top red=PLL lock fail, bottom red=glitch
             1: green: USB clock heartbeat, blue=CLKGEN clock heartbeat
             2: green: ADC sampling clock heartbeat, blue=PLL reference clock heartbeat
-            3: green: PLL clock heartbeat
-        In all cases, fast-flashing red lights indicate an error; 
-        see scope.XADC.status and scope.adc.errors for more information.
+            3: green: PLL clock heartbeat, blue=external clock change detected
+        In all cases, blinking red lights indicate a temperature, voltage, or
+        sampling error (see scope.XADC.status and scope.adc.errors for details),
+        whlie blinking green and blue lights indicate that a frequency change
+        was detected on the external clock input (and that scope.clock should
+        be updated to account for this).
 
         """
         raw = self.oa.sendMessage(CODE_READ, ADDR_LED_SELECT, maxResp=1)[0]
@@ -406,21 +408,38 @@ class LEDSettings(util.DisableNewAttr):
             raise ValueError
         self.oa.sendMessage(CODE_WRITE, ADDR_LED_SELECT, [val])
 
-    @property
-    def error_flag(self):
-        """Reflects whether internal errors have caused the red LEDs to flash.
-        See scope.XADC.status and scope.adc.errors for more information on error sources.
-        Write any value to clear the error and stop the flashing lights.
 
-        """
-        xadc = self.oa.sendMessage(CODE_READ, ADDR_XADC_STAT, maxResp=1)[0]
-        fifo = self.oa.sendMessage(CODE_READ, ADDR_FIFO_STAT, maxResp=1)[0]
-        return xadc | fifo
+class HuskyErrors(util.DisableNewAttr):
+    ''' Gather all the Husky error sources in one place.
+        Use scope.errors.clear() to clear them.
+    '''
+    _name = 'Husky Errors'
 
-    @error_flag.setter
-    def error_flag(self, val):
-        self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [1])
-        self.oa.sendMessage(CODE_WRITE, ADDR_XADC_STAT, [0])
+    def __init__(self, oaiface, XADC, adc, clock):
+        self.oa = oaiface
+        self.XADC = XADC
+        self.adc = adc
+        self.clock = clock
+        self.disable_newattr()
+
+    def _dict_repr(self):
+        dict = OrderedDict()
+        dict['XADC_status'] = self.XADC.status
+        dict['adc_errors'] = self.adc.errors
+        dict['extclk_error'] = self.clock.extclk_error
+        return dict
+
+    def __repr__(self):
+        return util.dict_to_str(self._dict_repr())
+
+    def __str__(self):
+        return self.__repr__()
+
+    def clear(self):
+        self.XADC.status = 0
+        self.adc.errors = 0
+        self.clock.extclk_error = 0
+
 
 
 class XADCSettings(util.DisableNewAttr):
@@ -1308,6 +1327,7 @@ class TriggerSettings(util.DisableNewAttr):
             dict['bits_per_sample'] = self.bits_per_sample
             dict['segments'] = self.segments
             dict['segment_cycles'] = self.segment_cycles
+            dict['clip_errors_disabled'] = self.clip_errors_disabled
             dict['errors'] = self.errors
             # keep these hidden:
             #dict['stream_segment_size'] = self.stream_segment_size
@@ -1412,6 +1432,7 @@ class TriggerSettings(util.DisableNewAttr):
 
     @clip_errors_disabled.setter
     def clip_errors_disabled(self, disable):
+        self.clear_clip_errors()
         self._set_clip_errors_disabled(disable)
 
 
@@ -1720,8 +1741,24 @@ class TriggerSettings(util.DisableNewAttr):
     def errors(self):
         """Internal error flags (FPGA FIFO over/underflow)
         .. warning:: Supported by CW-Husky only.
+
+        :Getter: Return the error flags.
+
+        :Setter: Clear error flags.
+
         """
         return self._get_errors()
+
+    @errors.setter
+    def errors(self, val):
+        """Internal error flags (FPGA FIFO over/underflow)
+        .. warning:: Supported by CW-Husky only.
+        """
+        self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [1])
+        if not self.clip_errors_disabled:
+            self.clear_clip_errors()
+
+
 
     def _get_errors(self):
         if self.oa is None:
