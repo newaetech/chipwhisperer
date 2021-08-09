@@ -3715,9 +3715,12 @@ class OpenADCInterface:
             #print(data)
             return None
 
+        self._int_data = None
+
         orig_data = copy.copy(data)
         if debug:
             fpData = []
+            intData = []
             # Slow, verbose processing method
             # Useful for fixing issues in ADC read
             for i in range(1, len(data) - 3, 4):
@@ -3755,6 +3758,8 @@ class OpenADCInterface:
                 fpData.append(float(intpt1) / 1024.0 - self.offset)
                 fpData.append(float(intpt2) / 1024.0 - self.offset)
                 fpData.append(float(intpt3) / 1024.0 - self.offset)
+                intData.extend([intpt1, intpt2, intpt3])
+                
         else:
             # Fast, efficient NumPy implementation
 
@@ -3775,6 +3780,7 @@ class OpenADCInterface:
             data = np.right_shift(np.reshape(data, (-1, 1)), [0, 10, 20, 30]) & 0x3FF
             fpData = np.reshape(data[:, [0, 1, 2]], (-1))
             trigger = data[:, 3] % 4
+            self._int_data = np.array(fpData, dtype='int16')
             fpData = fpData / 1024.0 - self.offset
             scope_logger.debug("Trigger_data: {} len={}".format(trigger, len(trigger)))
 
