@@ -81,6 +81,10 @@ ADDR_GLITCH2_DRP_RESET = 80
 ADDR_CLKGEN_DRP_RESET  = 81
 
 ADDR_CLIP_TEST         = 85
+ADDR_USERIO_CW_DRIVEN  = 86
+ADDR_USERIO_DEBUG_DRIVEN = 87
+ADDR_USERIO_DRIVE_DATA = 88
+
 
 CODE_READ       = 0x80
 CODE_WRITE      = 0xC0
@@ -441,6 +445,77 @@ class HuskyErrors(util.DisableNewAttr):
         self.XADC.status = 0
         self.adc.errors = 0
         self.clock.extclk_error = 0
+
+
+class USERIOSettings(util.DisableNewAttr):
+    ''' Control Husky's USERIO (20-pin front connector) interface.
+    '''
+    _name = 'USERIO Control'
+
+    def __init__(self, oaiface):
+        self.oa = oaiface
+        self.disable_newattr()
+
+    def _dict_repr(self):
+        dict = OrderedDict()
+        dict['debug_mode'] = self.debug_mode
+        dict['direction'] = self.direction
+        dict['drive_data'] = self.drive_data
+        return dict
+
+    def __repr__(self):
+        return util.dict_to_str(self._dict_repr())
+
+    def __str__(self):
+        return self.__repr__()
+
+    @property
+    def debug_mode(self):
+        """Set all pins to debug mode, driven by Husky. 
+        Takes precedence over scope.userio.direction.
+        Look to cwhusky_top.v for signal definitions.
+        """
+        return self.oa.sendMessage(CODE_READ, ADDR_USERIO_DEBUG_DRIVEN, maxResp=1)[0]
+
+    @debug_mode.setter
+    def debug_mode(self, setting):
+        if setting:
+            val = 1
+        else:
+            val = 0
+        self.oa.sendMessage(CODE_WRITE, ADDR_USERIO_DEBUG_DRIVEN, [val])
+
+    @property
+    def direction(self):
+        """Set the direction of the USERIO data pins (D0-D7) with an
+        8-bit integer, where bit <x> determines the direction of D<x>;
+        bit x = 0: D<x> is driven by Husky.
+        bit x = 1: D<x> is an input to Husky.
+        Note that scope.userio.debug_mode takes precedence.
+        Use with care.
+        """
+        return self.oa.sendMessage(CODE_READ, ADDR_USERIO_CW_DRIVEN, maxResp=1)[0]
+
+    @direction.setter
+    def direction(self, setting):
+        if not setting in range(0, 256):
+            raise ValueError("Must be integer 0-255")
+        else:
+            self.oa.sendMessage(CODE_WRITE, ADDR_USERIO_CW_DRIVEN, [setting])
+
+    @property
+    def drive_data(self):
+        """8-bit data to drive on the USERIO data bus.
+        """
+        return self.oa.sendMessage(CODE_READ, ADDR_USERIO_DRIVE_DATA, maxResp=1)[0]
+
+    @drive_data.setter
+    def drive_data(self, setting):
+        if not setting in range(0, 256):
+            raise ValueError("Must be integer 0-255")
+        else:
+            self.oa.sendMessage(CODE_WRITE, ADDR_USERIO_DRIVE_DATA, [setting])
+
 
 
 
