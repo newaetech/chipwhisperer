@@ -80,6 +80,8 @@ ADDR_GLITCH1_DRP_RESET = 79
 ADDR_GLITCH2_DRP_RESET = 80
 ADDR_CLKGEN_DRP_RESET  = 81
 
+ADDR_CLIP_TEST         = 85
+
 CODE_READ       = 0x80
 CODE_WRITE      = 0xC0
 
@@ -1063,9 +1065,10 @@ class ADS4128Settings(util.DisableNewAttr):
 class GainSettings(util.DisableNewAttr):
     _name = 'Gain Setting'
 
-    def __init__(self, oaiface):
+    def __init__(self, oaiface, adc):
         # oaiface = OpenADCInterface
         self.oa = oaiface
+        self.adc = adc
         self.gainlow_cached = False
         self.gain_cached = 0
         self._is_husky = False
@@ -1279,6 +1282,27 @@ class GainSettings(util.DisableNewAttr):
             g = 0xFF
 
         self.setGain(g)
+
+    def auto_gain(self, margin=20):
+        '''Increment gain until clipping occurs, then reduce by <margin> dB (default: 20 dB)
+        '''
+        if not self._is_husky:
+            raise ValueError("Only supported on Husky")
+        self.adc.clip_errors_disabled = False
+        self.adc.clear_clip_errors()
+        self.oa.sendMessage(CODE_WRITE, ADDR_CLIP_TEST, [1])
+        found = False
+        for gain in range(-15+margin, 65):
+            self.db = gain
+            if self.oa.sendMessage(CODE_READ, ADDR_FIFO_STAT, maxResp=1)[0] & 32:
+                self.db = gain - margin
+                found = True
+                self.adc.clear_clip_errors()
+                break
+        if not found:
+            scope_logger.warning("Couldn't clip ADC, using maximum gain")
+
+        self.oa.sendMessage(CODE_WRITE, ADDR_CLIP_TEST, [0])
 
 class TriggerSettings(util.DisableNewAttr):
     _name = 'Trigger Setup'
@@ -1950,6 +1974,7 @@ class TriggerSettings(util.DisableNewAttr):
     def clear_clip_errors(self):
         """ADC clipping errors are sticky until manually cleared by calling this.
         """
+        self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [1])
         self._set_clip_errors_disabled(True)
         self._set_clip_errors_disabled(False)
         self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [1])
