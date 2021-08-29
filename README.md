@@ -6,7 +6,7 @@ ChipWhisperer is an open source toolchain dedicated to hardware security researc
 * __Firmware__: Three separate pieces of firmware are used on the ChipWhisperer hardware. The capture board has a USB controller (in C) and an FPGA for high-speed captures (in Verilog) with open-source firmware. Also, the target device has its own firmware; this repository includes many firmware examples for different targets.
 * __Software__: The ChipWhisperer software includes a Python API for talking to ChipWhisperer hardware (ChipWhisperer Capture) and a Python API 
 for processing power traces from ChipWhisperer hardware (ChipWhisperer Analyzer). You can find documentation for our Python API at
-chipwhisperer.readthedocs.io
+[chipwhisperer.readthedocs.io](https://chipwhisperer.readthedocs.io/en/latest/)
 
 ---
 
