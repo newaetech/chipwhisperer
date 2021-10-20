@@ -61,6 +61,11 @@ ADDR_CLKGEN_DRP_RESET  = 81
 
 ADDR_CLIP_TEST         = 85
 
+ADDR_CAPTURE_DONE   = 89
+ADDR_FIFO_FIRST_ERROR = 90
+ADDR_FIFO_FIRST_ERROR_STATE = 91
+ADDR_SEGMENT_CYCLE_COUNTER_EN = 92
+
 
 CODE_READ       = 0x80
 CODE_WRITE      = 0xC0
@@ -161,7 +166,7 @@ class HWInformation(util.DisableNewAttr):
             year = ((raw[2] >> 1) & 0x3f) + 2000
             hour = ((raw[2] & 0x1) << 4) + (raw[1] >> 4)
             minute = ((raw[1] & 0xf) << 2) + (raw[0] >> 6)
-            return "{}/{}/{}, {}:{}".format(month, day, year, hour, minute)
+            return "{}/{}/{}, {:02d}:{:02d}".format(month, day, year, hour, minute)
         else:
             return None
 
@@ -195,12 +200,15 @@ class GainSettings(util.DisableNewAttr):
         # oaiface = OpenADCInterface
         self.oa = oaiface
         self.adc = adc
-        self.gainlow_cached = False
         self.gain_cached = 0
         self._is_husky = False
         self._vmag_highgain = 0x1f
         self._vmag_lowgain = 0
+        self._clear_caches()
         self.disable_newattr()
+
+    def _clear_caches(self):
+        self.gainlow_cached = False
 
     def _dict_repr(self):
         dict = OrderedDict()
@@ -452,12 +460,23 @@ class TriggerSettings(util.DisableNewAttr):
         self._is_husky = False
         self._is_sakura_g = None
         self._clear_caches()
-
         self.disable_newattr()
+
     def _clear_caches(self):
         self._cached_samples = None
         self._cached_offset = None
         self._cached_segments = 1 # Husky streaming capture breaks if left as None
+        self._cached_segment_cycles = None
+        self._cached_decimate = None
+        self._cached_presamples = None
+
+    def _update_caches(self):
+        self._cached_samples = self._get_num_samples()
+        self._cached_offset = self._get_offset()
+        self._cached_segments = self._get_segments()
+        self._cached_segment_cycles = self._get_segment_cycles()
+        self._cached_decimate = self._get_decimate()
+        self._cached_presamples = self._get_presamples()
 
     def _dict_repr(self):
         dict = OrderedDict()
@@ -478,6 +497,7 @@ class TriggerSettings(util.DisableNewAttr):
             dict['bits_per_sample'] = self.bits_per_sample
             dict['segments'] = self.segments
             dict['segment_cycles'] = self.segment_cycles
+            dict['segment_cycle_counter_en'] = self.segment_cycle_counter_en
             dict['clip_errors_disabled'] = self.clip_errors_disabled
             dict['errors'] = self.errors
             # keep these hidden:
@@ -588,7 +608,9 @@ class TriggerSettings(util.DisableNewAttr):
         Raises:
            ValueError: if the new factor is not positive
         """
-        return self._get_decimate()
+        if self._cached_decimate is None:
+            self._cached_decimate = self._get_decimate()
+        return self._cached_decimate
 
     @decimate.setter
     def decimate(self, decfactor):
@@ -704,11 +726,13 @@ class TriggerSettings(util.DisableNewAttr):
         Raises:
            ValueError: if presamples is outside of range [0, samples]
         """
-        return self._get_presamples()
+        if self._cached_presamples is None:
+            self._cached_presamples = self._get_presamples()
+        return self._cached_presamples
 
     @presamples.setter
     def presamples(self, setting):
-        self._set_presamples(setting)
+        self._cached_presamples = self._set_presamples(setting)
 
     @property
     def basic_mode(self):
@@ -865,12 +889,15 @@ class TriggerSettings(util.DisableNewAttr):
         In normal operation, segments=1. 
 
         Multiple segments are useful in two scenarios:
-        (1) Capturing only subsections of a power trace, to allow longer effective captures.
-            After a trigger event, the requested number of samples is captured every 'segment_cycles' 
-            clock cycles.
-        (2) Speeding up capture times by capturing 'segments' power traces from a single arm + capture
-            event. Here, the requested number of samples is captured at every trigger event, without
-            having to re-arm and download trace data between every trigger event.
+        (1) Capturing only subsections of a power trace, to allow longer
+            effective captures.  After a trigger event, the requested number of
+            samples is captured every 'segment_cycles' clock cycles, 'segments'
+            times. Set 'segment_cycle_counter_en' to 1 for this segment mode.
+        (2) Speeding up capture times by capturing 'segments' power traces from
+            a single arm + capture event. Here, the requested number of samples
+            is captured at every trigger event, without having to re-arm and
+            download trace data between every trigger event. Set
+            'segment_cycle_counter_en' to 0 for this segment mode.
 
         .. warning:: when capturing multiple segments with presamples, the total number of samples 
         per segment must be a multiple of 3. Incorrect sample data will be obtained if this is not 
@@ -891,14 +918,16 @@ class TriggerSettings(util.DisableNewAttr):
 
     @segments.setter
     def segments(self, num):
-        if num < 1 or num > 2**16-1 or not type(num) is int:
-            raise ValueError("Number of segments must be in range [1, 2^16-1]")
+        if num < 1 or num > 2**16-1 or not type(num) is int or not self._is_husky:
+            raise ValueError("Number of segments must be in range [1, 2^16-1]. For CW-Husky only.")
         self._cached_segments = num
         self._set_segments(num)
 
     def _get_segments(self):
         if self.oa is None:
             return 0
+        elif not self._is_husky:
+            return 1
         cmd = self.oa.sendMessage(CODE_READ, ADDR_SEGMENTS, maxResp=2)
         segments = int.from_bytes(cmd, byteorder='little')
         return segments
@@ -918,7 +947,7 @@ class TriggerSettings(util.DisableNewAttr):
         :Setter: Clear error flags.
 
         """
-        return self._get_errors()
+        return self._get_errors(ADDR_FIFO_STAT)
 
     @errors.setter
     def errors(self, val):
@@ -930,11 +959,44 @@ class TriggerSettings(util.DisableNewAttr):
             self.clear_clip_errors()
 
 
+    @property
+    def first_error(self):
+        """Reports the first error that was flagged (self.errors reports *all* errors). Useful for debugging. Read-only.
+        .. warning:: Supported by CW-Husky only.
 
-    def _get_errors(self):
+        :Getter: Return the error flags.
+
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        return self._get_errors(ADDR_FIFO_FIRST_ERROR)
+
+
+    @property
+    def first_error_state(self):
+        """Reports the state the FPGA FSM state at the time of the first flagged error. Useful for debugging. Read-only.
+        .. warning:: Supported by CW-Husky only.
+
+        :Getter: Return the error flags.
+
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        raw = self.oa.sendMessage(CODE_READ, ADDR_FIFO_FIRST_ERROR_STATE, maxResp=1)[0]
+        if   raw == 0: return "IDLE"
+        elif raw == 1: return "PRESAMP_FILLING"
+        elif raw == 2: return "PRESAMP_FULL"
+        elif raw == 3: return "TRIGGERED"
+        elif raw == 4: return "SEGMENT_DONE"
+        elif raw == 5: return "DONE"
+        else:
+            raise ValueError(raw)
+
+
+    def _get_errors(self, addr):
         if self.oa is None:
             return 0
-        raw = self.oa.sendMessage(CODE_READ, ADDR_FIFO_STAT, maxResp=1)[0]
+        raw = self.oa.sendMessage(CODE_READ, addr, maxResp=1)[0]
         stat = ''
         if raw & 1:   stat += 'slow FIFO underflow, '
         if raw & 2:   stat += 'slow FIFO overflow, '
@@ -958,8 +1020,10 @@ class TriggerSettings(util.DisableNewAttr):
 
         This setting must be a 20-bit positive integer. 
 
-        When 'segments' is greater than one, set segment_cycles to a non-zero value to capture a new 
-        segment every 'segment_cycles' clock cycles.
+        When 'segments' is greater than one, set segment_cycles to a non-zero
+        value to capture a new segment every 'segment_cycles' clock cycles
+        following the initial trigger event. 'segment_cycle_counter_en' must
+        also be set.
 
         :Getter: Return the current value of segment_cycles.
 
@@ -969,16 +1033,20 @@ class TriggerSettings(util.DisableNewAttr):
            ValueError: if segments is outside of range [0, 2^16-1]
         """
 
-        return self._get_segment_cycles()
+        if self._cached_segment_cycles is None:
+            self._cached_segment_cycles = self._get_segment_cycles()
+        return self._cached_segment_cycles
 
     @segment_cycles.setter
     def segment_cycles(self, num):
-        if num < 0 or num > 2**20-1 or not type(num) is int:
-            raise ValueError("Number of segments must be in range [0, 2^20-1]")
+        if num < 0 or num > 2**20-1 or not type(num) is int or not self._is_husky:
+            raise ValueError("Number of segments must be in range [0, 2^20-1]. For CW-Husky only.")
         self._set_segment_cycles(num)
 
     def _get_segment_cycles(self):
         if self.oa is None:
+            return 0
+        elif not self._is_husky:
             return 0
 
         cmd = self.oa.sendMessage(CODE_READ, ADDR_SEGMENT_CYCLES, maxResp=3)
@@ -988,6 +1056,44 @@ class TriggerSettings(util.DisableNewAttr):
 
     def _set_segment_cycles(self, num):
         self.oa.sendMessage(CODE_WRITE, ADDR_SEGMENT_CYCLES, list(int.to_bytes(num, length=3, byteorder='little')))
+
+
+
+    @property
+    def segment_cycle_counter_en(self):
+        """Number of clock cycles separating segments.
+
+        .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
+        CW-pro, see 'fifo_fill_mode' instead.
+
+        Set to 0 to capture a new power trace segment every time the target
+        issues a trigger event.
+
+        Set to 1 to capture a new power trace segment every 'segment_cycles'
+        clock cycles after a single trigger event.
+
+        :Getter: Return the current value of segment_cycle_counter_en.
+
+        :Setter: Set segment_cycles.
+
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        raw = self.oa.sendMessage(CODE_READ, ADDR_SEGMENT_CYCLE_COUNTER_EN, Validate=False, maxResp=1)[0]
+        if raw == 1:
+            return True
+        elif raw == 0:
+            return False
+        else:
+            raise ValueError("Unexpected: read %d" % raw)
+
+    @segment_cycle_counter_en.setter
+    def segment_cycle_counter_en(self, enable):
+        if enable:
+            val = [1]
+        else:
+            val = [0]
+        self.oa.sendMessage(CODE_WRITE, ADDR_SEGMENT_CYCLE_COUNTER_EN, val, Validate=False)
 
 
 
@@ -1111,6 +1217,7 @@ class TriggerSettings(util.DisableNewAttr):
         if self.presamples > 0 and decsamples > 1 and self._is_husky:
             raise Warning("Decimating with presamples is not supported on Husky.")
         self.oa.setDecimate(decsamples)
+        self._cached_decimate = decsamples
 
     def _get_decimate(self):
         return self.oa.decimate()
@@ -1324,6 +1431,7 @@ class ClockSettings(util.DisableNewAttr):
         self._hwinfo = hwinfo
         self._freqExt = 10e6
         self._is_husky = False
+        self._cached_adc_freq = None
         self.drp = XilinxDRP(oaiface, ADDR_CLKGEN_DRP_DATA, ADDR_CLKGEN_DRP_ADDR, ADDR_CLKGEN_DRP_RESET)
         self.mmcm = XilinxMMCMDRP(self.drp)
         self.disable_newattr()
@@ -1406,6 +1514,7 @@ class ClockSettings(util.DisableNewAttr):
     def adc_src(self, src):
         # We need to pass a tuple into _setAdcSource() so the ADC source
         # parameter recognizes this input
+        self._cached_adc_freq = None
         if src == "clkgen_x4":
             self._setAdcSource(("dcm", 4, "clkgen"))
         elif src == "clkgen_x1":
@@ -2119,15 +2228,16 @@ class ClockSettings(util.DisableNewAttr):
         if self.oa is None:
             return 0
 
-        #Get sample frequency
-        samplefreq = float(self.oa.hwInfo.sysFrequency()) / float(pow(2,23))
+        if self._cached_adc_freq is None:
+            #Get sample frequency
+            samplefreq = float(self.oa.hwInfo.sysFrequency()) / float(pow(2,23))
 
-        temp = self.oa.sendMessage(CODE_READ, ADDR_ADCFREQ, maxResp=4)
-        freq = int.from_bytes(temp, byteorder='little')
+            temp = self.oa.sendMessage(CODE_READ, ADDR_ADCFREQ, maxResp=4)
+            freq = int.from_bytes(temp, byteorder='little')
 
-        measured = freq * samplefreq
+            self._cached_adc_freq = int(freq * samplefreq)
 
-        return int(measured)
+        return self._cached_adc_freq
 
     def _adcSampleRate(self):
         """Return the sample rate, takes account of decimation factor (if set)"""
@@ -2579,13 +2689,9 @@ class OpenADCInterface(util.DisableNewAttr):
             self.serial.initStreamModeCapture(self._stream_len, self._sbuf, timeout_ms=int(self._timeout * 1000) + 500, \
                 is_husky=self._is_husky, segment_size=self._stream_segment_size)
 
-    def capture(self, offset=None, adc_freq=29.53E6, samples=24400):
-        timeout = False
-        sleeptime = 0
-        if offset:
-            sleeptime = (29.53E6*8*offset)/(100000*adc_freq) #rougly 8ms per 100k offset
-            sleeptime /= 1000
 
+    def capture(self, offset=None, adc_freq=29.53E6, samples=24400, segments=1, segment_cycles=0, poll_done=False):
+        timeout = False
         if self._stream_mode:
 
             # Wait for a trigger, letting the UI run when it can
@@ -2626,13 +2732,10 @@ class OpenADCInterface(util.DisableNewAttr):
             status = self.getStatus()
             starttime = datetime.datetime.now()
 
-            # Wait for a trigger, letting the UI run when it can
+            # Wait for a trigger
             while ((status & STATUS_ARM_MASK) == STATUS_ARM_MASK) | ((status & STATUS_FIFO_MASK) == 0):
                 status = self.getStatus()
 
-                # Wait for a moment before re-running the loop
-                #time.sleep(sleeptime) ## <-- This causes the capture slowdown
-                #util.better_delay(sleeptime) ## faster sleep method
                 diff = datetime.datetime.now() - starttime
 
                 # If we've timed out, don't wait any longer for a trigger
@@ -2645,34 +2748,29 @@ class OpenADCInterface(util.DisableNewAttr):
                     if (status & STATUS_FIFO_MASK) == 0:
                         break
 
-                # Give the UI a chance to update (does nothing if not using UI)
-
-            #time.sleep(0.005)
-            #time.sleep(sleeptime*10)
-
-            # If using large offsets, system doesn't know we are delaying api
-
-            # NOTE: This doesn't actually delay until adc starts reading
-            # so need to actually do the manual delay
-            #nosampletimeout = self._nosampletimeout * 10
-            #while (self.getBytesInFifo() == 0) and nosampletimeout:
-            #    logging.debug("Bytes in Fifo: {}".format(self.getBytesInFifo()))
-            #    time.sleep(0.001)
-            #    nosampletimeout -= 1
-
-            #if nosampletimeout == 0:
-            #    logging.warning('No samples received. Either very long offset, or no ADC clock (try "Reset ADC DCM"). '
-            #                    'If you need such a long offset, increase "scope.qtadc.sc._nosampletimeout" limit.')
-            #    timeout = True
-
         # give time for ADC to finish reading data
-        # may need to adjust delay
-        cap_delay = (7.37E6 * 4 * samples) / (adc_freq * 24400)
-        cap_delay *= 0.001
-        time.sleep(cap_delay+sleeptime)
-        # 0.000819672131147541
-        # 
-        #time.sleep(sleeptime) #need to do this one as well
+        if self._is_husky and poll_done:
+            # poll Husky to find out when the capture is complete:
+            starttime = datetime.datetime.now()
+            while not self.sendMessage(CODE_READ, ADDR_CAPTURE_DONE, maxResp=1)[0]:
+                diff = datetime.datetime.now() - starttime
+                if (diff.total_seconds() > self._timeout):
+                    scope_logger.warning('Timeout in OpenADC capture() waiting for scope "done" to go high.')
+                    break
+        else:
+            # calculate how long the capture should take:
+            if self._is_husky:
+                # in the case of Husky, "samples" is the number of samples *per segment*:
+                if segment_cycles:
+                    # in the case of cycle-count-based segmenting, we can calculate the exact length of the capture in ADC samples:
+                    samples = segment_cycles * segments
+                else:
+                    # in the case of trigger-based segmentings, this is the best we can do for the general case: we assume that one
+                    # segment is <samples> long; if this doesn't work, either adjust the delay manually, or use poll_done=True
+                    samples = samples * segments
+
+            time.sleep((offset+samples)/adc_freq)
+
         self.arm(False) # <------ ADC will stop reading after this
         return timeout
 
