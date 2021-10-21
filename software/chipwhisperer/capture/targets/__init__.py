@@ -13,6 +13,7 @@ from .CW305 import CW305
 from .SimpleSerial2 import SimpleSerial2, SimpleSerial2_CDC
 from .CW305_ECC import CW305_ECC
 from .CW310 import CW310
+from .Leia import LeiaTarget
 
 try:
     from .sakura_g import SakuraG #needs ftdi module

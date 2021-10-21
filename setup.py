@@ -22,6 +22,7 @@ setup(
         'ECpy',
         'fastdtw',
         'Cython',
+        'smartleia-target',
         'tqdm'
     ],
     project_urls={

@@ -14,6 +14,7 @@ sphinxcontrib-images>=0.9.1
 pyserial==3.4
 fastdtw==0.3.4
 Cython>=0.29.14
+smartleia_target=>1.0.0
 pypandoc==1.3.3
 tqdm>=4.40.0
 
