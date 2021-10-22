@@ -65,6 +65,9 @@ ADDR_FIFO_FIRST_ERROR = 90
 ADDR_FIFO_FIRST_ERROR_STATE = 91
 ADDR_SEGMENT_CYCLE_COUNTER_EN = 92
 
+ADDR_MAX_SAMPLES = 93
+ADDR_MAX_SEGMENT_SAMPLES = 94
+
 
 CODE_READ       = 0x80
 CODE_WRITE      = 0xC0
@@ -118,6 +121,7 @@ class OpenADCInterface(util.DisableNewAttr):
         self._fast_fifo_read_enable = True
         self._fast_fifo_read_active = False
         self.hwMaxSamples = 0
+        self.hwMaxSegmentSamples = 0
         self._stream_len = 0
         self._int_data = None
         self._stream_rx_bytes = 0
@@ -345,7 +349,8 @@ class OpenADCInterface(util.DisableNewAttr):
         if value:
             self.setSettings(self.settings() | SETTINGS_RESET, validate=False)
             if self._is_husky:
-                self.hwMaxSamples = self.numSamples()
+                self.hwMaxSamples = self.numMaxSamples()
+                self.hwMaxSegmentSamples = self.numMaxSegmentSamples()
             else:
                 #Hack to adjust the hwMaxSamples since the number should be smaller than what is being returned
                 self.hwMaxSamples = self.numSamples() - 45
@@ -442,6 +447,19 @@ class OpenADCInterface(util.DisableNewAttr):
         temp = self.sendMessage(CODE_READ, ADDR_SAMPLES, maxResp=4)
         samples = int.from_bytes(temp, byteorder='little')
         return samples
+
+    def numMaxSamples(self):
+        """Return the maximum number of samples that can be captured in one go. Husky only."""
+        if not self._is_husky:
+            scope_logger.error("Supported by Husky only.")
+        return int.from_bytes(self.sendMessage(CODE_READ, ADDR_MAX_SAMPLES, maxResp=4), byteorder='little')
+
+    def numMaxSegmentSamples(self):
+        """Return the maximum number of samples that can be captured in one go when segmenting is used. Husky only."""
+        if not self._is_husky:
+            scope_logger.error("Supported by Husky only.")
+        return int.from_bytes(self.sendMessage(CODE_READ, ADDR_MAX_SEGMENT_SAMPLES, maxResp=4), byteorder='little')
+
 
     def getBytesInFifo(self):
         if self._is_husky:
