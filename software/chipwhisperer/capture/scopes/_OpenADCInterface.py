@@ -2638,6 +2638,10 @@ class ClockSettings(util.DisableNewAttr):
         """
         return self._getClkgenMul()
 
+    @clkgen_mul.setter
+    def clkgen_mul(self, mul):
+        self._setClkgenMulWrapper(mul)
+
     def _getClkgenMul(self):
         timeout = 2
         while timeout > 0:
@@ -2662,9 +2666,6 @@ class ClockSettings(util.DisableNewAttr):
         # raise IOError("clkgen never loaded value?")
         return 0
 
-    @clkgen_mul.setter
-    def clkgen_mul(self, mul):
-        self._setClkgenMulWrapper(mul)
 
     def _setClkgenMulWrapper(self, mul):
         if self.oa.hwInfo.is_cwhusky():
@@ -2704,6 +2705,16 @@ class ClockSettings(util.DisableNewAttr):
         """
         return self._getClkgenDiv()
 
+    @clkgen_div.setter
+    def clkgen_div(self, div):
+        if self.oa.hwInfo.is_cwhusky():
+            # Husky PLL takes two dividers; if only one was provided, set the other to 1
+            if type(div) == int:
+                div = [div, 1]
+            self._set_husky_clkgen_div(div)
+        else:
+            self._setClkgenDivWrapper(div)
+
     def _getClkgenDiv(self):
         if self.oa is None:
             return 2
@@ -2729,15 +2740,6 @@ class ClockSettings(util.DisableNewAttr):
                       " source settings. CLKGEN clock results are currently invalid.")
         return 1
 
-    @clkgen_div.setter
-    def clkgen_div(self, div):
-        if self.oa.hwInfo.is_cwhusky():
-            # Husky PLL takes two dividers; if only one was provided, set the other to 1
-            if type(div) == int:
-                div = [div, 1]
-            self._set_husky_clkgen_div(div)
-        else:
-            self._setClkgenDivWrapper(div)
 
 
     def _set_husky_clkgen_div(self, div):
