@@ -1154,7 +1154,7 @@ class GainSettings(util.DisableNewAttr):
         return self.gain_cached
 
     @property
-    def gain(self):
+    def gain(self) -> int:
         """The current LNA gain setting.
 
         This gain is a dimensionless number in the range [0, 78]. Higher value
@@ -1173,7 +1173,8 @@ class GainSettings(util.DisableNewAttr):
         return self.getGain()
 
     @gain.setter
-    def gain(self, value):
+    def gain(self, value : int):
+        "test"
         self.setGain(value)
 
     def _get_gain_db(self):
