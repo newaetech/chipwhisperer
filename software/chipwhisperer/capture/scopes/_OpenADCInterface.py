@@ -101,6 +101,7 @@ def SIGNEXT(x, b):
 class OpenADCInterface(util.DisableNewAttr):
 
     def __init__(self, serial_instance):
+        super().__init__()
         self.serial = serial_instance
         self.hwInfo = None
         self.offset = 0.5
@@ -941,6 +942,7 @@ class HWInformation(util.DisableNewAttr):
 
     def __init__(self, oaiface : OpenADCInterface):
         # oaiface = OpenADCInterface
+        super().__init__()
         self.oa = oaiface
         self.oa.hwInfo = self
         self.sysFreq = 0
@@ -1037,6 +1039,7 @@ class GainSettings(util.DisableNewAttr):
 
     def __init__(self, oaiface : OpenADCInterface, adc):
         # oaiface = OpenADCInterface
+        super().__init__()
         self.oa = oaiface
         self.adc = adc
         self.gain_cached = 0
@@ -1283,6 +1286,7 @@ class TriggerSettings(util.DisableNewAttr):
 
     def __init__(self, oaiface : OpenADCInterface):
         # oaiface = OpenADCInterface
+        super().__init__()
         self._new_attributes_disabled = False
         self.oa = oaiface
         self.presamples_desired = 0
@@ -2268,6 +2272,7 @@ class ClockSettings(util.DisableNewAttr):
 
     def __init__(self, oaiface : OpenADCInterface, hwinfo=None):
         from .cwhardware.ChipWhispererHuskyMisc import XilinxDRP, XilinxMMCMDRP
+        super().__init__()
         self.oa = oaiface
         self._hwinfo = hwinfo
         self._freqExt = 10e6
