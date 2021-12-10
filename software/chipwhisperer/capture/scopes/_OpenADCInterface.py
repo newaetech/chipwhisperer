@@ -639,6 +639,8 @@ class OpenADCInterface(util.DisableNewAttr):
                     # segment is <samples> long; if this doesn't work, either adjust the delay manually, or use poll_done=True
                     samples = samples * segments
 
+            if offset == None:
+                offset = 0
             time.sleep((offset+samples)/adc_freq)
 
         self.arm(False) # <------ ADC will stop reading after this
