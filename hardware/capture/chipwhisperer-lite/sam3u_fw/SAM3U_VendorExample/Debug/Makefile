@@ -111,7 +111,6 @@ SUBDIRS :=  \
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
 ../src/ASF/common/services/usb/class/cdc/device/udi_cdc.c \
-../src/ASF/common/services/usb/class/composite/device/udi_composite_desc.c \
 ../src/ASF/sam/drivers/chipid/chipid.c \
 ../src/naeusb/circbuffer.c \
 ../src/naeusb/fpga_program.c \
@@ -123,6 +122,7 @@ C_SRCS +=  \
 ../src/naeusb/naeusb_openadc.c \
 ../src/naeusb/naeusb_usart.c \
 ../src/naeusb/udc.c \
+../src/naeusb/udi_composite_desc.c \
 ../src/naeusb/usb_xmem.c \
 ../src/naeusb/V2Protocol.c \
 ../src/naeusb/V2ProtocolParams.c \
@@ -167,7 +167,6 @@ ASM_SRCS +=
 
 OBJS +=  \
 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o \
-src/ASF/common/services/usb/class/composite/device/udi_composite_desc.o \
 src/ASF/sam/drivers/chipid/chipid.o \
 src/naeusb/circbuffer.o \
 src/naeusb/fpga_program.o \
@@ -179,6 +178,7 @@ src/naeusb/naeusb_mpsse.o \
 src/naeusb/naeusb_openadc.o \
 src/naeusb/naeusb_usart.o \
 src/naeusb/udc.o \
+src/naeusb/udi_composite_desc.o \
 src/naeusb/usb_xmem.o \
 src/naeusb/V2Protocol.o \
 src/naeusb/V2ProtocolParams.o \
@@ -216,7 +216,6 @@ src/main.o
 
 OBJS_AS_ARGS +=  \
 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o \
-src/ASF/common/services/usb/class/composite/device/udi_composite_desc.o \
 src/ASF/sam/drivers/chipid/chipid.o \
 src/naeusb/circbuffer.o \
 src/naeusb/fpga_program.o \
@@ -228,6 +227,7 @@ src/naeusb/naeusb_mpsse.o \
 src/naeusb/naeusb_openadc.o \
 src/naeusb/naeusb_usart.o \
 src/naeusb/udc.o \
+src/naeusb/udi_composite_desc.o \
 src/naeusb/usb_xmem.o \
 src/naeusb/V2Protocol.o \
 src/naeusb/V2ProtocolParams.o \
@@ -265,7 +265,6 @@ src/main.o
 
 C_DEPS +=  \
 src/ASF/common/services/usb/class/cdc/device/udi_cdc.d \
-src/ASF/common/services/usb/class/composite/device/udi_composite_desc.d \
 src/ASF/sam/drivers/chipid/chipid.d \
 src/naeusb/circbuffer.d \
 src/naeusb/fpga_program.d \
@@ -277,6 +276,7 @@ src/naeusb/naeusb_mpsse.d \
 src/naeusb/naeusb_openadc.d \
 src/naeusb/naeusb_usart.d \
 src/naeusb/udc.d \
+src/naeusb/udi_composite_desc.d \
 src/naeusb/usb_xmem.d \
 src/naeusb/V2Protocol.d \
 src/naeusb/V2ProtocolParams.d \
@@ -314,7 +314,6 @@ src/main.d
 
 C_DEPS_AS_ARGS +=  \
 src/ASF/common/services/usb/class/cdc/device/udi_cdc.d \
-src/ASF/common/services/usb/class/composite/device/udi_composite_desc.d \
 src/ASF/sam/drivers/chipid/chipid.d \
 src/naeusb/circbuffer.d \
 src/naeusb/fpga_program.d \
@@ -326,6 +325,7 @@ src/naeusb/naeusb_mpsse.d \
 src/naeusb/naeusb_openadc.d \
 src/naeusb/naeusb_usart.d \
 src/naeusb/udc.d \
+src/naeusb/udi_composite_desc.d \
 src/naeusb/usb_xmem.d \
 src/naeusb/V2Protocol.d \
 src/naeusb/V2ProtocolParams.d \
@@ -377,13 +377,6 @@ LINKER_SCRIPT_DEP+=  \
 
 # AVR32/GNU C Compiler
 src/ASF/common/services/usb/class/cdc/device/udi_cdc.o: ../src/ASF/common/services/usb/class/cdc/device/udi_cdc.c
-	@echo Building file: $<
-	@echo Invoking: ARM/GNU C Compiler : 6.3.1
-	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE)  -x c -mthumb -D__SAM3U2C__ -DDEBUG -D__SAM3U2C__ -DARM_MATH_CM3=true -Dprintf=iprintf -DUDD_ENABLE -DBOARD=CWLITE -Dscanf=iscanf -DSMART_CARD_USING_GPIO  -I"../common/services/usb/class/vendor/device/example" -I"../common/services/usb/class/vendor/device/example/sam3u4e_sam3u_ek" -I"../src/ASF/common/services/usb/udc" -I"../src/ASF/common/utils" -I"../src/ASF/common/services/sleepmgr" -I"../src/ASF/sam/utils/cmsis/sam3u/source/templates" -I"../src/ASF/sam/drivers/pmc" -I"../src/ASF/common/services/gpio" -I"../src/ASF/sam/boards" -I"../src/ASF/sam/drivers/pio" -I"../src/ASF/common/boards" -I"../src/ASF/sam/utils/header_files" -I"../src/ASF/common/services/ioport" -I"../src/ASF/common/services/usb/class/vendor" -I"../src/ASF/common/services/usb/class/vendor/device" -I"../src/ASF/thirdparty/CMSIS/Include" -I"../src/ASF/common/services/usb" -I"../src/ASF/sam/drivers/udphs" -I"../src/ASF/sam/utils/cmsis/sam3u/include" -I"../src/ASF/thirdparty/CMSIS/Lib/GCC" -I"../src/config" -I"../src" -I"../src/ASF/common/services/clock" -I"../src/ASF/sam/utils" -I"../src/ASF/sam/utils/preprocessor" -I"../src/ASF/sam/boards/sam3u_ek" -I"../src/ASF/common/utils/stdio/stdio_serial" -I"../src/ASF/common/services/serial" -I"../src/ASF/sam/drivers/uart" -I"../src/ASF/sam/drivers/usart" -I"../src/ASF/sam/drivers/ebi/smc" -I"../src/ASF/sam/drivers/spi" -I"../src/ASF/common/services/delay" -I"../src/ASF/sam/drivers/tc" -I"../src/ASF/sam/drivers/chipid" -I"../src/ASF/sam/drivers/efc" -I"../src/ASF/sam/services/flash_efc" -I"../src/ASF/common/services/usb/class/cdc" -I"../src/ASF/common/services/usb/class/cdc/device" -I"../src/ASF/common/services/usb/class/composite/device"  -O1 -fdata-sections -ffunction-sections -mlong-calls -g3 -Wall -mcpu=cortex-m3 -c -pipe -fno-strict-aliasing -Wall -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -std=gnu11 -ffunction-sections -fdata-sections -Wchar-subscripts -Wcomment -Wformat=2 -Wimplicit-int -Wmain -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wtrigraphs -Wunused -Wuninitialized -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow -Wbad-function-cast -Wwrite-strings -Wsign-compare -Waggregate-return  -Wmissing-declarations -Wformat -Wmissing-format-attribute -Wno-deprecated-declarations -Wpacked -Wredundant-decls -Wnested-externs -Wlong-long -Wunreachable-code -Wcast-align --param max-inline-insns-single=500 -Wno-attributes -I ../src/naeusb -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
-	@echo Finished building: $<
-	
-
-src/ASF/common/services/usb/class/composite/device/udi_composite_desc.o: ../src/ASF/common/services/usb/class/composite/device/udi_composite_desc.c
 	@echo Building file: $<
 	@echo Invoking: ARM/GNU C Compiler : 6.3.1
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE)  -x c -mthumb -D__SAM3U2C__ -DDEBUG -D__SAM3U2C__ -DARM_MATH_CM3=true -Dprintf=iprintf -DUDD_ENABLE -DBOARD=CWLITE -Dscanf=iscanf -DSMART_CARD_USING_GPIO  -I"../common/services/usb/class/vendor/device/example" -I"../common/services/usb/class/vendor/device/example/sam3u4e_sam3u_ek" -I"../src/ASF/common/services/usb/udc" -I"../src/ASF/common/utils" -I"../src/ASF/common/services/sleepmgr" -I"../src/ASF/sam/utils/cmsis/sam3u/source/templates" -I"../src/ASF/sam/drivers/pmc" -I"../src/ASF/common/services/gpio" -I"../src/ASF/sam/boards" -I"../src/ASF/sam/drivers/pio" -I"../src/ASF/common/boards" -I"../src/ASF/sam/utils/header_files" -I"../src/ASF/common/services/ioport" -I"../src/ASF/common/services/usb/class/vendor" -I"../src/ASF/common/services/usb/class/vendor/device" -I"../src/ASF/thirdparty/CMSIS/Include" -I"../src/ASF/common/services/usb" -I"../src/ASF/sam/drivers/udphs" -I"../src/ASF/sam/utils/cmsis/sam3u/include" -I"../src/ASF/thirdparty/CMSIS/Lib/GCC" -I"../src/config" -I"../src" -I"../src/ASF/common/services/clock" -I"../src/ASF/sam/utils" -I"../src/ASF/sam/utils/preprocessor" -I"../src/ASF/sam/boards/sam3u_ek" -I"../src/ASF/common/utils/stdio/stdio_serial" -I"../src/ASF/common/services/serial" -I"../src/ASF/sam/drivers/uart" -I"../src/ASF/sam/drivers/usart" -I"../src/ASF/sam/drivers/ebi/smc" -I"../src/ASF/sam/drivers/spi" -I"../src/ASF/common/services/delay" -I"../src/ASF/sam/drivers/tc" -I"../src/ASF/sam/drivers/chipid" -I"../src/ASF/sam/drivers/efc" -I"../src/ASF/sam/services/flash_efc" -I"../src/ASF/common/services/usb/class/cdc" -I"../src/ASF/common/services/usb/class/cdc/device" -I"../src/ASF/common/services/usb/class/composite/device"  -O1 -fdata-sections -ffunction-sections -mlong-calls -g3 -Wall -mcpu=cortex-m3 -c -pipe -fno-strict-aliasing -Wall -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -std=gnu11 -ffunction-sections -fdata-sections -Wchar-subscripts -Wcomment -Wformat=2 -Wimplicit-int -Wmain -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wtrigraphs -Wunused -Wuninitialized -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow -Wbad-function-cast -Wwrite-strings -Wsign-compare -Waggregate-return  -Wmissing-declarations -Wformat -Wmissing-format-attribute -Wno-deprecated-declarations -Wpacked -Wredundant-decls -Wnested-externs -Wlong-long -Wunreachable-code -Wcast-align --param max-inline-insns-single=500 -Wno-attributes -I ../src/naeusb -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
@@ -461,6 +454,13 @@ src/naeusb/naeusb_usart.o: ../src/naeusb/naeusb_usart.c
 	
 
 src/naeusb/udc.o: ../src/naeusb/udc.c
+	@echo Building file: $<
+	@echo Invoking: ARM/GNU C Compiler : 6.3.1
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE)  -x c -mthumb -D__SAM3U2C__ -DDEBUG -D__SAM3U2C__ -DARM_MATH_CM3=true -Dprintf=iprintf -DUDD_ENABLE -DBOARD=CWLITE -Dscanf=iscanf -DSMART_CARD_USING_GPIO  -I"../common/services/usb/class/vendor/device/example" -I"../common/services/usb/class/vendor/device/example/sam3u4e_sam3u_ek" -I"../src/ASF/common/services/usb/udc" -I"../src/ASF/common/utils" -I"../src/ASF/common/services/sleepmgr" -I"../src/ASF/sam/utils/cmsis/sam3u/source/templates" -I"../src/ASF/sam/drivers/pmc" -I"../src/ASF/common/services/gpio" -I"../src/ASF/sam/boards" -I"../src/ASF/sam/drivers/pio" -I"../src/ASF/common/boards" -I"../src/ASF/sam/utils/header_files" -I"../src/ASF/common/services/ioport" -I"../src/ASF/common/services/usb/class/vendor" -I"../src/ASF/common/services/usb/class/vendor/device" -I"../src/ASF/thirdparty/CMSIS/Include" -I"../src/ASF/common/services/usb" -I"../src/ASF/sam/drivers/udphs" -I"../src/ASF/sam/utils/cmsis/sam3u/include" -I"../src/ASF/thirdparty/CMSIS/Lib/GCC" -I"../src/config" -I"../src" -I"../src/ASF/common/services/clock" -I"../src/ASF/sam/utils" -I"../src/ASF/sam/utils/preprocessor" -I"../src/ASF/sam/boards/sam3u_ek" -I"../src/ASF/common/utils/stdio/stdio_serial" -I"../src/ASF/common/services/serial" -I"../src/ASF/sam/drivers/uart" -I"../src/ASF/sam/drivers/usart" -I"../src/ASF/sam/drivers/ebi/smc" -I"../src/ASF/sam/drivers/spi" -I"../src/ASF/common/services/delay" -I"../src/ASF/sam/drivers/tc" -I"../src/ASF/sam/drivers/chipid" -I"../src/ASF/sam/drivers/efc" -I"../src/ASF/sam/services/flash_efc" -I"../src/ASF/common/services/usb/class/cdc" -I"../src/ASF/common/services/usb/class/cdc/device" -I"../src/ASF/common/services/usb/class/composite/device"  -O1 -fdata-sections -ffunction-sections -mlong-calls -g3 -Wall -mcpu=cortex-m3 -c -pipe -fno-strict-aliasing -Wall -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -std=gnu11 -ffunction-sections -fdata-sections -Wchar-subscripts -Wcomment -Wformat=2 -Wimplicit-int -Wmain -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wtrigraphs -Wunused -Wuninitialized -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow -Wbad-function-cast -Wwrite-strings -Wsign-compare -Waggregate-return  -Wmissing-declarations -Wformat -Wmissing-format-attribute -Wno-deprecated-declarations -Wpacked -Wredundant-decls -Wnested-externs -Wlong-long -Wunreachable-code -Wcast-align --param max-inline-insns-single=500 -Wno-attributes -I ../src/naeusb -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+src/naeusb/udi_composite_desc.o: ../src/naeusb/udi_composite_desc.c
 	@echo Building file: $<
 	@echo Invoking: ARM/GNU C Compiler : 6.3.1
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE)  -x c -mthumb -D__SAM3U2C__ -DDEBUG -D__SAM3U2C__ -DARM_MATH_CM3=true -Dprintf=iprintf -DUDD_ENABLE -DBOARD=CWLITE -Dscanf=iscanf -DSMART_CARD_USING_GPIO  -I"../common/services/usb/class/vendor/device/example" -I"../common/services/usb/class/vendor/device/example/sam3u4e_sam3u_ek" -I"../src/ASF/common/services/usb/udc" -I"../src/ASF/common/utils" -I"../src/ASF/common/services/sleepmgr" -I"../src/ASF/sam/utils/cmsis/sam3u/source/templates" -I"../src/ASF/sam/drivers/pmc" -I"../src/ASF/common/services/gpio" -I"../src/ASF/sam/boards" -I"../src/ASF/sam/drivers/pio" -I"../src/ASF/common/boards" -I"../src/ASF/sam/utils/header_files" -I"../src/ASF/common/services/ioport" -I"../src/ASF/common/services/usb/class/vendor" -I"../src/ASF/common/services/usb/class/vendor/device" -I"../src/ASF/thirdparty/CMSIS/Include" -I"../src/ASF/common/services/usb" -I"../src/ASF/sam/drivers/udphs" -I"../src/ASF/sam/utils/cmsis/sam3u/include" -I"../src/ASF/thirdparty/CMSIS/Lib/GCC" -I"../src/config" -I"../src" -I"../src/ASF/common/services/clock" -I"../src/ASF/sam/utils" -I"../src/ASF/sam/utils/preprocessor" -I"../src/ASF/sam/boards/sam3u_ek" -I"../src/ASF/common/utils/stdio/stdio_serial" -I"../src/ASF/common/services/serial" -I"../src/ASF/sam/drivers/uart" -I"../src/ASF/sam/drivers/usart" -I"../src/ASF/sam/drivers/ebi/smc" -I"../src/ASF/sam/drivers/spi" -I"../src/ASF/common/services/delay" -I"../src/ASF/sam/drivers/tc" -I"../src/ASF/sam/drivers/chipid" -I"../src/ASF/sam/drivers/efc" -I"../src/ASF/sam/services/flash_efc" -I"../src/ASF/common/services/usb/class/cdc" -I"../src/ASF/common/services/usb/class/cdc/device" -I"../src/ASF/common/services/usb/class/composite/device"  -O1 -fdata-sections -ffunction-sections -mlong-calls -g3 -Wall -mcpu=cortex-m3 -c -pipe -fno-strict-aliasing -Wall -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -std=gnu11 -ffunction-sections -fdata-sections -Wchar-subscripts -Wcomment -Wformat=2 -Wimplicit-int -Wmain -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wtrigraphs -Wunused -Wuninitialized -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow -Wbad-function-cast -Wwrite-strings -Wsign-compare -Waggregate-return  -Wmissing-declarations -Wformat -Wmissing-format-attribute -Wno-deprecated-declarations -Wpacked -Wredundant-decls -Wnested-externs -Wlong-long -Wunreachable-code -Wcast-align --param max-inline-insns-single=500 -Wno-attributes -I ../src/naeusb -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
@@ -731,7 +731,7 @@ all: $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES)
 $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER_SCRIPT_DEP)
 	@echo Building target: $@
 	@echo Invoking: ARM/GNU Linker : 6.3.1
-	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -mthumb -Wl,-Map="SAM3U_CW1173.map" -Wl,--start-group -larm_cortexM3l_math -lm  -Wl,--end-group -L"../cmsis/linkerScripts" -L"../src/ASF/thirdparty/CMSIS/Lib/GCC"  -Wl,--gc-sections -mcpu=cortex-m3 -Wl,--entry=Reset_Handler -Wl,--cref -mthumb -T../src/ASF/sam/utils/linker_scripts/sam3u/sam3u2/gcc/flash.ld  
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -mthumb -Wl,-Map="SAM3U_CW1173.map" -Wl,--start-group -larm_cortexM3l_math -lm  -Wl,--end-group -L"../cmsis/linkerScripts" -L"../src/ASF/thirdparty/CMSIS/Lib/GCC"  -Wl,--gc-sections -mcpu=cortex-m3 -Wl,--entry=Reset_Handler -Wl,--cref -mthumb -T../src/naeusb/flash_sam3u2.ld  
 	@echo Finished building target: $@
 	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-objcopy.exe" -O binary "SAM3U_CW1173.elf" "SAM3U_CW1173.bin"
 	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-objcopy.exe" -O ihex -R .eeprom -R .fuse -R .lock -R .signature  "SAM3U_CW1173.elf" "SAM3U_CW1173.hex"
