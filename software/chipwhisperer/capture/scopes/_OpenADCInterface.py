@@ -639,6 +639,8 @@ class OpenADCInterface(util.DisableNewAttr):
                     # segment is <samples> long; if this doesn't work, either adjust the delay manually, or use poll_done=True
                     samples = samples * segments
 
+            if offset == None:
+                offset = 0
             time.sleep((offset+samples)/adc_freq)
 
         self.arm(False) # <------ ADC will stop reading after this
@@ -1309,7 +1311,7 @@ class TriggerSettings(util.DisableNewAttr):
     def _clear_caches(self):
         self._cached_samples = None
         self._cached_offset = None
-        self._cached_segments = 1 # Husky streaming capture breaks if left as None
+        self._cached_segments = None
         self._cached_segment_cycles = None
         self._cached_decimate = None
         self._cached_presamples = None
@@ -1885,6 +1887,7 @@ class TriggerSettings(util.DisableNewAttr):
     def segment_cycles(self, num):
         if num < 0 or num > 2**20-1 or not type(num) is int or not self._is_husky:
             raise ValueError("Number of segments must be in range [0, 2^20-1]. For CW-Husky only.")
+        self._cached_segment_cycles = num
         self._set_segment_cycles(num)
 
     def _get_segment_cycles(self):
