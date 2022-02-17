@@ -212,10 +212,15 @@ class OpenADCInterface(util.DisableNewAttr):
                     datalen = 1
 
                 if self._fast_fifo_read_active and address != ADDR_ADCDATA:
-                    raise ValueError('Internal error: in fast read mode but not reading FIFO! (address=%0d, datalen=%0d). Need to add a cached setting?' % (address, datalen))
+                    scope_logger.warning("Internal error: in fast read mode but not reading FIFO! (address=%0d, datalen=%0d)." % (address, datalen))
+                    scope_logger.warning("This happens when attempting to access (read or write) some Husky FPGA setting after the")
+                    scope_logger.warning("ADC sample FIFO read has been set up; in stream mode, this is done when scope.arm() is called.")
+                    scope_logger.warning("If this happens to you as a user: access scope.* settings before calling scope.arm(), not after.")
+                    scope_logger.warning("If this happens to you as a developer, you can resolve this by caching the setting you need.")
+                    scope_logger.warning("The error trace below will show you what led to this:")
+                    raise ValueError
 
-                data = bytearray(self.serial.cmdReadMem(address, datalen))
-                return data
+                return bytearray(self.serial.cmdReadMem(address, datalen))
 
             else:
                 # Write output to memory
