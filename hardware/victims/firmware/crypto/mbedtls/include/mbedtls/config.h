@@ -4912,7 +4912,9 @@
  * This module is required for SSL/TLS up to version 1.1, for TLS 1.2
  * depending on the handshake parameters, and for SHA1-signed certificates.
  */
+#ifndef MBEDTLS_SHA1_C
 #define MBEDTLS_SHA1_C
+#endif
 
 /**
  * \def MBEDTLS_SHA256_C
