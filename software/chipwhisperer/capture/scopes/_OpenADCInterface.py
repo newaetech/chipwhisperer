@@ -1858,7 +1858,7 @@ class TriggerSettings(util.DisableNewAttr):
         if raw & 64:  stat += 'invalid downsample setting, '
         if raw & 128: stat += 'segmenting error, '
         if stat == '':
-            stat = 'no errors'
+            stat = False
         return stat
 
 
