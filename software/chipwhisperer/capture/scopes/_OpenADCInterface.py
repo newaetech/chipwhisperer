@@ -2561,6 +2561,7 @@ class ClockSettings(util.DisableNewAttr):
 
     @clkgen_freq.setter
     def clkgen_freq(self, freq):
+        self._cached_adc_freq = None
         self._autoMulDiv(freq)
         self.reset_dcms()
 
