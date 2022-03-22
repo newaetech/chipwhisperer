@@ -435,17 +435,39 @@ class OpenADCInterface(util.DisableNewAttr):
     def set_clip_errors_disabled(self, disable):
         if not self._is_husky:
             raise ValueError("For CW-Husky only.")
+        raw = self.sendMessage(CODE_READ, ADDR_NO_CLIP_ERRORS, maxResp=1)[0]
         if disable:
-            val = [1]
+            raw |= 1 # set bit 0
         else:
-            val = [0]
-        self.sendMessage(CODE_WRITE, ADDR_NO_CLIP_ERRORS, val)
+            raw &= 2 # clear bit 0
+        self.sendMessage(CODE_WRITE, ADDR_NO_CLIP_ERRORS, [raw])
 
 
     def clip_errors_disabled(self):
         if not self._is_husky:
             raise ValueError("For CW-Husky only.")
-        return self.sendMessage(CODE_READ, ADDR_NO_CLIP_ERRORS, maxResp=1)[0]
+        if self.sendMessage(CODE_READ, ADDR_NO_CLIP_ERRORS, maxResp=1)[0] & 1:
+            return True
+        else:
+            return False
+
+    def set_lo_gain_errors_disabled(self, disable):
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        raw = self.sendMessage(CODE_READ, ADDR_NO_CLIP_ERRORS, maxResp=1)[0]
+        if disable:
+            raw |= 2 # set bit 1
+        else:
+            raw &= 1 # clear bit 1
+        self.sendMessage(CODE_WRITE, ADDR_NO_CLIP_ERRORS, [raw])
+
+    def lo_gain_errors_disabled(self):
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        if self.sendMessage(CODE_READ, ADDR_NO_CLIP_ERRORS, maxResp=1)[0] & 2:
+            return True
+        else:
+            return False
 
 
     def numSamples(self):
@@ -1350,6 +1372,7 @@ class TriggerSettings(util.DisableNewAttr):
             rtn['segment_cycles'] = self.segment_cycles
             rtn['segment_cycle_counter_en'] = self.segment_cycle_counter_en
             rtn['clip_errors_disabled'] = self.clip_errors_disabled
+            rtn['lo_gain_errors_disabled'] = self.lo_gain_errors_disabled
             rtn['errors'] = self.errors
             # keep these hidden:
             #rtn['stream_segment_size'] = self.stream_segment_size
@@ -1470,14 +1493,26 @@ class TriggerSettings(util.DisableNewAttr):
     @property
     def clip_errors_disabled(self):
         """By default, ADC clipping is flagged as an error. Disable if you
-        do not want this notification (for example, when using the test ramp).
+        do not want this error notification.
         """
-        return self._get_clip_errors_disabled()
+        return self.oa.clip_errors_disabled()
 
     @clip_errors_disabled.setter
     def clip_errors_disabled(self, disable):
-        self.clear_clip_errors()
-        self._set_clip_errors_disabled(disable)
+        self.oa.set_clip_errors_disabled(disable)
+
+    @property
+    def lo_gain_errors_disabled(self):
+        """By default, captures which use less than a quarter of the ADC's
+        dynamic range flag an error, to indicate that the gain should be
+        increased. Disable if you do not want this error notification.
+        """
+        return self.oa.lo_gain_errors_disabled()
+
+    @lo_gain_errors_disabled.setter
+    def lo_gain_errors_disabled(self, disable):
+        self.oa.set_lo_gain_errors_disabled(disable)
+
 
 
     @property
@@ -1806,8 +1841,7 @@ class TriggerSettings(util.DisableNewAttr):
         .. warning:: Supported by CW-Husky only.
         """
         self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [1])
-        if not self.clip_errors_disabled:
-            self.clear_clip_errors()
+        self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [0])
 
 
     @property
@@ -1847,16 +1881,17 @@ class TriggerSettings(util.DisableNewAttr):
     def _get_errors(self, addr):
         if self.oa is None:
             return 0
-        raw = self.oa.sendMessage(CODE_READ, addr, maxResp=1)[0]
+        raw = self.oa.sendMessage(CODE_READ, addr, maxResp=2)
         stat = ''
-        if raw & 1:   stat += 'slow FIFO underflow, '
-        if raw & 2:   stat += 'slow FIFO overflow, '
-        if raw & 4:   stat += 'fast FIFO underflow, '
-        if raw & 8:   stat += 'fast FIFO overflow, '
-        if raw & 16:  stat += 'presample error, '
-        if raw & 32:  stat += 'ADC clipped, '
-        if raw & 64:  stat += 'invalid downsample setting, '
-        if raw & 128: stat += 'segmenting error, '
+        if raw[0] & 1:   stat += 'slow FIFO underflow, '
+        if raw[0] & 2:   stat += 'slow FIFO overflow, '
+        if raw[0] & 4:   stat += 'fast FIFO underflow, '
+        if raw[0] & 8:   stat += 'fast FIFO overflow, '
+        if raw[0] & 16:  stat += 'presample error, '
+        if raw[0] & 32:  stat += 'ADC clipped, '
+        if raw[0] & 64:  stat += 'invalid downsample setting, '
+        if raw[0] & 128: stat += 'segmenting error, '
+        if raw[1] & 1:   stat += 'gain too low error, '
         if stat == '':
             stat = False
         return stat
@@ -2074,21 +2109,11 @@ class TriggerSettings(util.DisableNewAttr):
     def _get_decimate(self):
         return self.oa.decimate()
 
-    def _set_clip_errors_disabled(self, disable):
-        self.oa.set_clip_errors_disabled(disable)
-
     def clear_clip_errors(self):
         """ADC clipping errors are sticky until manually cleared by calling this.
         """
         self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [1])
-        self._set_clip_errors_disabled(True)
-        self._set_clip_errors_disabled(False)
-        self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [1])
-
-
-    def _get_clip_errors_disabled(self):
-        return self.oa.clip_errors_disabled()
-
+        self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [0])
 
     def _set_num_samples(self, samples):
         if samples < 0 or not type(samples) is int:
