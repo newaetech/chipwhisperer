@@ -1827,6 +1827,38 @@ class TriggerSettings(util.DisableNewAttr):
     def errors(self):
         """Internal error flags (FPGA FIFO over/underflow)
         .. warning:: Supported by CW-Husky only.
+        Error types and their causes:
+        * 'presample error': capture trigger occurs before the requested
+                number of presamples have been collected. Reduce 
+                scope.adc.presamples or delay the capture trigger.
+        * 'ADC clipped': gain is too high; reduce it (scope.gain) or disable 
+                this error (scope.adc.clip_errors_disabled).
+        * 'gain too low error': gain is "too low" (4 bits or more of the ADC's
+                dynamic range did not get used); increase it (scope.gain) or 
+                disable this error (scope.adc.lo_gain_errors_disabled).
+        * 'invalid downsample setting': using downsampling (aka decimating) with
+                presamples and multiple segments is not allowed.
+        * 'segmenting error': the condition for starting the capture of the next
+                segment came true before the capture of the current segment
+                completed. Reduce the segment size and/or increase the time
+                between segments.
+        * 'fast FIFO underflow': shouldn't occur in isolation without
+                other errors being flagged.
+        * 'fast FIFO overflow': data is coming in fast than it's being read;
+                reduce scope.clock.adc_freq.
+        * 'slow FIFO underflow': host tried to read more ADC samples than are
+                available.
+        * 'slow FIFO overflow': data is coming in faster than it's being
+                read; reduce scope.clock.adc_freq.
+
+        To fully understand the four different FIFO errors (fast/slow
+        over/underflows), some background on Husky's sample storage
+        architecture is required.  ADC samples are first stored in a "fast"
+        FIFO which runs at the ADC sampling rate, then moved to a wider and
+        "slower" FIFO which is read by the host. Overflows or underflows can
+        occur in either FIFO. Errors can be caused from an illegal
+        configuration of scope.adc (e.g. too many samples), or attempting to
+        stream too fast.
 
         :Getter: Return the error flags.
 
