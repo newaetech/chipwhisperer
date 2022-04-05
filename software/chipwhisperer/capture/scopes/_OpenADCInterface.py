@@ -1196,6 +1196,9 @@ class GainSettings(util.DisableNewAttr):
             raise ValueError("Invalid Gain, range 0-%d only" % maxgain)
         self.gain_cached = gain
         self.oa.sendMessage(CODE_WRITE, ADDR_GAIN, [gain])
+        if self._is_husky:
+            # allow time for the new gain to "settle":
+            time.sleep(0.1)
 
     def getGain(self, cached=False):
         if cached == False:
