@@ -3042,7 +3042,7 @@ class ClockSettings(util.DisableNewAttr):
 
         return (dcmADCLocked, dcmCLKGENLocked)
 
-    def _reset_dcms(self, resetAdc=True, resetClkgen=True):
+    def _reset_dcms(self, resetAdc=True, resetClkgen=True, resetGlitch=True):
         result = self.oa.sendMessage(CODE_READ, ADDR_ADVCLK, maxResp=4)
 
         #Set reset high on requested blocks only
@@ -3064,6 +3064,14 @@ class ClockSettings(util.DisableNewAttr):
         #Load clkgen if required
         if resetClkgen:
             self._clkgenLoad()
+
+        if resetGlitch:
+            glitchaddr = 51
+            reset = self.oa.sendMessage(CODE_READ, glitchaddr, Validate=False, maxResp=8)
+            reset[5] |= (1<<1)
+            self.oa.sendMessage(CODE_WRITE, glitchaddr, reset, Validate=False)
+            reset[5] &= ~(1<<1)
+            self.oa.sendMessage(CODE_WRITE, glitchaddr, reset, Validate=False)
 
     def _get_extfrequency(self):
         """Return frequency of clock measured on EXTCLOCK pin in Hz"""
