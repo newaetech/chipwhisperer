@@ -1073,7 +1073,7 @@ class GainSettings(util.DisableNewAttr):
         return self.__repr__()
 
     @property
-    def db(self):
+    def db(self) -> float:
         """The gain of the ChipWhisperer's low-noise amplifier in dB. Ranges
         from -6.5 dB to 56 dB, depending on the amplifier settings.
 
@@ -1104,6 +1104,7 @@ class GainSettings(util.DisableNewAttr):
         This setting is applied after the gain property, resulting in the value
         of the db property. May be necessary for reaching gains higher than
 
+        :meta private:
 
         Args:
            gainmode (str): Either 'low' or 'high'.
@@ -1144,7 +1145,7 @@ class GainSettings(util.DisableNewAttr):
             return "low"
 
     @property
-    def mode(self):
+    def mode(self) -> str:
         """The current mode of the LNA.
 
         The LNA can operate in two modes: low-gain or high-gain. Generally, the
@@ -1165,7 +1166,11 @@ class GainSettings(util.DisableNewAttr):
         return self.setMode(val)
 
     def setGain(self, gain):
-        '''Set the Gain range: 0-78 for CW-Lite and CW-Pro; 0-109 for CW-Husky'''
+        '''Set the Gain range: 0-78 for CW-Lite and CW-Pro; 0-109 for CW-Husky
+
+        :meta private:
+
+        '''
         if self._is_husky:
             maxgain = 109
         else:
@@ -1271,6 +1276,8 @@ class GainSettings(util.DisableNewAttr):
 
     def auto_gain(self, margin=20):
         '''Increment gain until clipping occurs, then reduce by <margin> dB (default: 20 dB)
+
+        :meta private:
         '''
         if not self._is_husky:
             raise ValueError("Only supported on Husky")
