@@ -2399,6 +2399,25 @@ class ClockSettings(util.DisableNewAttr):
         return self.__repr__()
 
     @property
+    def enabled(self):
+        """Controls whether the Xilinx MMCM used to generate the target clock
+        is powered on or not. In Husky, an external PLL is used instead; this
+        FPGA PLL is still present but disabled by default because MMCMs are
+        quite power-hungry.
+
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        return self._getEnabled()
+
+    @enabled.setter
+    def enabled(self, enable):
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        self._setEnabled(enable)
+
+
+    @property
     def adc_src(self):
         """The clock source for the ADC module.
 
