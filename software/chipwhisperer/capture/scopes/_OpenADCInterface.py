@@ -1,7 +1,6 @@
 # -*- coding: cp1252 -*-
 
-# This file is part of the OpenADC Project. See www.newae.com for more details,
-# or the codebase at http://www.assembla.com/spaces/openadc .
+# This file is part of the OpenADC Project. See www.newae.com for more details.
 #
 # Copyright (c) 2012-2013, Colin O'Flynn <coflynn@newae.com>. All rights reserved.
 # This project is released under the Modified FreeBSD License. See LICENSE
