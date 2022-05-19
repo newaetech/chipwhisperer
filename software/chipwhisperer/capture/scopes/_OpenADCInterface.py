@@ -1095,7 +1095,7 @@ class GainSettings(util.DisableNewAttr):
         return self.__repr__()
 
     @property
-    def db(self):
+    def db(self) -> float:
         """The gain of the ChipWhisperer's low-noise amplifier in dB. Ranges
         from -6.5 dB to 56 dB, depending on the amplifier settings.
 
@@ -1126,6 +1126,7 @@ class GainSettings(util.DisableNewAttr):
         This setting is applied after the gain property, resulting in the value
         of the db property. May be necessary for reaching gains higher than
 
+        :meta private:
 
         Args:
            gainmode (str): Either 'low' or 'high'.
@@ -1166,7 +1167,7 @@ class GainSettings(util.DisableNewAttr):
             return "low"
 
     @property
-    def mode(self):
+    def mode(self) -> str:
         """The current mode of the LNA.
 
         The LNA can operate in two modes: low-gain or high-gain. Generally, the
@@ -1187,7 +1188,11 @@ class GainSettings(util.DisableNewAttr):
         return self.setMode(val)
 
     def setGain(self, gain):
-        '''Set the Gain range: 0-78 for CW-Lite and CW-Pro; 0-109 for CW-Husky'''
+        '''Set the Gain range: 0-78 for CW-Lite and CW-Pro; 0-109 for CW-Husky
+
+        :meta private:
+
+        '''
         if self._is_husky:
             maxgain = 109
         else:
@@ -1293,6 +1298,8 @@ class GainSettings(util.DisableNewAttr):
 
     def auto_gain(self, margin=20):
         '''Increment gain until clipping occurs, then reduce by <margin> dB (default: 20 dB)
+
+        :meta private:
         '''
         if not self._is_husky:
             raise ValueError("Only supported on Husky")
@@ -1433,6 +1440,8 @@ class TriggerSettings(util.DisableNewAttr):
         conditions it may be possible to obtain higher streaming performance by
         tweaking these parameters -- this depends on the sampling rate and
         capture size. But it's also easy to degrade performance.  
+
+        :meta private:
         """ 
         return self._get_stream_segment_threshold()
 
@@ -1455,6 +1464,9 @@ class TriggerSettings(util.DisableNewAttr):
         conditions it may be possible to obtain higher streaming performance by
         tweaking these parameters -- this depends on the sampling rate and
         capture size. But it's also easy to degrade performance.  
+
+        :meta private:
+
         """
         return self._get_stream_segment_size()
 
@@ -1770,26 +1782,27 @@ class TriggerSettings(util.DisableNewAttr):
         """Number of sample segments to capture.
 
         .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
-        CW-pro, see 'fifo_fill_mode' instead.
+            CW-pro, see 'fifo_fill_mode' instead.
 
         This setting must be a 16-bit positive integer. 
 
         In normal operation, segments=1. 
 
         Multiple segments are useful in two scenarios:
-        (1) Capturing only subsections of a power trace, to allow longer
+
+        #. Capturing only subsections of a power trace, to allow longer
             effective captures.  After a trigger event, the requested number of
             samples is captured every 'segment_cycles' clock cycles, 'segments'
             times. Set 'segment_cycle_counter_en' to 1 for this segment mode.
-        (2) Speeding up capture times by capturing 'segments' power traces from
+        #. Speeding up capture times by capturing 'segments' power traces from
             a single arm + capture event. Here, the requested number of samples
             is captured at every trigger event, without having to re-arm and
             download trace data between every trigger event. Set
             'segment_cycle_counter_en' to 0 for this segment mode.
 
         .. warning:: when capturing multiple segments with presamples, the total number of samples 
-        per segment must be a multiple of 3. Incorrect sample data will be obtained if this is not 
-        the case.
+            per segment must be a multiple of 3. Incorrect sample data will be obtained if this is not 
+            the case.
 
         :Getter: Return the current number of presamples
 
@@ -1828,6 +1841,7 @@ class TriggerSettings(util.DisableNewAttr):
     @property
     def errors(self):
         """Internal error flags (FPGA FIFO over/underflow)
+
         .. warning:: Supported by CW-Husky only.
         Error types and their causes:
         * 'presample error': capture trigger occurs before the requested
@@ -1872,7 +1886,9 @@ class TriggerSettings(util.DisableNewAttr):
     @errors.setter
     def errors(self, val):
         """Internal error flags (FPGA FIFO over/underflow)
+
         .. warning:: Supported by CW-Husky only.
+
         """
         self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [1])
         self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [0])
@@ -1881,6 +1897,7 @@ class TriggerSettings(util.DisableNewAttr):
     @property
     def first_error(self):
         """Reports the first error that was flagged (self.errors reports *all* errors). Useful for debugging. Read-only.
+
         .. warning:: Supported by CW-Husky only.
 
         :Getter: Return the error flags.
@@ -1894,6 +1911,7 @@ class TriggerSettings(util.DisableNewAttr):
     @property
     def first_error_state(self):
         """Reports the state the FPGA FSM state at the time of the first flagged error. Useful for debugging. Read-only.
+
         .. warning:: Supported by CW-Husky only.
 
         :Getter: Return the error flags.
@@ -1936,7 +1954,7 @@ class TriggerSettings(util.DisableNewAttr):
         """Number of clock cycles separating segments.
 
         .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
-        CW-pro, see 'fifo_fill_mode' instead.
+            CW-pro, see 'fifo_fill_mode' instead.
 
         This setting must be a 20-bit positive integer. 
 
@@ -1985,7 +2003,7 @@ class TriggerSettings(util.DisableNewAttr):
         """Number of clock cycles separating segments.
 
         .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
-        CW-pro, see 'fifo_fill_mode' instead.
+            CW-pro, see 'fifo_fill_mode' instead.
 
         Set to 0 to capture a new power trace segment every time the target
         issues a trigger event.
@@ -1996,7 +2014,6 @@ class TriggerSettings(util.DisableNewAttr):
         :Getter: Return the current value of segment_cycle_counter_en.
 
         :Setter: Set segment_cycles.
-
         """
         if not self._is_husky:
             raise ValueError("For CW-Husky only.")
@@ -2083,6 +2100,9 @@ class TriggerSettings(util.DisableNewAttr):
         :Getter: Return True if test mode is enabled and False otherwise
 
         :Setter: Enable or disable test mode
+
+        :meta private:
+
         """
         return self._get_test_mode()
 
@@ -2376,26 +2396,6 @@ class ClockSettings(util.DisableNewAttr):
 
     def __str__(self):
         return self.__repr__()
-
-    @property
-    def enabled(self):
-        """Controls whether the Xilinx MMCMs used to generate glitches are
-        powered on or not.  7-series MMCMs are power hungry. In the Husky FPGA,
-        MMCMs are estimated to consume close to half of the FPGA's power. If
-        you run into temperature issues and don't require glitching, you can
-        power down these MMCMs.
-
-        """
-        if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
-        return self._getEnabled()
-
-    @enabled.setter
-    def enabled(self, enable):
-        if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
-        self._setEnabled(enable)
-
 
     @property
     def adc_src(self):
@@ -3101,7 +3101,7 @@ class ClockSettings(util.DisableNewAttr):
 
         return (dcmADCLocked, dcmCLKGENLocked)
 
-    def _reset_dcms(self, resetAdc=True, resetClkgen=True):
+    def _reset_dcms(self, resetAdc=True, resetClkgen=True, resetGlitch=True):
         result = self.oa.sendMessage(CODE_READ, ADDR_ADVCLK, maxResp=4)
 
         #Set reset high on requested blocks only
@@ -3123,6 +3123,14 @@ class ClockSettings(util.DisableNewAttr):
         #Load clkgen if required
         if resetClkgen:
             self._clkgenLoad()
+
+        if resetGlitch:
+            glitchaddr = 51
+            reset = self.oa.sendMessage(CODE_READ, glitchaddr, Validate=False, maxResp=8)
+            reset[5] |= (1<<1)
+            self.oa.sendMessage(CODE_WRITE, glitchaddr, reset, Validate=False)
+            reset[5] &= ~(1<<1)
+            self.oa.sendMessage(CODE_WRITE, glitchaddr, reset, Validate=False)
 
     def _get_extfrequency(self):
         """Return frequency of clock measured on EXTCLOCK pin in Hz"""
