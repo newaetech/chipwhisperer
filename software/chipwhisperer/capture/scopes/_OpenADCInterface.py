@@ -1964,12 +1964,19 @@ class TriggerSettings(util.DisableNewAttr):
         following the initial trigger event. 'segment_cycle_counter_en' must
         also be set.
 
+        Typically, segment_cycles should be much greater than
+        scope.adc.samples. If they are too close, capture will fail (indicated by
+        the blinking red lights and scope.adc.errors showing either a
+        segmenting error or a FIFO over/underflow error). 
+        When presamples = 0, segment_cycles >= samples + 10.
+        When presamples > 0, segment_cycles >= samples + presamples AND segment_cycles >= samples + 10.
+
         :Getter: Return the current value of segment_cycles.
 
         :Setter: Set segment_cycles.
 
         Raises:
-           ValueError: if segments is outside of range [0, 2^16-1]
+           ValueError: if segments is outside of range [0, 2^20-1]
         """
 
         if self._cached_segment_cycles is None:
