@@ -68,6 +68,8 @@ ADDR_SEGMENT_CYCLE_COUNTER_EN = 92
 ADDR_MAX_SAMPLES = 93
 ADDR_MAX_SEGMENT_SAMPLES = 94
 
+ADDR_FIFO_STATE = 110
+
 
 CODE_READ       = 0x80
 CODE_WRITE      = 0xC0
@@ -1565,6 +1567,29 @@ class TriggerSettings(util.DisableNewAttr):
 
         self._cached_samples = samples
         self._set_num_samples(samples)
+
+    @property
+    def fifo_state(self):
+        """Husky only, for debugging: return the state of the Husky FIFO FSM.
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        state = self.oa.sendMessage(CODE_READ, ADDR_FIFO_STATE, maxResp=1)[0]
+        if state == 0:
+            return 'IDLE'
+        elif state == 1:
+            return 'PRESAMP_FILLING'
+        elif state == 2:
+            return 'PRESAMP_FULL'
+        elif state == 3:
+            return 'TRIGGERED'
+        elif state == 4:
+            return 'SEGMENT_DONE'
+        elif state == 5:
+            return 'DONE'
+        else:
+            raise ValueError("Unexpected value: %d" % state)
+
 
     @property
     def timeout(self):
