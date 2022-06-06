@@ -17,7 +17,6 @@ from collections import OrderedDict
 import copy
 
 from chipwhisperer.logging import *
-from .cwhardware.ChipWhispererHuskyMisc import XilinxDRP, XilinxMMCMDRP
 
 ADDR_GAIN       = 0
 ADDR_SETTINGS   = 1
@@ -39,6 +38,7 @@ ADDR_BYTESTORX  = 18
 ADDR_TRIGGERDUR = 20
 ADDR_MULTIECHO  = 34
 ADDR_DATA_SOURCE = 27
+ADDR_RESET      = 28
 ADDR_ADC_LOW_RES = 29
 ADDR_CLKGEN_DRP_ADDR = 30
 ADDR_CLKGEN_DRP_DATA = 31
@@ -59,6 +59,14 @@ ADDR_FIFO_NO_UNDERFLOW_ERROR = 67
 ADDR_CLKGEN_DRP_RESET  = 81
 
 ADDR_CLIP_TEST         = 85
+
+ADDR_CAPTURE_DONE   = 89
+ADDR_FIFO_FIRST_ERROR = 90
+ADDR_FIFO_FIRST_ERROR_STATE = 91
+ADDR_SEGMENT_CYCLE_COUNTER_EN = 92
+
+ADDR_MAX_SAMPLES = 93
+ADDR_MAX_SEGMENT_SAMPLES = 94
 
 
 CODE_READ       = 0x80
@@ -90,12 +98,880 @@ def SIGNEXT(x, b):
     x = x & ((1 << b) - 1)
     return (x ^ m) - m
 
+class OpenADCInterface(util.DisableNewAttr):
+
+    def __init__(self, serial_instance):
+        super().__init__()
+        self.serial = serial_instance
+        self.hwInfo = None
+        self.offset = 0.5
+        self.ddrMode = False
+        self.sysFreq = 0
+        self._bits_per_sample = 10
+        self._sbuf = []
+        self._support_decimate = True
+        self._nosampletimeout = 100
+        self._timeout = 2
+        self.presamples_desired = 0
+        self.presamples_actual = 0
+        self.presampleTempMargin = 24
+        self._stream_mode = False
+        self._stream_segment_size = 65536
+        self._support_get_duration = True
+        self._is_husky = False
+        self._fast_fifo_read_enable = True
+        self._fast_fifo_read_active = False
+        self.hwMaxSamples = 0
+        self.hwMaxSegmentSamples = 0
+        self._stream_len = 0
+        self._int_data = None
+        self._stream_rx_bytes = 0
+        self._clear_caches()
+
+        self.settings()
+
+        # Send clearing function if using streaming mode
+        if hasattr(self.serial, "stream") and self.serial.stream == False:
+            pass
+        else:
+            nullmessage = bytearray([0] * 20)
+            self.serial.write(str(nullmessage))
+
+        self.disable_newattr()
+
+    def _clear_caches(self):
+        self.cached_settings = None
+
+
+    def setStreamMode(self, stream):
+        self._stream_mode = stream
+        self.updateStreamBuffer()
+
+    def setStreamSegmentSize(self, size):
+        self._stream_segment_size = size
+
+
+    def setFastSMC(self, active):
+        self.setFastFIFORead(active)
+        self.serial.set_smc_speed(active)
+
+    def setBitsPerSample(self, bits):
+        self._bits_per_sample = bits
+
+    def setTimeout(self, timeout):
+        self._timeout = timeout
+
+    def timeout(self):
+        return self._timeout
+
+    def testAndTime(self):
+        totalbytes = 0
+        totalerror = 0
+
+        for n in range(10):
+            # Generate 500 bytes
+            testData = bytearray(list(range(250)) + list(range(250))) #bytearray(random.randint(0,255) for r in xrange(500))
+            self.sendMessage(CODE_WRITE, ADDR_MULTIECHO, testData, False)
+            testDataEcho = self.sendMessage(CODE_READ, ADDR_MULTIECHO, None, False, 502)
+            testDataEcho = testDataEcho[2:]
+
+            #Compare
+            totalerror = totalerror + len([(i,j) for i,j in zip(testData,testDataEcho) if i!=j])
+            totalbytes = totalbytes + len(testData)
+
+            scope_logger.error('%d errors in %d' % (totalerror, totalbytes))
+
+    def sendMessage(self, mode, address, payload=None, Validate=False, maxResp=None, readMask=None):
+        """Send a message out the serial port"""
+
+        if payload is None:
+            payload = []
+
+        #Get length
+        length = len(payload)
+
+        if ((mode == CODE_WRITE) and (length < 1)) or ((mode == CODE_READ) and (length != 0)):
+            scope_logger.warning('Invalid payload for mode')
+            return None
+
+        if mode == CODE_READ:
+            self.flushInput()
+
+        #Flip payload around
+        pba = bytearray(payload)
+
+        #Check if stream or newaechip mode expected
+        if hasattr(self.serial, "stream") and self.serial.stream is False:
+            #The serial interface is actually special USB Chip
+            if mode == CODE_READ:
+                if maxResp:
+                    datalen = maxResp
+                elif ADDR_ADCDATA == address:
+                    datalen = 65000
+                else:
+                    datalen = 1
+
+                if self._fast_fifo_read_active and address != ADDR_ADCDATA:
+                    scope_logger.warning("Internal error: in fast read mode but not reading FIFO! (address=%0d, datalen=%0d)." % (address, datalen))
+                    scope_logger.warning("This happens when attempting to access (read or write) some Husky FPGA setting after the")
+                    scope_logger.warning("ADC sample FIFO read has been set up; in stream mode, this is done when scope.arm() is called.")
+                    scope_logger.warning("If this happens to you as a user: access scope.* settings before calling scope.arm(), not after.")
+                    scope_logger.warning("If this happens to you as a developer, you can resolve this by caching the setting you need.")
+                    scope_logger.warning("The error trace below will show you what led to this:")
+                    raise ValueError
+
+                return bytearray(self.serial.cmdReadMem(address, datalen))
+
+            else:
+                # Write output to memory
+                self.serial.cmdWriteMem(address, pba)
+
+                # Check write was successful if validation requested
+                if Validate:
+                    check =  bytearray(self.serial.cmdReadMem(address, len(pba)))
+
+                    if readMask:
+                        try:
+                            for i, m in enumerate(readMask):
+                                check[i] = check[i] & m
+                                pba[i] = pba[i] & m
+                        except IndexError:
+                            pass
+
+                    if check != pba:
+                        errmsg = "For address 0x%02x=%d" % (address, address)
+                        errmsg += "  Sent data: "
+                        for c in pba: errmsg += "%02x" % c
+                        errmsg += " Read data: "
+                        if check:
+                            for c in check: errmsg += "%02x" % c
+                        else:
+                            errmsg += "<Timeout>"
+
+                        scope_logger.error(errmsg)
+        else:
+            # ## Setup Message
+            message = bytearray([])
+
+            # Message type
+            message.append(mode | address)
+
+            # Length
+            lenpayload = len(pba)
+            message.append(lenpayload & 0xff)
+            message.append((lenpayload >> 8) & 0xff)
+
+            # append payload
+            message = message + pba
+
+            # ## Send out serial port
+            self.serial.write(message)
+
+            # for b in message: print "%02x "%b,
+            # print ""
+
+            # ## Wait Response (if requested)
+            if mode == CODE_READ:
+                if maxResp:
+                    datalen = maxResp
+                elif ADDR_ADCDATA == address:
+                    datalen = 65000
+                else:
+                    datalen = 1
+
+                result = self.serial.read(datalen)
+
+                # Check for timeout, if so abort
+                if len(result) < 1:
+                    self.flushInput()
+                    scope_logger.warning('Timeout in read: %d (address: 0x%02x)' % (len(result), address))
+                    return None
+
+                rb = bytearray(result)
+
+                return rb
+            else:
+                if Validate:
+                    check = self.sendMessage(CODE_READ, address, maxResp=len(pba))
+
+                    if readMask:
+                        try:
+                            for i, m in enumerate(readMask):
+                                check[i] = check[i] & m
+                                pba[i] = pba[i] & m
+                        except IndexError:
+                            pass
+
+                    if check != pba:
+                        errmsg = "For address 0x%02x=%d" % (address, address)
+                        errmsg += "  Sent data: "
+                        for c in pba: errmsg += "%02x" % c
+                        errmsg += " Read data: "
+                        if check:
+                            for c in check: errmsg += "%02x" % c
+                        else:
+                            errmsg += "<Timeout>"
+
+                        scope_logger.error(errmsg)
+
+### Generic
+    def fpga_write(self, address, data):
+        """Helper function to write FPGA registers. Intended for development/debug, not for regular use.
+        """
+        return self.sendMessage(CODE_WRITE, address, data)
+
+    def fpga_read(self, address, num_bytes):
+        """Helper function to read FPGA registers. Intended for development/debug, not for regular use.
+        """
+        return self.sendMessage(CODE_READ, address, maxResp=num_bytes)
+
+    def reset_fpga(self):
+        """ Reset all FPGA resgiters to their defaults.
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        self.sendMessage(CODE_WRITE, ADDR_RESET, [1])
+        self.sendMessage(CODE_WRITE, ADDR_RESET, [0])
+
+
+    def setSettings(self, state, validate=False):
+        cmd = bytearray(1)
+        cmd[0] = state
+        self.cached_settings = state
+        self.sendMessage(CODE_WRITE, ADDR_SETTINGS, cmd, Validate=validate)
+
+    def settings(self, use_cached=False):
+        if (not use_cached) or (not self.cached_settings):
+            sets = self.sendMessage(CODE_READ, ADDR_SETTINGS)
+            if sets is None:
+                self.cached_settings = 0
+            else:
+                self.cached_settings = sets[0]
+        return self.cached_settings
+
+    def _setReset(self, value):
+        """Note: this is only intended to be called when connecting. If used outside of this, cached register values may be not reflect reality.
+        """
+        if value:
+            self.setSettings(self.settings() | SETTINGS_RESET, validate=False)
+            if self._is_husky:
+                self.hwMaxSamples = self.numMaxSamples()
+                self.hwMaxSegmentSamples = self.numMaxSegmentSamples()
+            else:
+                #Hack to adjust the hwMaxSamples since the number should be smaller than what is being returned
+                self.hwMaxSamples = self.numSamples() - 45
+            self.setNumSamples(self.hwMaxSamples)
+        else:
+            self.setSettings(self.settings() & ~SETTINGS_RESET)
+
+    def triggerNow(self):
+        initial = self.settings(True)
+        self.setSettings(initial | SETTINGS_TRIG_NOW)
+        time.sleep(0.05)
+        self.setSettings(initial & ~SETTINGS_TRIG_NOW)
+
+    def getStatus(self):
+        result = self.sendMessage(CODE_READ, ADDR_STATUS)
+
+        if len(result) == 1:
+            return result[0]
+        else:
+            return None
+
+    def setNumSamples(self, samples):
+        self.sendMessage(CODE_WRITE, ADDR_SAMPLES, list(int.to_bytes(samples, length=4, byteorder='little')))
+        self.updateStreamBuffer(samples)
+
+
+    def updateStreamBuffer(self, samples=None):
+        # yes this is a bit weird but it is so:
+        if samples is not None:
+            self._stream_len = samples
+        if self._is_husky:
+            if self._stream_mode:
+                sbuf_len = int(self._stream_len * self._bits_per_sample / 8)
+                if sbuf_len % 3:
+                    # need to capture a multiple of 3 otherwise processHuskyData may fail
+                    sbuf_len += 3 - sbuf_len % 3
+                self._sbuf = array.array('B', [0]) * sbuf_len
+                # For CW-Pro, _stream_len is the number of (10-bit) samples (which was previously set), whereas for Husky, to accomodate 8/12-bit samples, 
+                # it's the total number of bytes, so we need to update _stream_len accordingly:
+                self._stream_len = sbuf_len
+        else:
+            bufsizebytes = 0
+            if self._stream_mode:
+                nae = self.serial
+                #Save the number we will return
+                bufsizebytes = nae.cmdReadStream_bufferSize(self._stream_len)
+
+            #Generate the buffer to save buffer
+            self._sbuf = array.array('B', [0]) * bufsizebytes
+
+
+    def setDecimate(self, decsamples):
+        cmd = bytearray(2)
+        if decsamples <= 0 or decsamples >= 2**16 or not type(decsamples) is int:
+            raise ValueError("Decsamples must be a positive 16-bit integer")
+        decsamples -= 1
+        self.sendMessage(CODE_WRITE, ADDR_DECIMATE, list(int.to_bytes(decsamples, length=2, byteorder='little')))
+
+
+    def decimate(self):
+        if self._support_decimate:
+            decnum = 0x00000000
+            temp = self.sendMessage(CODE_READ, ADDR_DECIMATE, maxResp=2)
+            #If we don't support decimate just return 1 in the future to avoid
+            if temp:
+                decnum |= temp[0] << 0
+                decnum |= temp[1] << 8
+                decnum += 1
+            else:
+                self._support_decimate = False
+                decnum = 1
+        else:
+            decnum = 1
+        return decnum
+
+    def set_clip_errors_disabled(self, disable):
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        raw = self.sendMessage(CODE_READ, ADDR_NO_CLIP_ERRORS, maxResp=1)[0]
+        if disable:
+            raw |= 1 # set bit 0
+        else:
+            raw &= 2 # clear bit 0
+        self.sendMessage(CODE_WRITE, ADDR_NO_CLIP_ERRORS, [raw])
+
+
+    def clip_errors_disabled(self):
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        if self.sendMessage(CODE_READ, ADDR_NO_CLIP_ERRORS, maxResp=1)[0] & 1:
+            return True
+        else:
+            return False
+
+    def set_lo_gain_errors_disabled(self, disable):
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        raw = self.sendMessage(CODE_READ, ADDR_NO_CLIP_ERRORS, maxResp=1)[0]
+        if disable:
+            raw |= 2 # set bit 1
+        else:
+            raw &= 1 # clear bit 1
+        self.sendMessage(CODE_WRITE, ADDR_NO_CLIP_ERRORS, [raw])
+
+    def lo_gain_errors_disabled(self):
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        if self.sendMessage(CODE_READ, ADDR_NO_CLIP_ERRORS, maxResp=1)[0] & 2:
+            return True
+        else:
+            return False
+
+
+    def numSamples(self):
+        """Return the number of samples captured in one go. Returns max after resetting the hardware"""
+        temp = self.sendMessage(CODE_READ, ADDR_SAMPLES, maxResp=4)
+        samples = int.from_bytes(temp, byteorder='little')
+        return samples
+
+    def numMaxSamples(self):
+        """Return the maximum number of samples that can be captured in one go. Husky only."""
+        if not self._is_husky:
+            scope_logger.error("Supported by Husky only.")
+        return int.from_bytes(self.sendMessage(CODE_READ, ADDR_MAX_SAMPLES, maxResp=4), byteorder='little')
+
+    def numMaxSegmentSamples(self):
+        """Return the maximum number of samples that can be captured in one go when segmenting is used. Husky only."""
+        if not self._is_husky:
+            scope_logger.error("Supported by Husky only.")
+        return int.from_bytes(self.sendMessage(CODE_READ, ADDR_MAX_SEGMENT_SAMPLES, maxResp=4), byteorder='little')
+
+
+    def getBytesInFifo(self):
+        if self._is_husky:
+            scope_logger.error("Shouldn't be calling getBytesInFifo on Husky: associated register doesn't exist.")
+        else:
+            temp = self.sendMessage(CODE_READ, ADDR_BYTESTORX, maxResp=4)
+            samples = int.from_bytes(temp, byteorder='little')
+            return samples
+
+    def flushInput(self):
+        try:
+            self.serial.flushInput()
+        except AttributeError:
+            return
+
+    def devicePresent(self):
+
+        #Re-init these settings:
+        self._support_decimate = True
+
+        #Send "ping" message, wait for pong
+        msgin = bytearray([])
+        msgin.append(0xAC)
+
+        self.flushInput()
+
+        #Reset... will automatically clear by the time we are done
+        self._setReset(True)
+        self.flushInput()
+
+        #Send ping
+        self.sendMessage(CODE_WRITE, ADDR_ECHO, msgin)
+
+        #Pong?
+        msgout = self.sendMessage(CODE_READ, ADDR_ECHO)
+
+        if (msgout != msgin):
+            return False
+
+        #Init stuff
+        state = self.getStatus()
+
+        if state & STATUS_DDRMODE_MASK:
+            self.ddrMode = True
+        else:
+            self.ddrMode = False
+
+        return True
+
+    # def setDDRAddress(self, addr):
+    #     cmd = bytearray(1)
+    #     cmd[0] = ((addr >> 0) & 0xFF)
+    #     self.sendMessage(CODE_WRITE, ADDR_DDR1, cmd)
+    #     cmd[0] = ((addr >> 8) & 0xFF)
+    #     self.sendMessage(CODE_WRITE, ADDR_DDR2, cmd)
+    #     cmd[0] = ((addr >> 16) & 0xFF)
+    #     self.sendMessage(CODE_WRITE, ADDR_DDR3, cmd)
+    #     cmd[0] = ((addr >> 24) & 0xFF)
+    #     self.sendMessage(CODE_WRITE, ADDR_DDR4, cmd)
+    #
+    # def getDDRAddress(self):
+    #     addr = 0x00000000
+    #     temp = self.sendMessage(CODE_READ, ADDR_DDR1)
+    #     addr = addr | (temp[0] << 0)
+    #     temp = self.sendMessage(CODE_READ, ADDR_DDR2)
+    #     addr = addr | (temp[0] << 8)
+    #     temp = self.sendMessage(CODE_READ, ADDR_DDR3)
+    #     addr = addr | (temp[0] << 16)
+    #     temp = self.sendMessage(CODE_READ, ADDR_DDR4)
+    #     addr = addr | (temp[0] << 24)
+    #     return addr
+
+    def arm(self, enable=True):
+        # keeps calling self.setting() - what if we cache it?
+        if enable:
+            #Must arm first
+            self.setSettings(self.settings() | SETTINGS_ARM)
+        else:
+            self.setSettings(self.settings() & ~SETTINGS_ARM)
+
+    def setFastFIFORead(self, active):
+        if active:
+            self.sendMessage(CODE_WRITE, ADDR_FAST_FIFO_READ, [1])
+            self._fast_fifo_read_active = True
+        else:
+            self.sendMessage(CODE_WRITE, ADDR_FAST_FIFO_READ, [0])
+            self._fast_fifo_read_active = False
+
+    def startCaptureThread(self):
+        # Then init the stream mode stuff
+        if self._stream_mode:
+            # Stream mode adds 500mS of extra timeout on USB traffic itself...
+            scope_logger.debug("Stream on!")
+            if self._is_husky and self._fast_fifo_read_enable:
+                self.setFastSMC(1)
+            self.serial.initStreamModeCapture(self._stream_len, self._sbuf, timeout_ms=int(self._timeout * 1000) + 500, \
+                is_husky=self._is_husky, segment_size=self._stream_segment_size)
+
+
+    def capture(self, offset=None, adc_freq=29.53E6, samples=24400, segments=1, segment_cycles=0, poll_done=False):
+        timeout = False
+        if self._stream_mode:
+
+            # Wait for a trigger, letting the UI run when it can
+            starttime = datetime.datetime.now()
+            while self.serial.cmdReadStream_isDone(self._is_husky) == False:
+                # Wait for a moment before re-running the loop
+                time.sleep(0.05)
+                diff = datetime.datetime.now() - starttime
+
+                # If we've timed out, don't wait any longer for a trigger
+                if (diff.total_seconds() > self._timeout):
+                    scope_logger.warning('Timeout in OpenADC capture(), no trigger seen! Trigger forced, data is invalid')
+                    timeout = True
+                    self.triggerNow()
+                    self.serial.streamModeCaptureStream.stop = True
+                    break
+
+            if self._is_husky and self._fast_fifo_read_enable:
+                scope_logger.debug("DISABLING fast fifo read")
+                self.setFastSMC(0)
+
+            self._stream_rx_bytes, stream_timeout = self.serial.cmdReadStream(self._is_husky)
+            timeout |= stream_timeout
+            #Check the status now
+            scope_logger.debug("Streaming done, results: rx_bytes = %d"%(self._stream_rx_bytes))
+            self.arm(False)
+
+            if self._is_husky and self.sendMessage(CODE_READ, ADDR_FIFO_STAT, maxResp=1)[0] & 0x0f:
+                scope_logger.warning("FIFO error occured; see scope.adc.errors for details.")
+
+            if stream_timeout:
+                if self._stream_rx_bytes == 0: # == (self._stream_len - 3072):
+                    scope_logger.warning("Streaming mode OVERFLOW occured as trigger too fast - Adjust offset upward (suggest = 200 000)")
+                else:
+                    scope_logger.warning("Streaming mode OVERFLOW occured during capture - ADC sample clock probably too fast for stream mode (keep ADC Freq < 10 MHz)")
+                timeout = True
+        else:
+            status = self.getStatus()
+            starttime = datetime.datetime.now()
+
+            # Wait for a trigger
+            while ((status & STATUS_ARM_MASK) == STATUS_ARM_MASK) | ((status & STATUS_FIFO_MASK) == 0):
+                status = self.getStatus()
+
+                diff = datetime.datetime.now() - starttime
+
+                # If we've timed out, don't wait any longer for a trigger
+                if (diff.total_seconds() > self._timeout):
+                    scope_logger.warning('Timeout in OpenADC capture(), no trigger seen! Trigger forced, data is invalid. Status: %02x'%status)
+                    timeout = True
+                    self.triggerNow()
+
+                    #Once in timeout mode we can't rely on STATUS_ARM_MASK anymore - just wait for FIFO to fill up
+                    if (status & STATUS_FIFO_MASK) == 0:
+                        break
+
+        # give time for ADC to finish reading data
+        if self._is_husky and poll_done:
+            # poll Husky to find out when the capture is complete:
+            starttime = datetime.datetime.now()
+            while not self.sendMessage(CODE_READ, ADDR_CAPTURE_DONE, maxResp=1)[0]:
+                diff = datetime.datetime.now() - starttime
+                if (diff.total_seconds() > self._timeout):
+                    scope_logger.warning('Timeout in OpenADC capture() waiting for scope "done" to go high.')
+                    break
+        else:
+            # calculate how long the capture should take:
+            if self._is_husky:
+                # in the case of Husky, "samples" is the number of samples *per segment*:
+                if segment_cycles:
+                    # in the case of cycle-count-based segmenting, we can calculate the exact length of the capture in ADC samples:
+                    samples = segment_cycles * segments
+                else:
+                    # in the case of trigger-based segmentings, this is the best we can do for the general case: we assume that one
+                    # segment is <samples> long; if this doesn't work, either adjust the delay manually, or use poll_done=True
+                    samples = samples * segments
+
+            if offset == None:
+                offset = 0
+            time.sleep((offset+samples)/adc_freq)
+
+        self.arm(False) # <------ ADC will stop reading after this
+        return timeout
+
+    def flush(self):
+        # Flush output FIFO
+        self.sendMessage(CODE_READ, ADDR_ADCDATA, None, False, None)
+
+    def readData(self, NumberPoints=None, progressDialog=None):
+        scope_logger.debug("Reading data from OpenADC (NumberPoints=%d)..." % NumberPoints)
+        if self._is_husky: 
+            return self.readHuskyData(NumberPoints)
+        elif self._stream_mode:
+            # Process data
+            bsize = self.serial.cmdReadStream_size_of_fpgablock()
+            num_bytes = self.serial.cmdReadStream_bufferSize(self._stream_len)
+
+            # Remove sync bytes from trace
+            data = np.zeros(num_bytes, dtype=np.uint8)
+            data[0] = self._sbuf[0]
+            dbuf2_idx = 1
+            for i in range(0, self._stream_rx_bytes, bsize):
+                if self._sbuf[i] != 0xAC:
+                    scope_logger.warning("Stream mode: Expected sync byte (AC) at location %d but got %x" % (i, self._sbuf[i]))
+                    break
+                s = i + 1
+                data[dbuf2_idx: (dbuf2_idx + (bsize - 1))] = self._sbuf[s:(s + (bsize - 1))]
+
+                # Write to next section
+                dbuf2_idx += (bsize - 1)
+
+            scope_logger.debug("Stream mode: read %d bytes"%len(data))
+
+            # Turn raw bytes into samples
+            datapoints = self.processData(data, 0.0)
+
+            if datapoints is not None and len(datapoints):
+                scope_logger.debug("Stream mode: done, %d samples processed"%len(datapoints))
+            else:
+                scope_logger.warning("Stream mode: done, no samples resulted from processing")
+                datapoints = []
+
+            if len(datapoints) > NumberPoints:
+                datapoints = datapoints[0:NumberPoints]
+
+            return datapoints
+
+        else:
+            datapoints = []
+
+            if NumberPoints == None:
+                NumberPoints = 0x1000
+
+            if self.ddrMode:
+                # We were passed number of samples to read. DDR interface
+                # reads 3 points per 4 bytes, and reads in blocks of
+                # 256 bytes (e.g.: 192 samples)
+                NumberPackages = NumberPoints / 192
+
+                # If user requests we send extra then scale back afterwards
+                if (NumberPoints % 192) > 0:
+                    NumberPackages = NumberPackages + 1
+
+                start = 0
+                self.setDDRAddress(0)
+
+
+                BytesPerPackage = 257
+
+                if progressDialog:
+                    progressDialog.setMinimum(0)
+                    progressDialog.setMaximum(NumberPackages)
+            else:
+                # FIFO takes 3 samples at a time... todo figure this out
+                NumberPackages = 1
+
+                # We get 3 samples in each word returned (word = 4 bytes)
+                # So need to convert samples requested to words, rounding
+                # up if we request an incomplete number
+                nwords = NumberPoints / 3
+                if NumberPoints % 3:
+                    nwords = nwords + 1
+
+                # Return 4x as many bytes as words, +1 for sync byte
+                BytesPerPackage = nwords * 4 + 1
+
+            for status in range(0, NumberPackages):
+                # Address of DDR is auto-incremented following a read command
+                # so no need to write new address
+
+                # print "Address=%x"%self.getDDRAddress()
+
+                # print "bytes = %d"%self.getBytesInFifo()
+
+                bytesToRead = self.getBytesInFifo()
+                #print(bytesToRead)
+
+                # print bytesToRead
+
+                if bytesToRead == 0:
+                    bytesToRead = BytesPerPackage
+
+                #If bytesToRead is huge, we only read what is needed
+                #Bytes get packed 3 samples / 4 bytes
+                #Add some extra in case needed
+                hypBytes = (NumberPoints * 4)/3 + 256
+
+                bytesToRead = min(hypBytes, bytesToRead)
+
+                # +1 for sync byte
+                data = self.sendMessage(CODE_READ, ADDR_ADCDATA, None, False, bytesToRead + 1)  # BytesPerPackage)
+                #print(data)
+
+                # for p in data:
+                #       print "%x "%p,
+
+                if data is not None:
+                    data = np.array(data)
+                    datapoints = self.processData(data, 0.0)
+
+                if progressDialog:
+                    progressDialog.setValue(status)
+
+                    if progressDialog.wasCanceled():
+                        break
+
+            # for point in datapoints:
+            #       print "%3x"%(int((point+0.5)*1024))
+
+            if datapoints is None:
+                return []
+            if len(datapoints) > NumberPoints:
+                datapoints = datapoints[0:NumberPoints]
+
+            # if len(datapoints) < NumberPoints:
+            # print len(datapoints),
+            # print NumberPoints
+
+            return datapoints
+
+
+
+    def readHuskyData(self, NumberPoints=None):
+        if self._bits_per_sample == 12:
+            bytesToRead = int(np.ceil(NumberPoints*1.5))
+        else:
+            bytesToRead = NumberPoints
+        # Husky hardware always captures a multiple of 3 samples. We want to read all the captured samples.
+        if bytesToRead % 3:
+            bytesToRead += 3  - bytesToRead % 3
+        scope_logger.debug("XXX reading with NumberPoints=%d, bytesToRead=%d" % (NumberPoints, bytesToRead))
+
+        if self._stream_mode:
+            data = self._sbuf
+            scope_logger.debug('stream: got data len = %d' % len(data))
+        else:
+            if self._fast_fifo_read_enable:
+                # switch FPGA and SAM3U into fast read timing mode
+                self.setFastSMC(1)
+            data = self.sendMessage(CODE_READ, ADDR_ADCDATA, None, False, bytesToRead)
+            # switch FPGA and SAM3U back to regular read timing mode
+            if self._fast_fifo_read_enable:
+                scope_logger.debug("DISABLING fast fifo read")
+                self.setFastSMC(0)
+
+        scope_logger.debug("XXX read %d bytes; NumberPoints=%d, bytesToRead=%d" % (len(data), NumberPoints, bytesToRead))
+        if data is not None:
+            data = np.array(data)
+            datapoints = self.processHuskyData(NumberPoints, data)
+        if datapoints is None:
+            return []
+        return datapoints
+
+
+    def processHuskyData(self, NumberPoints, data):
+        if self._bits_per_sample == 12:
+            data = np.frombuffer(data, dtype=np.uint8)
+            fst_uint8, mid_uint8, lst_uint8 = np.reshape(data, (data.shape[0] // 3, 3)).astype(np.uint16).T
+            fst_uint12 = (fst_uint8 << 4) + (mid_uint8 >> 4)
+            snd_uint12 = ((mid_uint8 % 16) << 8) + lst_uint8
+            data = np.reshape(np.concatenate((fst_uint12[:, None], snd_uint12[:, None]), axis=1), 2 * fst_uint12.shape[0])
+
+        self._int_data = data[:NumberPoints]
+        fpData = data / 2**self._bits_per_sample - self.offset
+        return fpData[:NumberPoints]
+
+
+    def processData(self, data, pad=float('NaN'), debug=False):
+        if data[0] != 0xAC:
+            scope_logger.warning('Unexpected sync byte in processData(): 0x%x' % data[0])
+            #print(data)
+            return None
+
+        self._int_data = None
+
+        orig_data = copy.copy(data)
+        if debug:
+            fpData = []
+            intData = []
+            # Slow, verbose processing method
+            # Useful for fixing issues in ADC read
+            for i in range(1, len(data) - 3, 4):
+                # Convert
+                temppt = (data[i + 3] << 0) | (data[i + 2] << 8) | (data[i + 1] << 16) | (data[i + 0] << 24)
+
+                # print("%2x "%data[i])
+
+                # print "%x %x %x %x"%(data[i +0], data[i +1], data[i +2], data[i +3]);
+                # print "%x"%temppt
+
+                intpt1 = temppt & 0x3FF
+                intpt2 = (temppt >> 10) & 0x3FF
+                intpt3 = (temppt >> 20) & 0x3FF
+
+                # print "%x %x %x" % (intpt1, intpt2, intpt3)
+
+                if trigfound == False:
+                    mergpt = temppt >> 30
+                    if (mergpt != 3):
+                        trigfound = True
+                        trigsamp = trigsamp + mergpt
+                        # print "Trigger found at %d"%trigsamp
+                    else:
+                        trigsamp += 3
+
+                # input validation test: uncomment following and use
+                # ramp input on FPGA
+                ##if (intpt != lastpt + 1) and (lastpt != 0x3ff):
+                ##    print "intpt: %x lstpt %x\n"%(intpt, lastpt)
+                ##lastpt = intpt;
+
+                # print "%x %x %x"%(intpt1, intpt2, intpt3)
+
+                fpData.append(float(intpt1) / 1024.0 - self.offset)
+                fpData.append(float(intpt2) / 1024.0 - self.offset)
+                fpData.append(float(intpt3) / 1024.0 - self.offset)
+                intData.extend([intpt1, intpt2, intpt3])
+                
+        else:
+            # Fast, efficient NumPy implementation
+
+            # Figure out how many bytes we're going to process
+            # Cut off some bytes at the end: we need the length to be a multiple of 4, and we probably have extra data
+            numbytes = len(data) - 1
+            extralen = (len(data) - 1) % 4
+
+            # Copy the data into a NumPy array. For long traces this is the longest part
+            data = data[1:1+numbytes-extralen]
+
+            # Split data into groups of 4 bytes and combine into words
+            data = np.reshape(data, (-1, 4))
+            data = np.left_shift(data, [24, 16, 8, 0])
+            data = np.sum(data, 1)
+
+            # Split words into samples and trigger bytes
+            data = np.right_shift(np.reshape(data, (-1, 1)), [0, 10, 20, 30]) & 0x3FF
+            fpData = np.reshape(data[:, [0, 1, 2]], (-1))
+            trigger = data[:, 3] % 4
+            self._int_data = np.array(fpData, dtype='int16')
+            fpData = fpData / 1024.0 - self.offset
+            scope_logger.debug("Trigger_data: {} len={}".format(trigger, len(trigger)))
+
+            # Search for the trigger signal
+            trigfound = False
+            trigsamp = 0
+            for t in trigger:
+                if(t != 3):
+                    trigfound = True
+                    trigsamp = trigsamp + (t & 0x3)
+                    logging.debug("Trigger found at %d"%trigsamp)
+                    break
+                else:
+                    trigsamp += 3
+
+        #print len(fpData)
+
+        if trigfound == False:
+            scope_logger.warning('Trigger not found in ADC data. No data reported!')
+            scope_logger.debug('Trigger not found typically caused by the actual \
+            capture starting too late after the trigger event happens')
+            scope_logger.debug('Data: {}'.format(orig_data))
+
+
+        #Ensure that the trigger point matches the requested by padding/chopping
+        diff = self.presamples_desired - trigsamp
+        if diff > 0:
+            #fpData = [pad]*diff + fpData
+            fpData = np.append([pad]*diff, fpData)
+            scope_logger.warning('Pretrigger not met: Do not use downsampling and pretriggering at same time.')
+            scope_logger.debug('Pretrigger not met: can attempt to increase presampleTempMargin(in the code).')
+        else:
+            fpData = fpData[-diff:]
+
+        scope_logger.debug("Processed data, ended up with %d samples total"%len(fpData))
+
+        return fpData
 
 class HWInformation(util.DisableNewAttr):
     _name = 'HW Information'
 
-    def __init__(self, oaiface):
+    def __init__(self, oaiface : OpenADCInterface):
         # oaiface = OpenADCInterface
+        super().__init__()
         self.oa = oaiface
         self.oa.hwInfo = self
         self.sysFreq = 0
@@ -160,7 +1036,7 @@ class HWInformation(util.DisableNewAttr):
             year = ((raw[2] >> 1) & 0x3f) + 2000
             hour = ((raw[2] & 0x1) << 4) + (raw[1] >> 4)
             minute = ((raw[1] & 0xf) << 2) + (raw[0] >> 6)
-            return "{}/{}/{}, {}:{}".format(month, day, year, hour, minute)
+            return "{}/{}/{}, {:02d}:{:02d}".format(month, day, year, hour, minute)
         else:
             return None
 
@@ -190,23 +1066,27 @@ class HWInformation(util.DisableNewAttr):
 class GainSettings(util.DisableNewAttr):
     _name = 'Gain Setting'
 
-    def __init__(self, oaiface, adc):
+    def __init__(self, oaiface : OpenADCInterface, adc):
         # oaiface = OpenADCInterface
+        super().__init__()
         self.oa = oaiface
         self.adc = adc
-        self.gainlow_cached = False
         self.gain_cached = 0
         self._is_husky = False
         self._vmag_highgain = 0x1f
         self._vmag_lowgain = 0
+        self._clear_caches()
         self.disable_newattr()
 
+    def _clear_caches(self):
+        self.gainlow_cached = False
+
     def _dict_repr(self):
-        dict = OrderedDict()
-        dict['mode'] = self.mode
-        dict['gain'] = self.gain
-        dict['db'] = self.db
-        return dict
+        rtn = OrderedDict()
+        rtn['mode'] = self.mode
+        rtn['gain'] = self.gain
+        rtn['db'] = self.db
+        return rtn
 
     def __repr__(self):
         return util.dict_to_str(self._dict_repr())
@@ -215,7 +1095,7 @@ class GainSettings(util.DisableNewAttr):
         return self.__repr__()
 
     @property
-    def db(self):
+    def db(self) -> float:
         """The gain of the ChipWhisperer's low-noise amplifier in dB. Ranges
         from -6.5 dB to 56 dB, depending on the amplifier settings.
 
@@ -246,6 +1126,7 @@ class GainSettings(util.DisableNewAttr):
         This setting is applied after the gain property, resulting in the value
         of the db property. May be necessary for reaching gains higher than
 
+        :meta private:
 
         Args:
            gainmode (str): Either 'low' or 'high'.
@@ -286,7 +1167,7 @@ class GainSettings(util.DisableNewAttr):
             return "low"
 
     @property
-    def mode(self):
+    def mode(self) -> str:
         """The current mode of the LNA.
 
         The LNA can operate in two modes: low-gain or high-gain. Generally, the
@@ -307,7 +1188,11 @@ class GainSettings(util.DisableNewAttr):
         return self.setMode(val)
 
     def setGain(self, gain):
-        '''Set the Gain range: 0-78 for CW-Lite and CW-Pro; 0-109 for CW-Husky'''
+        '''Set the Gain range: 0-78 for CW-Lite and CW-Pro; 0-109 for CW-Husky
+
+        :meta private:
+
+        '''
         if self._is_husky:
             maxgain = 109
         else:
@@ -316,6 +1201,8 @@ class GainSettings(util.DisableNewAttr):
             raise ValueError("Invalid Gain, range 0-%d only" % maxgain)
         self.gain_cached = gain
         self.oa.sendMessage(CODE_WRITE, ADDR_GAIN, [gain])
+        # allow time for the new gain to "settle":
+        time.sleep(0.1)
 
     def getGain(self, cached=False):
         if cached == False:
@@ -324,7 +1211,7 @@ class GainSettings(util.DisableNewAttr):
         return self.gain_cached
 
     @property
-    def gain(self):
+    def gain(self) -> int:
         """The current LNA gain setting.
 
         This gain is a dimensionless number in the range [0, 78]. Higher value
@@ -343,7 +1230,8 @@ class GainSettings(util.DisableNewAttr):
         return self.getGain()
 
     @gain.setter
-    def gain(self, value):
+    def gain(self, value : int):
+        "test"
         self.setGain(value)
 
     def _get_gain_db(self):
@@ -410,6 +1298,8 @@ class GainSettings(util.DisableNewAttr):
 
     def auto_gain(self, margin=20):
         '''Increment gain until clipping occurs, then reduce by <margin> dB (default: 20 dB)
+
+        :meta private:
         '''
         if not self._is_husky:
             raise ValueError("Only supported on Husky")
@@ -432,11 +1322,11 @@ class GainSettings(util.DisableNewAttr):
 class TriggerSettings(util.DisableNewAttr):
     _name = 'Trigger Setup'
 
-    def __init__(self, oaiface):
+    def __init__(self, oaiface : OpenADCInterface):
         # oaiface = OpenADCInterface
+        super().__init__()
         self._new_attributes_disabled = False
         self.oa = oaiface
-        self._numSamples = 0
         self.presamples_desired = 0
         self.presamples_actual = 0
         self.presampleTempMargin = 24
@@ -450,39 +1340,54 @@ class TriggerSettings(util.DisableNewAttr):
         self._is_pro = False
         self._is_lite = False
         self._is_husky = False
-        self._cached_samples = None
-        self._cached_offset = None
-        self._cached_segments = 1 # Husky streaming capture breaks if left as None
         self._is_sakura_g = None
-
+        self._clear_caches()
         self.disable_newattr()
 
-    def _dict_repr(self):
-        dict = OrderedDict()
-        dict['state']      = self.state
-        dict['basic_mode'] = self.basic_mode
-        dict['timeout']    = self.timeout
-        dict['offset']     = self.offset
-        dict['presamples'] = self.presamples
-        dict['samples']    = self.samples
-        dict['decimate']   = self.decimate
-        dict['trig_count'] = self.trig_count
-        if self._is_pro or self._is_lite:
-            dict['fifo_fill_mode'] = self.fifo_fill_mode
-        if self._is_pro or self._is_husky:
-            dict['stream_mode'] = self.stream_mode
-        if self._is_husky:
-            dict['test_mode'] = self.test_mode
-            dict['bits_per_sample'] = self.bits_per_sample
-            dict['segments'] = self.segments
-            dict['segment_cycles'] = self.segment_cycles
-            dict['clip_errors_disabled'] = self.clip_errors_disabled
-            dict['errors'] = self.errors
-            # keep these hidden:
-            #dict['stream_segment_size'] = self.stream_segment_size
-            #dict['stream_segment_threshold'] = self.stream_segment_threshold
+    def _clear_caches(self):
+        self._cached_samples = None
+        self._cached_offset = None
+        self._cached_segments = None
+        self._cached_segment_cycles = None
+        self._cached_decimate = None
+        self._cached_presamples = None
 
-        return dict
+    def _update_caches(self):
+        self._cached_samples = self._get_num_samples()
+        self._cached_offset = self._get_offset()
+        self._cached_segments = self._get_segments()
+        self._cached_segment_cycles = self._get_segment_cycles()
+        self._cached_decimate = self._get_decimate()
+        self._cached_presamples = self._get_presamples()
+
+    def _dict_repr(self):
+        rtn = OrderedDict()
+        rtn['state']      = self.state
+        rtn['basic_mode'] = self.basic_mode
+        rtn['timeout']    = self.timeout
+        rtn['offset']     = self.offset
+        rtn['presamples'] = self.presamples
+        rtn['samples']    = self.samples
+        rtn['decimate']   = self.decimate
+        rtn['trig_count'] = self.trig_count
+        if self._is_pro or self._is_lite:
+            rtn['fifo_fill_mode'] = self.fifo_fill_mode
+        if self._is_pro or self._is_husky:
+            rtn['stream_mode'] = self.stream_mode
+        if self._is_husky:
+            rtn['test_mode'] = self.test_mode
+            rtn['bits_per_sample'] = self.bits_per_sample
+            rtn['segments'] = self.segments
+            rtn['segment_cycles'] = self.segment_cycles
+            rtn['segment_cycle_counter_en'] = self.segment_cycle_counter_en
+            rtn['clip_errors_disabled'] = self.clip_errors_disabled
+            rtn['lo_gain_errors_disabled'] = self.lo_gain_errors_disabled
+            rtn['errors'] = self.errors
+            # keep these hidden:
+            #rtn['stream_segment_size'] = self.stream_segment_size
+            #rtn['stream_segment_threshold'] = self.stream_segment_threshold
+
+        return rtn
 
     def __repr__(self):
         return util.dict_to_str(self._dict_repr())
@@ -526,25 +1431,49 @@ class TriggerSettings(util.DisableNewAttr):
 
     @property
     def stream_segment_threshold(self):
-        """Only available on CW-Husky.
-        TODO: when stable, document (including limits), or maybe hide?
-        """
+        """Only available on CW-Husky. ** Internal parameter which should not
+        be tweaked unless you know what you're doing. **
+        
+        For streaming, this many samples must be available to be read from the
+        FPGA before the SAM3U starts a burst read of <stream_segment_size>
+        bytes.  Normally these parameters are both set to 65536. Under some
+        conditions it may be possible to obtain higher streaming performance by
+        tweaking these parameters -- this depends on the sampling rate and
+        capture size. But it's also easy to degrade performance.  
+
+        :meta private:
+        """ 
         return self._get_stream_segment_threshold()
 
     @stream_segment_threshold.setter
     def stream_segment_threshold(self, size):
+        if size < 1 or size > 131070 or not type(size) is int:
+            raise ValueError("Number of segments must be in range [1, 131070]")
         self._set_stream_segment_threshold(size)
 
 
     @property
     def stream_segment_size(self):
-        """Only available on CW-Husky.
-        TODO: when stable, document (including limits), or maybe hide?
+        """Only available on CW-Husky. ** Internal parameter which should not
+        be tweaked unless you know what you're doing. **
+        
+        For streaming, this is the size of the burst that the SAM3U reads from
+        from the FPGA.  A burst read doesn't start until
+        <stream_segment_threshold> bytes are available to be read from the
+        FPGA.  Normally these parameters are both set to 65536. Under some
+        conditions it may be possible to obtain higher streaming performance by
+        tweaking these parameters -- this depends on the sampling rate and
+        capture size. But it's also easy to degrade performance.  
+
+        :meta private:
+
         """
         return self._get_stream_segment_size()
 
     @stream_segment_size.setter
     def stream_segment_size(self, size):
+        if size < 1 or size > 131070 or not type(size) is int:
+            raise ValueError("Number of segments must be in range [1, 131070]")
         self._set_stream_segment_size(size)
 
 
@@ -567,7 +1496,9 @@ class TriggerSettings(util.DisableNewAttr):
         Raises:
            ValueError: if the new factor is not positive
         """
-        return self._get_decimate()
+        if self._cached_decimate is None:
+            self._cached_decimate = self._get_decimate()
+        return self._cached_decimate
 
     @decimate.setter
     def decimate(self, decfactor):
@@ -575,14 +1506,27 @@ class TriggerSettings(util.DisableNewAttr):
 
     @property
     def clip_errors_disabled(self):
-        """TODO
+        """By default, ADC clipping is flagged as an error. Disable if you
+        do not want this error notification.
         """
-        return self._get_clip_errors_disabled()
+        return self.oa.clip_errors_disabled()
 
     @clip_errors_disabled.setter
     def clip_errors_disabled(self, disable):
-        self.clear_clip_errors()
-        self._set_clip_errors_disabled(disable)
+        self.oa.set_clip_errors_disabled(disable)
+
+    @property
+    def lo_gain_errors_disabled(self):
+        """By default, captures which use less than a quarter of the ADC's
+        dynamic range flag an error, to indicate that the gain should be
+        increased. Disable if you do not want this error notification.
+        """
+        return self.oa.lo_gain_errors_disabled()
+
+    @lo_gain_errors_disabled.setter
+    def lo_gain_errors_disabled(self, disable):
+        self.oa.set_lo_gain_errors_disabled(disable)
+
 
 
     @property
@@ -682,11 +1626,13 @@ class TriggerSettings(util.DisableNewAttr):
         Raises:
            ValueError: if presamples is outside of range [0, samples]
         """
-        return self._get_presamples()
+        if self._cached_presamples is None:
+            self._cached_presamples = self._get_presamples()
+        return self._cached_presamples
 
     @presamples.setter
     def presamples(self, setting):
-        self._set_presamples(setting)
+        self._cached_presamples = self._set_presamples(setting)
 
     @property
     def basic_mode(self):
@@ -836,23 +1782,27 @@ class TriggerSettings(util.DisableNewAttr):
         """Number of sample segments to capture.
 
         .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
-        CW-pro, see 'fifo_fill_mode' instead.
+            CW-pro, see 'fifo_fill_mode' instead.
 
         This setting must be a 16-bit positive integer. 
 
         In normal operation, segments=1. 
 
         Multiple segments are useful in two scenarios:
-        (1) Capturing only subsections of a power trace, to allow longer effective captures.
-            After a trigger event, the requested number of samples is captured every 'segment_cycles' 
-            clock cycles.
-        (2) Speeding up capture times by capturing 'segments' power traces from a single arm + capture
-            event. Here, the requested number of samples is captured at every trigger event, without
-            having to re-arm and download trace data between every trigger event.
+
+        #. Capturing only subsections of a power trace, to allow longer
+            effective captures.  After a trigger event, the requested number of
+            samples is captured every 'segment_cycles' clock cycles, 'segments'
+            times. Set 'segment_cycle_counter_en' to 1 for this segment mode.
+        #. Speeding up capture times by capturing 'segments' power traces from
+            a single arm + capture event. Here, the requested number of samples
+            is captured at every trigger event, without having to re-arm and
+            download trace data between every trigger event. Set
+            'segment_cycle_counter_en' to 0 for this segment mode.
 
         .. warning:: when capturing multiple segments with presamples, the total number of samples 
-        per segment must be a multiple of 3. Incorrect sample data will be obtained if this is not 
-        the case.
+            per segment must be a multiple of 3. Incorrect sample data will be obtained if this is not 
+            the case.
 
         :Getter: Return the current number of presamples
 
@@ -869,14 +1819,16 @@ class TriggerSettings(util.DisableNewAttr):
 
     @segments.setter
     def segments(self, num):
-        if num < 1 or num > 2**16-1:
-            raise ValueError("Number of segments must be in range [1, 2^16-1]")
+        if num < 1 or num > 2**16-1 or not type(num) is int or not self._is_husky:
+            raise ValueError("Number of segments must be in range [1, 2^16-1]. For CW-Husky only.")
         self._cached_segments = num
         self._set_segments(num)
 
     def _get_segments(self):
         if self.oa is None:
             return 0
+        elif not self._is_husky:
+            return 1
         cmd = self.oa.sendMessage(CODE_READ, ADDR_SEGMENTS, maxResp=2)
         segments = int.from_bytes(cmd, byteorder='little')
         return segments
@@ -889,41 +1841,112 @@ class TriggerSettings(util.DisableNewAttr):
     @property
     def errors(self):
         """Internal error flags (FPGA FIFO over/underflow)
+
         .. warning:: Supported by CW-Husky only.
+
+        Error types and their causes:
+            * 'presample error': capture trigger occurs before the requested
+                    number of presamples have been collected. Reduce 
+                    scope.adc.presamples or delay the capture trigger.
+            * 'ADC clipped': gain is too high; reduce it (scope.gain) or disable 
+                    this error (scope.adc.clip_errors_disabled).
+            * 'gain too low error': gain is "too low" (4 bits or more of the ADC's
+                    dynamic range did not get used); increase it (scope.gain) or 
+                    disable this error (scope.adc.lo_gain_errors_disabled).
+            * 'invalid downsample setting': using downsampling (aka decimating) with
+                    presamples and multiple segments is not allowed.
+            * 'segmenting error': the condition for starting the capture of the next
+                    segment came true before the capture of the current segment
+                    completed. Reduce the segment size and/or increase the time
+                    between segments.
+            * 'fast FIFO underflow': shouldn't occur in isolation without
+                    other errors being flagged.
+            * 'fast FIFO overflow': data is coming in fast than it's being read;
+                    reduce scope.clock.adc_freq.
+            * 'slow FIFO underflow': host tried to read more ADC samples than are
+                    available.
+            * 'slow FIFO overflow': data is coming in faster than it's being
+                    read; reduce scope.clock.adc_freq.
+
+        To fully understand the four different FIFO errors (fast/slow
+        over/underflows), some background on Husky's sample storage
+        architecture is required.  ADC samples are first stored in a "fast"
+        FIFO which runs at the ADC sampling rate, then moved to a wider and
+        "slower" FIFO which is read by the host. Overflows or underflows can
+        occur in either FIFO. Errors can be caused from an illegal
+        configuration of scope.adc (e.g. too many samples), or attempting to
+        stream too fast.
 
         :Getter: Return the error flags.
 
         :Setter: Clear error flags.
 
         """
-        return self._get_errors()
+        return self._get_errors(ADDR_FIFO_STAT)
 
     @errors.setter
     def errors(self, val):
         """Internal error flags (FPGA FIFO over/underflow)
+
         .. warning:: Supported by CW-Husky only.
+
         """
         self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [1])
-        if not self.clip_errors_disabled:
-            self.clear_clip_errors()
+        self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [0])
 
 
+    @property
+    def first_error(self):
+        """Reports the first error that was flagged (self.errors reports *all* errors). Useful for debugging. Read-only.
 
-    def _get_errors(self):
+        .. warning:: Supported by CW-Husky only.
+
+        :Getter: Return the error flags.
+
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        return self._get_errors(ADDR_FIFO_FIRST_ERROR)
+
+
+    @property
+    def first_error_state(self):
+        """Reports the state the FPGA FSM state at the time of the first flagged error. Useful for debugging. Read-only.
+
+        .. warning:: Supported by CW-Husky only.
+
+        :Getter: Return the error flags.
+
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        raw = self.oa.sendMessage(CODE_READ, ADDR_FIFO_FIRST_ERROR_STATE, maxResp=1)[0]
+        if   raw == 0: return "IDLE"
+        elif raw == 1: return "PRESAMP_FILLING"
+        elif raw == 2: return "PRESAMP_FULL"
+        elif raw == 3: return "TRIGGERED"
+        elif raw == 4: return "SEGMENT_DONE"
+        elif raw == 5: return "DONE"
+        else:
+            raise ValueError(raw)
+
+
+    def _get_errors(self, addr):
         if self.oa is None:
             return 0
-        raw = self.oa.sendMessage(CODE_READ, ADDR_FIFO_STAT, maxResp=1)[0]
+        raw = self.oa.sendMessage(CODE_READ, addr, maxResp=2)
         stat = ''
-        if raw & 1:   stat += 'slow FIFO underflow, '
-        if raw & 2:   stat += 'slow FIFO overflow, '
-        if raw & 4:   stat += 'fast FIFO underflow, '
-        if raw & 8:   stat += 'fast FIFO overflow, '
-        if raw & 16:  stat += 'presample error, '
-        if raw & 32:  stat += 'ADC clipped, '
-        if raw & 64:  stat += 'invalid downsample setting, '
-        if raw & 128: stat += 'segmenting error, '
+        if raw[0] & 1:   stat += 'slow FIFO underflow, '
+        if raw[0] & 2:   stat += 'slow FIFO overflow, '
+        if raw[0] & 4:   stat += 'fast FIFO underflow, '
+        if raw[0] & 8:   stat += 'fast FIFO overflow, '
+        if raw[0] & 16:  stat += 'presample error, '
+        if raw[0] & 32:  stat += 'ADC clipped, '
+        if raw[0] & 64:  stat += 'invalid downsample setting, '
+        if raw[0] & 128: stat += 'segmenting error, '
+        if raw[1] & 1:   stat += 'gain too low error, '
         if stat == '':
-            stat = 'no errors'
+            stat = False
         return stat
 
 
@@ -932,31 +1955,45 @@ class TriggerSettings(util.DisableNewAttr):
         """Number of clock cycles separating segments.
 
         .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
-        CW-pro, see 'fifo_fill_mode' instead.
+            CW-pro, see 'fifo_fill_mode' instead.
 
         This setting must be a 20-bit positive integer. 
 
-        When 'segments' is greater than one, set segment_cycles to a non-zero value to capture a new 
-        segment every 'segment_cycles' clock cycles.
+        When 'segments' is greater than one, set segment_cycles to a non-zero
+        value to capture a new segment every 'segment_cycles' clock cycles
+        following the initial trigger event. 'segment_cycle_counter_en' must
+        also be set.
+
+        Typically, segment_cycles should be much greater than
+        scope.adc.samples. If they are too close, capture will fail (indicated by
+        the blinking red lights and scope.adc.errors showing either a
+        segmenting error or a FIFO over/underflow error). 
+        When presamples = 0, segment_cycles >= samples + 10.
+        When presamples > 0, segment_cycles >= samples + presamples AND segment_cycles >= samples + 10.
 
         :Getter: Return the current value of segment_cycles.
 
         :Setter: Set segment_cycles.
 
         Raises:
-           ValueError: if segments is outside of range [0, 2^16-1]
+           ValueError: if segments is outside of range [0, 2^20-1]
         """
 
-        return self._get_segment_cycles()
+        if self._cached_segment_cycles is None:
+            self._cached_segment_cycles = self._get_segment_cycles()
+        return self._cached_segment_cycles
 
     @segment_cycles.setter
     def segment_cycles(self, num):
-        if num < 0 or num > 2**20-1:
-            raise ValueError("Number of segments must be in range [0, 2^20-1]")
+        if num < 0 or num > 2**20-1 or not type(num) is int or not self._is_husky:
+            raise ValueError("Number of segments must be in range [0, 2^20-1]. For CW-Husky only.")
+        self._cached_segment_cycles = num
         self._set_segment_cycles(num)
 
     def _get_segment_cycles(self):
         if self.oa is None:
+            return 0
+        elif not self._is_husky:
             return 0
 
         cmd = self.oa.sendMessage(CODE_READ, ADDR_SEGMENT_CYCLES, maxResp=3)
@@ -966,6 +2003,43 @@ class TriggerSettings(util.DisableNewAttr):
 
     def _set_segment_cycles(self, num):
         self.oa.sendMessage(CODE_WRITE, ADDR_SEGMENT_CYCLES, list(int.to_bytes(num, length=3, byteorder='little')))
+
+
+
+    @property
+    def segment_cycle_counter_en(self):
+        """Number of clock cycles separating segments.
+
+        .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
+            CW-pro, see 'fifo_fill_mode' instead.
+
+        Set to 0 to capture a new power trace segment every time the target
+        issues a trigger event.
+
+        Set to 1 to capture a new power trace segment every 'segment_cycles'
+        clock cycles after a single trigger event.
+
+        :Getter: Return the current value of segment_cycle_counter_en.
+
+        :Setter: Set segment_cycles.
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        raw = self.oa.sendMessage(CODE_READ, ADDR_SEGMENT_CYCLE_COUNTER_EN, Validate=False, maxResp=1)[0]
+        if raw == 1:
+            return True
+        elif raw == 0:
+            return False
+        else:
+            raise ValueError("Unexpected: read %d" % raw)
+
+    @segment_cycle_counter_en.setter
+    def segment_cycle_counter_en(self, enable):
+        if enable:
+            val = [1]
+        else:
+            val = [0]
+        self.oa.sendMessage(CODE_WRITE, ADDR_SEGMENT_CYCLE_COUNTER_EN, val, Validate=False)
 
 
 
@@ -991,7 +2065,7 @@ class TriggerSettings(util.DisableNewAttr):
         scope_logger.warning('Changing this parameter can degrade performance and/or cause reads to fail entirely; use at your own risk.')
         self._stream_segment_threshold = size
         #Write to FPGA
-        self.oa.sendMessage(CODE_WRITE, ADDR_STREAM_SEGMENT_THRESHOLD, list(int.to_bytes(size, length=4, byteorder='little')))
+        self.oa.sendMessage(CODE_WRITE, ADDR_STREAM_SEGMENT_THRESHOLD, list(int.to_bytes(size, length=3, byteorder='little')))
 
 
     def _set_stream_segment_size(self, size):
@@ -1002,7 +2076,7 @@ class TriggerSettings(util.DisableNewAttr):
 
 
     def _get_stream_segment_threshold(self):
-        raw = self.oa.sendMessage(CODE_READ, ADDR_STREAM_SEGMENT_THRESHOLD, maxResp=4)
+        raw = self.oa.sendMessage(CODE_READ, ADDR_STREAM_SEGMENT_THRESHOLD, maxResp=3)
         return int.from_bytes(raw, byteorder='little')
 
     def _get_stream_segment_size(self):
@@ -1034,6 +2108,9 @@ class TriggerSettings(util.DisableNewAttr):
         :Getter: Return True if test mode is enabled and False otherwise
 
         :Setter: Enable or disable test mode
+
+        :meta private:
+
         """
         return self._get_test_mode()
 
@@ -1089,44 +2166,28 @@ class TriggerSettings(util.DisableNewAttr):
         if self.presamples > 0 and decsamples > 1 and self._is_husky:
             raise Warning("Decimating with presamples is not supported on Husky.")
         self.oa.setDecimate(decsamples)
+        self._cached_decimate = decsamples
 
     def _get_decimate(self):
         return self.oa.decimate()
-
-    def _set_clip_errors_disabled(self, disable):
-        self.oa.set_clip_errors_disabled(disable)
 
     def clear_clip_errors(self):
         """ADC clipping errors are sticky until manually cleared by calling this.
         """
         self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [1])
-        self._set_clip_errors_disabled(True)
-        self._set_clip_errors_disabled(False)
-        self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [1])
-
-
-    def _get_clip_errors_disabled(self):
-        return self.oa.clip_errors_disabled()
-
+        self.oa.sendMessage(CODE_WRITE, ADDR_FIFO_STAT, [0])
 
     def _set_num_samples(self, samples):
-        if samples < 0:
-            raise ValueError("Can't use negative number of samples")
-        # TODO: raise ValueError or round down for sample counts too high
-        # TODO: raise TypeError for non-integers
+        if samples < 0 or not type(samples) is int:
+            raise ValueError("Samples must be a positive integer")
         if self._is_husky and samples < 7:
-            scope_logger.warning('There may be issues with this few samples')
-        self._numSamples = samples
+            scope_logger.warning('There may be issues with this few samples on Husky; a minimum of 7 samples is recommended')
         self.oa.setNumSamples(samples)
 
-    def _get_num_samples(self, cached=True):
+    def _get_num_samples(self):
         if self.oa is None:
             return 0
-
-        if cached:
-            return self._numSamples
-        else:
-            return self.oa.numSamples()
+        return self.oa.numSamples()
 
 
     def _get_underflow_reads(self):
@@ -1149,10 +2210,8 @@ class TriggerSettings(util.DisableNewAttr):
         return self._timeout
 
     def _set_offset(self,  offset):
-        if offset < 0:
-            raise ValueError("Offset must be a non-negative integer")
-        if offset >= 2**32:
-            raise ValueError("Offset must fit into a 32-bit unsigned integer")
+        if offset < 0 or offset >= 2**32 or not type(offset) is int:
+            raise ValueError("Offset must be a non-negative 32-bit unsigned integer")
         self.oa.sendMessage(CODE_WRITE, ADDR_OFFSET, list(int.to_bytes(offset, length=4, byteorder='little')))
 
     def _get_offset(self):
@@ -1186,8 +2245,8 @@ class TriggerSettings(util.DisableNewAttr):
 
         if self._is_pro or self._is_lite or self._is_husky:
             #CW-1200 Hardware / CW-Lite / CW-Husky
-            samplesact = samples
-            self.presamples_actual = samples
+            samplesact = int(samples)
+            self.presamples_actual = samplesact
         else:
             #Other Hardware
             if samples > 0:
@@ -1306,36 +2365,39 @@ class ClockSettings(util.DisableNewAttr):
     _name = 'Clock Setup'
     _readMask = [0x1f, 0xff, 0xff, 0xfd]
 
-    def __init__(self, oaiface, hwinfo=None):
+    def __init__(self, oaiface : OpenADCInterface, hwinfo=None):
+        from .cwhardware.ChipWhispererHuskyMisc import XilinxDRP, XilinxMMCMDRP
+        super().__init__()
         self.oa = oaiface
         self._hwinfo = hwinfo
         self._freqExt = 10e6
         self._is_husky = False
+        self._cached_adc_freq = None
         self.drp = XilinxDRP(oaiface, ADDR_CLKGEN_DRP_DATA, ADDR_CLKGEN_DRP_ADDR, ADDR_CLKGEN_DRP_RESET)
         self.mmcm = XilinxMMCMDRP(self.drp)
         self.disable_newattr()
 
     def _dict_repr(self):
-        dict = OrderedDict()
+        rtn = OrderedDict()
         if self._is_husky:
-            dict['enabled'] = self.enabled
-        dict['adc_src']    = self.adc_src
-        dict['adc_phase']  = self.adc_phase
-        dict['adc_freq']   = self.adc_freq
-        dict['adc_rate']   = self.adc_rate
-        dict['adc_locked'] = self.adc_locked
+            rtn['enabled'] = self.enabled
+        rtn['adc_src']    = self.adc_src
+        rtn['adc_phase']  = self.adc_phase
+        rtn['adc_freq']   = self.adc_freq
+        rtn['adc_rate']   = self.adc_rate
+        rtn['adc_locked'] = self.adc_locked
 
-        dict['freq_ctr']     = self.freq_ctr
-        dict['freq_ctr_src'] = self.freq_ctr_src
+        rtn['freq_ctr']     = self.freq_ctr
+        rtn['freq_ctr_src'] = self.freq_ctr_src
 
-        dict['clkgen_src']    = self.clkgen_src
-        dict['extclk_freq']   = self.extclk_freq
-        dict['clkgen_mul']    = self.clkgen_mul
-        dict['clkgen_div']    = self.clkgen_div
-        dict['clkgen_freq']   = self.clkgen_freq
-        dict['clkgen_locked'] = self.clkgen_locked
+        rtn['clkgen_src']    = self.clkgen_src
+        rtn['extclk_freq']   = self.extclk_freq
+        rtn['clkgen_mul']    = self.clkgen_mul
+        rtn['clkgen_div']    = self.clkgen_div
+        rtn['clkgen_freq']   = self.clkgen_freq
+        rtn['clkgen_locked'] = self.clkgen_locked
 
-        return dict
+        return rtn
 
     def __repr__(self):
         return util.dict_to_str(self._dict_repr())
@@ -1345,11 +2407,10 @@ class ClockSettings(util.DisableNewAttr):
 
     @property
     def enabled(self):
-        """Controls whether the Xilinx MMCMs used to generate glitches are
-        powered on or not.  7-series MMCMs are power hungry. In the Husky FPGA,
-        MMCMs are estimated to consume close to half of the FPGA's power. If
-        you run into temperature issues and don't require glitching, you can
-        power down these MMCMs.
+        """Controls whether the Xilinx MMCM used to generate the target clock
+        is powered on or not. In Husky, an external PLL is used instead; this
+        FPGA PLL is still present but disabled by default because MMCMs are
+        quite power-hungry.
 
         """
         if not self._is_husky:
@@ -1393,6 +2454,7 @@ class ClockSettings(util.DisableNewAttr):
     def adc_src(self, src):
         # We need to pass a tuple into _setAdcSource() so the ADC source
         # parameter recognizes this input
+        self._cached_adc_freq = None
         if src == "clkgen_x4":
             self._setAdcSource(("dcm", 4, "clkgen"))
         elif src == "clkgen_x1":
@@ -1585,6 +2647,7 @@ class ClockSettings(util.DisableNewAttr):
 
     @clkgen_freq.setter
     def clkgen_freq(self, freq):
+        self._cached_adc_freq = None
         self._autoMulDiv(freq)
         self.reset_dcms()
 
@@ -1694,6 +2757,10 @@ class ClockSettings(util.DisableNewAttr):
         """
         return self._getClkgenMul()
 
+    @clkgen_mul.setter
+    def clkgen_mul(self, mul):
+        self._setClkgenMulWrapper(mul)
+
     def _getClkgenMul(self):
         timeout = 2
         while timeout > 0:
@@ -1718,9 +2785,6 @@ class ClockSettings(util.DisableNewAttr):
         # raise IOError("clkgen never loaded value?")
         return 0
 
-    @clkgen_mul.setter
-    def clkgen_mul(self, mul):
-        self._setClkgenMulWrapper(mul)
 
     def _setClkgenMulWrapper(self, mul):
         if self.oa.hwInfo.is_cwhusky():
@@ -1760,6 +2824,16 @@ class ClockSettings(util.DisableNewAttr):
         """
         return self._getClkgenDiv()
 
+    @clkgen_div.setter
+    def clkgen_div(self, div):
+        if self.oa.hwInfo.is_cwhusky():
+            # Husky PLL takes two dividers; if only one was provided, set the other to 1
+            if type(div) == int:
+                div = [div, 1]
+            self._set_husky_clkgen_div(div)
+        else:
+            self._setClkgenDivWrapper(div)
+
     def _getClkgenDiv(self):
         if self.oa is None:
             return 2
@@ -1785,15 +2859,6 @@ class ClockSettings(util.DisableNewAttr):
                       " source settings. CLKGEN clock results are currently invalid.")
         return 1
 
-    @clkgen_div.setter
-    def clkgen_div(self, div):
-        if self.oa.hwInfo.is_cwhusky():
-            # Husky PLL takes two dividers; if only one was provided, set the other to 1
-            if type(div) == int:
-                div = [div, 1]
-            self._set_husky_clkgen_div(div)
-        else:
-            self._setClkgenDivWrapper(div)
 
 
     def _set_husky_clkgen_div(self, div):
@@ -1982,8 +3047,8 @@ class ClockSettings(util.DisableNewAttr):
         '''Set the phase adjust, range -255 to 255'''
         try:
             phase_int = int(phase)
-        except ValueError:
-            raise TypeError("Can't convert %s to int" % phase)
+        except ValueError as e:
+            raise TypeError("Can't convert %s to int" % phase) from e
 
         if self._is_husky:
             if phase_int < -32767 or phase_int > 32767:
@@ -2063,7 +3128,7 @@ class ClockSettings(util.DisableNewAttr):
 
         return (dcmADCLocked, dcmCLKGENLocked)
 
-    def _reset_dcms(self, resetAdc=True, resetClkgen=True):
+    def _reset_dcms(self, resetAdc=True, resetClkgen=True, resetGlitch=True):
         result = self.oa.sendMessage(CODE_READ, ADDR_ADVCLK, maxResp=4)
 
         #Set reset high on requested blocks only
@@ -2086,6 +3151,14 @@ class ClockSettings(util.DisableNewAttr):
         if resetClkgen:
             self._clkgenLoad()
 
+        if resetGlitch:
+            glitchaddr = 51
+            reset = self.oa.sendMessage(CODE_READ, glitchaddr, Validate=False, maxResp=8)
+            reset[5] |= (1<<1)
+            self.oa.sendMessage(CODE_WRITE, glitchaddr, reset, Validate=False)
+            reset[5] &= ~(1<<1)
+            self.oa.sendMessage(CODE_WRITE, glitchaddr, reset, Validate=False)
+
     def _get_extfrequency(self):
         """Return frequency of clock measured on EXTCLOCK pin in Hz"""
         if self.oa is None:
@@ -2106,905 +3179,17 @@ class ClockSettings(util.DisableNewAttr):
         if self.oa is None:
             return 0
 
-        #Get sample frequency
-        samplefreq = float(self.oa.hwInfo.sysFrequency()) / float(pow(2,23))
+        if self._cached_adc_freq is None:
+            #Get sample frequency
+            samplefreq = float(self.oa.hwInfo.sysFrequency()) / float(pow(2,23))
 
-        temp = self.oa.sendMessage(CODE_READ, ADDR_ADCFREQ, maxResp=4)
-        freq = int.from_bytes(temp, byteorder='little')
+            temp = self.oa.sendMessage(CODE_READ, ADDR_ADCFREQ, maxResp=4)
+            freq = int.from_bytes(temp, byteorder='little')
 
-        measured = freq * samplefreq
+            self._cached_adc_freq = int(freq * samplefreq)
 
-        return int(measured)
+        return self._cached_adc_freq
 
     def _adcSampleRate(self):
         """Return the sample rate, takes account of decimation factor (if set)"""
         return self._getAdcFrequency() / self.oa.decimate()
-
-
-class OpenADCInterface:
-
-    cached_settings = None
-    def __init__(self, serial_instance):
-        self.serial = serial_instance
-        self.offset = 0.5
-        self.ddrMode = False
-        self.sysFreq = 0
-        self._bits_per_sample = 10
-        self._sbuf = []
-        self._support_decimate = True
-        self._nosampletimeout = 100
-        self._timeout = 2
-        self.presamples_desired = 0
-        self.presamples_actual = 0
-        self.presampleTempMargin = 24
-        self._stream_mode = False
-        self._stream_segment_size = 65536
-        self._support_get_duration = True
-        self._is_husky = False
-        self._fast_fifo_read_enable = True
-        self._fast_fifo_read_active = False
-
-        self.settings()
-
-        # Send clearing function if using streaming mode
-        if hasattr(self.serial, "stream") and self.serial.stream == False:
-            pass
-        else:
-            nullmessage = bytearray([0] * 20)
-            self.serial.write(str(nullmessage))
-
-        self.setReset(True)
-        self.setReset(False)
-
-    def setStreamMode(self, stream):
-        self._stream_mode = stream
-        self.updateStreamBuffer()
-
-    def setStreamSegmentSize(self, size):
-        self._stream_segment_size = size
-
-
-    def setFastSMC(self, fast):
-        self.serial.set_smc_speed(fast)
-
-    def setBitsPerSample(self, bits):
-        self._bits_per_sample = bits
-
-    def setTimeout(self, timeout):
-        self._timeout = timeout
-
-    def timeout(self):
-        return self._timeout
-
-    def testAndTime(self):
-        totalbytes = 0
-        totalerror = 0
-
-        for n in range(10):
-            # Generate 500 bytes
-            testData = bytearray(list(range(250)) + list(range(250))) #bytearray(random.randint(0,255) for r in xrange(500))
-            self.sendMessage(CODE_WRITE, ADDR_MULTIECHO, testData, False)
-            testDataEcho = self.sendMessage(CODE_READ, ADDR_MULTIECHO, None, False, 502)
-            testDataEcho = testDataEcho[2:]
-
-            #Compare
-            totalerror = totalerror + len([(i,j) for i,j in zip(testData,testDataEcho) if i!=j])
-            totalbytes = totalbytes + len(testData)
-
-            scope_logger.error('%d errors in %d' % (totalerror, totalbytes))
-
-    def sendMessage(self, mode, address, payload=None, Validate=False, maxResp=None, readMask=None):
-        """Send a message out the serial port"""
-
-        if payload is None:
-            payload = []
-
-        #Get length
-        length = len(payload)
-
-        if ((mode == CODE_WRITE) and (length < 1)) or ((mode == CODE_READ) and (length != 0)):
-            scope_logger.warning('Invalid payload for mode')
-            return None
-
-        if mode == CODE_READ:
-            self.flushInput()
-
-        #Flip payload around
-        pba = bytearray(payload)
-
-        #Check if stream or newaechip mode expected
-        if hasattr(self.serial, "stream") and self.serial.stream is False:
-            #The serial interface is actually special USB Chip
-            if mode == CODE_READ:
-                if maxResp:
-                    datalen = maxResp
-                elif ADDR_ADCDATA == address:
-                    datalen = 65000
-                else:
-                    datalen = 1
-
-                if self._fast_fifo_read_active and address != ADDR_ADCDATA:
-                    raise ValueError('Internal error: in fast read mode but not reading FIFO! (address=%0d, datalen=%0d). Need to add a cached setting?' % (address, datalen))
-
-                data = bytearray(self.serial.cmdReadMem(address, datalen))
-                return data
-
-            else:
-                # Write output to memory
-                self.serial.cmdWriteMem(address, pba)
-
-                # Check write was successful if validation requested
-                if Validate:
-                    check =  bytearray(self.serial.cmdReadMem(address, len(pba)))
-
-                    if readMask:
-                        try:
-                            for i, m in enumerate(readMask):
-                                check[i] = check[i] & m
-                                pba[i] = pba[i] & m
-                        except IndexError:
-                            pass
-
-                    if check != pba:
-                        errmsg = "For address 0x%02x=%d" % (address, address)
-                        errmsg += "  Sent data: "
-                        for c in pba: errmsg += "%02x" % c
-                        errmsg += " Read data: "
-                        if check:
-                            for c in check: errmsg += "%02x" % c
-                        else:
-                            errmsg += "<Timeout>"
-
-                        scope_logger.error(errmsg)
-        else:
-            # ## Setup Message
-            message = bytearray([])
-
-            # Message type
-            message.append(mode | address)
-
-            # Length
-            lenpayload = len(pba)
-            message.append(lenpayload & 0xff)
-            message.append((lenpayload >> 8) & 0xff)
-
-            # append payload
-            message = message + pba
-
-            # ## Send out serial port
-            self.serial.write(message)
-
-            # for b in message: print "%02x "%b,
-            # print ""
-
-            # ## Wait Response (if requested)
-            if mode == CODE_READ:
-                if maxResp:
-                    datalen = maxResp
-                elif ADDR_ADCDATA == address:
-                    datalen = 65000
-                else:
-                    datalen = 1
-
-                result = self.serial.read(datalen)
-
-                # Check for timeout, if so abort
-                if len(result) < 1:
-                    self.flushInput()
-                    scope_logger.warning('Timeout in read: %d (address: 0x%02x)' % (len(result), address))
-                    return None
-
-                rb = bytearray(result)
-
-                return rb
-            else:
-                if Validate:
-                    check = self.sendMessage(CODE_READ, address, maxResp=len(pba))
-
-                    if readMask:
-                        try:
-                            for i, m in enumerate(readMask):
-                                check[i] = check[i] & m
-                                pba[i] = pba[i] & m
-                        except IndexError:
-                            pass
-
-                    if check != pba:
-                        errmsg = "For address 0x%02x=%d" % (address, address)
-                        errmsg += "  Sent data: "
-                        for c in pba: errmsg += "%02x" % c
-                        errmsg += " Read data: "
-                        if check:
-                            for c in check: errmsg += "%02x" % c
-                        else:
-                            errmsg += "<Timeout>"
-
-                        scope_logger.error(errmsg)
-
-### Generic
-    def setSettings(self, state, validate=False):
-        cmd = bytearray(1)
-        cmd[0] = state
-        self.cached_settings = state
-        self.sendMessage(CODE_WRITE, ADDR_SETTINGS, cmd, Validate=validate)
-
-    def settings(self, use_cached=False):
-        if (not use_cached) or (not self.cached_settings):
-            sets = self.sendMessage(CODE_READ, ADDR_SETTINGS)
-            if sets is None:
-                self.cached_settings = 0
-            else:
-                self.cached_settings = sets[0]
-        return self.cached_settings
-
-    def setReset(self, value):
-        if value:
-            self.setSettings(self.settings() | SETTINGS_RESET, validate=False)
-            #TODO: Hack to adjust the hwMaxSamples since the number should be smaller than what is being returned
-            self.hwMaxSamples = self.numSamples() - 45
-            #TODO: another hack... if reconnecting to Husky which was previously set to have a small number of samples, avoid feeding through a negative number... don't quite understand what's happening here and why...
-            if self.hwMaxSamples < 0:
-                self.hwMaxSamples = 0
-            self.setNumSamples(self.hwMaxSamples)
-        else:
-            self.setSettings(self.settings() & ~SETTINGS_RESET)
-
-    def triggerNow(self):
-        initial = self.settings(True)
-        self.setSettings(initial | SETTINGS_TRIG_NOW)
-        time.sleep(0.05)
-        self.setSettings(initial & ~SETTINGS_TRIG_NOW)
-
-    def getStatus(self):
-        result = self.sendMessage(CODE_READ, ADDR_STATUS)
-
-        if len(result) == 1:
-            return result[0]
-        else:
-            return None
-
-    def setNumSamples(self, samples):
-        self.sendMessage(CODE_WRITE, ADDR_SAMPLES, list(int.to_bytes(samples, length=4, byteorder='little')))
-        self.updateStreamBuffer(samples)
-
-
-    def updateStreamBuffer(self, samples=None):
-        # yes this is a bit weird but it is so:
-        if samples is not None:
-            self._stream_len = samples
-        if self._is_husky:
-            if self._stream_mode:
-                bufsizebytes = 0
-                #Save the number we will return
-                # bufsizebytes, self._stream_len_act = self.serial.cmdReadStream_bufferSize(self._stream_len, self._is_husky, self._bits_per_sample)
-                #bufsizebytes = self._stream_segment_size # XXX- temporary
-                #Generate the buffer to save buffer
-                sbuf_len = int(self._stream_len * self._bits_per_sample / 8)
-                if self._is_husky and sbuf_len % 3:
-                    # need to capture a multiple of 3 otherwise processHuskyData may fail
-                    sbuf_len += 3 - sbuf_len % 3
-                self._sbuf = array.array('B', [0]) * sbuf_len
-                # For CW-Pro, _stream_len is the number of (10-bit) samples (which was previously set), whereas for Husky, to accomodate 8/12-bit samples, 
-                # it's the total number of bytes, so we need to update _stream_len accordingly:
-                if self._is_husky:
-                    self._stream_len = sbuf_len
-        else:
-            bufsizebytes = 0
-            if self._stream_mode:
-                nae = self.serial
-                #Save the number we will return
-                bufsizebytes, self._stream_len_act = nae.cmdReadStream_bufferSize(self._stream_len)
-
-            #Generate the buffer to save buffer
-            self._sbuf = array.array('B', [0]) * bufsizebytes
-
-
-    def setDecimate(self, decsamples):
-        cmd = bytearray(2)
-        if decsamples <= 0:
-            raise ValueError("Decsamples is <= 0 (%d), makes no sense" % decsamples)
-        decsamples -= 1
-        self.sendMessage(CODE_WRITE, ADDR_DECIMATE, list(int.to_bytes(decsamples, length=2, byteorder='little')))
-
-
-    def decimate(self):
-        if self._support_decimate:
-            decnum = 0x00000000
-            temp = self.sendMessage(CODE_READ, ADDR_DECIMATE, maxResp=2)
-            #If we don't support decimate just return 1 in the future to avoid
-            if temp:
-                decnum |= temp[0] << 0
-                decnum |= temp[1] << 8
-                decnum += 1
-            else:
-                self._support_decimate = False
-                decnum = 1
-        else:
-            decnum = 1
-        return decnum
-
-    def set_clip_errors_disabled(self, disable):
-        if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
-        if disable:
-            val = [1]
-        else:
-            val = [0]
-        self.sendMessage(CODE_WRITE, ADDR_NO_CLIP_ERRORS, val)
-
-
-    def clip_errors_disabled(self):
-        if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
-        return self.sendMessage(CODE_READ, ADDR_NO_CLIP_ERRORS, maxResp=1)[0]
-
-
-    def numSamples(self):
-        """Return the number of samples captured in one go. Returns max after resetting the hardware"""
-        temp = self.sendMessage(CODE_READ, ADDR_SAMPLES, maxResp=4)
-        samples = int.from_bytes(temp, byteorder='little')
-        return samples
-
-    def getBytesInFifo(self):
-        if self._is_husky:
-            scope_logger.error("Shouldn't be calling getBytesInFifo on Husky: associated register doesn't exist.")
-        else:
-            temp = self.sendMessage(CODE_READ, ADDR_BYTESTORX, maxResp=4)
-            samples = int.from_bytes(temp, byteorder='little')
-            return samples
-
-    def flushInput(self):
-        try:
-            self.serial.flushInput()
-        except AttributeError:
-            return
-
-    def devicePresent(self):
-
-        #Re-init these settings:
-        self._support_decimate = True
-
-        #Send "ping" message, wait for pong
-        msgin = bytearray([])
-        msgin.append(0xAC)
-
-        self.flushInput()
-
-        #Reset... will automatically clear by the time we are done
-        self.setReset(True)
-        self.flushInput()
-
-        #Send ping
-        self.sendMessage(CODE_WRITE, ADDR_ECHO, msgin)
-
-        #Pong?
-        msgout = self.sendMessage(CODE_READ, ADDR_ECHO)
-
-        if (msgout != msgin):
-            return False
-
-        #Init stuff
-        state = self.getStatus()
-
-        if state & STATUS_DDRMODE_MASK:
-            self.ddrMode = True
-        else:
-            self.ddrMode = False
-
-        return True
-
-    # def setDDRAddress(self, addr):
-    #     cmd = bytearray(1)
-    #     cmd[0] = ((addr >> 0) & 0xFF)
-    #     self.sendMessage(CODE_WRITE, ADDR_DDR1, cmd)
-    #     cmd[0] = ((addr >> 8) & 0xFF)
-    #     self.sendMessage(CODE_WRITE, ADDR_DDR2, cmd)
-    #     cmd[0] = ((addr >> 16) & 0xFF)
-    #     self.sendMessage(CODE_WRITE, ADDR_DDR3, cmd)
-    #     cmd[0] = ((addr >> 24) & 0xFF)
-    #     self.sendMessage(CODE_WRITE, ADDR_DDR4, cmd)
-    #
-    # def getDDRAddress(self):
-    #     addr = 0x00000000
-    #     temp = self.sendMessage(CODE_READ, ADDR_DDR1)
-    #     addr = addr | (temp[0] << 0)
-    #     temp = self.sendMessage(CODE_READ, ADDR_DDR2)
-    #     addr = addr | (temp[0] << 8)
-    #     temp = self.sendMessage(CODE_READ, ADDR_DDR3)
-    #     addr = addr | (temp[0] << 16)
-    #     temp = self.sendMessage(CODE_READ, ADDR_DDR4)
-    #     addr = addr | (temp[0] << 24)
-    #     return addr
-
-    def arm(self, enable=True):
-        # keeps calling self.setting() - what if we cache it?
-        if enable:
-            #Must arm first
-            self.setSettings(self.settings() | SETTINGS_ARM)
-        else:
-            self.setSettings(self.settings() & ~SETTINGS_ARM)
-
-    def setFastFIFORead(self, active):
-        if active:
-            self.sendMessage(CODE_WRITE, ADDR_FAST_FIFO_READ, [1])
-            self._fast_fifo_read_active = True
-        else:
-            self.sendMessage(CODE_WRITE, ADDR_FAST_FIFO_READ, [0])
-            self._fast_fifo_read_active = False
-
-    def startCaptureThread(self):
-        # Then init the stream mode stuff
-        if self._stream_mode:
-            # Stream mode adds 500mS of extra timeout on USB traffic itself...
-            scope_logger.debug("Stream on!")
-            if self._is_husky:
-                self.setFastFIFORead(1)
-                self.serial.set_smc_speed(1)
-            self.serial.initStreamModeCapture(self._stream_len, self._sbuf, timeout_ms=int(self._timeout * 1000) + 500, \
-                is_husky=self._is_husky, segment_size=self._stream_segment_size)
-
-    def capture(self, offset=None, adc_freq=29.53E6, samples=24400):
-        timeout = False
-        sleeptime = 0
-        if offset:
-            sleeptime = (29.53E6*8*offset)/(100000*adc_freq) #rougly 8ms per 100k offset
-            sleeptime /= 1000
-
-        if self._stream_mode:
-
-            # Wait for a trigger, letting the UI run when it can
-            starttime = datetime.datetime.now()
-            while self.serial.cmdReadStream_isDone(self._is_husky) == False:
-                # Wait for a moment before re-running the loop
-                time.sleep(0.05)
-                diff = datetime.datetime.now() - starttime
-
-                # If we've timed out, don't wait any longer for a trigger
-                if (diff.total_seconds() > self._timeout):
-                    scope_logger.warning('Timeout in OpenADC capture(), no trigger seen! Trigger forced, data is invalid')
-                    timeout = True
-                    self.triggerNow()
-                    self.serial.streamModeCaptureStream.stop = True
-                    break
-
-            if self._is_husky:
-                scope_logger.debug("DISABLING fast fifo read")
-                self.setFastFIFORead(0)
-                self.serial.set_smc_speed(0)
-
-            self._stream_rx_bytes, stream_timeout = self.serial.cmdReadStream(self._is_husky)
-            timeout |= stream_timeout
-            #Check the status now
-            scope_logger.debug("Streaming done, results: rx_bytes = %d"%(self._stream_rx_bytes))
-            if self._is_husky:
-                pass
-            else:
-            # TODO later-Husky? 
-                pass
-                # bytes_left, overflow_bytes_left, unknown_overflow = self.serial.cmdReadStream_getStatus()
-                # scope_logger.debug("Streaming done, results: rx_bytes = %d, bytes_left = %d, overflow_bytes_left = %d"%(self._stream_rx_bytes, bytes_left, overflow_bytes_left))
-            self.arm(False)
-
-            if stream_timeout:
-                # TODO later- adjust messages/checks for Husky?
-                if self._stream_rx_bytes == 0: # == (self._stream_len - 3072):
-                    scope_logger.warning("Streaming mode OVERFLOW occured as trigger too fast - Adjust offset upward (suggest = 200 000)")
-                else:
-                    scope_logger.warning("Streaming mode OVERFLOW occured during capture - ADC sample clock probably too fast for stream mode (keep ADC Freq < 10 MHz)")
-                timeout = True
-        else:
-            status = self.getStatus()
-            starttime = datetime.datetime.now()
-
-            # Wait for a trigger, letting the UI run when it can
-            while ((status & STATUS_ARM_MASK) == STATUS_ARM_MASK) | ((status & STATUS_FIFO_MASK) == 0):
-                status = self.getStatus()
-
-                # Wait for a moment before re-running the loop
-                #time.sleep(sleeptime) ## <-- This causes the capture slowdown
-                #util.better_delay(sleeptime) ## faster sleep method
-                diff = datetime.datetime.now() - starttime
-
-                # If we've timed out, don't wait any longer for a trigger
-                if (diff.total_seconds() > self._timeout):
-                    scope_logger.warning('Timeout in OpenADC capture(), no trigger seen! Trigger forced, data is invalid. Status: %02x'%status)
-                    timeout = True
-                    self.triggerNow()
-
-                    #Once in timeout mode we can't rely on STATUS_ARM_MASK anymore - just wait for FIFO to fill up
-                    if (status & STATUS_FIFO_MASK) == 0:
-                        break
-
-                # Give the UI a chance to update (does nothing if not using UI)
-
-            #time.sleep(0.005)
-            #time.sleep(sleeptime*10)
-
-            # If using large offsets, system doesn't know we are delaying api
-
-            # NOTE: This doesn't actually delay until adc starts reading
-            # so need to actually do the manual delay
-            #nosampletimeout = self._nosampletimeout * 10
-            #while (self.getBytesInFifo() == 0) and nosampletimeout:
-            #    logging.debug("Bytes in Fifo: {}".format(self.getBytesInFifo()))
-            #    time.sleep(0.001)
-            #    nosampletimeout -= 1
-
-            #if nosampletimeout == 0:
-            #    logging.warning('No samples received. Either very long offset, or no ADC clock (try "Reset ADC DCM"). '
-            #                    'If you need such a long offset, increase "scope.qtadc.sc._nosampletimeout" limit.')
-            #    timeout = True
-
-        # give time for ADC to finish reading data
-        # may need to adjust delay
-        cap_delay = (7.37E6 * 4 * samples) / (adc_freq * 24400)
-        cap_delay *= 0.001
-        time.sleep(cap_delay+sleeptime)
-        # 0.000819672131147541
-        # 
-        #time.sleep(sleeptime) #need to do this one as well
-        self.arm(False) # <------ ADC will stop reading after this
-        return timeout
-
-    def flush(self):
-        # Flush output FIFO
-        self.sendMessage(CODE_READ, ADDR_ADCDATA, None, False, None)
-
-    def readData(self, NumberPoints=None, progressDialog=None):
-        scope_logger.debug("Reading data from OpenADC (NumberPoints=%d)..." % NumberPoints)
-        if self._is_husky: 
-            return self.readHuskyData(NumberPoints)
-        elif self._stream_mode:
-            # Process data
-            bsize = self.serial.cmdReadStream_size_of_fpgablock()
-            num_bytes, num_samples = self.serial.cmdReadStream_bufferSize(self._stream_len)
-
-            # Remove sync bytes from trace
-            data = np.zeros(num_bytes, dtype=np.uint8)
-            data[0] = self._sbuf[0]
-            dbuf2_idx = 1
-            for i in range(0, self._stream_rx_bytes, bsize):
-                if self._sbuf[i] != 0xAC:
-                    scope_logger.warning("Stream mode: Expected sync byte (AC) at location %d but got %x" % (i, self._sbuf[i]))
-                    break
-                s = i + 1
-                data[dbuf2_idx: (dbuf2_idx + (bsize - 1))] = self._sbuf[s:(s + (bsize - 1))]
-
-                # Write to next section
-                dbuf2_idx += (bsize - 1)
-
-            scope_logger.debug("Stream mode: read %d bytes"%len(data))
-
-            # Turn raw bytes into samples
-            datapoints = self.processData(data, 0.0)
-
-            if datapoints is not None and len(datapoints):
-                scope_logger.debug("Stream mode: done, %d samples processed"%len(datapoints))
-            else:
-                scope_logger.warning("Stream mode: done, no samples resulted from processing")
-                datapoints = []
-
-            if len(datapoints) > NumberPoints:
-                datapoints = datapoints[0:NumberPoints]
-
-            return datapoints
-
-        else:
-            datapoints = []
-
-            if NumberPoints == None:
-                NumberPoints = 0x1000
-
-            if self.ddrMode:
-                # We were passed number of samples to read. DDR interface
-                # reads 3 points per 4 bytes, and reads in blocks of
-                # 256 bytes (e.g.: 192 samples)
-                NumberPackages = NumberPoints / 192
-
-                # If user requests we send extra then scale back afterwards
-                if (NumberPoints % 192) > 0:
-                    NumberPackages = NumberPackages + 1
-
-                start = 0
-                self.setDDRAddress(0)
-
-
-                BytesPerPackage = 257
-
-                if progressDialog:
-                    progressDialog.setMinimum(0)
-                    progressDialog.setMaximum(NumberPackages)
-            else:
-                # FIFO takes 3 samples at a time... todo figure this out
-                NumberPackages = 1
-
-                # We get 3 samples in each word returned (word = 4 bytes)
-                # So need to convert samples requested to words, rounding
-                # up if we request an incomplete number
-                nwords = NumberPoints / 3
-                if NumberPoints % 3:
-                    nwords = nwords + 1
-
-                # Return 4x as many bytes as words, +1 for sync byte
-                BytesPerPackage = nwords * 4 + 1
-
-            for status in range(0, NumberPackages):
-                # Address of DDR is auto-incremented following a read command
-                # so no need to write new address
-
-                # print "Address=%x"%self.getDDRAddress()
-
-                # print "bytes = %d"%self.getBytesInFifo()
-
-                bytesToRead = self.getBytesInFifo()
-                #print(bytesToRead)
-
-                # print bytesToRead
-
-                if bytesToRead == 0:
-                    bytesToRead = BytesPerPackage
-
-                #If bytesToRead is huge, we only read what is needed
-                #Bytes get packed 3 samples / 4 bytes
-                #Add some extra in case needed
-                hypBytes = (NumberPoints * 4)/3 + 256
-
-                bytesToRead = min(hypBytes, bytesToRead)
-
-                # +1 for sync byte
-                data = self.sendMessage(CODE_READ, ADDR_ADCDATA, None, False, bytesToRead + 1)  # BytesPerPackage)
-                #print(data)
-
-                # for p in data:
-                #       print "%x "%p,
-
-                if data is not None:
-                    data = np.array(data)
-                    datapoints = self.processData(data, 0.0)
-
-                if progressDialog:
-                    progressDialog.setValue(status)
-
-                    if progressDialog.wasCanceled():
-                        break
-
-            # for point in datapoints:
-            #       print "%3x"%(int((point+0.5)*1024))
-
-            if datapoints is None:
-                return []
-            if len(datapoints) > NumberPoints:
-                datapoints = datapoints[0:NumberPoints]
-
-            # if len(datapoints) < NumberPoints:
-            # print len(datapoints),
-            # print NumberPoints
-
-            return datapoints
-
-
-
-    def readHuskyData(self, NumberPoints=None):
-        if self._bits_per_sample == 12:
-            bytesToRead = int(np.ceil(NumberPoints*1.5))
-        else:
-            bytesToRead = NumberPoints
-        # Husky hardware always captures a multiple of 3 samples. We want to read all the captured samples.
-        if bytesToRead % 3:
-            bytesToRead += 3  - bytesToRead % 3
-        scope_logger.debug("XXX reading with NumberPoints=%d, bytesToRead=%d" % (NumberPoints, bytesToRead))
-
-        if self._stream_mode:
-            data = self._sbuf
-            scope_logger.debug('stream: got data len = %d' % len(data))
-        else:
-            if self._fast_fifo_read_enable:
-                # switch FPGA and SAM3U into fast read timing mode
-                self.setFastFIFORead(1)
-                self.serial.set_smc_speed(1)
-            data = self.sendMessage(CODE_READ, ADDR_ADCDATA, None, False, bytesToRead)
-            # switch FPGA and SAM3U back to regular read timing mode
-            self.setFastFIFORead(0)
-            self.serial.set_smc_speed(0)
-
-        # XXX Husky debug:
-        scope_logger.debug("XXX read %d bytes; NumberPoints=%d, bytesToRead=%d" % (len(data), NumberPoints, bytesToRead))
-        if data is not None:
-            data = np.array(data)
-            datapoints = self.processHuskyData(NumberPoints, data)
-        if datapoints is None:
-            return []
-        #scope_logger.debug("YYY got datapoints size %d, returning %d elements; last few: %s" % (len(datapoints), NumberPoints, datapoints[-10:-1]))
-        return datapoints[:NumberPoints]
-
-
-
-    def processHuskyData(self, NumberPoints, data):
-        if self._bits_per_sample == 12:
-            #print('XXX NumberPoints: %d, len(data): %d' % (NumberPoints, len(data)))
-            # slower, easier to follow data process:
-            #samples = np.zeros(NumberPoints, dtype=np.int16)
-            #for i in range(NumberPoints):
-            #    if (i%2 == 0):
-            #        j = int(i*1.5)
-            #        samples[i] = (data[j]<<4) + (data[j+1]>>4)
-            #    else:
-            #        j = int((i-1)*1.5)
-            #        samples[i] = ((data[j+1] & 0xf)<<8) + data[j+2]
-
-
-            # faster, harder to follow data process:
-            data = np.array(data, dtype=np.int16)
-
-            evenNumberPoints = NumberPoints + NumberPoints % 2
-            i = np.arange(len(data), dtype=np.int32)
-            a = data[i%3==0][:int(evenNumberPoints/2)]
-            b = data[i%3==1][:int(evenNumberPoints/2)]
-            c = data[i%3==2][:int(evenNumberPoints/2)]
-            #print('XXX i:%d, a:%d, b:%d, c:%d, np:%d' % (len(i), len(a), len(b), len(c), NumberPoints))
-            samples = np.zeros(evenNumberPoints, dtype=np.int16)
-            i = np.arange(evenNumberPoints, dtype=np.int32)
-            try:
-                samples[i%2==0] = (a << 4) + (b >> 4)
-                samples[i%2==1] = ((b & 0x0F) << 8) + c
-            except:
-                scope_logger.error("Husky processing error: data={}, a={}, b={}, c={}, NumPoints={}".format(data, a, b, c, NumberPoints))
-                scope_logger.error("lendata={}, lena={}, lenb={}, lenc={}".format(len(data), len(a), len(b), len(c)))
-                raise
-            #samples = samples[:NumberPoints]
-
-            # print("Samples equal?: {}".format((fast_samples==samples).all()))
-            # print(a[0], b[0], c[0], data[0], data[1], data[2])
-            # for i in range(NumberPoints):
-            #     if fast_samples[i] != samples[i]:
-            #         pass
-            #         #print("{} bad, {} vs {}".format(i, fast_samples[i], samples[i]))
-
-        else:
-            #print('QWERTY')
-            samples = data
-
-        # fpData = samples / 2**self._bits_per_sample - self.offset
-
-        #scope_logging.debug("Processed data, ended up with %d samples total"%len(fpData))
-        # print(data[0], data[1], data[2], samples[0], samples[1])
-
-        #return fpData # XXX Husky: temporary
-        return samples
-
-
-
-    def processData(self, data, pad=float('NaN'), debug=False):
-        if data[0] != 0xAC:
-            scope_logger.warning('Unexpected sync byte in processData(): 0x%x' % data[0])
-            #print(data)
-            return None
-
-        self._int_data = None
-
-        orig_data = copy.copy(data)
-        if debug:
-            fpData = []
-            intData = []
-            # Slow, verbose processing method
-            # Useful for fixing issues in ADC read
-            for i in range(1, len(data) - 3, 4):
-                # Convert
-                temppt = (data[i + 3] << 0) | (data[i + 2] << 8) | (data[i + 1] << 16) | (data[i + 0] << 24)
-
-                # print("%2x "%data[i])
-
-                # print "%x %x %x %x"%(data[i +0], data[i +1], data[i +2], data[i +3]);
-                # print "%x"%temppt
-
-                intpt1 = temppt & 0x3FF
-                intpt2 = (temppt >> 10) & 0x3FF
-                intpt3 = (temppt >> 20) & 0x3FF
-
-                # print "%x %x %x" % (intpt1, intpt2, intpt3)
-
-                if trigfound == False:
-                    mergpt = temppt >> 30
-                    if (mergpt != 3):
-                        trigfound = True
-                        trigsamp = trigsamp + mergpt
-                        # print "Trigger found at %d"%trigsamp
-                    else:
-                        trigsamp += 3
-
-                # input validation test: uncomment following and use
-                # ramp input on FPGA
-                ##if (intpt != lastpt + 1) and (lastpt != 0x3ff):
-                ##    print "intpt: %x lstpt %x\n"%(intpt, lastpt)
-                ##lastpt = intpt;
-
-                # print "%x %x %x"%(intpt1, intpt2, intpt3)
-
-                fpData.append(float(intpt1) / 1024.0 - self.offset)
-                fpData.append(float(intpt2) / 1024.0 - self.offset)
-                fpData.append(float(intpt3) / 1024.0 - self.offset)
-                intData.extend([intpt1, intpt2, intpt3])
-                
-        else:
-            # Fast, efficient NumPy implementation
-
-            # Figure out how many bytes we're going to process
-            # Cut off some bytes at the end: we need the length to be a multiple of 4, and we probably have extra data
-            numbytes = len(data) - 1
-            extralen = (len(data) - 1) % 4
-
-            # Copy the data into a NumPy array. For long traces this is the longest part
-            data = data[1:1+numbytes-extralen]
-
-            # Split data into groups of 4 bytes and combine into words
-            data = np.reshape(data, (-1, 4))
-            data = np.left_shift(data, [24, 16, 8, 0])
-            data = np.sum(data, 1)
-
-            # Split words into samples and trigger bytes
-            data = np.right_shift(np.reshape(data, (-1, 1)), [0, 10, 20, 30]) & 0x3FF
-            fpData = np.reshape(data[:, [0, 1, 2]], (-1))
-            trigger = data[:, 3] % 4
-            self._int_data = np.array(fpData, dtype='int16')
-            fpData = fpData / 1024.0 - self.offset
-            scope_logger.debug("Trigger_data: {} len={}".format(trigger, len(trigger)))
-
-            # Search for the trigger signal
-            trigfound = False
-            trigsamp = 0
-            for t in trigger:
-                if(t != 3):
-                    trigfound = True
-                    trigsamp = trigsamp + (t & 0x3)
-                    logging.debug("Trigger found at %d"%trigsamp)
-                    break
-                else:
-                    trigsamp += 3
-
-        #print len(fpData)
-
-        if trigfound == False:
-            scope_logger.warning('Trigger not found in ADC data. No data reported!')
-            scope_logger.debug('Trigger not found typically caused by the actual \
-            capture starting too late after the trigger event happens')
-            scope_logger.debug('Data: {}'.format(orig_data))
-
-
-        #Ensure that the trigger point matches the requested by padding/chopping
-        diff = self.presamples_desired - trigsamp
-        if diff > 0:
-               #fpData = [pad]*diff + fpData
-               fpData = np.append([pad]*diff, fpData)
-               scope_logger.warning('Pretrigger not met: Do not use downsampling and pretriggering at same time.')
-               scope_logger.debug('Pretrigger not met: can attempt to increase presampleTempMargin(in the code).')
-        else:
-               fpData = fpData[-diff:]
-
-        scope_logger.debug("Processed data, ended up with %d samples total"%len(fpData))
-
-        return fpData
-
-if __name__ == "__main__":
-    import serial
-
-    ser = serial.Serial()
-    ser.port     = "com6"
-    ser.baudrate = 512000
-    ser.timeout  = 1.0
-
-    try:
-        ser.open()
-    except serial.SerialException as e:
-        print("Could not open %s" % ser.name)
-        sys.exit()
-    except ValueError as s:
-        print("Invalid settings for serial port")
-        ser.close()
-        ser = None
-        sys.exit()
-
-    adc = OpenADCInterface(ser)
-    adc.devicePresent()
-
-    adc_settings = OpenADCSettings()
-    adc_settings.setInterface(adc)
