@@ -50,7 +50,6 @@
 #define FLASH_REG2  FLASH_A.BIUCR3.R
 #define FLASH_DATA2 0x00020015
 
-
 /* This function is defined in some other functions too */
 __attribute__ ((weak)) void uart_puts(char * s){
     while(*s){
@@ -68,12 +67,17 @@ void putch(char c)
     /* Ensure all the data in the transmit buffer are sent out to bus. */
     char local = c;
     uint8_t* mssg = &local;
-    UART_SendDataBlocking(&uart_pal1_instance, (uint8_t *)mssg, 1 , TIMEOUT);
+    // UART_SendData(&uart_pal1_instance, (uint8_t *)mssg, 1);
+    ESCI_HW_SendCharacter(0, c);
+    // while (!ESCI_HW_GetSendReadyFlag(0));
+    // ESCI_HW_ClearSendReadyFlag(0);
 }
 
 char getch(void)
 {
     char mssg;
+    while (!ESCI_HW_GetReceiveReadyFlag(0));
+    ESCI_HW_ClearReceiveReadyFlag(0);
     UART_ReceiveDataBlocking(&uart_pal1_instance, &mssg, 1,TIMEOUT);
     return mssg;
 }
@@ -86,10 +90,40 @@ void trigger_setup(void)
 }
 void trigger_high(void)
 {
+    // PINS_DRV_WritePin(SIU, 160, 1);
+    pin_settings_config_t trig_config = {
+        .base              = SIU,
+        .pinPortIdx        = 160u,
+        .mux               = PORT_MUX_AS_GPIO,
+        .outputBuffer      = PORT_OUTPUT_BUFFER_ENABLED,
+        .slewRateCtrl      = HALF_STRENGTH_WITH_SLEWRATE_CONTROL,
+        .openDrain         = PORT_OPEN_DRAIN_DISABLED,
+        .hysteresis        = PORT_HYSTERESYS_DISABLED,
+        .driveSelect       = PORT_MINIMUM_DRIVE_STRENGTH,
+        .inputBuffer       = PORT_INPUT_BUFFER_DISABLED,
+        .pullConfig        = PORT_INTERNAL_PULL_NOT_ENABLED,
+        .initValue         = 1u,
+    };
+    PINS_DRV_Init(1, &trig_config);
    ;
 }
 void trigger_low(void)
 {
+    pin_settings_config_t trig_config = {
+        .base              = SIU,
+        .pinPortIdx        = 160u,
+        .mux               = PORT_MUX_AS_GPIO,
+        .outputBuffer      = PORT_OUTPUT_BUFFER_ENABLED,
+        .slewRateCtrl      = HALF_STRENGTH_WITH_SLEWRATE_CONTROL,
+        .openDrain         = PORT_OPEN_DRAIN_DISABLED,
+        .hysteresis        = PORT_HYSTERESYS_DISABLED,
+        .driveSelect       = PORT_MINIMUM_DRIVE_STRENGTH,
+        .inputBuffer       = PORT_INPUT_BUFFER_DISABLED,
+        .pullConfig        = PORT_INTERNAL_PULL_NOT_ENABLED,
+        .initValue         = 0u,
+    };
+    // PINS_DRV_WritePin(SIU, 160, 0);
+    PINS_DRV_Init(1, &trig_config);
    ;
 }
 
@@ -201,22 +235,62 @@ static void PIT3Init(void)
  */
 void BoardInit(void)
 {
+    PINS_DRV_Init(NUM_OF_CONFIGURED_PINS, g_pin_mux_InitConfigArr);
 
-    FMPLL.ESYNCR1.B.CLKCFG = 7;         /* Normal mode with crystal osc */
+    // FMPLL.ESYNCR1.B.CLKCFG = 7;         /* Normal mode with crystal osc */
+    // FMPLL.ESYNCR1.B.CLKCFG = 0;         /* Normal mode with crystal osc */
     
     /* Programming PLL to 60 MHz */
     /* Fpll = (10Mhz* (EMFD+16)) / ((ERFD+1) * (EPREDIV+1) * DIV2) */
     /* Fpll = (10 * 54 / 9)  = 60MHz */
-    FMPLL.ESYNCR2.R = 0x00000002;           /* Output divide ratio: 2+1=3 */
-    FMPLL.ESYNCR1.B.EPREDIV = 5;        /* Input divide ratio: 5+1=6 */
-    FMPLL.ESYNCR1.B.EMFD = 38;          /* Feedback divide ratio: 38+16=54 */ 
+    // FMPLL.ESYNCR2.R = 0x00000002;           /* Output divide ratio: 2+1=3 */
+    // FMPLL.ESYNCR1.B.EPREDIV = 5;        /* Input divide ratio: 5+1=6 */
+    // FMPLL.ESYNCR1.B.EMFD = 38;          /* Feedback divide ratio: 38+16=54 */ 
     
-    while(!FMPLL.SYNSR.B.LOCK) {;}      /* Wait for FMPLL to lock */
+    // while(!FMPLL.SYNSR.B.LOCK) {;}      /* Wait for FMPLL to lock */
+
+    // VERY IMPORTANT:
+    // The endianness of the datasheet is opposite
+    // To the C representation
+
+    // So bit 0 on the datasheet is bit 31 here
+    // Probably powerpc bs
+    if (SIU->SYSDIV & (1 << 31)) {
+        SIU->SYSDIV &= ~(1 << 31);
+    }
+    uint32_t sysdiv = SIU->SYSDIV;
+
     
-    //SIU->SYSDIV = (SIU->SYSDIV & ~SIU_SYSDIV_BYPASS_MASK) | SIU_SYSDIV_BYPASS(1U);
+    //sysclock = xosc
+    sysdiv &= ~(0b11 << 12);
+    sysdiv |= 0b01 << 12; //10 for ext oscillator
+
+    // turn off bypass
+    // sysdiv &= ~(0b1 << 4);
+
+    sysdiv &= ~(0b11 << 2); // sysclock/2 for m_clk
+
+    SIU->SYSDIV = sysdiv;
+    pin_settings_config_t clkokconfig = {
+        .base              = SIU,
+        .pinPortIdx        = 199,
+        .mux               = PORT_MUX_AS_GPIO,
+        .outputBuffer      = PORT_OUTPUT_BUFFER_ENABLED,
+        .slewRateCtrl      = HALF_STRENGTH_WITH_SLEWRATE_CONTROL,
+        .openDrain         = PORT_OPEN_DRAIN_DISABLED,
+        .hysteresis        = PORT_HYSTERESYS_DISABLED,
+        .driveSelect       = PORT_MINIMUM_DRIVE_STRENGTH,
+        .inputBuffer       = PORT_INPUT_BUFFER_DISABLED,
+        .pullConfig        = PORT_INTERNAL_PULL_NOT_ENABLED,
+        .initValue         = 1u,
+    };
+    // PINS_DRV_WritePin(SIU, 160, 0);
+    PINS_DRV_Init(1, &clkokconfig);
+
+    // SIU_SYSDIV_BYPASS_MASK
+    // SIU->SYSDIV = (SIU->SYSDIV & ~SIU_SYSDIV_BYPASS_MASK) | SIU_SYSDIV_BYPASS(1U);
     //SIU->SYSDIV = (SIU->SYSDIV & ~SIU_SYSDIV_SYSCLKSEL_MASK) | SIU_SYSDIV_SYSCLKSEL(2U);
     
-    PINS_DRV_Init(NUM_OF_CONFIGURED_PINS, g_pin_mux_InitConfigArr);
 }
 
 
@@ -260,3 +334,18 @@ void platform_init(void)
      */
     FLEXCAN_DRV_Init(INST_CANCOM1, &canCom1_State, &canCom1_InitConfig0);
 }
+
+
+// const uint32_t  __attribute__((section (".rchw")))user_rchw[] = {
+//     0x005A0000,
+//     0x1000
+// };
+
+#define MPC56xx_ID    0x005A0000  /* RCHW boot ID for MPC56xx devices     */
+#define VLE_ENABLE    0x01000000  /* VLE is enabled                       */
+
+extern void _start(void);
+#define ENTRY_POINT  _start
+#define RCHW_VAL (VLE_ENABLE | MPC56xx_ID)
+
+const uint32_t __attribute__ ((section(".rchw"))) RCHW[] = {RCHW_VAL, (uint32_t)ENTRY_POINT};

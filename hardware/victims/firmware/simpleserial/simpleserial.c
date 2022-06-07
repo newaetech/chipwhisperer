@@ -8,14 +8,15 @@
 #define MAX_SS_CMDS 16
 static int num_commands = 0;
 
-#define MAX_SS_LEN 192
+#define MAX_SS_LEN 256
 
 //#define SS_VER_1_0 0
 //#define SS_VER_1_1 1
 //#define SS_VER_2_0 2
 
 
-#define CRC 0xA6
+// 0xA6 formerly 
+#define CW_CRC 0x4D 
 uint8_t ss_crc(uint8_t *buf, uint8_t len)
 {
 	unsigned int k = 0;
@@ -23,7 +24,7 @@ uint8_t ss_crc(uint8_t *buf, uint8_t len)
 	while (len--) {
 		crc ^= *buf++;
 		for (k = 0; k < 8; k++) {
-			crc = crc & 0x80 ? (crc << 1) ^ 0xA6: crc << 1;
+			crc = crc & 0x80 ? (crc << 1) ^ CW_CRC: crc << 1;
 		}
 	}
 	return crc;
@@ -33,8 +34,9 @@ uint8_t ss_crc(uint8_t *buf, uint8_t len)
 // [B_STUFF, CMD, SCMD, LEN, B_STUFF, DATA..., CRC, TERM]
 
 //#define SS_VER SS_VER_2_0
-
 #if SS_VER == SS_VER_2_0
+#error "SS_VER_2_0 is deprecated! Use SS_VER_2_1 instead."
+#elif SS_VER == SS_VER_2_1
 
 
 typedef struct ss_cmd
