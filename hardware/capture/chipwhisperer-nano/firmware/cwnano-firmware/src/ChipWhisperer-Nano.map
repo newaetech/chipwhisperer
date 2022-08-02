@@ -2554,251 +2554,6 @@ Discarded input sections
  .debug_macro   0x00000000       0x10 obj/naeusb/udc.o
  .debug_macro   0x00000000       0x10 obj/naeusb/udc.o
  .debug_macro   0x00000000       0x34 obj/naeusb/udc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .group         0x00000000        0xc obj/naeusb/udi_composite_desc.o
- .text          0x00000000        0x0 obj/naeusb/udi_composite_desc.o
- .data          0x00000000        0x0 obj/naeusb/udi_composite_desc.o
- .bss           0x00000000        0x0 obj/naeusb/udi_composite_desc.o
- .bss.cpu_irq_critical_section_counter
-                0x00000000        0x4 obj/naeusb/udi_composite_desc.o
- .bss.cpu_irq_prev_interrupt_state
-                0x00000000        0x1 obj/naeusb/udi_composite_desc.o
- .data.udc_desc_hs_mpsse
-                0x00000000       0x62 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0xa8a obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x16d obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x6d7 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x76 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x16 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x6da obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x22 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x8e obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x51 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x103 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x6a obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x1df obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x27 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x3b obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x2d obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x26 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0xbbf obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x154 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0xaa5 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x1b4 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x11e obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0xac obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x3f7 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x106 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x1c obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x72f obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x2c9 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0xbe obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000     0x2807 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x76e obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0xa84 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x9a obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x3cf obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x64 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x37c obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x61b obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x686 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x595 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x344 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x283 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x2cd obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x6cf obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x76 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0xb8 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0xb2 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x88 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x100 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x88 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x88 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x2cd obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0xb2 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0xb2 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x52 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0xac obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x7c obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x40 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x64 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x46 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x4c obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0xa6 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x7c obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x16 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x7c obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x22 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x22 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x18b obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x15b obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x1c obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x2e obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x22 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x1c obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x52 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x10 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x1fc obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x605 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x12a obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x64 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x18 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x35 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x34 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x16 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x35 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x35d obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x10 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x16 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x43 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x34 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x10 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x58 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x182 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x10 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x1c obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x52 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x22 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x10 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x52 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0xd5 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x1c obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x3d obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x16 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x16f obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x22 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x16 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x16 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x29 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x73 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x3e obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x3ca obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0xa6 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x218 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x107 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x241 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x17e obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x1c obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x16 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x1c obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000       0x78 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00000000      0x190 obj/naeusb/udi_composite_desc.o
  .group         0x00000000        0xc obj/naeusb/sam4s_hal/flash_efc.o
  .group         0x00000000        0xc obj/naeusb/sam4s_hal/flash_efc.o
  .group         0x00000000        0xc obj/naeusb/sam4s_hal/flash_efc.o
@@ -5397,6 +5152,251 @@ Discarded input sections
  .debug_macro   0x00000000       0x78 obj/naeusb/sam4s_hal/udi_vendor.o
  .debug_macro   0x00000000      0x190 obj/naeusb/sam4s_hal/udi_vendor.o
  .debug_macro   0x00000000       0x16 obj/naeusb/sam4s_hal/udi_vendor.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .group         0x00000000        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .text          0x00000000        0x0 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .data          0x00000000        0x0 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .bss           0x00000000        0x0 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .bss.cpu_irq_critical_section_counter
+                0x00000000        0x4 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .bss.cpu_irq_prev_interrupt_state
+                0x00000000        0x1 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .data.udc_desc_hs_mpsse
+                0x00000000       0x62 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0xa8a obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x16d obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x6d7 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x76 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x16 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x6da obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x22 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x8e obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x51 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x103 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x6a obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x1df obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x27 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x3b obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x2d obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x26 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0xbbf obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x154 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0xaa5 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x1b4 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x11e obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0xac obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x3f7 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x106 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x1c obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x72f obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x2c9 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0xbe obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000     0x2807 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x76e obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0xa84 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x9a obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x3cf obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x64 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x37c obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x61b obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x686 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x595 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x344 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x283 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x2cd obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x6cf obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x76 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0xb8 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0xb2 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x88 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x100 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x88 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x88 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x2cd obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0xb2 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0xb2 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x52 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0xac obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x7c obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x40 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x64 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x46 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x4c obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0xa6 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x7c obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x16 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x7c obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x22 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x22 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x18b obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x15b obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x1c obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x2e obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x22 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x1c obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x52 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x10 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x1fc obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x605 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x12a obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x64 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x18 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x35 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x34 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x16 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x35 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x35d obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x10 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x16 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x43 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x34 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x10 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x58 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x182 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x10 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x1c obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x52 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x22 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x10 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x52 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0xd5 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x1c obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x3d obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x16 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x16f obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x22 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x16 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x16 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x29 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x73 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x3e obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x3ca obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0xa6 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x218 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x107 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x241 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x17e obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x1c obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x16 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x1c obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000       0x78 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_macro   0x00000000      0x190 obj/naeusb/sam4s_hal/udi_composite_desc.o
  .group         0x00000000        0xc obj/naeusb/sam4s_hal/efc.o
  .group         0x00000000        0xc obj/naeusb/sam4s_hal/efc.o
  .group         0x00000000        0xc obj/naeusb/sam4s_hal/efc.o
@@ -8914,7 +8914,6 @@ LOAD obj/naeusb/naeusb_mpsse.o
 LOAD obj/naeusb/naeusb_usart.o
 LOAD obj/naeusb/naeusb.o
 LOAD obj/naeusb/udc.o
-LOAD obj/naeusb/udi_composite_desc.o
 LOAD obj/naeusb/sam4s_hal/flash_efc.o
 LOAD obj/naeusb/sam4s_hal/usart.o
 LOAD obj/naeusb/sam4s_hal/matrix.o
@@ -8925,6 +8924,7 @@ LOAD obj/naeusb/sam4s_hal/tc.o
 LOAD obj/naeusb/sam4s_hal/sysclk.o
 LOAD obj/naeusb/sam4s_hal/pmc.o
 LOAD obj/naeusb/sam4s_hal/udi_vendor.o
+LOAD obj/naeusb/sam4s_hal/udi_composite_desc.o
 LOAD obj/naeusb/sam4s_hal/efc.o
 LOAD obj/naeusb/sam4s_hal/pio.o
 LOAD obj/naeusb/sam4s_hal/chipid.o
@@ -9233,136 +9233,136 @@ LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc
  .text.udc_process_setup
                 0x00402130      0x4f4 obj/naeusb/udc.o
                 0x00402130                udc_process_setup
- .text.switch_configurations
-                0x00402624       0x1c obj/naeusb/udi_composite_desc.o
-                0x00402624                switch_configurations
  .text.flash_read_unique_id
-                0x00402640       0x4c obj/naeusb/sam4s_hal/flash_efc.o
-                0x00402640                flash_read_unique_id
+                0x00402624       0x4c obj/naeusb/sam4s_hal/flash_efc.o
+                0x00402624                flash_read_unique_id
  .text.usart_set_async_baudrate
-                0x0040268c       0x5c obj/naeusb/sam4s_hal/usart.o
-                0x0040268c                usart_set_async_baudrate
+                0x00402670       0x5c obj/naeusb/sam4s_hal/usart.o
+                0x00402670                usart_set_async_baudrate
  .text.usart_init_rs232
-                0x004026e8       0x78 obj/naeusb/sam4s_hal/usart.o
-                0x004026e8                usart_init_rs232
+                0x004026cc       0x78 obj/naeusb/sam4s_hal/usart.o
+                0x004026cc                usart_init_rs232
  .text.usart_enable_tx
-                0x00402760        0x8 obj/naeusb/sam4s_hal/usart.o
-                0x00402760                usart_enable_tx
+                0x00402744        0x8 obj/naeusb/sam4s_hal/usart.o
+                0x00402744                usart_enable_tx
  .text.usart_disable_tx
-                0x00402768        0x8 obj/naeusb/sam4s_hal/usart.o
-                0x00402768                usart_disable_tx
+                0x0040274c        0x8 obj/naeusb/sam4s_hal/usart.o
+                0x0040274c                usart_disable_tx
  .text.usart_enable_rx
-                0x00402770        0x8 obj/naeusb/sam4s_hal/usart.o
-                0x00402770                usart_enable_rx
+                0x00402754        0x8 obj/naeusb/sam4s_hal/usart.o
+                0x00402754                usart_enable_rx
  .text.usart_disable_rx
-                0x00402778        0x8 obj/naeusb/sam4s_hal/usart.o
-                0x00402778                usart_disable_rx
+                0x0040275c        0x8 obj/naeusb/sam4s_hal/usart.o
+                0x0040275c                usart_disable_rx
  .text.usart_enable_interrupt
-                0x00402780        0x4 obj/naeusb/sam4s_hal/usart.o
-                0x00402780                usart_enable_interrupt
+                0x00402764        0x4 obj/naeusb/sam4s_hal/usart.o
+                0x00402764                usart_enable_interrupt
  .text.usart_disable_interrupt
-                0x00402784        0x4 obj/naeusb/sam4s_hal/usart.o
-                0x00402784                usart_disable_interrupt
+                0x00402768        0x4 obj/naeusb/sam4s_hal/usart.o
+                0x00402768                usart_disable_interrupt
  .text.usart_get_interrupt_mask
-                0x00402788        0x4 obj/naeusb/sam4s_hal/usart.o
-                0x00402788                usart_get_interrupt_mask
+                0x0040276c        0x4 obj/naeusb/sam4s_hal/usart.o
+                0x0040276c                usart_get_interrupt_mask
  .text.usart_get_status
-                0x0040278c        0x4 obj/naeusb/sam4s_hal/usart.o
-                0x0040278c                usart_get_status
+                0x00402770        0x4 obj/naeusb/sam4s_hal/usart.o
+                0x00402770                usart_get_status
  .text.usart_putchar
-                0x00402790       0x10 obj/naeusb/sam4s_hal/usart.o
-                0x00402790                usart_putchar
+                0x00402774       0x10 obj/naeusb/sam4s_hal/usart.o
+                0x00402774                usart_putchar
  .text.pio_handler_process
-                0x004027a0       0x78 obj/naeusb/sam4s_hal/pio_handler.o
-                0x004027a0                pio_handler_process
+                0x00402784       0x78 obj/naeusb/sam4s_hal/pio_handler.o
+                0x00402784                pio_handler_process
  .text.pio_handler_set
-                0x00402818       0x88 obj/naeusb/sam4s_hal/pio_handler.o
-                0x00402818                pio_handler_set
+                0x004027fc       0x88 obj/naeusb/sam4s_hal/pio_handler.o
+                0x004027fc                pio_handler_set
  .text.pio_capture_handler_set
-                0x004028a0        0xc obj/naeusb/sam4s_hal/pio_handler.o
-                0x004028a0                pio_capture_handler_set
+                0x00402884        0xc obj/naeusb/sam4s_hal/pio_handler.o
+                0x00402884                pio_capture_handler_set
  .text.PIOA_Handler
-                0x004028ac       0x10 obj/naeusb/sam4s_hal/pio_handler.o
-                0x004028ac                PIOA_Handler
+                0x00402890       0x10 obj/naeusb/sam4s_hal/pio_handler.o
+                0x00402890                PIOA_Handler
  .text.PIOB_Handler
-                0x004028bc       0x10 obj/naeusb/sam4s_hal/pio_handler.o
-                0x004028bc                PIOB_Handler
+                0x004028a0       0x10 obj/naeusb/sam4s_hal/pio_handler.o
+                0x004028a0                PIOB_Handler
  .text.SystemCoreClockUpdate
-                0x004028cc       0xd4 obj/naeusb/sam4s_hal/system_sam4s.o
-                0x004028cc                SystemCoreClockUpdate
+                0x004028b0       0xd4 obj/naeusb/sam4s_hal/system_sam4s.o
+                0x004028b0                SystemCoreClockUpdate
  .text.system_init_flash
-                0x004029a0       0x8c obj/naeusb/sam4s_hal/system_sam4s.o
-                0x004029a0                system_init_flash
- .text.LED_Off  0x00402a2c       0x48 obj/naeusb/sam4s_hal/led.o
-                0x00402a2c                LED_Off
- .text.LED_On   0x00402a74       0x48 obj/naeusb/sam4s_hal/led.o
-                0x00402a74                LED_On
+                0x00402984       0x8c obj/naeusb/sam4s_hal/system_sam4s.o
+                0x00402984                system_init_flash
+ .text.LED_Off  0x00402a10       0x48 obj/naeusb/sam4s_hal/led.o
+                0x00402a10                LED_Off
+ .text.LED_On   0x00402a58       0x48 obj/naeusb/sam4s_hal/led.o
+                0x00402a58                LED_On
  .text.sysclk_enable_usb
-                0x00402abc       0x54 obj/naeusb/sam4s_hal/sysclk.o
-                0x00402abc                sysclk_enable_usb
+                0x00402aa0       0x54 obj/naeusb/sam4s_hal/sysclk.o
+                0x00402aa0                sysclk_enable_usb
  .text.sysclk_init
-                0x00402b10       0x68 obj/naeusb/sam4s_hal/sysclk.o
-                0x00402b10                sysclk_init
+                0x00402af4       0x68 obj/naeusb/sam4s_hal/sysclk.o
+                0x00402af4                sysclk_init
  .text.pmc_switch_mck_to_mainck
-                0x00402b78       0x5c obj/naeusb/sam4s_hal/pmc.o
-                0x00402b78                pmc_switch_mck_to_mainck
+                0x00402b5c       0x5c obj/naeusb/sam4s_hal/pmc.o
+                0x00402b5c                pmc_switch_mck_to_mainck
  .text.pmc_switch_mck_to_pllack
-                0x00402bd4       0x5c obj/naeusb/sam4s_hal/pmc.o
-                0x00402bd4                pmc_switch_mck_to_pllack
+                0x00402bb8       0x5c obj/naeusb/sam4s_hal/pmc.o
+                0x00402bb8                pmc_switch_mck_to_pllack
  .text.pmc_switch_mainck_to_xtal
-                0x00402c30       0x50 obj/naeusb/sam4s_hal/pmc.o
-                0x00402c30                pmc_switch_mainck_to_xtal
+                0x00402c14       0x50 obj/naeusb/sam4s_hal/pmc.o
+                0x00402c14                pmc_switch_mainck_to_xtal
  .text.pmc_osc_is_ready_mainck
-                0x00402c80       0x10 obj/naeusb/sam4s_hal/pmc.o
-                0x00402c80                pmc_osc_is_ready_mainck
+                0x00402c64       0x10 obj/naeusb/sam4s_hal/pmc.o
+                0x00402c64                pmc_osc_is_ready_mainck
  .text.pmc_disable_pllack
-                0x00402c90       0x10 obj/naeusb/sam4s_hal/pmc.o
-                0x00402c90                pmc_disable_pllack
+                0x00402c74       0x10 obj/naeusb/sam4s_hal/pmc.o
+                0x00402c74                pmc_disable_pllack
  .text.pmc_is_locked_pllack
-                0x00402ca0       0x10 obj/naeusb/sam4s_hal/pmc.o
-                0x00402ca0                pmc_is_locked_pllack
+                0x00402c84       0x10 obj/naeusb/sam4s_hal/pmc.o
+                0x00402c84                pmc_is_locked_pllack
  .text.pmc_disable_pllbck
-                0x00402cb0        0xc obj/naeusb/sam4s_hal/pmc.o
-                0x00402cb0                pmc_disable_pllbck
+                0x00402c94        0xc obj/naeusb/sam4s_hal/pmc.o
+                0x00402c94                pmc_disable_pllbck
  .text.pmc_is_locked_pllbck
-                0x00402cbc       0x10 obj/naeusb/sam4s_hal/pmc.o
-                0x00402cbc                pmc_is_locked_pllbck
+                0x00402ca0       0x10 obj/naeusb/sam4s_hal/pmc.o
+                0x00402ca0                pmc_is_locked_pllbck
  .text.pmc_enable_periph_clk
-                0x00402ccc       0x44 obj/naeusb/sam4s_hal/pmc.o
-                0x00402ccc                pmc_enable_periph_clk
+                0x00402cb0       0x44 obj/naeusb/sam4s_hal/pmc.o
+                0x00402cb0                pmc_enable_periph_clk
  .text.pmc_disable_periph_clk
-                0x00402d10       0x44 obj/naeusb/sam4s_hal/pmc.o
-                0x00402d10                pmc_disable_periph_clk
+                0x00402cf4       0x44 obj/naeusb/sam4s_hal/pmc.o
+                0x00402cf4                pmc_disable_periph_clk
  .text.pmc_enable_pck
-                0x00402d54       0x10 obj/naeusb/sam4s_hal/pmc.o
-                0x00402d54                pmc_enable_pck
+                0x00402d38       0x10 obj/naeusb/sam4s_hal/pmc.o
+                0x00402d38                pmc_enable_pck
  .text.pmc_switch_udpck_to_pllbck
-                0x00402d64       0x14 obj/naeusb/sam4s_hal/pmc.o
-                0x00402d64                pmc_switch_udpck_to_pllbck
+                0x00402d48       0x14 obj/naeusb/sam4s_hal/pmc.o
+                0x00402d48                pmc_switch_udpck_to_pllbck
  .text.pmc_enable_udpck
-                0x00402d78        0xc obj/naeusb/sam4s_hal/pmc.o
-                0x00402d78                pmc_enable_udpck
+                0x00402d5c        0xc obj/naeusb/sam4s_hal/pmc.o
+                0x00402d5c                pmc_enable_udpck
  .text.pmc_set_fast_startup_input
-                0x00402d84       0x14 obj/naeusb/sam4s_hal/pmc.o
-                0x00402d84                pmc_set_fast_startup_input
+                0x00402d68       0x14 obj/naeusb/sam4s_hal/pmc.o
+                0x00402d68                pmc_set_fast_startup_input
  .text.udi_vendor_getsetting
-                0x00402d98        0xc obj/naeusb/sam4s_hal/udi_vendor.o
-                0x00402d98                udi_vendor_getsetting
+                0x00402d7c        0xc obj/naeusb/sam4s_hal/udi_vendor.o
+                0x00402d7c                udi_vendor_getsetting
  .text.udi_vendor_disable
-                0x00402da4       0x14 obj/naeusb/sam4s_hal/udi_vendor.o
-                0x00402da4                udi_vendor_disable
+                0x00402d88       0x14 obj/naeusb/sam4s_hal/udi_vendor.o
+                0x00402d88                udi_vendor_disable
  .text.udi_vendor_setup
-                0x00402db8       0x30 obj/naeusb/sam4s_hal/udi_vendor.o
-                0x00402db8                udi_vendor_setup
+                0x00402d9c       0x30 obj/naeusb/sam4s_hal/udi_vendor.o
+                0x00402d9c                udi_vendor_setup
  .text.udi_vendor_enable
-                0x00402de8       0x28 obj/naeusb/sam4s_hal/udi_vendor.o
-                0x00402de8                udi_vendor_enable
+                0x00402dcc       0x28 obj/naeusb/sam4s_hal/udi_vendor.o
+                0x00402dcc                udi_vendor_enable
  .text.udi_vendor_bulk_in_run
-                0x00402e10       0x20 obj/naeusb/sam4s_hal/udi_vendor.o
-                0x00402e10                udi_vendor_bulk_in_run
+                0x00402df4       0x20 obj/naeusb/sam4s_hal/udi_vendor.o
+                0x00402df4                udi_vendor_bulk_in_run
  .text.udi_vendor_bulk_out_run
-                0x00402e30       0x20 obj/naeusb/sam4s_hal/udi_vendor.o
-                0x00402e30                udi_vendor_bulk_out_run
+                0x00402e14       0x20 obj/naeusb/sam4s_hal/udi_vendor.o
+                0x00402e14                udi_vendor_bulk_out_run
+ .text.switch_configurations
+                0x00402e34       0x1c obj/naeusb/sam4s_hal/udi_composite_desc.o
+                0x00402e34                switch_configurations
  .text.efc_perform_command
                 0x00402e50       0x60 obj/naeusb/sam4s_hal/efc.o
                 0x00402e50                efc_perform_command
@@ -9774,36 +9774,36 @@ LOAD c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc
  .data.udc_string_product_name
                 0x200005e8       0x13 obj/naeusb/udc.o
  *fill*         0x200005fb        0x1 
- .data.mpsse_udi_apis
-                0x200005fc        0x8 obj/naeusb/udi_composite_desc.o
-                0x200005fc                mpsse_udi_apis
- .data.udc_config
-                0x20000604        0xc obj/naeusb/udi_composite_desc.o
-                0x20000604                udc_config
- .data.udc_config_lsfs
-                0x20000610        0x8 obj/naeusb/udi_composite_desc.o
-                0x20000610                udc_config_lsfs
- .data.udc_desc_fs
-                0x20000618       0x62 obj/naeusb/udi_composite_desc.o
-                0x20000618                udc_desc_fs
- *fill*         0x2000067a        0x2 
- .data.udc_desc_fs_mpsse
-                0x2000067c       0x62 obj/naeusb/udi_composite_desc.o
-                0x2000067c                udc_desc_fs_mpsse
- *fill*         0x200006de        0x2 
- .data.udc_device_desc
-                0x200006e0       0x12 obj/naeusb/udi_composite_desc.o
-                0x200006e0                udc_device_desc
- *fill*         0x200006f2        0x2 
- .data.udi_apis
-                0x200006f4        0xc obj/naeusb/udi_composite_desc.o
-                0x200006f4                udi_apis
  .data.SystemCoreClock
-                0x20000700        0x4 obj/naeusb/sam4s_hal/system_sam4s.o
-                0x20000700                SystemCoreClock
+                0x200005fc        0x4 obj/naeusb/sam4s_hal/system_sam4s.o
+                0x200005fc                SystemCoreClock
  .data.udi_api_vendor
-                0x20000704       0x14 obj/naeusb/sam4s_hal/udi_vendor.o
-                0x20000704                udi_api_vendor
+                0x20000600       0x14 obj/naeusb/sam4s_hal/udi_vendor.o
+                0x20000600                udi_api_vendor
+ .data.mpsse_udi_apis
+                0x20000614        0x8 obj/naeusb/sam4s_hal/udi_composite_desc.o
+                0x20000614                mpsse_udi_apis
+ .data.udc_config
+                0x2000061c        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+                0x2000061c                udc_config
+ .data.udc_config_lsfs
+                0x20000628        0x8 obj/naeusb/sam4s_hal/udi_composite_desc.o
+                0x20000628                udc_config_lsfs
+ .data.udc_desc_fs
+                0x20000630       0x62 obj/naeusb/sam4s_hal/udi_composite_desc.o
+                0x20000630                udc_desc_fs
+ *fill*         0x20000692        0x2 
+ .data.udc_desc_fs_mpsse
+                0x20000694       0x62 obj/naeusb/sam4s_hal/udi_composite_desc.o
+                0x20000694                udc_desc_fs_mpsse
+ *fill*         0x200006f6        0x2 
+ .data.udc_device_desc
+                0x200006f8       0x12 obj/naeusb/sam4s_hal/udi_composite_desc.o
+                0x200006f8                udc_device_desc
+ *fill*         0x2000070a        0x2 
+ .data.udi_apis
+                0x2000070c        0xc obj/naeusb/sam4s_hal/udi_composite_desc.o
+                0x2000070c                udi_apis
  .data.g_interrupt_enabled
                 0x20000718        0x1 obj/naeusb/sam4s_hal/interrupt_sam_nvic.o
                 0x20000718                g_interrupt_enabled
@@ -10049,23 +10049,23 @@ LOAD linker stubs
  .ARM.attributes
                 0x000001df       0x2d obj/naeusb/udc.o
  .ARM.attributes
-                0x0000020c       0x2d obj/naeusb/udi_composite_desc.o
+                0x0000020c       0x2d obj/naeusb/sam4s_hal/flash_efc.o
  .ARM.attributes
-                0x00000239       0x2d obj/naeusb/sam4s_hal/flash_efc.o
+                0x00000239       0x2d obj/naeusb/sam4s_hal/usart.o
  .ARM.attributes
-                0x00000266       0x2d obj/naeusb/sam4s_hal/usart.o
+                0x00000266       0x2d obj/naeusb/sam4s_hal/pio_handler.o
  .ARM.attributes
-                0x00000293       0x2d obj/naeusb/sam4s_hal/pio_handler.o
+                0x00000293       0x2d obj/naeusb/sam4s_hal/system_sam4s.o
  .ARM.attributes
-                0x000002c0       0x2d obj/naeusb/sam4s_hal/system_sam4s.o
+                0x000002c0       0x2d obj/naeusb/sam4s_hal/led.o
  .ARM.attributes
-                0x000002ed       0x2d obj/naeusb/sam4s_hal/led.o
+                0x000002ed       0x2d obj/naeusb/sam4s_hal/sysclk.o
  .ARM.attributes
-                0x0000031a       0x2d obj/naeusb/sam4s_hal/sysclk.o
+                0x0000031a       0x2d obj/naeusb/sam4s_hal/pmc.o
  .ARM.attributes
-                0x00000347       0x2d obj/naeusb/sam4s_hal/pmc.o
+                0x00000347       0x2d obj/naeusb/sam4s_hal/udi_vendor.o
  .ARM.attributes
-                0x00000374       0x2d obj/naeusb/sam4s_hal/udi_vendor.o
+                0x00000374       0x2d obj/naeusb/sam4s_hal/udi_composite_desc.o
  .ARM.attributes
                 0x000003a1       0x2d obj/naeusb/sam4s_hal/efc.o
  .ARM.attributes
@@ -10137,7 +10137,6 @@ LOAD linker stubs
  .comment       0x00000049       0x4a obj/naeusb/naeusb_usart.o
  .comment       0x00000049       0x4a obj/naeusb/naeusb.o
  .comment       0x00000049       0x4a obj/naeusb/udc.o
- .comment       0x00000049       0x4a obj/naeusb/udi_composite_desc.o
  .comment       0x00000049       0x4a obj/naeusb/sam4s_hal/flash_efc.o
  .comment       0x00000049       0x4a obj/naeusb/sam4s_hal/usart.o
  .comment       0x00000049       0x4a obj/naeusb/sam4s_hal/pio_handler.o
@@ -10146,6 +10145,7 @@ LOAD linker stubs
  .comment       0x00000049       0x4a obj/naeusb/sam4s_hal/sysclk.o
  .comment       0x00000049       0x4a obj/naeusb/sam4s_hal/pmc.o
  .comment       0x00000049       0x4a obj/naeusb/sam4s_hal/udi_vendor.o
+ .comment       0x00000049       0x4a obj/naeusb/sam4s_hal/udi_composite_desc.o
  .comment       0x00000049       0x4a obj/naeusb/sam4s_hal/efc.o
  .comment       0x00000049       0x4a obj/naeusb/sam4s_hal/pio.o
  .comment       0x00000049       0x4a obj/naeusb/sam4s_hal/startup_sam4s.o
@@ -10167,15 +10167,15 @@ LOAD linker stubs
  .debug_info    0x000046aa     0x20fc obj/naeusb/naeusb_usart.o
  .debug_info    0x000067a6      0x4e1 obj/naeusb/naeusb.o
  .debug_info    0x00006c87     0x1852 obj/naeusb/udc.o
- .debug_info    0x000084d9      0x994 obj/naeusb/udi_composite_desc.o
- .debug_info    0x00008e6d     0x1db2 obj/naeusb/sam4s_hal/flash_efc.o
- .debug_info    0x0000ac1f     0x223e obj/naeusb/sam4s_hal/usart.o
- .debug_info    0x0000ce5d      0xf48 obj/naeusb/sam4s_hal/pio_handler.o
- .debug_info    0x0000dda5      0x3f5 obj/naeusb/sam4s_hal/system_sam4s.o
- .debug_info    0x0000e19a      0x1fa obj/naeusb/sam4s_hal/led.o
- .debug_info    0x0000e394      0x9f8 obj/naeusb/sam4s_hal/sysclk.o
- .debug_info    0x0000ed8c     0x10e2 obj/naeusb/sam4s_hal/pmc.o
- .debug_info    0x0000fe6e      0x4b2 obj/naeusb/sam4s_hal/udi_vendor.o
+ .debug_info    0x000084d9     0x1db2 obj/naeusb/sam4s_hal/flash_efc.o
+ .debug_info    0x0000a28b     0x223e obj/naeusb/sam4s_hal/usart.o
+ .debug_info    0x0000c4c9      0xf48 obj/naeusb/sam4s_hal/pio_handler.o
+ .debug_info    0x0000d411      0x3f5 obj/naeusb/sam4s_hal/system_sam4s.o
+ .debug_info    0x0000d806      0x1fa obj/naeusb/sam4s_hal/led.o
+ .debug_info    0x0000da00      0x9f8 obj/naeusb/sam4s_hal/sysclk.o
+ .debug_info    0x0000e3f8     0x10e2 obj/naeusb/sam4s_hal/pmc.o
+ .debug_info    0x0000f4da      0x4b2 obj/naeusb/sam4s_hal/udi_vendor.o
+ .debug_info    0x0000f98c      0x994 obj/naeusb/sam4s_hal/udi_composite_desc.o
  .debug_info    0x00010320      0x7ee obj/naeusb/sam4s_hal/efc.o
  .debug_info    0x00010b0e     0x1e55 obj/naeusb/sam4s_hal/pio.o
  .debug_info    0x00012963      0x66b obj/naeusb/sam4s_hal/startup_sam4s.o
@@ -10197,15 +10197,15 @@ LOAD linker stubs
  .debug_abbrev  0x00001505      0x562 obj/naeusb/naeusb_usart.o
  .debug_abbrev  0x00001a67      0x269 obj/naeusb/naeusb.o
  .debug_abbrev  0x00001cd0      0x45a obj/naeusb/udc.o
- .debug_abbrev  0x0000212a      0x194 obj/naeusb/udi_composite_desc.o
- .debug_abbrev  0x000022be      0x2ea obj/naeusb/sam4s_hal/flash_efc.o
- .debug_abbrev  0x000025a8      0x3d5 obj/naeusb/sam4s_hal/usart.o
- .debug_abbrev  0x0000297d      0x339 obj/naeusb/sam4s_hal/pio_handler.o
- .debug_abbrev  0x00002cb6      0x114 obj/naeusb/sam4s_hal/system_sam4s.o
- .debug_abbrev  0x00002dca      0x108 obj/naeusb/sam4s_hal/led.o
- .debug_abbrev  0x00002ed2      0x2ce obj/naeusb/sam4s_hal/sysclk.o
- .debug_abbrev  0x000031a0      0x29b obj/naeusb/sam4s_hal/pmc.o
- .debug_abbrev  0x0000343b      0x238 obj/naeusb/sam4s_hal/udi_vendor.o
+ .debug_abbrev  0x0000212a      0x2ea obj/naeusb/sam4s_hal/flash_efc.o
+ .debug_abbrev  0x00002414      0x3d5 obj/naeusb/sam4s_hal/usart.o
+ .debug_abbrev  0x000027e9      0x339 obj/naeusb/sam4s_hal/pio_handler.o
+ .debug_abbrev  0x00002b22      0x114 obj/naeusb/sam4s_hal/system_sam4s.o
+ .debug_abbrev  0x00002c36      0x108 obj/naeusb/sam4s_hal/led.o
+ .debug_abbrev  0x00002d3e      0x2ce obj/naeusb/sam4s_hal/sysclk.o
+ .debug_abbrev  0x0000300c      0x29b obj/naeusb/sam4s_hal/pmc.o
+ .debug_abbrev  0x000032a7      0x238 obj/naeusb/sam4s_hal/udi_vendor.o
+ .debug_abbrev  0x000034df      0x194 obj/naeusb/sam4s_hal/udi_composite_desc.o
  .debug_abbrev  0x00003673      0x2ce obj/naeusb/sam4s_hal/efc.o
  .debug_abbrev  0x00003941      0x335 obj/naeusb/sam4s_hal/pio.o
  .debug_abbrev  0x00003c76      0x1c7 obj/naeusb/sam4s_hal/startup_sam4s.o
@@ -10266,23 +10266,23 @@ LOAD linker stubs
  .debug_aranges
                 0x000003c8       0x68 obj/naeusb/udc.o
  .debug_aranges
-                0x00000430       0x20 obj/naeusb/udi_composite_desc.o
+                0x00000430       0xe0 obj/naeusb/sam4s_hal/flash_efc.o
  .debug_aranges
-                0x00000450       0xe0 obj/naeusb/sam4s_hal/flash_efc.o
+                0x00000510      0x200 obj/naeusb/sam4s_hal/usart.o
  .debug_aranges
-                0x00000530      0x200 obj/naeusb/sam4s_hal/usart.o
+                0x00000710       0x50 obj/naeusb/sam4s_hal/pio_handler.o
  .debug_aranges
-                0x00000730       0x50 obj/naeusb/sam4s_hal/pio_handler.o
+                0x00000760       0x30 obj/naeusb/sam4s_hal/system_sam4s.o
  .debug_aranges
-                0x00000780       0x30 obj/naeusb/sam4s_hal/system_sam4s.o
+                0x00000790       0x28 obj/naeusb/sam4s_hal/led.o
  .debug_aranges
-                0x000007b0       0x28 obj/naeusb/sam4s_hal/led.o
+                0x000007b8       0x40 obj/naeusb/sam4s_hal/sysclk.o
  .debug_aranges
-                0x000007d8       0x40 obj/naeusb/sam4s_hal/sysclk.o
+                0x000007f8      0x208 obj/naeusb/sam4s_hal/pmc.o
  .debug_aranges
-                0x00000818      0x208 obj/naeusb/sam4s_hal/pmc.o
+                0x00000a00       0x48 obj/naeusb/sam4s_hal/udi_vendor.o
  .debug_aranges
-                0x00000a20       0x48 obj/naeusb/sam4s_hal/udi_vendor.o
+                0x00000a48       0x20 obj/naeusb/sam4s_hal/udi_composite_desc.o
  .debug_aranges
                 0x00000a68       0x90 obj/naeusb/sam4s_hal/efc.o
  .debug_aranges
@@ -10313,15 +10313,15 @@ LOAD linker stubs
  .debug_ranges  0x000005a0      0x830 obj/naeusb/naeusb_usart.o
  .debug_ranges  0x00000dd0       0x90 obj/naeusb/naeusb.o
  .debug_ranges  0x00000e60      0x2c8 obj/naeusb/udc.o
- .debug_ranges  0x00001128       0x10 obj/naeusb/udi_composite_desc.o
- .debug_ranges  0x00001138      0x540 obj/naeusb/sam4s_hal/flash_efc.o
- .debug_ranges  0x00001678      0x9c8 obj/naeusb/sam4s_hal/usart.o
- .debug_ranges  0x00002040       0x80 obj/naeusb/sam4s_hal/pio_handler.o
- .debug_ranges  0x000020c0       0x20 obj/naeusb/sam4s_hal/system_sam4s.o
- .debug_ranges  0x000020e0       0x18 obj/naeusb/sam4s_hal/led.o
- .debug_ranges  0x000020f8       0xf0 obj/naeusb/sam4s_hal/sysclk.o
- .debug_ranges  0x000021e8      0x248 obj/naeusb/sam4s_hal/pmc.o
- .debug_ranges  0x00002430       0x50 obj/naeusb/sam4s_hal/udi_vendor.o
+ .debug_ranges  0x00001128      0x540 obj/naeusb/sam4s_hal/flash_efc.o
+ .debug_ranges  0x00001668      0x9c8 obj/naeusb/sam4s_hal/usart.o
+ .debug_ranges  0x00002030       0x80 obj/naeusb/sam4s_hal/pio_handler.o
+ .debug_ranges  0x000020b0       0x20 obj/naeusb/sam4s_hal/system_sam4s.o
+ .debug_ranges  0x000020d0       0x18 obj/naeusb/sam4s_hal/led.o
+ .debug_ranges  0x000020e8       0xf0 obj/naeusb/sam4s_hal/sysclk.o
+ .debug_ranges  0x000021d8      0x248 obj/naeusb/sam4s_hal/pmc.o
+ .debug_ranges  0x00002420       0x50 obj/naeusb/sam4s_hal/udi_vendor.o
+ .debug_ranges  0x00002470       0x10 obj/naeusb/sam4s_hal/udi_composite_desc.o
  .debug_ranges  0x00002480       0xe0 obj/naeusb/sam4s_hal/efc.o
  .debug_ranges  0x00002560      0x5a0 obj/naeusb/sam4s_hal/pio.o
  .debug_ranges  0x00002b00       0x18 obj/naeusb/sam4s_hal/startup_sam4s.o
@@ -10495,25 +10495,25 @@ LOAD linker stubs
  .debug_macro   0x0001348b      0x218 obj/naeusb/udc.o
  .debug_macro   0x000136a3      0x107 obj/naeusb/udc.o
  .debug_macro   0x000137aa       0x42 obj/naeusb/udc.o
- .debug_macro   0x000137ec      0x5b9 obj/naeusb/udi_composite_desc.o
- .debug_macro   0x00013da5      0x5eb obj/naeusb/sam4s_hal/flash_efc.o
- .debug_macro   0x00014390       0x5e obj/naeusb/sam4s_hal/flash_efc.o
- .debug_macro   0x000143ee       0x94 obj/naeusb/sam4s_hal/flash_efc.o
- .debug_macro   0x00014482       0x57 obj/naeusb/sam4s_hal/flash_efc.o
- .debug_macro   0x000144d9       0x10 obj/naeusb/sam4s_hal/flash_efc.o
- .debug_macro   0x000144e9       0x16 obj/naeusb/sam4s_hal/flash_efc.o
- .debug_macro   0x000144ff       0x1c obj/naeusb/sam4s_hal/flash_efc.o
- .debug_macro   0x0001451b      0x548 obj/naeusb/sam4s_hal/usart.o
- .debug_macro   0x00014a63       0x28 obj/naeusb/sam4s_hal/usart.o
- .debug_macro   0x00014a8b      0x522 obj/naeusb/sam4s_hal/pio_handler.o
- .debug_macro   0x00014fad       0x8e obj/naeusb/sam4s_hal/pio_handler.o
- .debug_macro   0x0001503b      0x305 obj/naeusb/sam4s_hal/system_sam4s.o
- .debug_macro   0x00015340      0x573 obj/naeusb/sam4s_hal/led.o
- .debug_macro   0x000158b3      0x2cb obj/naeusb/sam4s_hal/led.o
- .debug_macro   0x00015b7e      0x586 obj/naeusb/sam4s_hal/sysclk.o
- .debug_macro   0x00016104      0x518 obj/naeusb/sam4s_hal/pmc.o
- .debug_macro   0x0001661c       0x52 obj/naeusb/sam4s_hal/pmc.o
- .debug_macro   0x0001666e      0x5dd obj/naeusb/sam4s_hal/udi_vendor.o
+ .debug_macro   0x000137ec      0x5eb obj/naeusb/sam4s_hal/flash_efc.o
+ .debug_macro   0x00013dd7       0x5e obj/naeusb/sam4s_hal/flash_efc.o
+ .debug_macro   0x00013e35       0x94 obj/naeusb/sam4s_hal/flash_efc.o
+ .debug_macro   0x00013ec9       0x57 obj/naeusb/sam4s_hal/flash_efc.o
+ .debug_macro   0x00013f20       0x10 obj/naeusb/sam4s_hal/flash_efc.o
+ .debug_macro   0x00013f30       0x16 obj/naeusb/sam4s_hal/flash_efc.o
+ .debug_macro   0x00013f46       0x1c obj/naeusb/sam4s_hal/flash_efc.o
+ .debug_macro   0x00013f62      0x548 obj/naeusb/sam4s_hal/usart.o
+ .debug_macro   0x000144aa       0x28 obj/naeusb/sam4s_hal/usart.o
+ .debug_macro   0x000144d2      0x522 obj/naeusb/sam4s_hal/pio_handler.o
+ .debug_macro   0x000149f4       0x8e obj/naeusb/sam4s_hal/pio_handler.o
+ .debug_macro   0x00014a82      0x305 obj/naeusb/sam4s_hal/system_sam4s.o
+ .debug_macro   0x00014d87      0x573 obj/naeusb/sam4s_hal/led.o
+ .debug_macro   0x000152fa      0x2cb obj/naeusb/sam4s_hal/led.o
+ .debug_macro   0x000155c5      0x586 obj/naeusb/sam4s_hal/sysclk.o
+ .debug_macro   0x00015b4b      0x518 obj/naeusb/sam4s_hal/pmc.o
+ .debug_macro   0x00016063       0x52 obj/naeusb/sam4s_hal/pmc.o
+ .debug_macro   0x000160b5      0x5dd obj/naeusb/sam4s_hal/udi_vendor.o
+ .debug_macro   0x00016692      0x5b9 obj/naeusb/sam4s_hal/udi_composite_desc.o
  .debug_macro   0x00016c4b      0x530 obj/naeusb/sam4s_hal/efc.o
  .debug_macro   0x0001717b       0x94 obj/naeusb/sam4s_hal/efc.o
  .debug_macro   0x0001720f      0x518 obj/naeusb/sam4s_hal/pio.o
@@ -10534,7 +10534,7 @@ LOAD linker stubs
  .debug_macro   0x00019646      0x65c obj/naeusb/sam4s_hal/udi_cdc.o
  .debug_macro   0x00019ca2      0x50d obj/naeusb/sam4s_hal/pdc.o
 
-.debug_line     0x00000000    0x1efff
+.debug_line     0x00000000    0x1f009
  .debug_line    0x00000000      0xe60 obj/cwnano_adc.o
  .debug_line    0x00000e60      0xeb8 obj/cwnano_glitch.o
  .debug_line    0x00001d18      0xe51 obj/main.o
@@ -10545,26 +10545,26 @@ LOAD linker stubs
  .debug_line    0x00006bf4     0x1dbd obj/naeusb/naeusb_usart.o
  .debug_line    0x000089b1      0xdfb obj/naeusb/naeusb.o
  .debug_line    0x000097ac     0x1642 obj/naeusb/udc.o
- .debug_line    0x0000adee      0x9fd obj/naeusb/udi_composite_desc.o
- .debug_line    0x0000b7eb     0x1774 obj/naeusb/sam4s_hal/flash_efc.o
- .debug_line    0x0000cf5f     0x1f81 obj/naeusb/sam4s_hal/usart.o
- .debug_line    0x0000eee0      0xc3a obj/naeusb/sam4s_hal/pio_handler.o
- .debug_line    0x0000fb1a      0x8c2 obj/naeusb/sam4s_hal/system_sam4s.o
- .debug_line    0x000103dc      0xa9e obj/naeusb/sam4s_hal/led.o
- .debug_line    0x00010e7a      0xc92 obj/naeusb/sam4s_hal/sysclk.o
- .debug_line    0x00011b0c     0x19b7 obj/naeusb/sam4s_hal/pmc.o
- .debug_line    0x000134c3      0xb24 obj/naeusb/sam4s_hal/udi_vendor.o
- .debug_line    0x00013fe7      0xd29 obj/naeusb/sam4s_hal/efc.o
- .debug_line    0x00014d10     0x1a3d obj/naeusb/sam4s_hal/pio.o
- .debug_line    0x0001674d      0x869 obj/naeusb/sam4s_hal/startup_sam4s.o
- .debug_line    0x00016fb6      0x4b3 obj/naeusb/sam4s_hal/syscalls.o
- .debug_line    0x00017469     0x29dd obj/naeusb/sam4s_hal/udp_device.o
- .debug_line    0x00019e46      0xd08 obj/naeusb/sam4s_hal/init.o
- .debug_line    0x0001ab4e      0xa45 obj/naeusb/sam4s_hal/interrupt_sam_nvic.o
- .debug_line    0x0001b593     0x2f35 obj/naeusb/sam4s_hal/udi_cdc.o
- .debug_line    0x0001e4c8      0xb37 obj/naeusb/sam4s_hal/pdc.o
+ .debug_line    0x0000adee     0x1774 obj/naeusb/sam4s_hal/flash_efc.o
+ .debug_line    0x0000c562     0x1f81 obj/naeusb/sam4s_hal/usart.o
+ .debug_line    0x0000e4e3      0xc3a obj/naeusb/sam4s_hal/pio_handler.o
+ .debug_line    0x0000f11d      0x8c2 obj/naeusb/sam4s_hal/system_sam4s.o
+ .debug_line    0x0000f9df      0xa9e obj/naeusb/sam4s_hal/led.o
+ .debug_line    0x0001047d      0xc92 obj/naeusb/sam4s_hal/sysclk.o
+ .debug_line    0x0001110f     0x19b7 obj/naeusb/sam4s_hal/pmc.o
+ .debug_line    0x00012ac6      0xb24 obj/naeusb/sam4s_hal/udi_vendor.o
+ .debug_line    0x000135ea      0xa07 obj/naeusb/sam4s_hal/udi_composite_desc.o
+ .debug_line    0x00013ff1      0xd29 obj/naeusb/sam4s_hal/efc.o
+ .debug_line    0x00014d1a     0x1a3d obj/naeusb/sam4s_hal/pio.o
+ .debug_line    0x00016757      0x869 obj/naeusb/sam4s_hal/startup_sam4s.o
+ .debug_line    0x00016fc0      0x4b3 obj/naeusb/sam4s_hal/syscalls.o
+ .debug_line    0x00017473     0x29dd obj/naeusb/sam4s_hal/udp_device.o
+ .debug_line    0x00019e50      0xd08 obj/naeusb/sam4s_hal/init.o
+ .debug_line    0x0001ab58      0xa45 obj/naeusb/sam4s_hal/interrupt_sam_nvic.o
+ .debug_line    0x0001b59d     0x2f35 obj/naeusb/sam4s_hal/udi_cdc.o
+ .debug_line    0x0001e4d2      0xb37 obj/naeusb/sam4s_hal/pdc.o
 
-.debug_str      0x00000000    0x5b2de
+.debug_str      0x00000000    0x5b2e8
  .debug_str     0x00000000    0x50e3e obj/cwnano_adc.o
                               0x51215 (size before relaxing)
  .debug_str     0x00050e3e      0x133 obj/cwnano_glitch.o
@@ -10585,41 +10585,41 @@ LOAD linker stubs
                               0x50c17 (size before relaxing)
  .debug_str     0x00052b34     0x16e9 obj/naeusb/udc.o
                               0x52240 (size before relaxing)
- .debug_str     0x0005421d      0x792 obj/naeusb/udi_composite_desc.o
-                              0x4db13 (size before relaxing)
- .debug_str     0x000549af      0x6cb obj/naeusb/sam4s_hal/flash_efc.o
+ .debug_str     0x0005421d      0x6cb obj/naeusb/sam4s_hal/flash_efc.o
                               0x4be2b (size before relaxing)
- .debug_str     0x0005507a      0x6ee obj/naeusb/sam4s_hal/usart.o
+ .debug_str     0x000548e8      0x6ee obj/naeusb/sam4s_hal/usart.o
                               0x49494 (size before relaxing)
- .debug_str     0x00055768      0x197 obj/naeusb/sam4s_hal/pio_handler.o
+ .debug_str     0x00054fd6      0x197 obj/naeusb/sam4s_hal/pio_handler.o
                               0x495bd (size before relaxing)
- .debug_str     0x000558ff       0xe7 obj/naeusb/sam4s_hal/system_sam4s.o
+ .debug_str     0x0005516d       0xe7 obj/naeusb/sam4s_hal/system_sam4s.o
                               0x38e28 (size before relaxing)
- .debug_str     0x000559e6       0xd5 obj/naeusb/sam4s_hal/led.o
+ .debug_str     0x00055254       0xd5 obj/naeusb/sam4s_hal/led.o
                               0x4b131 (size before relaxing)
- .debug_str     0x00055abb      0x1b9 obj/naeusb/sam4s_hal/sysclk.o
+ .debug_str     0x00055329      0x1b9 obj/naeusb/sam4s_hal/sysclk.o
                               0x4b7d6 (size before relaxing)
- .debug_str     0x00055c74      0x588 obj/naeusb/sam4s_hal/pmc.o
+ .debug_str     0x000554e2      0x588 obj/naeusb/sam4s_hal/pmc.o
                               0x4950f (size before relaxing)
- .debug_str     0x000561fc       0xa5 obj/naeusb/sam4s_hal/udi_vendor.o
+ .debug_str     0x00055a6a       0xb4 obj/naeusb/sam4s_hal/udi_vendor.o
                               0x4d237 (size before relaxing)
- .debug_str     0x000562a1      0x251 obj/naeusb/sam4s_hal/efc.o
+ .debug_str     0x00055b1e      0x78d obj/naeusb/sam4s_hal/udi_composite_desc.o
+                              0x4db1d (size before relaxing)
+ .debug_str     0x000562ab      0x251 obj/naeusb/sam4s_hal/efc.o
                               0x48ff1 (size before relaxing)
- .debug_str     0x000564f2      0x352 obj/naeusb/sam4s_hal/pio.o
+ .debug_str     0x000564fc      0x352 obj/naeusb/sam4s_hal/pio.o
                               0x496b1 (size before relaxing)
- .debug_str     0x00056844      0x3f2 obj/naeusb/sam4s_hal/startup_sam4s.o
+ .debug_str     0x0005684e      0x3f2 obj/naeusb/sam4s_hal/startup_sam4s.o
                               0x39099 (size before relaxing)
- .debug_str     0x00056c36      0x78a obj/naeusb/sam4s_hal/syscalls.o
+ .debug_str     0x00056c40      0x78a obj/naeusb/sam4s_hal/syscalls.o
                                0x76a8 (size before relaxing)
- .debug_str     0x000573c0     0x3206 obj/naeusb/sam4s_hal/udp_device.o
+ .debug_str     0x000573ca     0x3206 obj/naeusb/sam4s_hal/udp_device.o
                               0x53719 (size before relaxing)
- .debug_str     0x0005a5c6       0x6e obj/naeusb/sam4s_hal/init.o
+ .debug_str     0x0005a5d0       0x6e obj/naeusb/sam4s_hal/init.o
                               0x50e37 (size before relaxing)
- .debug_str     0x0005a634       0x54 obj/naeusb/sam4s_hal/interrupt_sam_nvic.o
+ .debug_str     0x0005a63e       0x54 obj/naeusb/sam4s_hal/interrupt_sam_nvic.o
                               0x48afa (size before relaxing)
- .debug_str     0x0005a688      0xb4b obj/naeusb/sam4s_hal/udi_cdc.o
+ .debug_str     0x0005a692      0xb4b obj/naeusb/sam4s_hal/udi_cdc.o
                               0x4debe (size before relaxing)
- .debug_str     0x0005b1d3      0x10b obj/naeusb/sam4s_hal/pdc.o
+ .debug_str     0x0005b1dd      0x10b obj/naeusb/sam4s_hal/pdc.o
                               0x48c4e (size before relaxing)
 
 .debug_frame    0x00000000     0x3014
@@ -10633,15 +10633,15 @@ LOAD linker stubs
  .debug_frame   0x00000700      0x2f8 obj/naeusb/naeusb_usart.o
  .debug_frame   0x000009f8       0xf8 obj/naeusb/naeusb.o
  .debug_frame   0x00000af0      0x130 obj/naeusb/udc.o
- .debug_frame   0x00000c20       0x20 obj/naeusb/udi_composite_desc.o
- .debug_frame   0x00000c40      0x324 obj/naeusb/sam4s_hal/flash_efc.o
- .debug_frame   0x00000f64      0x4c8 obj/naeusb/sam4s_hal/usart.o
- .debug_frame   0x0000142c       0xe0 obj/naeusb/sam4s_hal/pio_handler.o
- .debug_frame   0x0000150c       0x40 obj/naeusb/sam4s_hal/system_sam4s.o
- .debug_frame   0x0000154c       0x50 obj/naeusb/sam4s_hal/led.o
- .debug_frame   0x0000159c       0xb0 obj/naeusb/sam4s_hal/sysclk.o
- .debug_frame   0x0000164c      0x458 obj/naeusb/sam4s_hal/pmc.o
- .debug_frame   0x00001aa4       0x9c obj/naeusb/sam4s_hal/udi_vendor.o
+ .debug_frame   0x00000c20      0x324 obj/naeusb/sam4s_hal/flash_efc.o
+ .debug_frame   0x00000f44      0x4c8 obj/naeusb/sam4s_hal/usart.o
+ .debug_frame   0x0000140c       0xe0 obj/naeusb/sam4s_hal/pio_handler.o
+ .debug_frame   0x000014ec       0x40 obj/naeusb/sam4s_hal/system_sam4s.o
+ .debug_frame   0x0000152c       0x50 obj/naeusb/sam4s_hal/led.o
+ .debug_frame   0x0000157c       0xb0 obj/naeusb/sam4s_hal/sysclk.o
+ .debug_frame   0x0000162c      0x458 obj/naeusb/sam4s_hal/pmc.o
+ .debug_frame   0x00001a84       0x9c obj/naeusb/sam4s_hal/udi_vendor.o
+ .debug_frame   0x00001b20       0x20 obj/naeusb/sam4s_hal/udi_composite_desc.o
  .debug_frame   0x00001b40      0x13c obj/naeusb/sam4s_hal/efc.o
  .debug_frame   0x00001c7c      0x3a8 obj/naeusb/sam4s_hal/pio.o
  .debug_frame   0x00002024       0x38 obj/naeusb/sam4s_hal/startup_sam4s.o
@@ -11029,7 +11029,7 @@ mpsse_setup_out_received                          obj/naeusb/naeusb_mpsse.o
 mpsse_swd_send_bit                                obj/naeusb/naeusb_mpsse.o
 mpsse_tms_bit_send                                obj/naeusb/naeusb_mpsse.o
 mpsse_tms_send                                    obj/naeusb/naeusb_mpsse.o
-mpsse_udi_apis                                    obj/naeusb/udi_composite_desc.o
+mpsse_udi_apis                                    obj/naeusb/sam4s_hal/udi_composite_desc.o
 mpsse_vendor_bulk_in_received                     obj/naeusb/naeusb_mpsse.o
 mpsse_vendor_bulk_out_received                    obj/naeusb/naeusb_mpsse.o
 my_callback_config                                obj/naeusb/naeusb_usart.o
@@ -11295,7 +11295,7 @@ strlen                                            c:/program files (x86)/gnu arm
                                                   obj/naeusb/naeusb_default.o
 strncpy                                           c:/program files (x86)/gnu arm embedded toolchain/10 2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libg_nano.a(lib_a-strncpy.o)
                                                   obj/naeusb/naeusb_default.o
-switch_configurations                             obj/naeusb/udi_composite_desc.o
+switch_configurations                             obj/naeusb/sam4s_hal/udi_composite_desc.o
                                                   obj/naeusb/naeusb_mpsse.o
 sysclk_disable_usb                                obj/naeusb/sam4s_hal/sysclk.o
 sysclk_enable_usb                                 obj/naeusb/sam4s_hal/sysclk.o
@@ -11358,13 +11358,13 @@ uart_reset_tx                                     obj/naeusb/sam4s_hal/uart.o
 uart_set_clock_divisor                            obj/naeusb/sam4s_hal/uart.o
 uart_write                                        obj/naeusb/sam4s_hal/uart.o
                                                   obj/naeusb/sam4s_hal/usart_serial.o
-udc_config                                        obj/naeusb/udi_composite_desc.o
+udc_config                                        obj/naeusb/sam4s_hal/udi_composite_desc.o
                                                   obj/naeusb/udc.o
-udc_config_lsfs                                   obj/naeusb/udi_composite_desc.o
-udc_desc_fs                                       obj/naeusb/udi_composite_desc.o
-udc_desc_fs_mpsse                                 obj/naeusb/udi_composite_desc.o
-udc_desc_hs_mpsse                                 obj/naeusb/udi_composite_desc.o
-udc_device_desc                                   obj/naeusb/udi_composite_desc.o
+udc_config_lsfs                                   obj/naeusb/sam4s_hal/udi_composite_desc.o
+udc_desc_fs                                       obj/naeusb/sam4s_hal/udi_composite_desc.o
+udc_desc_fs_mpsse                                 obj/naeusb/sam4s_hal/udi_composite_desc.o
+udc_desc_hs_mpsse                                 obj/naeusb/sam4s_hal/udi_composite_desc.o
+udc_device_desc                                   obj/naeusb/sam4s_hal/udi_composite_desc.o
 udc_get_interface_desc                            obj/naeusb/udc.o
                                                   obj/naeusb/sam4s_hal/udi_vendor.o
 udc_process_setup                                 obj/naeusb/udc.o
@@ -11428,12 +11428,12 @@ udd_set_address                                   obj/naeusb/sam4s_hal/udp_devic
 udd_set_setup_payload                             obj/naeusb/sam4s_hal/udp_device.o
                                                   obj/naeusb/udc.o
 udi_api_cdc_comm                                  obj/naeusb/sam4s_hal/udi_cdc.o
-                                                  obj/naeusb/udi_composite_desc.o
+                                                  obj/naeusb/sam4s_hal/udi_composite_desc.o
 udi_api_cdc_data                                  obj/naeusb/sam4s_hal/udi_cdc.o
-                                                  obj/naeusb/udi_composite_desc.o
+                                                  obj/naeusb/sam4s_hal/udi_composite_desc.o
 udi_api_vendor                                    obj/naeusb/sam4s_hal/udi_vendor.o
-                                                  obj/naeusb/udi_composite_desc.o
-udi_apis                                          obj/naeusb/udi_composite_desc.o
+                                                  obj/naeusb/sam4s_hal/udi_composite_desc.o
+udi_apis                                          obj/naeusb/sam4s_hal/udi_composite_desc.o
 udi_cdc_comm_disable                              obj/naeusb/sam4s_hal/udi_cdc.o
 udi_cdc_comm_enable                               obj/naeusb/sam4s_hal/udi_cdc.o
 udi_cdc_comm_setup                                obj/naeusb/sam4s_hal/udi_cdc.o
