@@ -2528,7 +2528,7 @@ class ClockSettings(util.DisableNewAttr):
         This clock frequency is derived from one of the ADC clock sources as
         described in adc_src.
 
-        :Getter: Return the current frequency in MHz (float). May take
+        :Getter: Return the current frequency in Hz (int). May take
                 up to 0.5s to stabilize after adc_locked is True.
         """
         return self._getAdcFrequency()
@@ -2540,7 +2540,7 @@ class ClockSettings(util.DisableNewAttr):
         Note that the sampling rate may be less than the clock frequency if
         the downsampling factor is greater than 1.
 
-        :Getter: Return the current sampling rate in MS/s (float)
+        :Getter: Return the current sampling rate in samples/s (float)
         """
         return self._adcSampleRate()
 
@@ -2556,13 +2556,13 @@ class ClockSettings(util.DisableNewAttr):
 
     @property
     def freq_ctr(self):
-        """The current frequency at the frequency counter in MHz. Read-only.
+        """The current frequency at the frequency counter in Hz. Read-only.
 
         The frequency counter can be used to check the speed of the CLKGEN
         output or the EXTCLK input. This value shows the current frequency
         reading.
 
-        :Getter: Return the current frequency in MHz (float)
+        :Getter: Return the current frequency in Hz (int)
         """
         return self._get_extfrequency()
 
