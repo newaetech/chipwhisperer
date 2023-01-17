@@ -6,6 +6,7 @@ from ....logging import *
 import numpy as np
 from .._OpenADCInterface import OpenADCInterface, ClockSettings
 
+ADDR_EXTCLK                     = 38
 ADDR_EXTCLK_CHANGE_LIMIT        = 82
 ADDR_EXTCLK_MONITOR_DISABLED    = 83
 ADDR_EXTCLK_MONITOR_STAT        = 84
@@ -359,7 +360,8 @@ class CDCI6214:
 
         if old_mul != adc_mul:
             self._adc_mul = adc_mul
-            scope_logger.warning("ADC frequency must be between 1MHz and {}MHz - ADC mul has been adjusted to {}".format(self._max_freq, adc_mul))
+            if not adc_off:
+                scope_logger.warning("ADC frequency must be between 1MHz and {}MHz - ADC mul has been adjusted to {}".format(self._max_freq, adc_mul))
 
         if adc_mul * target_freq > self._warning_freq:
             scope_logger.warning("""
@@ -731,7 +733,11 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         sampling clock will remain tied to the *previous* external clock
         frequency.
 
-        :Getter: Return the current PLL input (either "system" or "extclk")
+        A variant on "extclk" is "extclk_aux_io", when the external clock is
+        supplied on the AUX I/O MCX instead of the HS1 pin (scope.io.aux_io_mcx
+        must be set to "high_z" in this case).
+
+        :Getter: Return the current PLL input ("system", "extclk" or "extclk_aux_io")
 
         :Setter: Change the CLKGEN source
 
@@ -743,7 +749,13 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         if self.pll.pll_src == "xtal":
             return "system"
         elif self.pll.pll_src == "fpga":
-            return "extclk"
+            data = self.oa.sendMessage(CODE_READ, ADDR_EXTCLK, maxResp=1)[0]
+            if data & 0x03 == 0x03:
+                return "extclk"
+            elif data & 0x03 == 0x00:
+                return "extclk_aux_io"
+            else:
+                raise ValueError("Unexpected value: %d" % data)
 
         raise ValueError("Invalid FPGA/PLL settings!") #TODO: print values
 
@@ -756,7 +768,16 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
             self.pll.pll_src = "xtal"
             self.fpga_clk_settings.enabled = False # keep things cool
             self.clkgen_freq = clkgen_freq
-        elif clk_src == "extclk":
+        elif clk_src in ["extclk", 'extclk_aux_io']:
+            data = self.oa.sendMessage(CODE_READ, ADDR_EXTCLK, maxResp=1)[0]
+            if clk_src == 'extclk':
+                #set bits [2:0] to 011:
+                data &= 0xf8
+                data |= 0x03
+            else:
+                #set bits [2:0] to 000:
+                data &= 0xf8
+            self.oa.sendMessage(CODE_WRITE, ADDR_EXTCLK, [data])
             self.pll.pll_src = "fpga"
             self.fpga_clk_settings.adc_src = "extclk_dir"
             self.fpga_clk_settings.enabled = False # keep things cool
@@ -764,7 +785,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
             self.clkgen_freq = self.fpga_clk_settings.freq_ctr
             self.extclk_monitor_enabled = True
         else:
-            raise ValueError("Invalid src settings! Must be 'internal', 'system' or 'extclk', not {}".format(clk_src))
+            raise ValueError("Invalid src settings! Must be 'internal', 'system', 'extclk' or 'extclk_aux_io', not {}".format(clk_src))
 
     @property
     def clkgen_freq(self):

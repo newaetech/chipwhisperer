@@ -28,7 +28,6 @@ from ....logging import *
 import zipfile
 import datetime
 import math
-from collections import OrderedDict
 from ....capture.scopes.cwhardware import PartialReconfiguration as pr
 from ....common.utils import util
 
@@ -77,7 +76,7 @@ class GlitchSettings(util.DisableNewAttr):
         self.disable_newattr()
 
     def _dict_repr(self):
-        rtn = OrderedDict()
+        rtn = {}
 
         if self._is_husky:
             rtn['enabled'] = self.enabled
@@ -111,6 +110,9 @@ class GlitchSettings(util.DisableNewAttr):
 
         This trigger is most useful in Manual trigger mode, where this is the
         only way to cause a glitch.
+
+        Note that for ChipWhisperer-Husky, this method will only cause a glitch
+        in manual mode, while on the Lite/Pro, this method will always insert a glitch.
         """
         self.cwg.glitchManual()
         
@@ -143,7 +145,7 @@ class GlitchSettings(util.DisableNewAttr):
         """The clock signal that the glitch DCM is using as input.
 
         This DCM can be clocked from three different sources:
-         * "target": The HS1 clock from the target device
+         * "target": The HS1 clock from the target device (can also be AUX clock for Husky)
          * "clkgen": The CLKGEN DCM output (N/A for Husky)
          * "pll": Husky's on-board PLL clock (Husky only)
 
@@ -260,7 +262,7 @@ class GlitchSettings(util.DisableNewAttr):
         """
         if not self._is_husky:
             raise ValueError("For CW-Husky only.")
-        return self.cwg.getActualNumGlitches()
+        return self.cwg.getNumActualGlitches()
 
     @property
     def state(self):
@@ -421,9 +423,10 @@ class GlitchSettings(util.DisableNewAttr):
          * "continuous": Constantly trigger glitches. The following
             scope.glitch parameters have no bearing in this mode: ext_offset,
             repeat, num_glitches.
-         * "manual": Only trigger glitches by calling manual_trigger(). The
+         * "manual": Only trigger glitches by calling :code:`manual_trigger()`. The
             following scope.glitch parameters have no bearing in this mode:
-            ext_offset, num_glitches.
+            ext_offset, num_glitches. In this mode, calling :code:`scope.arm()` will
+            trigger a glitch as well.
          * "ext_single": Use the trigger module. Once the scope is armed, one
             set of glitch events is emitted when the trigger condition is
             satisfied. Subsequent trigger conditions are ignored unless the
@@ -510,7 +513,9 @@ class GlitchSettings(util.DisableNewAttr):
 
         For CW-Husky when scope.glitch.num_glitches > 1, this parameter is a
         list with scope.glitch.num_glitches elements, each element
-        representing the ext_offset value for the corresponding glitch.
+        representing the ext_offset value for the corresponding glitch,
+        relative to the previous glitch. If ext_offset[i] = j, glitch i will
+        be issued 2+j cycles after the start of glitch i-1.
 
         For CW-Lite/Pro, scope.glitch.num_glitches is not supported so this is
         a simply an integer.
@@ -551,7 +556,10 @@ class GlitchSettings(util.DisableNewAttr):
 
         For CW-Husky when scope.glitch.num_glitches > 1, this parameter is a
         list with scope.glitch.num_glitches elements, each element
-        representing the repeat value for the corresponding glitch.
+        representing the repeat value for the corresponding glitch. The
+        maximum legal value for repeat[i] is ext_offset[i+1]+1. If an
+        illegal value is specified, the glitch output may be held high for
+        up to 8192 cycles.
 
         For CW-Lite/Pro, scope.glitch.num_glitches is not supported so this is
         a simply an integer.

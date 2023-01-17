@@ -25,7 +25,6 @@
 #    along with chipwhisperer.  If not, see <http://www.gnu.org/licenses/>.
 #=================================================
 import time
-from collections import OrderedDict
 from . import ChipWhispererGlitch
 from ....common.utils import util
 
@@ -37,6 +36,7 @@ ADDR_ADC_TRIGGER_LEVEL = 21
 ADDR_DATA = 33
 ADDR_LEN = 34
 ADDR_BAUD = 35
+ADDR_AUX_IO = 37
 ADDR_EXTCLK = 38
 ADDR_TRIGSRC = 39
 ADDR_TRIGMOD = 40
@@ -44,6 +44,7 @@ ADDR_I2CSTATUS = 47
 ADDR_I2CDATA = 48
 ADDR_IOROUTE = 55
 ADDR_IOREAD = 59
+ADDR_EDGE_TRIGGER = 113
 
 # API aliases for the TIO settings
 _tio_alias = {
@@ -90,6 +91,7 @@ class GPIOSettings(util.DisableNewAttr):
         ]
 
         self.HS2_VALID = {'disabled': 0, 'clkgen': 2, 'glitch': 3}
+        self._is_husky = False
 
         self.disable_newattr()
 
@@ -99,7 +101,7 @@ class GPIOSettings(util.DisableNewAttr):
         return tuple(((bitmask >> i) & 0x01) for i in range(4))
 
     def _dict_repr(self):
-        rtn = OrderedDict()
+        rtn = {}
         rtn['tio1'] = self.tio1
         rtn['tio2'] = self.tio2
         rtn['tio3'] = self.tio3
@@ -120,6 +122,10 @@ class GPIOSettings(util.DisableNewAttr):
         rtn['tio_states'] = self.tio_states
 
         rtn['cdc_settings'] = self.cdc_settings
+
+        if self._is_husky:
+            rtn['aux_io_mcx'] = self.aux_io_mcx
+            rtn['glitch_trig_mcx'] = self.glitch_trig_mcx
 
         return rtn
 
@@ -218,6 +224,62 @@ class GPIOSettings(util.DisableNewAttr):
         if ver < '0.30':
             return None
         return self.cwe.oa.serial.set_cdc_settings(port)
+
+    @property
+    def aux_io_mcx(self):
+        """Set the function of the AUX I/O MCX on Husky.
+        Options:
+        * "high_z": input: to use as a trigger (scope.trigger.triggers = 'aux') or clock (scope.clock.clkgen_src = 'extclk_aux_io').
+        * "hs2": output: provide the same clock that's on HS2.
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        data = self.cwe.oa.sendMessage(CODE_READ, ADDR_AUX_IO, Validate=False, maxResp=1)[0]
+        if data & 0x01:
+            return "hs2"
+        else:
+            return "high_z"
+
+    @aux_io_mcx.setter
+    def aux_io_mcx(self, state):
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        data = self.cwe.oa.sendMessage(CODE_READ, ADDR_AUX_IO, Validate=False, maxResp=1)[0]
+        if state == 'high_z':
+            data &= 0xfe
+        elif state == 'hs2':
+            data |= 0x01
+        else:
+            raise ValueError("Options: high_z, hs2")
+        return self.cwe.oa.sendMessage(CODE_WRITE, ADDR_AUX_IO, [data])
+
+    @property
+    def glitch_trig_mcx(self):
+        """Set the function of the Trigger/Glitch Out MCX on Husky.
+        Options:
+        * "glitch": glitch output (clock or voltage glitch signal, as defined by scope.glitch settings)
+        * "trigger": internal trigger signal (as defined by scope.trigger)
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        data = self.cwe.oa.sendMessage(CODE_READ, ADDR_AUX_IO, Validate=False, maxResp=1)[0]
+        if data & 0x02:
+            return "glitch"
+        else:
+            return "trigger"
+
+    @glitch_trig_mcx.setter
+    def glitch_trig_mcx(self, state):
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        data = self.cwe.oa.sendMessage(CODE_READ, ADDR_AUX_IO, Validate=False, maxResp=1)[0]
+        if state == 'trigger':
+            data &= 0xfd
+        elif state == 'glitch':
+            data |= 0x02
+        else:
+            raise ValueError("Options: glitch, trig")
+        self.cwe.oa.sendMessage(CODE_WRITE, ADDR_AUX_IO, [data])
 
     @property
     def tio1(self):
@@ -575,7 +637,7 @@ class TriggerSettings(util.DisableNewAttr):
         self.cwe = cwextra
 
         self.supported_tpins = {
-            'tio1':self.cwe.PIN_RTIO1,
+            'tio1': self.cwe.PIN_RTIO1,
             'tio2': self.cwe.PIN_RTIO2,
             'tio3': self.cwe.PIN_RTIO3,
             'tio4': self.cwe.PIN_RTIO4,
@@ -585,11 +647,25 @@ class TriggerSettings(util.DisableNewAttr):
         self.last_module = "basic"
         if self.cwe.hasAux:
             self.supported_tpins['sma'] = self.cwe.PIN_FPA
+            self.supported_tpins['aux'] = self.cwe.PIN_FPA # alias for Husky since it's labeled 'Aux' on the sticker
+
+        if self.cwe.hasUserio:
+            self.supported_tpins['userio_d0'] = self.cwe.PIN_USERIO0
+            self.supported_tpins['userio_d1'] = self.cwe.PIN_USERIO1
+            self.supported_tpins['userio_d2'] = self.cwe.PIN_USERIO2
+            self.supported_tpins['userio_d3'] = self.cwe.PIN_USERIO3
+            self.supported_tpins['userio_d4'] = self.cwe.PIN_USERIO4
+            self.supported_tpins['userio_d5'] = self.cwe.PIN_USERIO5
+            self.supported_tpins['userio_d6'] = self.cwe.PIN_USERIO6
+            self.supported_tpins['userio_d7'] = self.cwe.PIN_USERIO7
+
+
+        self._is_husky = False
 
         self.disable_newattr()
 
     def _dict_repr(self):
-        rtn = OrderedDict()
+        rtn = {}
         rtn['triggers'] = self.triggers
         rtn['module'] = self.module
 
@@ -677,6 +753,38 @@ class TriggerSettings(util.DisableNewAttr):
 
             if pins & self.cwe.PIN_TNRST:
                 tstring.append("nrst")
+                tstring.append(modes)
+
+            if pins & self.cwe.PIN_USERIO0:
+                tstring.append("userio_d0")
+                tstring.append(modes)
+
+            if pins & self.cwe.PIN_USERIO1:
+                tstring.append("userio_d1")
+                tstring.append(modes)
+
+            if pins & self.cwe.PIN_USERIO2:
+                tstring.append("userio_d2")
+                tstring.append(modes)
+
+            if pins & self.cwe.PIN_USERIO3:
+                tstring.append("userio_d3")
+                tstring.append(modes)
+
+            if pins & self.cwe.PIN_USERIO4:
+                tstring.append("userio_d4")
+                tstring.append(modes)
+
+            if pins & self.cwe.PIN_USERIO5:
+                tstring.append("userio_d5")
+                tstring.append(modes)
+
+            if pins & self.cwe.PIN_USERIO6:
+                tstring.append("userio_d6")
+                tstring.append(modes)
+
+            if pins & self.cwe.PIN_USERIO7:
+                tstring.append("userio_d7")
                 tstring.append(modes)
 
             #Remove last useless combination mode
@@ -809,20 +917,42 @@ class ProTrigger(TriggerSettings):
 
         CWPro only
 
-        :Getter: Returns True if yes, False if no
+        :Getter: Returns True for 'trigger', 'glitch' for 'glitch', 'clock' for 'clock' or False for no output.
 
-        :Setter: Set True to enable aux_out, False to disable
+        :Setter: Set False or 0 to disable, True or :code:`'trigger'` for trig_out,
+                :code:`'glitch'` for glitch out, or :code:`'clock'` for clock_out
         """
+        # resp1 = self.cwe.oa.sendMessage(CODE_READ, ADDR_EXTCLK, Validate=False, maxResp=1)
         resp = self.cwe.oa.sendMessage(CODE_READ, ADDR_TRIGMOD, Validate=False, maxResp=1)
-        return bool(resp[0] & 0x08)
+        resp2 = self.cwe.oa.sendMessage(CODE_READ, ADDR_EXTCLK, Validate=False, maxResp=1)
+
+
+        if (resp[0] & 0x08):
+            return True
+        elif resp2[0] & 0x10:
+            return "glitch"
+        elif resp2[0] & 0x08:
+            return "clock"
+        else:
+            return False
 
     @aux_out.setter
     def aux_out(self, enabled):
+        if enabled is True:
+            enabled = "trigger"
+        
         resp = self.cwe.oa.sendMessage(CODE_READ, ADDR_TRIGMOD, Validate=False, maxResp=1)
+        resp2 = self.cwe.oa.sendMessage(CODE_READ, ADDR_EXTCLK, Validate=False, maxResp=1)
+        resp2[0] &= 0xE7
         resp[0] &= 0xE7
-        if enabled:
+        if enabled == "trigger":
             resp[0] |= 0x08
+        elif enabled == "glitch":
+            resp2[0] |= 0x10
+        elif enabled == "clock":
+            resp2[0] |= 0x08
         self.cwe.oa.sendMessage(CODE_WRITE, ADDR_TRIGMOD, resp)
+        self.cwe.oa.sendMessage(CODE_WRITE, ADDR_EXTCLK, resp2)
 
 
 class HuskyTrigger(TriggerSettings):
@@ -830,14 +960,20 @@ class HuskyTrigger(TriggerSettings):
     Communicates with all the trigger modules inside CW-Husky.
     Usage depends on the active trigger module.
     """
+    def __init__(self, cwextra):
+        self._edges = 1
+        super().__init__(cwextra)
+        self._is_husky = True
 
     def _dict_repr(self):
-        rtn = OrderedDict()
+        rtn = {}
         rtn['module'] = self.module
         if self.module == 'ADC':
             rtn['level'] = self.level
-        elif self.module == 'basic' or self.module == 'UART':
+        if self.module in ['basic', 'UART', 'edge_counter']:
             rtn['triggers'] = self.triggers
+        if self.module == 'edge_counter':
+            rtn['edges'] = self.edges
         return rtn
 
     @property
@@ -849,11 +985,12 @@ class HuskyTrigger(TriggerSettings):
         data and SAD triggers are available too.
 
         Available trigger modules:
-         * 'basic': Trigger on a logic level or edge
-         * 'ADC':   Trigger on ADC sample exceeding a threshold
-         * 'SAD':   Trigger from SAD module
-         * 'UART':  Trigger from UART module
-         * 'trace': Trigger from TraceWhisperer
+         * 'basic':        Trigger on a logic level or edge
+         * 'ADC':          Trigger on ADC sample exceeding a threshold
+         * 'SAD':          Trigger from SAD module
+         * 'UART':         Trigger from UART module
+         * 'edge_counter': Trigger after a number of rising/falling edges
+         * 'trace':        Trigger from TraceWhisperer
 
         :Getter: Return the active trigger module
 
@@ -876,8 +1013,10 @@ class HuskyTrigger(TriggerSettings):
             module = self.cwe.MODULE_TRACE
         elif mode == "ADC":
             module = self.cwe.MODULE_ADC
+        elif mode == "edge_counter":
+            module = self.cwe.MODULE_EDGE_COUNTER
         else:
-            raise ValueError("Invalid mode {}. Must be 'basic', 'SAD', 'UART', 'ADC', or 'trace'")
+            raise ValueError("Invalid mode {}. Must be 'basic', 'SAD', 'UART', 'ADC', 'trace', or 'edge_counter'")
 
         resp = self.cwe.oa.sendMessage(CODE_READ, ADDR_TRIGMOD,
                                        Validate=False, maxResp=1)
@@ -891,9 +1030,12 @@ class HuskyTrigger(TriggerSettings):
     def level(self):
         """For triggering on ADC sample exceeding a treshold,
         when scope.trigger.module = 'ADC'.
+
         Sets the trigger threshold, in the range [-0.5, 0.5].
+
         If positive, triggers when the ADC sample exceeds this setting;
         if negative, triggers when the ADC sample is below this setting.
+
         Only a single trigger is issued (i.e. multiple samples exceeding
         the threshold do not each generate a trigger; cannot be used in
         conjunction with segmented capture).
@@ -909,6 +1051,40 @@ class HuskyTrigger(TriggerSettings):
         offset = self.cwe.oa.offset
         val = int((val + offset) * 2**12)
         self.cwe.oa.sendMessage(CODE_WRITE, ADDR_ADC_TRIGGER_LEVEL, list(int.to_bytes(val, length=2, byteorder='little')))
+
+    @property
+    def edges(self):
+        """For triggering on edge counts, when :code:`scope.trigger.module = 'edge_counter'`.
+
+        Sets the number of rising+falling edges on :code:`scope.trigger.triggers` that
+        need to be seen for a trigger to be issued.
+
+        Edges are sampled by the ADC sampling clock (:code:`scope.clock.adc_freq`), so
+        ensure that scope.trigger.triggers does not change faster than what can
+        be seen by that clock.
+
+        Args:
+            val (int): number of edges, non-zero 16-bit integer.
+        """
+        return self._edges
+
+    @edges.setter
+    def edges(self, val):
+        if val < 1 or val > 2**16:
+            raise ValueError("Out of range: [1, 2**16]")
+        self._edges = val
+        self.cwe.oa.sendMessage(CODE_WRITE, ADDR_EDGE_TRIGGER, list(int.to_bytes(val-1, length=2, byteorder='little')))
+
+    @property
+    def edges_seen(self):
+        """Returns the number of edges seen. 
+        
+        Under normal operation this should
+        be the same as :code:`scope.trigger.edges`. When trigger generation failed, Can
+        be useful to understand why. Resets upon :code:`scope.arm()`.
+        """
+        return int.from_bytes(self.cwe.oa.sendMessage(CODE_READ, ADDR_EDGE_TRIGGER, Validate=False, maxResp=2), byteorder='little')
+
 
 
 class SADTrigger(util.DisableNewAttr):
@@ -958,12 +1134,22 @@ class CWExtraSettings:
     MODE_AND = 0x01
     MODE_NAND = 0x02
 
+    PIN_USERIO0 = 0x0100
+    PIN_USERIO1 = 0x0200
+    PIN_USERIO2 = 0x0400
+    PIN_USERIO3 = 0x0800
+    PIN_USERIO4 = 0x1000
+    PIN_USERIO5 = 0x2000
+    PIN_USERIO6 = 0x4000
+    PIN_USERIO7 = 0x8000
+
     MODULE_BASIC = 0x00
     MODULE_ADVPATTERN = 0x01
     MODULE_SADPATTERN = 0x02
     MODULE_DECODEIO = 0x03
     MODULE_TRACE = 0x04
     MODULE_ADC = 0x05
+    MODULE_EDGE_COUNTER = 0x06
 
     CLOCK_FPA = 0x00
     CLOCK_FPB = 0x01
@@ -990,21 +1176,25 @@ class CWExtraSettings:
             hasGlitchOut = False
             hasPLL = True
             hasAux=False
+            hasUserio=False
         elif cwtype == "cwlite":
             hasFPAFPB=False
             hasGlitchOut=True
             hasPLL=False
             hasAux=False
+            hasUserio=False
         elif cwtype == "cw1200":
             hasFPAFPB=False
             hasGlitchOut=True
             hasPLL=False
             hasAux=True
+            hasUserio=False
         elif cwtype == "cwhusky":
             hasFPAFPB=False
             hasGlitchOut=True
             hasPLL=False
-            hasAux=False
+            hasAux=True
+            hasUserio=True
         else:
             raise ValueError("Unknown ChipWhisperer: %s" % cwtype)
 
@@ -1013,6 +1203,7 @@ class CWExtraSettings:
         self.hasGlitchOut = hasGlitchOut
         self.hasPLL = hasPLL
         self.hasAux = hasAux
+        self.hasUserio = hasUserio
 
 
         #Add special single-class items used as higher-level API
@@ -1020,6 +1211,13 @@ class CWExtraSettings:
         self.triggermux = TriggerSettings(self)
         self.protrigger = ProTrigger(self)
         self.huskytrigger = HuskyTrigger(self)
+
+        if cwtype == "cwhusky":
+            self.gpiomux._is_husky = True
+            self.triggermux._is_husky = True
+            self._addr_trigsrc_size = 2
+        else:
+            self._addr_trigsrc_size = 1
 
 
     def _setGPIOState(self, state, IONumber):
@@ -1294,13 +1492,14 @@ class CWExtraSettings:
         return current[1]
 
     def setPins(self, pins, mode):
-        d = bytearray()
-        d.append((mode << 6) | pins)
-        self.oa.sendMessage(CODE_WRITE, ADDR_TRIGSRC, d)
+        d = list(int.to_bytes((mode << 6) | pins, length=self._addr_trigsrc_size, byteorder='little'))
+        self.oa.sendMessage(CODE_WRITE, ADDR_TRIGSRC, d, maxResp=self._addr_trigsrc_size)
 
     def getPins(self):
-        resp = self.oa.sendMessage(CODE_READ, ADDR_TRIGSRC, Validate=False, maxResp=1)
+        resp = self.oa.sendMessage(CODE_READ, ADDR_TRIGSRC, Validate=False, maxResp=self._addr_trigsrc_size)
         pins = resp[0] & 0x3F
+        if self._addr_trigsrc_size == 2:
+            pins += (resp[1] << 8)
         mode = resp[0] >> 6
         return(pins, mode)
 

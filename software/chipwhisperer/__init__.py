@@ -21,19 +21,67 @@ from zipfile import ZipFile
 from .capture import scopes, targets
 from .capture.api import programmers
 from .capture import acq_patterns as key_text_patterns
-from .common.utils.util import fw_ver_compare
 from .common.api import ProjectFormat as project
 from .common.traces import Trace
 from .common.utils import util
 from .capture.scopes.cwhardware.ChipWhispererSAM3Update import SAMFWLoader, get_at91_ports
 import logging
 from .logging import *
+
+from .common.results.glitch import GlitchController
 import sys, subprocess
 
-from typing import Optional, Type, Union
+
+from typing import Optional, Type, Union, List
 
 # replace bytearray with inherited class with better repr and str.
 bytearray = util.bytearray # type: ignore
+
+def list_devices(idProduct : Optional[List[int]]=None, get_sn=True, get_hw_loc=True) -> List[dict]:
+    """Get a list of devices by NewAE (VID 0x2b3e) currently connected
+
+    Args:
+        idProduct (Optional[List[int]], optional): List of PIDs to restrict devices to. If None, do 
+            not restrict. Defaults to None.
+        get_sn (bool, optional): Whether or not to try to access serial number. Can fail if another 
+            process is connected or if we don't have permission to access the device. Defaults to True.
+        get_hw_loc (bool, optional): Whether or not to access the hardware location of the device.
+            Can fail due to the same reasons as above. Defaults to True.
+
+    Returns:
+        List[dict]: A list of dicts with fields {'name': str, 'sn', str, 'hw_loc': (int, int)}
+
+    If an unknown NewAE device is connected, 'name' will be 'unknown'. If 'sn' or 'hw_loc'
+    are not desired, or cannot be accessed, they will be None.
+
+    .. versionadded:: 5.6.2
+    """
+    from .hardware.naeusb.naeusb import NAEUSB_Backend, NEWAE_PIDS
+    be = NAEUSB_Backend()
+    dev_list = be.get_possible_devices(idProduct)
+    rtn = []
+    for dev in dev_list:
+        try:
+            name = NEWAE_PIDS[dev.getProductID()]['name']
+        except Exception as e:
+            other_logger.info("Could not get name of device with pid {}".format(dev.getProductID()))
+            name = "Unknown"
+        sn = None
+        hw_loc = None
+        if get_sn:
+            try:
+                sn = dev.getSerialNumber()
+            except Exception as e:
+                other_logger.warning("Could not access {} serial number (error {})".format(name, str(e)))
+        if get_hw_loc:
+            try:
+                hw_loc = (dev.getBusNumber(), dev.getDeviceAddress())
+            except Exception as e:
+                other_logger.warning("Could not access {} hw_loc (error {})".format(name, str(e)))
+        rtn.append({'name': name, 'sn': sn, 'hw_loc': hw_loc})
+
+    be.usb_ctx.close()
+    return rtn
 
 def check_for_updates() -> str:
     """Check if current ChipWhisperer version is the latest.
@@ -50,17 +98,19 @@ def check_for_updates() -> str:
         other_logger.warning("Old pip version: {}, unable to do CW version check".format(pip_version))
         return ""
 
-    latest_version = str(subprocess.run([sys.executable, '-m', 'pip', 'install', '{}==random'.format("chipwhisperer")],
+    latest_version = str(subprocess.run([sys.executable, '-m', 'pip',  '--timeout=3', 'install', '--retries=1', '{}==random'.format("chipwhisperer")],
                         capture_output=True, text=True, check=False))
-    if not latest_version:
+    if (not latest_version) or (latest_version == "none"):
         raise IOError("Could not check chipwhisperer version")
     latest_version = latest_version[latest_version.find('(from versions:')+15:]
     latest_version = latest_version[:latest_version.find(')')]
     latest_version = latest_version.replace(' ','').split(',')[-1]
+    if (not latest_version) or (latest_version == "none"):
+        raise IOError("Could not check chipwhisperer version")
 
     current_version = __version__
 
-    other_logger.info("CW version: {}. Latest: {}".format(current_version, latest_version))
+    other_logger.info("CW version: {}. Latest: {}".format(current_version, type(latest_version)))
 
     if latest_version <= current_version:
         other_logger.info("ChipWhisperer up to date")
@@ -69,10 +119,10 @@ def check_for_updates() -> str:
         other_logger.warning("ChipWhisperer update available! See https://chipwhisperer.readthedocs.io/en/latest/installing.html for updating instructions")
         return latest_version
 
-try:
-    check_for_updates()
-except Exception as e:
-    other_logger.warning("Could not check ChipWhisperer version, error {}".format(e))
+# try:
+#     check_for_updates()
+# except Exception as e:
+#     other_logger.warning("Could not check ChipWhisperer version, error {}".format(e))
 # from chipwhisperer.capture.scopes.cwhardware import ChipWhispererSAM3Update as CWFirmwareUpdate
 
 ktp = key_text_patterns #alias
@@ -241,7 +291,7 @@ def import_project(filename : str, file_type : str='zip', overwrite : bool=False
     return proj
 
 
-def scope(scope_type : Type[scopes.ScopeTypes]=None, name : Optional[str]=None, 
+def scope(scope_type : Optional[Type[scopes.ScopeTypes]]=None, name : Optional[str]=None, 
     sn : Optional[str]=None, idProduct : Optional[int]=None,
     bitstream : Optional[str]=None, force : bool=False,
     prog_speed : int=int(10E6),
@@ -372,7 +422,7 @@ def target(scope : Optional[scopes.ScopeTypes],
 
 def capture_trace(scope : scopes.ScopeTypes, target : targets.TargetTypes, plaintext : bytearray,
     key : Optional[bytearray]=None, ack : bool=True, poll_done : bool=False,
-    as_int : bool=False) -> Optional[Trace]:
+    as_int : bool=False, always_send_key=False) -> Optional[Trace]:
 
     """Capture a trace, sending plaintext and key
 
@@ -399,6 +449,8 @@ def capture_trace(scope : scopes.ScopeTypes, target : targets.TargetTypes, plain
             only.
         as_int (bool, optional): If False, return trace as a float. Otherwise,
             return as an int.
+        always_send_key (bool, optional): If True, always send key. Otherwise,
+            only send if the key is different from the last one sent.
 
     Returns:
         :class:`Trace <chipwhisperer.common.traces.Trace>` or None if capture
@@ -431,7 +483,7 @@ def capture_trace(scope : scopes.ScopeTypes, target : targets.TargetTypes, plain
     import signal
 
     if key:
-        target.set_key(key, ack=ack)
+        target.set_key(key, ack=ack, always_send=always_send_key)
 
     scope.arm()
 
@@ -483,6 +535,23 @@ def plot(*args, **kwargs):
 
     .. versionadded:: 5.4
     """
+    if (len(args) == 0) and (len(kwargs) == 0):
+        args = [[]]
     import holoviews as hv # type: ignore
     hv.extension('bokeh', logo=False) #don't display logo, otherwise it pops up everytime this func is called.
     return hv.Curve(*args, **kwargs).opts(width=800, height=600)
+
+class StreamPlot:
+    def __init__(self):
+        import holoviews as hv # type: ignore
+        from holoviews.streams import Pipe # type: ignore
+        hv.extension('bokeh', logo=False) #don't display logo, otherwise it pops up everytime this func is called.
+        self._default_opts = {'height': 600, 'width': 800, 'framewise': True, 'tools': ['hover']}
+        self._pipe = Pipe(data=[])
+        self._dmap = hv.DynamicMap(hv.Curve, streams=[self._pipe]).opts(**self._default_opts)
+
+    def plot(self):
+        return self._dmap.opts(**self._default_opts)
+
+    def update(self, data):
+        self._pipe.send(data)

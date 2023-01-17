@@ -24,7 +24,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with chipwhisperer.  If not, see <http://www.gnu.org/licenses/>.
 #=================================================
-from collections import OrderedDict
 from ....common.utils import util
 from .. import _OpenADCInterface as OAI
 
@@ -59,11 +58,14 @@ ADDR_LA_CAPTURE_DEPTH   = 77
 ADDR_LA_DOWNSAMPLE      = 78
 ADDR_LA_ARM             = 98
 ADDR_LA_ENABLED         = 99
+ADDR_LA_SOURCE_FREQ     = 112
 
 ADDR_USERIO_CW_DRIVEN   = 86
 ADDR_USERIO_DEBUG_DRIVEN= 87
 ADDR_USERIO_DRIVE_DATA  = 88
 ADDR_USERIO_READ        = 97
+ADDR_USERIO_DEBUG_SELECT= 109
+
 ADDR_TRACE_EN           = 0xc0 + 0x2d
 
 
@@ -263,7 +265,7 @@ class LEDSettings(util.DisableNewAttr):
         self.disable_newattr()
 
     def _dict_repr(self):
-        rtn = OrderedDict()
+        rtn = {}
         rtn['setting'] = self.setting
         return rtn
 
@@ -319,7 +321,7 @@ class HuskyErrors(util.DisableNewAttr):
         self.disable_newattr()
 
     def _dict_repr(self):
-        rtn = OrderedDict()
+        rtn = {}
         rtn['XADC errors'] = self.XADC.errors()
         rtn['ADC errors'] = self.adc.errors
         rtn['extclk error'] = self.clock.extclk_error
@@ -350,7 +352,7 @@ class USERIOSettings(util.DisableNewAttr):
         self.disable_newattr()
 
     def _dict_repr(self):
-        rtn = OrderedDict()
+        rtn = {}
         rtn['mode'] = self.mode
         rtn['direction'] = self.direction
         rtn['drive_data'] = self.drive_data
@@ -406,6 +408,21 @@ class USERIOSettings(util.DisableNewAttr):
             raise ValueError("Invalid mode; use normal/trace/fpga_debug/target_debug_jtag/target_debug_swd")
 
     @property
+    def fpga_mode(self):
+        """When scope.userio.mode = 'fpga_debug', selects which FPGA signals
+        are routed to the USERIO pins. See cwhusky_top.v for definitions.
+        """
+        return self.oa.sendMessage(CODE_READ, ADDR_USERIO_DEBUG_SELECT, maxResp=1)[0]
+
+    @fpga_mode.setter
+    def fpga_mode(self, setting):
+        if not setting in range(0, 11):
+            raise ValueError("Must be integer in [0, 10]")
+        else:
+            self.oa.sendMessage(CODE_WRITE, ADDR_USERIO_DEBUG_SELECT, [setting])
+
+
+    @property
     def direction(self):
         """Set the direction of the USERIO data pins (D0-D7) with an
         8-bit integer, where bit <x> determines the direction of D<x>;
@@ -458,7 +475,7 @@ class XADCSettings(util.DisableNewAttr):
         self.disable_newattr()
 
     def _dict_repr(self):
-        rtn = OrderedDict()
+        rtn = {}
         rtn['status'] = self.status
         rtn['current temperature [C]'] = '%.1f' % self.temp
         rtn['maximum temperature [C]'] = '%.1f' % self.max_temp
@@ -635,7 +652,7 @@ class LASettings(util.DisableNewAttr):
         self.disable_newattr()
 
     def _dict_repr(self):
-        rtn = OrderedDict()
+        rtn = {}
         rtn['present'] = self.present
         rtn['enabled'] = self.enabled
         rtn['clkgen_enabled'] = self.clkgen_enabled
@@ -764,7 +781,7 @@ class LASettings(util.DisableNewAttr):
 
     @property
     def clkgen_enabled(self):
-        """Controls whether the Xilinx MMCM used to generate the samplign clock
+        """Controls whether the Xilinx MMCM used to generate the sampling clock
         is powered on or not.  7-series MMCMs are power hungry. In the Husky
         FPGA, MMCMs are estimated to consume close to half of the FPGA's power.
         If you run into temperature issues and don't require the logic analyzer
@@ -793,8 +810,8 @@ class LASettings(util.DisableNewAttr):
         """The clock signal that the logic analyzer is using to generate its sampling clock.
 
         There are three different sources:
-         * "target": The HS1 clock from the target device.
-         * "clkgen": The CLKGEN DCM output.
+         * "target": The clock from the target device (from HS1 or AUX, as per scope.clock.clkgen_src)
+         * "usb": The 96 MHz internal USB clock.
          * "pll": Husky's on-board PLL clock.
 
         :Getter:
@@ -804,7 +821,7 @@ class LASettings(util.DisableNewAttr):
            Change the clock source
 
         Raises:
-           ValueError: New value not one of "target", "clkgen" or "pll"
+           ValueError: New value not one of "target", "usb" or "pll"
         """
 
         return self._getClkSource()
@@ -837,7 +854,6 @@ class LASettings(util.DisableNewAttr):
     @errors.setter
     def errors(self, val):
         self.oa.sendMessage(CODE_WRITE, self._scope.trace.REG_CLEAR_ERRORS, [1], Validate=False)
-
 
     def read_capture_data(self, check_empty=False):
         """Read captured data.
@@ -934,12 +950,22 @@ class LASettings(util.DisableNewAttr):
         """The trigger used by the logic analyzer to capture.
 
         There are several different sources:
-         * "glitch": The internal glitch trigger.
+         * "glitch": The internal glitch enable trigger, one cycle earlier than the
+                     glitch output seen when scope.glitch.output = 'enable_only'. This
+                     signal is in the MMCM1 clock glitch domain.
          * "capture": The internal ADC capture trigger.
-         * "glitch_source": The internal glitch trigger in the source clock
-                            domain. This comes before "glitch", since there is
-                            a clock domain crossing from "glitch_source" to "glitch"
+         * "glitch_source": The internal manual glitch trigger in the source or target clock
+                            domain (as per scope.glitch.clk_src), which accounts for 
+                            scope.glitch.ext_offset but not scope.glitch.offset. Should
+                            only be used with scope.glitch.trigger_src = 'manual'; may
+                            not fire reliably with other settings.
+         * "glitch_trigger": The internal glitch trigger in the MMCM1 clock domain.
+         * "trigger_glitch": The trigger *for* the glitch module (aka scope.trigger.triggers).
          * "HS1": The HS1 input clock.
+         * "rising_userio_d[0-7]": a rising edge (0->1) on a USERIO pin
+         * "falling_userio_d[0-7]": a falling edge (1->0) on a USERIO pin
+         * "rising_tio[0-3]": a rising edge (0->1) on a tio pin
+         * "failling_tio[0-3]": a falling edge (0->1) on a tio pin
 
          In addition, capture can be triggered manually, irrespective of the trigger_source
          setting, by calling scope.LA.trigger_now()
@@ -951,7 +977,7 @@ class LASettings(util.DisableNewAttr):
            Change the trigger source
 
         Raises:
-           ValueError: New value not one of "glitch" or "capture"
+           ValueError: New value not one of the options listed above.
         """
 
         return self._getTriggerSource()
@@ -996,6 +1022,14 @@ class LASettings(util.DisableNewAttr):
         return self._scope.trace.clock.swo_clock_freq
 
     @property
+    def source_clock_frequency(self):
+        """Report the actual clock frequency of the input clock to the shared LA/trace MMCM.
+        """
+        raw = int.from_bytes(self.oa.sendMessage(CODE_READ, ADDR_LA_SOURCE_FREQ, Validate=False, maxResp=4), byteorder='little')
+        freq = raw * 96e6 / float(pow(2,23))
+        return freq
+
+    @property
     def downsample(self):
         """Downsample setting.
 
@@ -1020,10 +1054,11 @@ class LASettings(util.DisableNewAttr):
             #. source clock of glitch module
             #. glitch internal MMCM1 (offset) output
             #. glitch internal MMCM2 (width) output
-            #. glitch trigger
+            #. glitch go internal signal
             #. capture trigger
             #. glitch enable
-            #. glitch trigger in its source clock domain (e.g. signal 1 of this group)
+            #. manual glitch trigger in source clock domain (e.g. signal 1 of this group)
+            #. glitch trigger in MMCM1 clock domain
 
         'CW 20-pin' (group 1):
 
@@ -1050,7 +1085,9 @@ class LASettings(util.DisableNewAttr):
             #. CK
 
         'trigger debug' (group 3)
-        'internal trace' (group 4)
+        'internal trace 1' (group 4)
+        'internal trace 2' (group 5)
+        'glitch debug' (group 6)
 
         :Getter:
            Return the capture group currently in use.
@@ -1071,12 +1108,12 @@ class LASettings(util.DisableNewAttr):
     def _setClkSource(self, source):
         if source == 'target':
             val = [0]
-        elif source == 'clkgen':
+        elif source == 'usb':
             val = [1]
         elif source == 'pll':
             val = [2]
         else:
-            raise ValueError("Must be one of 'target', 'clkgen', or 'pll'")
+            raise ValueError("Must be one of 'target', 'usb', or 'pll'")
         self.oa.sendMessage(CODE_WRITE, ADDR_LA_CLOCK_SOURCE, val, Validate=False)
 
     def _getClkSource(self):
@@ -1084,7 +1121,7 @@ class LASettings(util.DisableNewAttr):
         if raw == 0:
             return 'target'
         elif raw == 1:
-            return 'clkgen'
+            return 'usb'
         elif raw == 2:
             return 'pll'
         else:
@@ -1099,8 +1136,24 @@ class LASettings(util.DisableNewAttr):
             val = [2]
         elif source == 'HS1':
             val = [3]
+        elif source == 'glitch_trigger':
+            val = [4]
+        elif source == 'trigger signal 0':
+            val = [5]
+        elif source == 'trigger signal 1':
+            val = [6]
+        elif source == 'trigger_glitch':
+            val = [7]
+        elif 'rising_userio_d' in source:
+            val = [0x08 + int(source[-1])]
+        elif 'falling_userio_d' in source:
+            val = [0x18 + int(source[-1])]
+        elif 'rising_tio' in source:
+            val = [0x20 + int(source[-1]) - 1]
+        elif 'falling_tio' in source:
+            val = [0x28 + int(source[-1]) - 1]
         else:
-            raise ValueError("Must be one of 'glitch', 'capture', 'glitch_source', or 'HS1'")
+            raise ValueError("Must be one of 'glitch', 'capture', 'glitch_source', 'HS1', '[rising|falling]_userio_d[0-7]', or [rising|falling]_tio[0-3]")
         self.oa.sendMessage(CODE_WRITE, ADDR_LA_TRIGGER_SOURCE, val, Validate=False)
 
     def _getTriggerSource(self):
@@ -1113,11 +1166,27 @@ class LASettings(util.DisableNewAttr):
             return 'glitch_source'
         elif raw == 3:
             return 'HS1'
+        elif raw == 4:
+            return 'glitch_trigger'
+        elif raw == 5:
+            return 'trigger signal 0'
+        elif raw == 6:
+            return 'trigger signal 1'
+        elif raw == 7:
+            return 'trigger_glitch'
+        elif raw in range(0x8, 0x10):
+            return 'rising_userio_d' + str(raw & 0x07)
+        elif raw in range(0x10, 0x20):
+            return 'falling_userio_d' + str(raw & 0x07)
+        elif raw in range(0x20, 0x24):
+            return 'rising_tio' + str((raw & 0x03) + 1)
+        elif raw in range(0x28, 0x2c):
+            return 'falling_tio' + str((raw & 0x03) + 1)
         else:
             raise ValueError("Unexpected: read %d" % raw)
 
     def _setOversamplingFactor(self, factor):
-        self._scope.trace.clock.swo_clock_freq = self._scope.trace.clock.fe_freq * factor
+        self._scope.trace.clock.swo_clock_freq = self.source_clock_frequency * factor
 
     def _getOversamplingFactor(self):
         return self._mmcm.get_mul() // (self._mmcm.get_main_div() * self._mmcm.get_sec_div())
@@ -1141,8 +1210,12 @@ class LASettings(util.DisableNewAttr):
             num = 2
         elif group == 'trigger debug':
             num = 3
-        elif group == 'internal trace':
+        elif group == 'internal trace 1':
             num = 4
+        elif group == 'internal trace 2':
+            num = 5
+        elif group == 'glitch debug':
+            num = 6
         else:
             raise ValueError("invalid group name")
         self.oa.sendMessage(CODE_WRITE, ADDR_LA_CAPTURE_GROUP, [num], Validate=False)
@@ -1158,7 +1231,11 @@ class LASettings(util.DisableNewAttr):
         elif num == 3:
             group = 'trigger debug'
         elif num == 4:
-            group = 'internal trace'
+            group = 'internal trace 1'
+        elif num == 5:
+            group = 'internal trace 2'
+        elif num == 6:
+            group = 'glitch debug'
         else:
             raise ValueError("invalid group name")
         return group
@@ -1178,7 +1255,7 @@ class ADS4128Settings(util.DisableNewAttr):
         self.disable_newattr()
 
     def _dict_repr(self):
-        rtn = OrderedDict()
+        rtn = {}
         rtn['mode'] = self.mode
         rtn['low_speed'] = self.low_speed
         rtn['hi_perf'] = self.hi_perf

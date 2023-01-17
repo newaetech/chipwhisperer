@@ -51,6 +51,8 @@ SAM_FW_FEATURES = [
     "MPSSE", #13
     "TARGET_SPI", #14
     "MPSSE_ENABLED", #15
+    "HUSKY_PIN_CONTROL", #16
+    "NANO_CLOCK_RESET", #17
 ]
 
 class CWFirmwareError(Exception):
@@ -67,6 +69,7 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[8]: '0.23.0',
         SAM_FW_FEATURES[13]: '0.60.0',
         SAM_FW_FEATURES[15]: '0.62.0',
+        SAM_FW_FEATURES[17]: '0.64.0',
     },
 
     0xACE2: {
@@ -115,6 +118,7 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[13]: '1.1.0',
         SAM_FW_FEATURES[14]: '1.1.0',
         SAM_FW_FEATURES[15]: '1.3.0',
+        SAM_FW_FEATURES[16]: '1.4.0',
     },
 
     0xC305: {
@@ -133,7 +137,7 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[1]: '1.0.0',
         SAM_FW_FEATURES[2]: '1.0.0',
         SAM_FW_FEATURES[3]: '1.0.0',
-        SAM_FW_FEATURES[4]: '1.0.0',
+        SAM_FW_FEATURES[4]: '0.40.1',
         SAM_FW_FEATURES[5]: '1.0.0',
         SAM_FW_FEATURES[6]: '1.0.0',
         SAM_FW_FEATURES[7]: '1.0.0',
@@ -282,12 +286,14 @@ def packuint16(data):
 
 #List of all NewAE PID's
 NEWAE_VID = 0x2B3E
-NEWAE_PIDS : Dict[int, Dict[str, Union[str, List[int]]]]= {
+NEWAE_PIDS : Dict[int, Dict[str, Union[str, Optional[List[int]]]]]= {
     0xACE2: {'name': "ChipWhisperer-Lite",     'fwver': fw_cwlite.fwver},
     0xACE3: {'name': "ChipWhisperer-CW1200",   'fwver': fw_cw1200.fwver},
     0xC305: {'name': "CW305 Artix FPGA Board", 'fwver': fw_cw305.fwver},
     0xACE0: {'name': "ChipWhisperer-Nano", 'fwver': fw_nano.fwver},
     0xACE5: {'name': "ChipWhisperer-Husky",   'fwver': fw_cwhusky.fwver},
+    0xC521: {'name': "CW521 Ballistic-Gel",   'fwver': None},
+    0xC610: {'name': "PhyWhisperer-USB",   'fwver': None},
 }
 
 class NAEUSB_Backend:
@@ -428,7 +434,7 @@ class NAEUSB_Backend:
             List of USBDevice that match Vendor/Product IDs
             """
         
-        dev_list = [dev for dev in self.usb_ctx.getDeviceIterator() if dev.getVendorID() == 0x2b3e]
+        dev_list = [dev for dev in self.usb_ctx.getDeviceIterator(skip_on_error=True) if dev.getVendorID() == 0x2b3e]
         naeusb_logger.info("Found NAEUSB devices {}".format(dev_list))
         
         if os.name == "nt":
@@ -657,6 +663,14 @@ class NAEUSB:
                 return "UNKNOWN"
         return "UNKNOWN"
 
+    def set_husky_tms_wr(self, num):
+        # TODO: add in check_feature
+        if self.check_feature("HUSKY_PIN_CONTROL"):
+            num &= 0xFF
+            self.usbtx.sendCtrl(0x22, 0x43 | (num << 8))
+        else:
+            naeusb_logger.error("Cannot set Husky TMS direction pin. SWD mode will not work! A firmware update to >=1.4 is highly recommended!")
+
     def get_serial_ports(self) -> Optional[List[Dict[str, int]]]:
         """May have multiple com ports associated with one device, so returns a list of port + interface
         """
@@ -698,7 +712,7 @@ class NAEUSB:
         if not latest:
             naeusb_logger.warning('Your firmware (%d.%d) is outdated - latest is %d.%d' 
                              % (fwver[0], fwver[1], fw_latest[0], fw_latest[1]) +
-                             'See https://chipwhisperer.readthedocs.io/en/latest/firmware.html for more information')
+                             ' See https://chipwhisperer.readthedocs.io/en/latest/firmware.html for more information')
 
         return self.usbtx.pid
 

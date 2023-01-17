@@ -65,7 +65,6 @@ uint32_t rand_cmwc(void)
     return (Q[i] = r - x);
 }
 
-
 static int myrand( void *rng_state, unsigned char *output, size_t len )
 {
      size_t i;
@@ -74,9 +73,7 @@ static int myrand( void *rng_state, unsigned char *output, size_t len )
           rng_state  = NULL;
 
      for( i = 0; i < len; ++i )
-          output[i] = rand_cmwc(); //rand(); Reduce external lib dependancies
-                                   // by using above rand_cmwc(). The rand()
-                                   // call had issues on neorv32 it seemed.
+          output[i] = rand_cmwc();
 
      return( 0 );
 }
@@ -333,7 +330,6 @@ cleanup:
 void rsa_init(void)
 {
     init_rand(0);
-
     mbedtls_rsa_init( &rsa_ctx, MBEDTLS_RSA_PKCS_V15, 0 );
     simpleserial_addcmd('1', 0, sig_chunk_1);
     simpleserial_addcmd('2', 0, sig_chunk_2);
