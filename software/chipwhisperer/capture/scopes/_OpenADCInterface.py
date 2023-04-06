@@ -380,9 +380,9 @@ class OpenADCInterface(util.DisableNewAttr):
         else:
             return None
 
-    def setNumSamples(self, samples):
+    def setNumSamples(self, samples, segments=1):
         self.sendMessage(CODE_WRITE, ADDR_SAMPLES, list(int.to_bytes(samples, length=4, byteorder='little')))
-        self.updateStreamBuffer(samples)
+        self.updateStreamBuffer(samples*segments)
 
 
     def updateStreamBuffer(self, samples=None):
@@ -1869,6 +1869,8 @@ class TriggerSettings(util.DisableNewAttr):
 
     def _set_segments(self, num):
         self.oa.sendMessage(CODE_WRITE, ADDR_SEGMENTS, list(int.to_bytes(num, length=2, byteorder='little')))
+        # necessary for streaming to work:
+        self.oa.setNumSamples(self.samples, self.segments)
 
 
     @property
@@ -2166,7 +2168,7 @@ class TriggerSettings(util.DisableNewAttr):
         # Notify capture system:
         self.oa.setBitsPerSample(bits)
         # necessary for streaming to work:
-        self.oa.setNumSamples(self.samples)
+        self.oa.setNumSamples(self.samples, self.segments)
 
     def _get_bits_per_sample(self):
         return self._bits_per_sample
@@ -2215,7 +2217,11 @@ class TriggerSettings(util.DisableNewAttr):
             raise ValueError("Samples must be a positive integer")
         if self._is_husky and samples < 7:
             scope_logger.warning('There may be issues with this few samples on Husky; a minimum of 7 samples is recommended')
-        self.oa.setNumSamples(samples)
+        if self._is_husky:
+            segments = self.segments
+        else:
+            segments = 1
+        self.oa.setNumSamples(samples, segments)
 
     def _get_num_samples(self):
         if self.oa is None:
