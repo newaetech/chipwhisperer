@@ -670,7 +670,8 @@ class OpenADCInterface(util.DisableNewAttr):
 
             if offset == None:
                 offset = 0
-            time.sleep((offset+samples)/adc_freq)
+            if not timeout:
+                time.sleep((offset+samples)/adc_freq)
 
         self.arm(False) # <------ ADC will stop reading after this
         return timeout
