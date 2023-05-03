@@ -945,7 +945,7 @@ class OpenADCInterface(util.DisableNewAttr):
                 if(t != 3):
                     trigfound = True
                     trigsamp = trigsamp + (t & 0x3)
-                    logging.debug("Trigger found at %d"%trigsamp)
+                    scope_logger.debug("Trigger found at %d"%trigsamp)
                     break
                 else:
                     trigsamp += 3
@@ -997,7 +997,8 @@ class HWInformation(util.DisableNewAttr):
         hwtype = result[1] >> 3
         hwver = result[1] & 0x07
         hwList = ["Default/Unknown", "LX9 MicroBoard", "SASEBO-W", "ChipWhisperer Rev2 LX25",
-                  "Reserved?", "ZedBoard", "Papilio Pro", "SAKURA-G", "ChipWhisperer-Lite", "ChipWhisperer-CW1200","ChipWhisperer-Husky"]
+                  "Reserved?", "ZedBoard", "Papilio Pro", "SAKURA-G", "ChipWhisperer-Lite", "ChipWhisperer-CW1200", "ChipWhisperer-Husky",
+                  "ChipWhisperer-Husky-Plus"]
 
         try:
             textType = hwList[hwtype]
@@ -1031,7 +1032,7 @@ class HWInformation(util.DisableNewAttr):
     def is_cwhusky(self):
         if self.vers is None:
             self.versions()
-        if self.vers[1] == 10:
+        if self.vers[1] in (10,11):
             return True
         else:
             return False
