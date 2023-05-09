@@ -19,6 +19,7 @@ from .cwhardware import ChipWhispererDecodeTrigger, ChipWhispererExtra, \
 from .cwhardware.ChipWhispererHuskyMisc import XilinxDRP, XilinxMMCMDRP, LEDSettings, HuskyErrors, \
         USERIOSettings, XADCSettings, LASettings, ADS4128Settings
 from ._OpenADCInterface import OpenADCInterface, HWInformation, GainSettings, TriggerSettings, ClockSettings
+from ..api.cwcommon import ChipWhispererSAMErrors
 
 try:
     from ..trace import TraceWhisperer
@@ -119,7 +120,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
         self.connectStatus = True
         # self.disable_newattr()
 
-    def _getFWPy(self) -> List[int]:
+    def _getFWPy(self):
         cw_type = self._getCWType()
         if cw_type == "cwlite":
             from ...hardware.firmware.cwlite import fwver
@@ -151,7 +152,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
         return self.scopetype.ser
 
 
-    def enable_MPSSE(self, enable=True, husky_userio=None):
+    def enable_MPSSE(self, enable=True, husky_userio=None, scope_default_setup=True):
         """Enable/disable MPSSE mode. Results in a :code:`default_setup()` and scope disconnection
 
         Args:
@@ -159,9 +160,13 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             husky_userio (str or None): Enables communication using the Husky's user IO pins.
                 If "jtag", route jtag over those pins. If "swd", route swd. If None, do not route.
                 Optional, defaults to None
+            scope_default_setup (bool): Calls `default_setup()` before enabling JTAG mode (resets clock,
+                IOs, etc to default). Useful when working with standard targets, but set this to `False`
+                if you had non-standard setup.
         """
         sn = self.sn
-        self.default_setup()
+        if scope_default_setup:
+            self.default_setup()
         if enable:
             self.io.cwe.setAVRISPMode(1)
         else:
@@ -676,6 +681,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             self.errors = HuskyErrors(self.sc, self.XADC, self.adc, self.clock, self.trace)
         else:
             self.clock = ClockSettings(self.sc, hwinfo=self.hwinfo)
+            self.errors = ChipWhispererSAMErrors(self._getNAEUSB())
 
 
         if cwtype == "cw1200":
@@ -708,6 +714,8 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             self.ADS4128.mode = 'normal'
             self.glitch.enabled = False
             self.LA.enabled = False
+
+        self._get_usart().init() # init serial port on connection
 
         module_list = [x for x in self.__dict__ if isinstance(self.__dict__[x], util.DisableNewAttr)]
         self.add_read_only(module_list)

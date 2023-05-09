@@ -71,6 +71,7 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[13]: '0.60.0',
         SAM_FW_FEATURES[15]: '0.62.0',
         SAM_FW_FEATURES[17]: '0.64.0',
+        SAM_FW_FEATURES[18]: '0.66.0',
     },
 
     0xACE2: {
@@ -87,6 +88,7 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[13]: '0.60.0',
         SAM_FW_FEATURES[14]: '0.60.0',
         SAM_FW_FEATURES[15]: '0.62.0',
+        SAM_FW_FEATURES[18]: '0.65.0',
     },
 
     0xACE3: {
@@ -148,12 +150,32 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[11]: '1.0.0',
         SAM_FW_FEATURES[12]: '1.1.0',
         SAM_FW_FEATURES[13]: '1.2.0'
+    },
+    
+    0xC340: {
+        SAM_FW_FEATURES[0]: '0.1.0',
+        SAM_FW_FEATURES[1]: '0.1.0',
+        SAM_FW_FEATURES[2]: '0.1.0',
+        SAM_FW_FEATURES[3]: '0.1.0',
+        SAM_FW_FEATURES[4]: '0.1.0',
+        SAM_FW_FEATURES[5]: '0.1.0',
+        SAM_FW_FEATURES[6]: '0.1.0',
+        SAM_FW_FEATURES[7]: '0.1.0',
+        SAM_FW_FEATURES[8]: '0.1.0',
+        SAM_FW_FEATURES[10]: '0.1.0',
+        SAM_FW_FEATURES[12]: '0.1.0',
     }
 }
 
+def quick_firmware_erase(product_id, serial_number=None):
+    naeusb = NAEUSB()
+    naeusb.con(serial_number=serial_number, idProduct=[product_id])
+    naeusb.enterBootloader(True)
+
+
 def _check_sam_feature(feature, fw_version, prod_id):
     if prod_id not in SAM_FW_FEATURE_BY_DEVICE:
-        naeusb_logger.info("Features for ProdID {:04X} not stored, skipping...".format(prod_id))
+        naeusb_logger.debug("Features for ProdID {:04X} not stored, skipping...".format(prod_id))
         return
     if feature not in SAM_FW_FEATURES:
         raise ValueError("Unknown feature {}".format(feature))
@@ -288,7 +310,7 @@ def packuint16(data):
 
 #List of all NewAE PID's
 NEWAE_VID = 0x2B3E
-NEWAE_PIDS : Dict[int, Dict[str, Union[str, Optional[List[int]]]]]= {
+NEWAE_PIDS = {
     0xACE2: {'name': "ChipWhisperer-Lite",     'fwver': fw_cwlite.fwver},
     0xACE3: {'name': "ChipWhisperer-CW1200",   'fwver': fw_cw1200.fwver},
     0xC305: {'name': "CW305 Artix FPGA Board", 'fwver': fw_cw305.fwver},
@@ -478,6 +500,8 @@ class NAEUSB_Backend:
         naeusb_logger.debug("WRITE_CTRL: bmRequestType: {:02X}, \
                     bRequest: {:02X}, wValue: {:04X}, wIndex: {:04X}, data: {}".format(0x41, cmd, \
                         value, 0, data))
+        if len(data) > 128:
+            naeusb_logger.error("The naeusb fw ctrl buffer is 128 bytes, but len(data) > 128. If you get a pipe error, this is why.")
         self.handle.controlWrite(0x41, cmd, value, 0, data, timeout=self._timeout)
         #return self.usbdev().ctrl_transfer(0x41, cmd, value, 0, data, timeout=self._timeout)
 
@@ -486,6 +510,8 @@ class NAEUSB_Backend:
         Read data from control endpoint
         """
         # Vendor-specific, IN, interface control transfer
+        if dlen > 128:
+            naeusb_logger.error("The naeusb fw ctrl buffer is 128 bytes, but len(data) > 128. If you get a pipe error, this is why.")
         response = self.handle.controlRead(0xC1, cmd, value, 0, dlen, timeout=self._timeout)
         naeusb_logger.debug("READ_CTRL: bmRequestType: {:02X}, \
                     bRequest: {:02X}, wValue: {:04X}, wIndex: {:04X}, data_len: {:04X}, response: {}".format(0xC1, cmd, \
@@ -561,14 +587,16 @@ class NAEUSB_Backend:
 
         return None
 
-    def cmdWriteBulk(self, data : bytearray):
+    def cmdWriteBulk(self, data : bytearray, timeout = None):
         """
         Write data directly to the bulk endpoint.
         :param data: Data to be written
         :return:
         """
         naeusb_logger.debug("BULK WRITE: data = {}".format(data))
-        self.handle.bulkWrite(self.wep, data, timeout=self._timeout)
+        if timeout is None:
+            timeout = self._timeout
+        self.handle.bulkWrite(self.wep, data, timeout=timeout)
 
     writeBulk = cmdWriteBulk
 
@@ -705,8 +733,8 @@ class NAEUSB:
         fw_latest : List[int] = [0, 0]
 
         if self.usbtx.pid in NEWAE_PIDS:
-            name = NEWAE_PIDS[self.usbtx.pid]['name']
-            fw_latest = cast(List[int], NEWAE_PIDS[self.usbtx.pid]['fwver'])
+            name = NEWAE_PIDS[self.usbtx.pid]['name'] # type: ignore
+            fw_latest = cast(List[int], NEWAE_PIDS[self.usbtx.pid]['fwver']) # type: ignore
         else:
             name = "Unknown (PID = %04x)"%self.usbtx.pid
 
@@ -786,14 +814,13 @@ class NAEUSB:
 
         return self.usbserializer.cmdWriteMem(addr, data)
 
-    def writeBulkEP(self, data : bytearray):
+    def writeBulkEP(self, data : bytearray, timeout = None):
         """
         Write directoly to the bulk endpoint.
         :param data: Data to be written.
         :return:
         """
-
-        return self.usbserializer.writeBulk(data)
+        return self.usbserializer.writeBulk(data, timeout=timeout)
 
     def flushInput(self):
         """Dump all the crap left over"""
@@ -826,32 +853,41 @@ class NAEUSB:
             self.stop = False
 
         def run(self):
-            naeusb_logger.debug("Streaming: starting USB read")
-            start = time.time()
+            # basically just setup a bunch of async transfers, then handle them via callback
+            naeusb_logger.info("Streaming: starting USB read")
             transfer_list = []
+            unsubmitted_transfers = []
             self.drx = 0
+            stream_start =  time.time()
             try:
-                # self.drx = self.serial.usbtx.read(self.dbuf_temp, timeout=self.timeout_ms)
                 num_transfers = int(self.dlen // self.segment_size)
                 if (self.dlen % self.segment_size) != 0:
                     num_transfers += 1
-                naeusb_logger.info("Doing {} transfers".format(num_transfers))
-                naeusb_logger.info("Cal'd from dlen = {} and segment_len = {}".format(self.dlen, self.segment_size))
+                naeusb_logger.debug("Doing {} transfers".format(num_transfers))
+                naeusb_logger.debug("Calc'd from dlen = {} and segment_len = {}".format(self.dlen, self.segment_size))
                 for i in range(num_transfers):
                     transfer = self.serial.usbtx.handle.getTransfer()
                     transfer.setBulk(usb1.ENDPOINT_IN | 0x05, \
                         self.segment_size, \
                         callback=self.callback)
-                    transfer.submit()
-                    transfer_list.append(transfer)
+                    try:
+                        transfer.submit()
+                        transfer_list.append(transfer)
+                    except usb1.USBError as e:
+                        # On Linux, trying to allocate for > ~10M samples seems to not work (ENOMEM)
+                        # Putting them in a list and attempting a resubmit later seems to fix things
+                        unsubmitted_transfers.append(transfer)
+                        naeusb_logger.info("Unsubmitted transfer, will try again later. Err = {}".format(str(e)))
             except IOError as e:
                 raise
 
-            diff = time.time() - start
+            # basically poll all the transfers we've setup
+            start = time.time()
             while any(x.isSubmitted() for x in transfer_list):
                 # handleEvents does the callbacks
                 try:
                     self.serial.usbtx.usb_ctx.handleEvents()
+
                     if self.stop:
                         self.stop = False
                         for transfer in transfer_list:
@@ -859,7 +895,28 @@ class NAEUSB:
                                 transfer.cancel()
                 except usb1.USBErrorInterrupted:
                     pass
-            naeusb_logger.info("Streaming: Received %d bytes in time %.20f)" % (self.drx, diff))
+                    
+                # try resubmitting transfers that failed earlier (likely due to enomem)
+                for transfer in unsubmitted_transfers:
+                    try:
+                        naeusb_logger.info("Attempting transfer resubmit")
+                        transfer.submit()
+                        unsubmitted_transfers.remove(transfer)
+                        transfer_list.append(transfer)
+                    except usb1.USBError as e:
+                        naeusb_logger.info("Still can't handle this: {}".format(str(e))) # this will probably still happen a lot before it works
+                        diff = (time.time() - start) * 1000
+                        if diff > self.timeout_ms: # if the capture has timed out
+                            naeusb_logger.error("Libusb async transfer request failed with: {}".format(str(e)))
+                            naeusb_logger.error("NOTE: If you're doing a long transfer, try increasing scope.adc.timeout")
+
+                            # cancel all submitted transfers to prevent pipe errors
+                            for transfer in transfer_list:
+                                if transfer.isSubmitted():
+                                    transfer.cancel()
+                            raise e
+                
+            naeusb_logger.info("Streaming: Received %d bytes in time %.20f)" % (self.drx, time.time() - stream_start))
 
         def callback(self, transfer : usb1.USBTransfer):
             """ Handle finished asynchronous bulk transfer"""
@@ -911,8 +968,8 @@ class NAEUSB:
             except Exception as e:
                 naeusb_logger.warning('Streaming: USB stream read timed out')
             diff = time.time() - start
-            naeusb_logger.info("Streaming: Received %d bytes in time %.20f)" % (self.drx, diff))
-            naeusb_logger.info("Expected {}".format(len(self.dbuf_temp)))
+            naeusb_logger.debug("Streaming: Received %d bytes in time %.20f)" % (self.drx, diff))
+            naeusb_logger.debug("Expected {}".format(len(self.dbuf_temp)))
 
     def cmdReadStream_getStatus(self) -> Tuple[int, int, int]:
         """

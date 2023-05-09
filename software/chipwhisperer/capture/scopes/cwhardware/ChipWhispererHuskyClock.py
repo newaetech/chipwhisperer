@@ -49,6 +49,9 @@ class CDCI6214:
         self._max_freq = 300e6
         self._warning_freq = 201e6
 
+        self._old_in_freq = 0
+        self._old_target_freq = 0
+
     def write_reg(self, addr, data):
         """Write to a CDCI6214 Register over I2C
 
@@ -223,10 +226,15 @@ class CDCI6214:
         """
         self.update_reg(0x00, 1 << 5, 0x00)
 
+    # def reset_pll_lock_detection(self):
+    #     """NOTE: Does not relock PLL
+    #     """
+    #     self.update_reg(0x00, 1 << 6, 0x00)
+
     def recal(self):
         """Perform a calibration. Typically unneeded.
         """
-        self.update_reg(0x0, 1 << 5, 1 << 5)
+        self.update_reg(0x0, 1 << 4, 0x00)
 
     def set_pll_input(self, xtal=True):
         """Set input to PLL and set input to 4MHz
@@ -285,10 +293,8 @@ class CDCI6214:
         if pll_out == 3:
             self.update_reg(0x31, div, 0xFFFF) # set div
             self.update_reg(0x32, (1) | (1 << 2), 0xFF) # LVDS CH3
-            self.reset()
         elif pll_out == 1:
             self.update_reg(0x25, div, 0xFFFF) # set div, prescaler A
-            self.reset()
         else:
             raise ValueError("pll_out must be 1 or 3, not {}".format(pll_out))
 
@@ -299,7 +305,7 @@ class CDCI6214:
             return self.read_reg(0x25, True) & 0x3FFF
         return None
 
-    def set_outfreqs(self, input_freq, target_freq, adc_mul):
+    def set_outfreqs(self, input_freq, target_freq, adc_mul, force_recalc=False):
         """Set an output target frequency for the target/adc using input_freq
 
         Calculates the best PLL/divider settings for a target_freq
@@ -336,7 +342,6 @@ class CDCI6214:
             self.set_outdiv(1, 0)
             return
 
-
         # ADC mul must be either 0, or a positive integer
         adc_off = (adc_mul == 0)
         if (adc_mul < 1) or (adc_mul != int(adc_mul)):
@@ -359,7 +364,6 @@ class CDCI6214:
             adc_mul = 1
 
         if old_mul != adc_mul:
-            self._adc_mul = adc_mul
             if not adc_off:
                 scope_logger.warning("ADC frequency must be between 1MHz and {}MHz - ADC mul has been adjusted to {}".format(self._max_freq, adc_mul))
 
@@ -373,6 +377,34 @@ class CDCI6214:
                 You can adjust scope.clock.pll._warning_freq if you don't want
                 to see this message anymore.
                 """)
+
+        # If we're just changing ADC mul, try to avoid touching PLL settings
+        # Depending on what frequencies we're dealing with, this may fail, meaning we have to touch the PLL settings
+        # Then we need to reset the PLL to lock it, which drops the target clock for a bit
+        # This often crashes the target, so the user may need to reset their target
+        if (force_recalc is False) and ((input_freq == self._old_in_freq) and (target_freq == self._old_target_freq)):
+            scope_logger.info("Input and target frequency unchanged, avoiding PLL changes so as not to drop out target clock")
+            old_div = self.get_outdiv(3)
+            
+            # check if this results in a remainder
+            # if it does, we need to recalc clocks
+            if (old_div * self.adc_mul) % adc_mul:
+                scope_logger.warning(f"Could not adjust adc_mul via output divider alone. Recalcing clocks...")
+                scope_logger.warning("Target clock has dropped for a moment. You may need to reset your target")
+            else:
+                new_div = (old_div * self.adc_mul) // adc_mul
+                scope_logger.debug(f"Newdiv {new_div}, OldDiv {old_div}, old adcmul {self.adc_mul}, new adcmul {adc_mul}")
+                try:
+                    if not self.pll_locked:
+                        scope_logger.warning("PLL unlocked after updating frequencies")
+                        scope_logger.warning("Target clock has dropped for a moment. You may need to reset your target")
+                        self.reset()
+                    self.set_outdiv(3, new_div)
+                    self._adc_mul = adc_mul
+                    return
+                except:
+                    scope_logger.warning("Could not change adc_mul with current settings, redoing PLL calculations")
+                    scope_logger.warning("Target clock has dropped for a moment. You may need to reset your target")
 
         scope_logger.debug("adc_mul: {}".format(adc_mul))
 
@@ -429,8 +461,14 @@ class CDCI6214:
 
         # set the output settings we found
         self.set_prescale(3, best_prescale)
-        self.set_input_div(best_in_div)
-        self.set_pll_mul(best_pll_mul)
+        
+        relock = False
+        if self.get_input_div() != best_in_div:
+            self.set_input_div(best_in_div)
+            relock = True
+        if self.get_pll_mul() != best_pll_mul:
+            self.set_pll_mul(best_pll_mul)
+            relock = True
         self.set_outdiv(1, best_out_div)
 
         if not adc_off:
@@ -440,7 +478,13 @@ class CDCI6214:
             self.set_outdiv(3, 0)
 
         # reset PLL (needed?)
-        self.reset()
+        if (not self.pll_locked) or relock:
+            self.reset()
+        self.sync_clocks()
+
+        self._old_in_freq = input_freq
+        self._old_target_freq = target_freq
+        self._adc_mul = adc_mul
 
     def set_bypass_adc(self, enable_bypass):
         """Routes FPGA clock input directly to ADC, bypasses PLL.
@@ -526,7 +570,7 @@ class CDCI6214:
         else:
             raise ValueError("Pll src must be either 'xtal' or 'fpga'")
         ## update clocks
-        self.set_outfreqs(self.input_freq, self._set_target_freq, self._adc_mul)
+        self.set_outfreqs(self.input_freq, self._set_target_freq, self._adc_mul, True)
 
     @property
     def adc_mul(self):
@@ -544,9 +588,9 @@ class CDCI6214:
 
     @adc_mul.setter
     def adc_mul(self, adc_mul):
-        self._adc_mul = adc_mul
         scope_logger.debug("adc_mul: {}".format(adc_mul))
-        self.set_outfreqs(self.input_freq, self._set_target_freq, self._adc_mul)
+        self.set_outfreqs(self.input_freq, self._set_target_freq, adc_mul)
+        self._adc_mul = adc_mul
 
     @property
     def target_freq(self):
@@ -843,7 +887,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
 
         :Setter: Set the adc multiplier
         """
-        self._cached_adc_freq = None
+        # self._cached_adc_freq = None
         return self.pll.adc_mul
 
     @adc_mul.setter
@@ -871,6 +915,27 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         return self.fpga_clk_settings.freq_ctr
 
     @property
+    def freq_ctr_src(self):
+        """The current input to the frequency counter.
+
+        There are two possible inputs to the frequency counter:
+        - "clkgen": The CLKGEN DCM output
+        - "extclk": The external input clock signal
+
+        :Getter: Return the frequency counter input (one of the above strings)
+
+        :Setter: Set the frequency counter source
+
+        Raises:
+           ValueError: if source is not "pll" or "extclk"
+        """
+        return self.fpga_clk_settings.freq_ctr_src
+
+    @freq_ctr_src.setter
+    def freq_ctr_src(self, src):
+        self.fpga_clk_settings.freq_ctr_src = src
+
+    @property
     def clkgen_locked(self):
         """Checks if the Husky PLL is locked"""
         return self.pll.pll_locked
@@ -895,6 +960,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
 
     @adc_phase.setter
     def adc_phase(self, phase):
+        self._cached_adc_freq = None
         if abs(phase) > 255:
             raise ValueError("Max phase +/- 255")
         adj_phase = int((abs(phase) * 31 / 255) + 0.5)
@@ -993,6 +1059,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         my_dict['adc_mul'] = self.adc_mul
         my_dict['adc_freq'] = self.adc_freq
         my_dict['freq_ctr'] = self.freq_ctr
+        my_dict['freq_ctr_src'] = self.freq_ctr_src
         my_dict['clkgen_locked'] = self.clkgen_locked
         my_dict['adc_phase'] = self.adc_phase
         my_dict['extclk_monitor_enabled'] = self.extclk_monitor_enabled
@@ -1032,6 +1099,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
     @adc_src.setter
     def adc_src(self, src):
         scope_logger.warning("scope.clock.adc_src is provided for backwards compability, but scope.clock.clkgen_src and scope.clock.adc_mul should be used for Husky.")
+        self._cached_adc_freq = None
 
         if src == "clkgen_x4":
             self.adc_mul = 4
@@ -1055,6 +1123,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         """Convenience function for backwards compatibility with how ADC clocks
         are managed on CW-lite and CW-pro.
         """
+        self._cached_adc_freq = None
         self.pll.reset()
 
     @property

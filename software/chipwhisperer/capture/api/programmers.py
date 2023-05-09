@@ -153,7 +153,13 @@ class SAM4SProgrammer(Programmer):
         return self.prog
 
     @save_and_restore_pins
-    def find(self):
+    def find(self, power_cycle=True):
+        if power_cycle:
+            target_logger.info("Power cycling SAM4S")
+            self.scope.io.target_pwr = 0
+            time.sleep(0.2)
+            self.scope.io.target_pwr = 1
+            time.sleep(0.2)
         target_logger.info("Toggling erase({})/nrst pins".format(self.erase_pin))
 
         setattr(self.scope.io, self.erase_pin, 1)
@@ -162,9 +168,9 @@ class SAM4SProgrammer(Programmer):
         time.sleep(0.5)
 
         self.scope.io.nrst = 0
-        time.sleep(0.5)
+        time.sleep(0.2)
         self.scope.io.nrst = None
-        time.sleep(0.5)
+        time.sleep(0.2)
 
         self._old_baud = self.scope._get_usart()._baud
         prog = self.get_prog()
@@ -207,8 +213,12 @@ class SAM4SProgrammer(Programmer):
             prog.ser.close()
             raise OSError("Verify FAILED")
 
-    def close(self):
+    def close(self, reset=True):
         self.scope._get_usart().init(self._old_baud)
+        self.scope.io.nrst = 0
+        time.sleep(0.2)
+        self.scope.io.nrst = None
+        time.sleep(0.2)
         pass
         
     

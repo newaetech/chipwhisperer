@@ -47,6 +47,7 @@ print('* modified with updated instruction addresses.                           
 print('**************************************************************************************\n\n')
 
 test_platform = "stm32f3"
+logfilename = "test_husky_xadc.log"
 
 if "HUSKY_HW_LOC" in os.environ:
     locboth = os.environ["HUSKY_HW_LOC"].split(',')
@@ -276,31 +277,33 @@ testTargetData = [
 
 if test_platform == "sam4s":
     testSegmentData = [
-        # offset    presamples  samples clock       adcmul  seg_count   segs    segcycs desc
-        (0,         0,          90,    7.37e6,     4,      False,      20,     0,      'segments_trigger_no_offset'),
-        (0,         10,         90,    7.37e6,     4,      False,      20,     0,      'segments_trigger_no_offset_presamp'),
-        (10,        0,          90,    7.37e6,     4,      False,      20,     0,      'segments_trigger_offset10_SLOW'),
-        (50,        0,          90,    7.37e6,     4,      False,      20,     0,      'segments_trigger_offset50_SLOW'),
-        (50,        20,         90,    7.37e6,     4,      False,      20,     0,      'segments_trigger_offset50_presamp'),
-        (0,         0,          90,    7.37e6,     4,      True,       20,     32500,  'segments_counter_no_offset'),
-        (0,         30,         90,    7.37e6,     4,      True,       20,     32500,  'segments_counter_no_offset_presamp_SLOW'),
-        (10,        0,          90,    7.37e6,     4,      True,       20,     32500,  'segments_counter_offset10_SLOW'),
-        (50,        0,          90,    7.37e6,     4,      True,       20,     32500,  'segments_counter_offset50_SLOW'),
-        (50,        40,         90,    7.37e6,     4,      True,       20,     32500,  'segments_counter_offset50_presamp'),
+        # offset    presamples  samples stream  clock       adcmul  seg_count   segs    segcycs desc
+        (0,         0,          90,     False,  7.37e6,     4,      False,      20,     0,      'segments_trigger_no_offset'),
+        (0,         10,         90,     False,  7.37e6,     4,      False,      20,     0,      'segments_trigger_no_offset_presamp'),
+        (10,        0,          90,     False,  7.37e6,     4,      False,      20,     0,      'segments_trigger_offset10_SLOW'),
+        (50,        0,          90,     False,  7.37e6,     4,      False,      20,     0,      'segments_trigger_offset50_SLOW'),
+        (50,        20,         90,     False,  7.37e6,     4,      False,      20,     0,      'segments_trigger_offset50_presamp'),
+        (0,         0,          100,    True,   7.37e6,     4,      False,      2000,   0,      'segments_trigger_stream_SLOW'),
+        (0,         0,          90,     False,  7.37e6,     4,      True,       20,     32500,  'segments_counter_no_offset'),
+        (0,         30,         90,     False,  7.37e6,     4,      True,       20,     32500,  'segments_counter_no_offset_presamp_SLOW'),
+        (10,        0,          90,     False,  7.37e6,     4,      True,       20,     32500,  'segments_counter_offset10_SLOW'),
+        (50,        0,          90,     False,  7.37e6,     4,      True,       20,     32500,  'segments_counter_offset50_SLOW'),
+        (50,        40,         90,     False,  7.37e6,     4,      True,       20,     32500,  'segments_counter_offset50_presamp'),
     ]
 else:
     testSegmentData = [
-        # offset    presamples  samples clock       adcmul  seg_count   segs    segcycs desc
-        (0,         0,          90,    7.37e6,     4,      False,      20,     0,      'segments_trigger_no_offset'),
-        (0,         10,         90,    7.37e6,     4,      False,      20,     0,      'segments_trigger_no_offset_presamp'),
-        (10,        0,          90,    7.37e6,     4,      False,      20,     0,      'segments_trigger_offset10_SLOW'),
-        (50,        0,          90,    7.37e6,     4,      False,      20,     0,      'segments_trigger_offset50_SLOW'),
-        (50,        20,         90,    7.37e6,     4,      False,      20,     0,      'segments_trigger_offset50_presamp'),
-        (0,         0,          90,    7.37e6,     4,      True,       20,     29472,  'segments_counter_no_offset'),
-        (0,         30,         90,    7.37e6,     4,      True,       20,     29472,  'segments_counter_no_offset_presamp_SLOW'),
-        (10,        0,          90,    7.37e6,     4,      True,       20,     29472,  'segments_counter_offset10_SLOW'),
-        (50,        0,          90,    7.37e6,     4,      True,       20,     29472,  'segments_counter_offset50_SLOW'),
-        (50,        40,         90,    7.37e6,     4,      True,       20,     29472,  'segments_counter_offset50_presamp'),
+        # offset    presamples  samples stream  clock       adcmul  seg_count   segs    segcycs desc
+        (0,         0,          90,     False,  7.37e6,     4,      False,      20,     0,      'segments_trigger_no_offset'),
+        (0,         10,         90,     False,  7.37e6,     4,      False,      20,     0,      'segments_trigger_no_offset_presamp'),
+        (10,        0,          90,     False,  7.37e6,     4,      False,      20,     0,      'segments_trigger_offset10_SLOW'),
+        (50,        0,          90,     False,  7.37e6,     4,      False,      20,     0,      'segments_trigger_offset50_SLOW'),
+        (50,        20,         90,     False,  7.37e6,     4,      False,      20,     0,      'segments_trigger_offset50_presamp'),
+        (0,         0,          100,    True,   7.37e6,     4,      False,      2000,   0,      'segments_trigger_stream_SLOW'),
+        (0,         0,          90,     False,  7.37e6,     4,      True,       20,     29472,  'segments_counter_no_offset'),
+        (0,         30,         90,     False,  7.37e6,     4,      True,       20,     29472,  'segments_counter_no_offset_presamp_SLOW'),
+        (10,        0,          90,     False,  7.37e6,     4,      True,       20,     29472,  'segments_counter_offset10_SLOW'),
+        (50,        0,          90,     False,  7.37e6,     4,      True,       20,     29472,  'segments_counter_offset50_SLOW'),
+        (50,        40,         90,     False,  7.37e6,     4,      True,       20,     29472,  'segments_counter_offset50_presamp'),
     ]
 
 
@@ -400,14 +403,30 @@ testTraceSegmentData = [
 
 testSADTriggerData = [
     #clock  adc_mul bits   threshold   offset  reps    desc
-    (10e6,  1,      8,     50,         0,      50,     '8bits'),
-    (10e6,  1,      12,    50,         0,      50,     '12bits'),
-    (10e6,  1,      8,     50,         0,      10,     '8bits_SLOW'),
-    (10e6,  10,     8,     50,         0,      50,     'fast_SLOW'),
-    (10e6,  18,     8,     50,         0,      50,     'faster_SLOW'),
-    (10e6,  20,     8,     50,         0,      50,     'fastest'),
-    (10e6,  25,     8,     50,         0,      50,     'overclocked_SLOW'),
+    (10e6,  1,      8,     200,        0,      50,     '8bits'),
+    (10e6,  1,      12,    200,        0,      50,     '12bits'),
+    (10e6,  1,      8,     200,        0,      10,     '8bits_SLOW'),
+    (10e6,  10,     8,     200,        0,      50,     'fast_SLOW'),
+    (10e6,  18,     8,     200,        0,      50,     'faster_SLOW'),
+    (10e6,  20,     8,     200,        0,      50,     'fastest'),
+    (10e6,  25,     8,     200,        0,      50,     'overclocked_SLOW'),
 ]
+
+if test_platform == "sam4s":
+    testMultipleSADTriggerData = [
+        #clock  adc_mul bits   half threshold   segments    offset  reps    desc
+        (10e6,  4,      8,     0,   100,        10,         2700,   20,     'regular'),
+        (10e6,  4,      8,     1,   100,        10,         2700,   20,     'half'),
+        (10e6,  20,     8,     0,   100,        10,         13500,  20,     'fast'),
+    ]
+else:
+    testMultipleSADTriggerData = [
+        #clock  adc_mul bits   half threshold   segments    offset  reps    desc
+        (10e6,  4,      8,     0,   200,        11,         3525,   20,     'regular'),
+        (10e6,  4,      8,     1,   100,        11,         3525,   20,     'half'),
+        (10e6,  20,     8,     0,   300,        11,         17625,  20,     'fast'),
+    ]
+
 
 testUARTTriggerData = [
     #clock      pin     pattern     mask                            bytes_compared  reps    desc
@@ -454,13 +473,40 @@ testGlitchTriggerData = [
 
 
 def test_fpga_version():
-    assert scope.fpga_buildtime == '1/30/2023, 11:35'
+    assert scope.fpga_buildtime == '4/5/2023, 21:22'
 
 def test_fw_version():
     assert scope.fw_version['major'] == 1
     assert scope.fw_version['minor'] == 5
-    assert scope.sam_build_date == '21:32:05 Jan 31 2023'
+    assert scope.sam_build_date == '13:17:41 Feb  9 2023'
 
+@pytest.fixture(autouse=True)
+def xadc_check(xadc, log):
+    # runs before test:
+    #...
+    yield
+    # runs after test:
+    if xadc:
+        #print(' temp=%4.1f, XADC=%s' % (scope.XADC.temp, scope.XADC.status), end='')
+        print(' temp=%4.1f ' % scope.XADC.temp, end='')
+        if scope.XADC.status != 'good':
+            print(scope.XADC.status, end='')
+            if 'VCCint' in scope.XADC.status: 
+                print(' vccint=%1.3f/%1.3f/%1.3f' % (scope.XADC.vccint, scope.XADC.get_vcc('vccint', 'min'),  scope.XADC.get_vcc('vccint', 'max')), end='')
+            if 'VCCbram' in scope.XADC.status: 
+                print(' vccbram=%1.3f/%1.3f/%1.3f' % (scope.XADC.vccbram, scope.XADC.get_vcc('vccbram', 'min'),  scope.XADC.get_vcc('vccbram', 'max')), end='')
+            if 'VCCaux' in scope.XADC.status: 
+                print(' vccaux=%1.3f/%1.3f/%1.3f' % (scope.XADC.vccaux, scope.XADC.get_vcc('vccaux', 'min'),  scope.XADC.get_vcc('vccaux', 'max')), end='')
+    if log:
+        logfile = open(logfilename, 'a')
+        logfile.write('%4.1f %1.3f %1.3f %1.3f %1.3f %1.3f %1.3f %1.3f %1.3f %1.3f\n' % 
+                (scope.XADC.temp,
+                 scope.XADC.vccint, scope.XADC.get_vcc('vccint', 'min'),  scope.XADC.get_vcc('vccint', 'max'),
+                 scope.XADC.vccbram, scope.XADC.get_vcc('vccbram', 'min'),  scope.XADC.get_vcc('vccbram', 'max'),
+                 scope.XADC.vccaux, scope.XADC.get_vcc('vccaux', 'min'),  scope.XADC.get_vcc('vccaux', 'max')
+                ))
+        logfile.close()
+    scope.XADC.status = 0 # clear any errors after each test
 
 @pytest.mark.parametrize("address, nbytes, reps, desc", testRWData)
 def test_reg_rw(address, nbytes, reps, desc):
@@ -517,7 +563,7 @@ def test_internal_ramp(fulltest, samples, presamples, testmode, clock, fastreads
         assert scope.capture() == False
         raw = scope.get_last_trace(True)
         errors, first_error = check_ramp(raw, testmode, samples, segment_cycles)
-        assert errors == 0, "%d errors; First error: %d" % (errors, first_error)
+        assert errors == 0, "%d errors; First error: %d; scope.adc.errors: %s" % (errors, first_error, scope.adc.errors)
         assert scope.adc.errors == False
     scope.sc._fast_fifo_read_enable = True # return to default
 
@@ -584,7 +630,7 @@ def test_adc_freq_sweep(fulltest, samples, presamples, freq_start, freq_stop, fr
                 #zero_start, zero_stop = last_zero_run(raw)
                 #zero_length = zero_stop - zero_start
                 #outfile.write('{} MHz: FAIL on iteration {}! {} ramp errors; scope.adc.errors:{}; first error:{}; state:{}, last zero run: {} zeros starting at sample {}; first error: {}\n'.format(scope.clock.adc_freq/1e6, i, errors, scope.adc.errors, scope.adc.first_error, scope.adc.first_error_state, zero_length, zero_start, first_error))
-                outfile.write('{} MHz: FAIL on iteration {}! {} ramp errors; scope.adc.errors:{}; first error:{}; state:{}, first error: {}\n'.format(scope.clock.adc_freq/1e6, i, errors, scope.adc.errors, scope.adc.first_error, scope.adc.first_error_state, first_error))
+                outfile.write('{} MHz: FAIL on iteration {}! {} ramp errors; scope.adc.errors:{}; first error:{}; state:{}, first error: {}, rep: {}\n'.format(scope.clock.adc_freq/1e6, i, errors, scope.adc.errors, scope.adc.first_error, scope.adc.first_error_state, first_error, i))
                 break # no point running more reps once it fails
             else:
                 outfile.write('{} MHz: pass\n'.format(scope.clock.adc_freq/1e6))
@@ -978,7 +1024,7 @@ def test_target_internal_ramp (fulltest, samples, presamples, testmode, clock, f
     raw = scope.get_last_trace(True)
     if verbose: print('Words read before error: %d ' % int.from_bytes(scope.sc.sendMessage(0x80, 47, maxResp=4), byteorder='little'))
     if 'overflow' in desc:
-        assert 'fast FIFO' in scope.adc.errors
+        assert 'overflow' in scope.adc.errors
         scope.errors.clear()
         time.sleep(2)
     else:
@@ -989,9 +1035,9 @@ def test_target_internal_ramp (fulltest, samples, presamples, testmode, clock, f
     scope.sc._fast_fifo_read_enable = True # return to default
 
 
-@pytest.mark.parametrize("offset, presamples, samples, clock, adcmul, seg_count, segs, segcycs, desc", testSegmentData)
+@pytest.mark.parametrize("offset, presamples, samples, stream, clock, adcmul, seg_count, segs, segcycs, desc", testSegmentData)
 @pytest.mark.skipif(not target_attached, reason='No target detected')
-def test_segments (fulltest, offset, presamples, samples, clock, adcmul, seg_count, segs, segcycs, desc):
+def test_segments (fulltest, offset, presamples, samples, stream, clock, adcmul, seg_count, segs, segcycs, desc):
     # This requires a specific target firmware to work properly:
     # simpleserial-aes where the number of triggers can be set via 'n' commmand.
     # The segcycs value for seg_count=True requires a very specific firmware, otherwise the test is likely to fail.
@@ -1038,7 +1084,7 @@ def test_segments (fulltest, offset, presamples, samples, clock, adcmul, seg_cou
     scope.adc.segment_cycles = segcycs
     scope.adc.segment_cycle_counter_en = seg_count
     scope.adc.offset = offset
-    scope.adc.stream_mode = False
+    scope.adc.stream_mode = stream
     scope.adc.bits_per_sample = 12
     scope.adc.clip_errors_disabled = False
     scope.adc.lo_gain_errors_disabled = True
@@ -1046,7 +1092,7 @@ def test_segments (fulltest, offset, presamples, samples, clock, adcmul, seg_cou
     scope.gain.db = 10
 
     target.set_key(bytearray(16))
-    target.simpleserial_write('n', bytearray([0, segs]))
+    target.simpleserial_write('n', list(int.to_bytes(segs, length=2, byteorder='big')))
     scope.arm()
     target.simpleserial_write('f', bytearray(16))
     ret = scope.capture()
@@ -1192,20 +1238,18 @@ def test_sad_trigger (fulltest, clock, adc_mul, bits, threshold, offset, reps, d
     assert scope.clock.pll.pll_locked == True
     assert scope.clock.adc_freq == clock * adc_mul
     target.baud = 38400 * clock / 1e6 / 7.37
+    reset_target()
 
-
+    scope.adc.stream_mode = False
     scope.errors.clear()
     scope.trace.enabled = False
     scope.trace.target = None
-    scope.default_setup()
-    reset_target()
-    time.sleep(0.5)
-    target.baud = 38400
+
     scope.adc.lo_gain_errors_disabled = True
     scope.adc.clip_errors_disabled = False
     scope.adc.segment_cycle_counter_en = False
     scope.adc.segments = 1
-    scope.adc.samples = scope.SAD._sad_reference_length * 2
+    scope.adc.samples = scope.SAD.sad_reference_length * 2
     scope.adc.presamples = 0
     scope.adc.bits_per_sample = bits
     scope.adc.offset = offset
@@ -1222,16 +1266,82 @@ def test_sad_trigger (fulltest, clock, adc_mul, bits, threshold, offset, reps, d
     scope.trigger.module = 'SAD'
     scope.adc.offset = 0
 
-    scope.adc.presamples = scope.SAD._sad_reference_length + 8
+    # set presamples so that the waveforms line up;
+    # + sad_reference_length because trigger happens at the end of the SAD pattern;
+    # + latency for the latency of the SAD triggering logic.
+    scope.adc.presamples = scope.SAD.sad_reference_length + scope.SAD.latency
     for r in range(reps):
         sadtrace = cw.capture_trace(scope, target, bytearray(16), bytearray(16))
         assert sadtrace is not None, 'SAD-triggered capture failed on rep {}'.format(r)
         assert scope.adc.errors == False
         sad = 0
-        for i in range(scope.SAD._sad_reference_length):
+        for i in range(scope.SAD.sad_reference_length):
             sad += abs(reftrace.wave[i] - sadtrace.wave[i])
         sad = int(sad*2**scope.SAD._sad_bits_per_sample)
         assert sad <= threshold, 'SAD=%d, threshold=%d (iteration: %d)' %(sad, threshold, r)
+
+
+@pytest.mark.parametrize("clock, adc_mul, bits, half, threshold, segments, offset, reps, desc", testMultipleSADTriggerData)
+@pytest.mark.skipif(not target_attached, reason='No target detected')
+def test_multiple_sad_trigger (fulltest, clock, adc_mul, bits, half, threshold, segments, offset, reps, desc):
+    if not fulltest and 'SLOW' in desc:
+        pytest.skip("use --fulltest to run")
+        return None
+    if not fulltest:
+        reps = 3 # go faster
+    reset_setup()
+    scope.clock.clkgen_freq = clock
+    scope.clock.adc_mul = adc_mul
+    time.sleep(0.1)
+    assert scope.clock.pll.pll_locked == True
+    assert scope.clock.adc_freq == clock * adc_mul
+    target.baud = 38400 * clock / 1e6 / 7.37
+    reset_target()
+
+    scope.errors.clear()
+    scope.trace.enabled = False
+    scope.trace.target = None
+
+    scope.SAD.multiple_triggers = True
+    scope.SAD.half_pattern = half
+    scope.adc.lo_gain_errors_disabled = True
+    scope.adc.clip_errors_disabled = False
+    scope.adc.segment_cycle_counter_en = False
+    scope.adc.segments = 1
+    scope.adc.samples = scope.SAD.sad_reference_length * 2
+    scope.adc.presamples = 0
+    scope.adc.bits_per_sample = bits
+    scope.adc.offset = offset
+
+    scope.trigger.module = 'basic'
+    # scope.gain.db = 23.7
+    scope.gain.db = 12
+    reftrace = cw.capture_trace(scope, target, bytearray(16), bytearray(16))
+    assert scope.adc.errors == False, (scope.adc.errors, scope.gain)
+
+    scope.SAD.reference = reftrace.wave
+    scope.SAD.threshold = threshold
+    scope.trigger.module = 'SAD'
+    scope.adc.offset = 0
+
+    # set presamples so that the waveforms line up;
+    # + sad_reference_length because trigger happens at the end of the SAD pattern;
+    # + latency for the latency of the SAD triggering logic.
+    scope.adc.presamples = scope.SAD.sad_reference_length + scope.SAD.latency
+    scope.adc.segments = segments
+    scope.adc.samples -= scope.adc.samples %3
+    for r in range(reps):
+        sadtrace = cw.capture_trace(scope, target, bytearray(16), bytearray(16))
+        assert sadtrace is not None, 'SAD-triggered capture failed on rep {}'.format(r)
+        assert scope.SAD.num_triggers_seen == scope.adc.segments
+        assert scope.adc.errors == False
+        for s in range(scope.adc.segments):
+            sad = 0
+            for i in range(scope.SAD.sad_reference_length):
+                sad += abs(reftrace.wave[i] - sadtrace.wave[i+s*scope.adc.samples])
+            sad = int(sad*2**scope.SAD._sad_bits_per_sample)
+            assert sad <= threshold, 'SAD=%d, threshold=%d (iteration: %d, segment %d)' %(sad, threshold, r, s)
+
 
 
 @pytest.mark.parametrize("clock, pin, pattern, mask, bytes_compared, reps, desc", testUARTTriggerData)

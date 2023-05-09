@@ -8,8 +8,7 @@
 
 Main module for ChipWhisperer.
 """
-
-__version__ = '5.6.1'
+from .version import __version__
 
 try:
     import usb1 # type: ignore
@@ -62,7 +61,7 @@ def list_devices(idProduct : Optional[List[int]]=None, get_sn=True, get_hw_loc=T
     rtn = []
     for dev in dev_list:
         try:
-            name = NEWAE_PIDS[dev.getProductID()]['name']
+            name = NEWAE_PIDS[dev.getProductID()]['name'] # type: ignore
         except Exception as e:
             other_logger.info("Could not get name of device with pid {}".format(dev.getProductID()))
             name = "Unknown"
