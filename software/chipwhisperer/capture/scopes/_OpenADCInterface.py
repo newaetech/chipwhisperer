@@ -128,6 +128,7 @@ class OpenADCInterface(util.DisableNewAttr):
         self.hwMaxSamples = 0
         self.hwMaxSegmentSamples = 0
         self._stream_len = 0
+        self._total_samples = 0
         self._int_data = None
         self._stream_rx_bytes = 0
         self._clear_caches()
@@ -367,10 +368,10 @@ class OpenADCInterface(util.DisableNewAttr):
     def updateStreamBuffer(self, samples=None):
         # yes this is a bit weird but it is so:
         if samples is not None:
-            self._stream_len = samples
+            self._total_samples = samples
         if self._is_husky:
             if self._stream_mode:
-                sbuf_len = int(self._stream_len * self._bits_per_sample / 8)
+                sbuf_len = int(self._total_samples * self._bits_per_sample / 8)
                 if sbuf_len % 3:
                     # need to capture a multiple of 3 otherwise processHuskyData may fail
                     sbuf_len += 3 - sbuf_len % 3
@@ -380,6 +381,7 @@ class OpenADCInterface(util.DisableNewAttr):
                 self._stream_len = sbuf_len
         else:
             bufsizebytes = 0
+            self._stream_len = self._total_samples
             if self._stream_mode:
                 nae = self.serial
                 #Save the number we will return
