@@ -2062,6 +2062,8 @@ class TriggerSettings(util.DisableNewAttr):
 
 
     def _set_stream_mode(self, enabled):
+        if self._is_lite:
+            raise ValueError("Not supported on CW-Lite.")
         self._stream_mode = enabled
 
         #Write to FPGA
