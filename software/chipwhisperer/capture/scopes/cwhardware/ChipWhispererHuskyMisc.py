@@ -468,6 +468,9 @@ class USERIOSettings(util.DisableNewAttr):
 
 class XADCSettings(util.DisableNewAttr):
     ''' Husky FPGA XADC temperature and voltage monitoring.
+    XADC alarms are sticky and shut down generated clocks and SAD logic; the
+    error condition must be manually cleared (scope.XADC.status = 0) to re-enable
+    shutdown logic.
     '''
     _name = 'Husky XADC Setting'
 
@@ -703,6 +706,26 @@ class XADCSettings(util.DisableNewAttr):
             raise ValueError("Out of range")
         self.drp.write(addr, raw)
 
+    def _enable_vcc_alarms(self, enable):
+        """Enable or disable XADC vcc alarms.
+        """
+        addr = 0x41
+        val = self.drp.read(addr)
+        # VCC alarms are disabled when bits 2, 3 and 8 are set, enabled when they are clear (ref: UG480 Table 3.5)
+        mask_enable = 2**16-1 - 2**2 - 2**3 - 2**8
+        mask_disable = 2**2 + 2**3 + 2**8
+        if enable:
+            val &= mask_enable
+        else:
+            val |= mask_disable
+        self.drp.write(addr, val)
+
+    def _user_reset(self):
+        """Do a user reset of the XADC.
+        This will not clear scope.XADC.errors (use scope.XADC.status = 0 for this), but it will
+        clear stored min/max temperature and voltage measurements.
+        """
+        self.drp.write(0x03, 0xeeee) # (ref: UG480, "XADC JTAG Reset")
 
 
 class LASettings(util.DisableNewAttr):
@@ -716,6 +739,7 @@ class LASettings(util.DisableNewAttr):
         self.oa = oaiface
         self._mmcm = mmcm
         self._scope = scope
+        self._is_husky_plus = False
         self.disable_newattr()
 
     def _dict_repr(self):
@@ -802,19 +826,28 @@ class LASettings(util.DisableNewAttr):
             return False
 
     @property
+    def max_capture_depth(self):
+        """Maximum capture depth.
+        """
+        if self._is_husky_plus:
+            return 65535
+        else:
+            return 16376
+
+    @property
     def capture_depth(self):
         """Number of bits captured for each signal.
 
         Args:
-            depth (int): capture <depth> samples of each signal. 16-bit value, in range [1, 16376].
+            depth (int): capture <depth> samples of each signal. 16-bit value, in range [1, scope.LA.max_capture_depth]
         """
         raw = self.oa.sendMessage(CODE_READ, ADDR_LA_CAPTURE_DEPTH, Validate=False, maxResp=2)
         return int.from_bytes(raw, byteorder='little')
 
     @capture_depth.setter
     def capture_depth(self, depth):
-        if depth > 16376:
-            raise ValueError("Maximum capture depth is 16376")
+        if depth > self.max_capture_depth:
+            raise ValueError("Maximum capture depth is %s" % self.max_capture_depth)
         if depth % 2:
             depth -= 1
         self.oa.sendMessage(CODE_WRITE, ADDR_LA_CAPTURE_DEPTH, int.to_bytes(depth, length=2, byteorder='little'), Validate=False)

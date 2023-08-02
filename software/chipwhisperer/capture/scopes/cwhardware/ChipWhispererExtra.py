@@ -45,6 +45,7 @@ ADDR_I2CDATA = 48
 ADDR_IOROUTE = 55
 ADDR_IOREAD = 59
 ADDR_EDGE_TRIGGER = 113
+ADDR_SOFTPOWER_CONTROL = 115
 
 # API aliases for the TIO settings
 _tio_alias = {
@@ -304,26 +305,36 @@ class GPIOSettings(util.DisableNewAttr):
 
         * "glitch": glitch output (clock or voltage glitch signal, as defined by scope.glitch settings)
         * "trigger": internal trigger signal (as defined by scope.trigger)
+        * "inverted [glitch | trigger]": inverted glitch or trigger signal
         """
         if not self._is_husky:
             raise ValueError("For CW-Husky only.")
         data = self.cwe.oa.sendMessage(CODE_READ, ADDR_AUX_IO, Validate=False, maxResp=1)[0]
-        if data & 0x02:
-            return "glitch"
+        if data & 0x04:
+            setting = 'inverted '
         else:
-            return "trigger"
+            setting = ''
+        if data & 0x02:
+            setting += "glitch"
+        else:
+            setting += "trigger"
+        return setting
 
     @glitch_trig_mcx.setter
     def glitch_trig_mcx(self, state):
         if not self._is_husky:
             raise ValueError("For CW-Husky only.")
         data = self.cwe.oa.sendMessage(CODE_READ, ADDR_AUX_IO, Validate=False, maxResp=1)[0]
-        if state == 'trigger':
+        if 'trigger' in state:
             data &= 0xfd
-        elif state == 'glitch':
+        elif 'glitch' in state:
             data |= 0x02
         else:
             raise ValueError("Options: glitch, trig")
+        if 'inverted' in state:
+            data |= 0x04
+        else:
+            data &= 0xfb
         self.cwe.oa.sendMessage(CODE_WRITE, ADDR_AUX_IO, [data])
 
     @property
@@ -643,6 +654,9 @@ class GPIOSettings(util.DisableNewAttr):
 
     def vglitch_reset(self, delay=0.005):
         """
+        Sets scope.io.glitch_hp and scope.io.glitch_lp to False, waits 'delay' 
+        seconds, then returns scope.io.glitch_hp and scope.io.glitch_lp to 
+        their original settings.
         """
         hp = self.glitch_hp
         lp = self.glitch_lp
@@ -1248,7 +1262,7 @@ class CWExtraSettings:
             hasPLL=False
             hasAux=True
             hasUserio=False
-        elif cwtype == "cwhusky":
+        elif cwtype in ["cwhusky", "cwhusky-plus"]:
             hasFPAFPB=False
             hasGlitchOut=True
             hasPLL=False
@@ -1271,12 +1285,14 @@ class CWExtraSettings:
         self.protrigger = ProTrigger(self)
         self.huskytrigger = HuskyTrigger(self)
 
-        if cwtype == "cwhusky":
+        if cwtype in ["cwhusky", "cwhusky-plus"]:
             self.gpiomux._is_husky = True
             self.triggermux._is_husky = True
             self._addr_trigsrc_size = 2
+            self._is_husky = True
         else:
             self._addr_trigsrc_size = 1
+            self._is_husky = False
 
 
     def _setGPIOState(self, state, IONumber):
@@ -1517,6 +1533,36 @@ class CWExtraSettings:
             data[5] &= ~(0x04)
 
         self.oa.sendMessage(CODE_WRITE, ADDR_IOROUTE, data)
+
+    def setHuskySoftPowerOnParameters(self, pwm_cycles1, pwm_cycles2, pwm_period, pwm_off_time1, pwm_off_time2):
+        """Sets the soft power-on PWM parameters.
+
+        Args:
+            pwm_cycles1 (8-bit int): this plus pwm_cycles2 is the number of PWM on/off cycles before power is fully on
+            pwm_cycles2 (8-bit int): this plus pwm_cycles1 is the number of PWM on/off cycles before power is fully on
+            pwm_period (16-bit int): number of cycles in PWM period
+            pwm_off_time1 (16-bit int): number of cycles in PWM period where power is off, for the first pwm_cycles1
+        """
+        if not self._is_husky:
+            raise ValueError("For Husky only")
+        raw = [pwm_cycles1, pwm_cycles2]
+        raw.extend(list(int.to_bytes(pwm_period, length=2, byteorder='little')))
+        raw.extend(list(int.to_bytes(pwm_off_time1, length=2, byteorder='little')))
+        raw.extend(list(int.to_bytes(pwm_off_time2, length=2, byteorder='little')))
+        self.oa.sendMessage(CODE_WRITE, ADDR_SOFTPOWER_CONTROL, raw)
+
+    def getHuskySoftPowerOnParameters(self):
+        """Get the soft power-on PWM parameters as (pwm_cycles1, pwm_cycles2, pwm_period, pwm_off_time1, pwm_off_time2)
+        """
+        if not self._is_husky:
+            raise ValueError("For Husky only")
+        raw = self.oa.sendMessage(CODE_READ, ADDR_SOFTPOWER_CONTROL, Validate=False, maxResp=8)
+        pwm_cycles1 = raw[0]
+        pwm_cycles2 = raw[1]
+        pwm_period = int.from_bytes(raw[2:4], byteorder='little')
+        pwm_off_time1 = int.from_bytes(raw[4:6], byteorder='little')
+        pwm_off_time2 = int.from_bytes(raw[6:8], byteorder='little')
+        return (pwm_cycles1, pwm_cycles2, pwm_period, pwm_off_time1, pwm_off_time2)
 
     def getTargetPowerState(self):
         data = self.oa.sendMessage(CODE_READ, ADDR_IOROUTE, Validate=False, maxResp=8)

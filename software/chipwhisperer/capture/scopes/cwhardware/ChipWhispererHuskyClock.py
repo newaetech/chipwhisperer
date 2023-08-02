@@ -5,6 +5,9 @@ from ....common.utils import util
 from ....logging import *
 import numpy as np
 from .._OpenADCInterface import OpenADCInterface, ClockSettings
+from ..cwhardware.ChipWhispererHuskyMisc import ADS4128Settings
+
+import time
 
 ADDR_EXTCLK                     = 38
 ADDR_EXTCLK_CHANGE_LIMIT        = 82
@@ -51,6 +54,8 @@ class CDCI6214:
 
         self._old_in_freq = 0
         self._old_target_freq = 0
+        self._allow0p5 = False
+        self._reset_time = 0.10 # empirically seems to work well; this is a conservative number
 
     def write_reg(self, addr, data):
         """Write to a CDCI6214 Register over I2C
@@ -174,6 +179,9 @@ class CDCI6214:
         # use ref_mux_src bit to select input
         self.update_reg(0x01, 1 << 9, 0b11 << 8)
 
+        # set GPIO1 output to PLL_LOCK
+        self.update_reg(0x02, 0, 0b1111)
+
     def get_pll_input(self):
         """True if XTAL or False if FPGA
         """
@@ -218,6 +226,8 @@ class CDCI6214:
         Maybe need to do to lock PLL?
         """
         self.update_reg(0x0, 1 << 2, 0x00)
+        # wait enough time for PLL to re-lock (obtained empirically)
+        time.sleep(self._reset_time)
 
     def sync_clocks(self):
         """Send a resync pulse to the internal synchronization blocks.
@@ -410,8 +420,11 @@ class CDCI6214:
 
         # find input divs that will give a clock
         # input to the PLL between 1MHz and 100MHz
-        okay_in_divs = [0.5]
-        okay_in_divs.extend(range(1, 256))
+        okay_in_divs = list(range(1,256))
+        if self._allow0p5:
+            # setting the reference divider to 0.5 seems to result in inconsistant phase relationship between the target clock and the
+            # ADC sampling clock (the CDCI6214 datasheet hints at this in section 8.3.6); it's prevented by default:
+            okay_in_divs.append(0.5)
         okay_in_divs = np.array(okay_in_divs)
         okay_in_divs = okay_in_divs[(input_freq // okay_in_divs) >= 1E6]
         okay_in_divs = okay_in_divs[(input_freq // okay_in_divs) <= 100E6]
@@ -513,7 +526,8 @@ class CDCI6214:
 
     @property
     def target_delay(self):
-        """Delays/phase shifts the target clock to the right (positive phase)
+        """Delays/phase shifts the target clock to the right (positive phase).
+        Can only be used when pll_src is xtal.
 
         :getter: A 5 bit integer representing the delay
 
@@ -524,10 +538,13 @@ class CDCI6214:
 
     @target_delay.setter
     def target_delay(self, delay):
+        if self.pll_src == 'fpga':
+            raise ValueError("Cannot set target_delay when scope.clock.clkgen_src is 'extclk'.")
         if (delay > 0b11111) or (delay < 0):
             raise ValueError("Invalid Delay {}, must be between 0 and 31".format(delay))
 
         self.update_reg(0x26, (delay << 11) | (1 << 10), 0b11111 << 11)
+        self.reset() # the change doesn't take until a reset (or recal)
 
     @property
     def adc_delay(self):
@@ -546,6 +563,7 @@ class CDCI6214:
             raise ValueError("Invalid Delay {}, must be between 0 and 31".format(delay))
 
         self.update_reg(0x32, (delay << 11) | (1 << 10), 0b11111 << 11)
+        self.reset() # the change doesn't take until a reset (or recal)
 
     @property
     def pll_src(self):
@@ -568,7 +586,7 @@ class CDCI6214:
         elif src == "fpga":
             self.set_pll_input(False)
         else:
-            raise ValueError("Pll src must be either 'xtal' or 'fpga'")
+            raise ValueError("PLL src must be either 'xtal' or 'fpga'")
         ## update clocks
         self.set_outfreqs(self.input_freq, self._set_target_freq, self._adc_mul, True)
 
@@ -653,6 +671,9 @@ class CDCI6214:
             raise ValueError("Invalid input div {}".format(div))
 
         if div == 0.5:
+            scope_logger.warning("""Setting reference divider to 0.5;
+            this may result in inconsistent phase relationship between the target clock and the ADC sampling clock.
+            This can be prevented by setting scope.clock.pll._allow0p5 to False.""")
             div = 0
 
         div = int(div)
@@ -745,7 +766,21 @@ class CDCI6214:
 
 class ChipWhispererHuskyClock(util.DisableNewAttr):
 
-    def __init__(self, oaiface : OpenADCInterface, fpga_clk_settings : ClockSettings, mmcm1, mmcm2):
+    def clear_adc_unlock(fn):
+        """Use this to decorate methods that can cause the PLL to momentarily unlock. Clears
+        the unlock status and then re-enables it. If PLL lock is regained, then the user will
+        see the ADC LED turn on for a short time. If the PLL remains unlocked, then the ADC
+        LED will turn on, flicker off, then turn back on and stay on.
+        We do this because the ADC LED is sticky (i.e. stays on after an unlock event, even
+        when the PLL re-locks, until manually cleared).
+        """
+        def inner(self, *args, **kwargs) :
+            fn(self, *args, **kwargs)
+            self._adc_error_enabled(False)
+            self._adc_error_enabled(True)
+        return inner
+
+    def __init__(self, oaiface : OpenADCInterface, fpga_clk_settings : ClockSettings, mmcm1, mmcm2, adc: ADS4128Settings):
         super().__init__()
 
         # cache ADC freq to improve capture speed
@@ -754,6 +789,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         self.oa = oaiface
         self.naeusb = oaiface.serial
         self.pll = CDCI6214(self.naeusb, mmcm1, mmcm2)
+        self.adc = adc
         self.fpga_clk_settings = fpga_clk_settings
         self.fpga_clk_settings.freq_ctr_src = "extclk"
         self.adc_phase = 0
@@ -803,7 +839,8 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
 
         raise ValueError("Invalid FPGA/PLL settings!") #TODO: print values
 
-    @clkgen_src.setter
+    @clkgen_src.setter # type: ignore
+    @clear_adc_unlock
     def clkgen_src(self, clk_src):
         self._cached_adc_freq = None
         if clk_src in ["internal", "system"]:
@@ -831,6 +868,16 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         else:
             raise ValueError("Invalid src settings! Must be 'internal', 'system', 'extclk' or 'extclk_aux_io', not {}".format(clk_src))
 
+    def _update_adc_speed_mode(self, mul, freq):
+        """Husky's ADC has a high speed / low speed mode bit.
+        When the ADC clock is changed, this automatically sets the appropriate
+        speed mode.
+        """
+        if mul * freq < 80e6:
+            self.adc.low_speed = True
+        else:
+            self.adc.low_speed = False
+
     @property
     def clkgen_freq(self):
         """The target clock frequency in Hz.
@@ -853,8 +900,10 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
 
         :Getter: Return the calculated target clock frequency in Hz
 
-        :Setter: Attempt to set a new target clock frequency in Hz
-
+        :Setter: Attempt to set a new target clock frequency in Hz.
+            This also blindly clears extclk_error if there is one, but it only
+            assumes, and does not verify, that the frequency has been updated
+            to the correct value.
 
         """
         # update pll clk src
@@ -863,14 +912,18 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         return self.pll.target_freq
 
 
-    @clkgen_freq.setter
+    @clkgen_freq.setter # type: ignore
+    @clear_adc_unlock
     def clkgen_freq(self, freq):
         # update pll clk src
         self._cached_adc_freq = None
         if not (self.clkgen_src in ["internal", "system"]):
             self.pll._fpga_clk_freq = self.fpga_clk_settings.freq_ctr
-
+        if self.clkgen_src == "test":
+            self.pll._fpga_clk_freq = freq
         self.pll.target_freq = freq
+        self.extclk_error = None
+        self._update_adc_speed_mode(self.adc_mul, freq)
 
     @property
     def adc_mul(self):
@@ -890,10 +943,12 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         # self._cached_adc_freq = None
         return self.pll.adc_mul
 
-    @adc_mul.setter
+    @adc_mul.setter # type: ignore
+    @clear_adc_unlock
     def adc_mul(self, mul):
         self._cached_adc_freq = None
         self.pll.adc_mul = mul
+        self._update_adc_speed_mode(mul, self.clkgen_freq)
 
     @property
     def adc_freq(self):
@@ -947,6 +1002,9 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         Positive values delay the ADC clock compared to the target clock
         and vice versa.
 
+        Negative values are not possible when scope.clock.clkgen_src is
+        'extclk'.
+
         Note: The actual phase is only a 6 bit signed value compared to
         a 9 bit signed value on the Lite/Pro. This is mapped onto
         the same [-255, 255] range, meaning not all phases
@@ -965,13 +1023,16 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
             raise ValueError("Max phase +/- 255")
         adj_phase = int((abs(phase) * 31 / 255) + 0.5)
 
-        if phase > 0:
+        if phase >= 0:
             self.pll.adc_delay = adj_phase
-            self.pll.target_delay = 0
+            if self.clkgen_src == 'system':
+                # can't set this otherwise:
+                self.pll.target_delay = 0
         else:
             self.pll.target_delay = abs(adj_phase)
             self.pll.adc_delay = 0
 
+    @clear_adc_unlock # type: ignore
     def reset_dcms(self):
         """Reset the lock on the Husky's PLL.
         """
@@ -993,7 +1054,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
 
         :Setter: Enable/disable the external clock monitor.
         """
-        raw = self.oa.sendMessage(CODE_READ, ADDR_EXTCLK_MONITOR_DISABLED, maxResp=1)[0]
+        raw = self.oa.sendMessage(CODE_READ, ADDR_EXTCLK_MONITOR_DISABLED, maxResp=1)[0] & 0x01
         if raw:
             return False
         else:
@@ -1001,11 +1062,27 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
 
     @extclk_monitor_enabled.setter
     def extclk_monitor_enabled(self, en):
+        raw = self.oa.sendMessage(CODE_READ, ADDR_EXTCLK_MONITOR_DISABLED, maxResp=1)[0]
+        # set bit 0 to disable, clear to enable
         if en:
-            self.oa.sendMessage(CODE_WRITE, ADDR_EXTCLK_MONITOR_DISABLED, [0])
+            raw &= 0xfe # clear bit 0
         else:
-            self.oa.sendMessage(CODE_WRITE, ADDR_EXTCLK_MONITOR_DISABLED, [1])
+            raw |= 0x01 # set bit 0
+        self.oa.sendMessage(CODE_WRITE, ADDR_EXTCLK_MONITOR_DISABLED, [raw])
 
+    def _adc_error_enabled(self, en):
+        """Enable or disable the front panel red LED labeled "ADC", which (when
+        enabled) lights up when the PLL (CDCI6214) is not locked.
+        This is not something users are intended to play with; it's used internally
+        to mask PLL unlock events when making clock changes.
+        """
+        raw = self.oa.sendMessage(CODE_READ, ADDR_EXTCLK_MONITOR_DISABLED, maxResp=1)[0]
+        # set bit 1 to disable, clear to enable
+        if en:
+            raw &= 0xfd # clear bit 1
+        else:
+            raw |= 0x02 # set bit 1
+        self.oa.sendMessage(CODE_WRITE, ADDR_EXTCLK_MONITOR_DISABLED, [raw])
 
     @property
     def extclk_error(self):
@@ -1119,12 +1196,20 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
             raise ValueError("Invalid ADC source (possible values: 'clkgen_x4', 'clkgen_x1', 'extclk_x4', 'extclk_x1', 'extclk_dir'")
 
 
+    @clear_adc_unlock # type: ignore
     def reset_adc(self):
         """Convenience function for backwards compatibility with how ADC clocks
         are managed on CW-lite and CW-pro.
         """
         self._cached_adc_freq = None
         self.pll.reset()
+
+    @clear_adc_unlock # type: ignore
+    def recal_pll(self):
+        """Convenience function.
+        """
+        self.pll.recal()
+
 
     @property
     def adc_locked(self):
@@ -1168,7 +1253,4 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
             ValueError: set vco out of valid range
         """
         vco = int(vco)
-        if (vco > 600e3) or (vco < 1200e3):
-            raise ValueError("Invalid VCO frequency {} (allowed range 600MHz-1200MHz".format(vco))
-
         self.pll.update_fpga_vco(vco)

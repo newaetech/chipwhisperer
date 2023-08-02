@@ -34,7 +34,7 @@ import sys, subprocess
 from typing import Optional, Type, Union, List
 
 # replace bytearray with inherited class with better repr and str.
-bytearray = util.bytearray # type: ignore
+bytearray = util.CWByteArray # type: ignore
 
 def list_devices(idProduct : Optional[List[int]]=None, get_sn=True, get_hw_loc=True) -> List[dict]:
     """Get a list of devices by NewAE (VID 0x2b3e) currently connected
@@ -404,8 +404,8 @@ def target(scope : Optional[scopes.ScopeTypes],
        target_type (TargetTemplate, optional): Target type to connect to.
            Defaults to targets.SimpleSerial. Types can be found in
            chipwhisperer.targets.
-       **kwargs: Additional keyword arguments to pass to target setup. Rarely
-           needed.
+       **kwargs: Additional keyword arguments to pass to target setup. See target.con
+            or target._con for your target_type for more information
 
     Returns:
         Connected target object specified by target_type.

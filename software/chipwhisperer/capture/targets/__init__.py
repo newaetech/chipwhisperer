@@ -27,7 +27,10 @@ Package containing all of the target types that the ChipWhisperer API can connec
 
 Targets:
 * SimpleSerial - Communication via CW Uart Pins
-* CW305 - USB communication to CW305
+* SimpleSerial2 - Communication via CW Uart Pins (updated protocol)
+* CW305 - USB communication to CW305 (also CW305_ECC, CW305_AES_PIPELINED for extensions for those particular targets)
+* CW310 - USB communication to CW310
+* CW340 - USB communication to CW340
 * SAKURAG - Requires FTDI module, old, untested
 * SASEBOGII - Requires FTDI module, old, untested
 * SmartCard - Currently unavailable (tied to GUI)
@@ -36,6 +39,7 @@ from .SimpleSerial import SimpleSerial
 from .CW305 import CW305
 from .SimpleSerial2 import SimpleSerial2, SimpleSerial2_CDC
 from .CW305_ECC import CW305_ECC
+from .CW305_AES_PIPELINED import CW305_AES_PIPELINED
 from .CW310 import CW310
 from .CW340 import CW340
 from typing import Union

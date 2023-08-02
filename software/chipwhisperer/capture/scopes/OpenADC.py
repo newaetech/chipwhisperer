@@ -115,6 +115,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
         self._is_connected = False
         self.data_points = []
         self._is_husky = False
+        self._is_husky_plus = False
 
         # self.scopetype = OpenADCInterface_NAEUSBChip(self.qtadc)
         self.connectStatus = True
@@ -126,7 +127,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             from ...hardware.firmware.cwlite import fwver
         elif cw_type == "cw1200":
             from ...hardware.firmware.cw1200 import fwver # type: ignore
-        elif cw_type == "cwhusky":
+        elif cw_type in ["cwhusky", "cwhusky-plus"]:
             from ...hardware.firmware.cwhusky import fwver # type: ignore
         else:
             raise ValueError('Unknown cw_type: %s' % cw_type)
@@ -290,7 +291,27 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
 
         self.io.hs2 = "clkgen"
 
-    def default_setup(self):
+
+    def _recurse_scope_diff(self, string0, item0, string1, item1):
+        if isinstance(item0, dict):
+            for i,j in zip(item0.items(), item1.items()):
+                self._recurse_scope_diff(string0 + '.' + i[0], i[1], string1 + '.' + j[0], j[1])
+        else:
+            if item0 != item1 and (('scope.XADC' not in string0) or (string0 == 'scope.XADC.status')):
+                print('%-40s changed from %-25s to %-25s' % (string0, item0, item1))
+
+    def scope_diff(self, scope_dict1, scope_dict2):
+        """ Reports differences between two sets of scope settings.
+
+        Args:
+            scope_dict1, scope_dict2: dictionaries of scope settings (obtained
+                with scope._dict_repr())
+
+        """
+        for a,b in zip(scope_dict1.items(), scope_dict2.items()):
+            self._recurse_scope_diff('scope.' + a[0], a[1], 'scope.' + b[0], b[1])
+
+    def default_setup(self, verbose=True):
         """Sets up sane capture defaults for this scope
 
          *  25dB gain
@@ -303,9 +324,15 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
          *  tio2 = serial tx
          *  CDC settings change off
 
+        Args:
+            verbose (bool): shows which scope settings have changed. Ignores scope.XADC changes,
+                except for scope.XADC.status.
+
         .. versionadded:: 5.1
             Added default setup for OpenADC
         """
+        if verbose:
+            scope_dict_pre = self._dict_repr()
         self.gain.db = 25
         self.adc.samples = 5000
         self.adc.offset = 0
@@ -365,6 +392,10 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
 
                 if count > 10:
                     raise OSError("Could not lock DCM. Try rerunning this function or calling scope.clock.reset_dcms(): {}".format(self))
+        if verbose:
+            scope_dict_post = self._dict_repr()
+            self.scope_diff(scope_dict_pre, scope_dict_post)
+
 
     def dcmTimeout(self):
         if self._is_connected:
@@ -396,6 +427,8 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
                 return "cwlite"
             elif "CW1200" in hwInfoVer:
                 return "cw1200"
+            elif "Husky-Plus" in hwInfoVer:
+                return "cwhusky-plus"
             elif "Husky" in hwInfoVer:
                 return "cwhusky"
             else:
@@ -631,7 +664,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
         self.sc = OpenADCInterface(self.scopetype.ser) # important to instantiate this before other FPGA components, since this does an FPGA reset
         self.hwinfo = HWInformation(self.sc)
         cwtype = self._getCWType()
-        if cwtype == "cwhusky":
+        if cwtype in ["cwhusky", "cwhusky-plus"]:
             self.sc._is_husky = True
         self.sc._setReset(True)
         self.sc._setReset(False)
@@ -655,7 +688,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             self.SAD = ChipWhispererSAD.ChipWhispererSAD(self.sc)
             self.decode_IO = ChipWhispererDecodeTrigger.ChipWhispererDecodeTrigger(self.sc)
 
-        if cwtype == "cwhusky":
+        if cwtype in ["cwhusky", "cwhusky-plus"]:
             # self.pll = ChipWhispererHuskyClock.CDCI6214(self.sc)
             self._fpga_clk = ClockSettings(self.sc, hwinfo=self.hwinfo)
             self.glitch_drp1 = XilinxDRP(self.sc, ADDR_GLITCH1_DRP_DATA, ADDR_GLITCH1_DRP_ADDR, ADDR_GLITCH1_DRP_RESET)
@@ -664,9 +697,9 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             self.glitch_mmcm1 = XilinxMMCMDRP(self.glitch_drp1)
             self.glitch_mmcm2 = XilinxMMCMDRP(self.glitch_drp2)
             self.la_mmcm = XilinxMMCMDRP(self.la_drp)
-            self.clock = ChipWhispererHuskyClock.ChipWhispererHuskyClock(self.sc, \
-                self._fpga_clk, self.glitch_mmcm1, self.glitch_mmcm2)
             self.ADS4128 = ADS4128Settings(self.sc)
+            self.clock = ChipWhispererHuskyClock.ChipWhispererHuskyClock(self.sc, \
+                self._fpga_clk, self.glitch_mmcm1, self.glitch_mmcm2, self.ADS4128)
             self.XADC = XADCSettings(self.sc)
             self.LEDs = LEDSettings(self.sc)
             self.LA = LASettings(oaiface=self.sc, mmcm=self.la_mmcm, scope=self)
@@ -679,27 +712,28 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
                     scope_logger.info("TraceWhisperer unavailable " + str(e))
             self.SAD = ChipWhispererSAD.HuskySAD(self.sc)
             self.errors = HuskyErrors(self.sc, self.XADC, self.adc, self.clock, self.trace)
-        else:
-            self.clock = ClockSettings(self.sc, hwinfo=self.hwinfo)
-            self.errors = ChipWhispererSAMErrors(self._getNAEUSB())
-
-
-        if cwtype == "cw1200":
-            self.adc._is_pro = True
-        if cwtype == "cwlite":
-            self.adc._is_lite = True
-        elif cwtype == "cwhusky":
             self._is_husky = True
             self.adc._is_husky = True
             self.gain._is_husky = True
             self._fpga_clk._is_husky = True
             self.sc._is_husky = True
             self.adc.bits_per_sample = 12
+            if cwtype == "cwhusky-plus":
+                self._is_husky_plus = True
+                self.LA._is_husky_plus = True
+        else:
+            self.clock = ClockSettings(self.sc, hwinfo=self.hwinfo)
+            self.errors = ChipWhispererSAMErrors(self._getNAEUSB())
+
+        if cwtype == "cw1200":
+            self.adc._is_pro = True
+        if cwtype == "cwlite":
+            self.adc._is_lite = True
         if self.advancedSettings:
             self.io = self.advancedSettings.cwEXTRA.gpiomux
             self.trigger = self.advancedSettings.cwEXTRA.triggermux
             self.glitch = self.advancedSettings.glitch.glitchSettings
-            if cwtype == 'cwhusky':
+            if cwtype in ['cwhusky', 'cwhusky-plus']:
                 # TODO: cleaner way to do this?
                 self.glitch.pll = self.clock.pll
                 self.clock.pll._glitch = self.glitch
@@ -708,7 +742,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             if cwtype == "cw1200":
                 self.trigger = self.advancedSettings.cwEXTRA.protrigger
 
-        if cwtype == "cwhusky":
+        if cwtype in ["cwhusky", "cwhusky-plus"]:
             # these are the power-up defaults, but just in case e.g. test script left these on:
             self.adc.test_mode = False
             self.ADS4128.mode = 'normal'
@@ -866,7 +900,11 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             Added as_int parameter
         """
         if as_int:
-            return self.sc._int_data
+            if self._is_husky:
+                # for Husky this is always appropriately sized (also there would be # of segments to consider)
+                return self.sc._int_data
+            else:
+                return self.sc._int_data[:self.adc.samples]
         return self.data_points
 
     getLastTrace = util.camel_case_deprecated(get_last_trace)
@@ -934,8 +972,8 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             rtn['SAD'] = self.SAD._dict_repr()
             rtn['decode_IO'] = self.decode_IO._dict_repr()
         if self._is_husky:
+            rtn['SAD'] = self.SAD._dict_repr()
             rtn['ADS4128'] = self.ADS4128._dict_repr()
-            # rtn['pll'] = self.pll._dict_repr()
             if self.LA.present:
                 rtn['LA'] = self.LA._dict_repr()
             if self.trace and self.trace.present:

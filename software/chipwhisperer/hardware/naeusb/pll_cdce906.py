@@ -27,13 +27,14 @@ import time
 
 class PLLCDCE906(object):
 
-    def __init__(self, usb, ref_freq):
+    def __init__(self, usb, ref_freq, board="CW305"):
         self._usb = usb
         self.reffreq = ref_freq
         self._pll0source = 'PLL0'
         self._pll0slew = '+0nS'
         self._pll1slew = '+0nS'
         self._pll2slew = '+0nS'
+        self._board = board
 
     def pll_outfreq_set(self, freq, outnum):
         """Set the output frequency of a PLL
@@ -55,6 +56,7 @@ class PLLCDCE906(object):
 
     def outnumToPin(self, outnum):
         """Convert from PLL Number to actual output pin"""
+        outnum = self.swap_340_pllnum(outnum)
         if outnum == 0:
             return 0
         elif outnum == 1:
@@ -66,6 +68,7 @@ class PLLCDCE906(object):
 
     def outputUpdateOutputs(self, outnum, pllsrc_new=None, pllenabled_new=None, pllslewrate_new=None):
         """Update the output pins with enabled/disabled, slew rate, etc"""
+        outnum = self.swap_340_pllnum(outnum)
         # Map to output pins on CDCE906 Chip
         if outnum == 0:
             outpin = 0
@@ -332,8 +335,19 @@ class PLLCDCE906(object):
                             return best
         return best
 
+    def swap_340_pllnum(self, pllnum):
+        # handles the fact that PLL2 and PLL1 are swapped on CW340
+        if self._board == 'CW340':
+            if pllnum == 2:
+                pllnum = 1
+            elif pllnum == 1:
+                pllnum = 2
+        return pllnum
+
+
     def pllwrite(self, pllnum, N, M, outdiv):
         """Write N/M/output divisors to PLL chip"""
+        pllnum = self.swap_340_pllnum(pllnum)
         offset = 3 * pllnum
 
         self.cdce906write(1 + offset, M & 0xFF)
@@ -366,6 +380,7 @@ class PLLCDCE906(object):
 
     def pllread(self, pllnum):
         """Read N/M/output divisors from PLL chip"""
+        pllnum = self.swap_340_pllnum(pllnum)
         offset = 3 * pllnum
 
         # Read M & N
