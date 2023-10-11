@@ -354,7 +354,6 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
         self._default_setup()
         self.io.cdc_settings = 0
 
-        count = 0
         if self._is_husky:
             if not self.try_wait_clkgen_locked(10):
                 raise OSError("Could not lock PLL. Try rerunning this function or calling scope.pll.reset(): {}".format(self))
@@ -367,6 +366,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             self.userio.mode = 'normal'
             self.trace.capture.use_husky_arm = False
             self.trace.capture.trigger_source = 'firmware trigger'
+            self.adc.segments = 1
 
         else:
             if not self.try_wait_clkgen_locked(5, 0.05):
@@ -984,14 +984,14 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
     def __str__(self):
         return self.__repr__()
 
-    def upgrade_firmware(self):
-        """Attempt a firmware upgrade. See https://chipwhisperer.readthedocs.io/en/latest/firmware.html for more information.
+    # def upgrade_firmware(self, fw_path=None):
+    #     """Attempt a firmware upgrade. See https://chipwhisperer.readthedocs.io/en/latest/firmware.html for more information.
 
-        .. versionadded:: 5.6.1
-            Improved programming interface
-        """
-        prog = SAMFWLoader(self)
-        prog.auto_program()
+    #     .. versionadded:: 5.6.1
+    #         Improved programming interface
+    #     """
+    #     prog = SAMFWLoader(self)
+    #     prog.auto_program(fw_path)
 
     def fpga_reg_read(self, addr, numbytes):
         """Convenience method to read an FPGA register. Intended for debug/development.
