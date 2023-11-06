@@ -153,7 +153,6 @@ class OpenADCInterface(util.DisableNewAttr):
     def setStreamSegmentSize(self, size):
         self._stream_segment_size = size
 
-
     def setFastSMC(self, active):
         self.setFastFIFORead(active)
         self.serial.set_smc_speed(active)
@@ -1433,8 +1432,6 @@ class TriggerSettings(util.DisableNewAttr):
         self.presampleTempMargin = 24
         self._timeout = 2
         self._stream_mode = False
-        self._stream_segment_size = 65536
-        self._stream_segment_threshold = 65536
         self._test_mode = False
         self._bits_per_sample = 10
         self._support_get_duration = True
@@ -2193,14 +2190,12 @@ class TriggerSettings(util.DisableNewAttr):
 
     def _set_stream_segment_threshold(self, size):
         scope_logger.warning('Changing this parameter can degrade performance and/or cause reads to fail entirely; use at your own risk.')
-        self._stream_segment_threshold = size
         #Write to FPGA
         self.oa.sendMessage(CODE_WRITE, "STREAM_SEGMENT_THRESHOLD", list(int.to_bytes(size, length=3, byteorder='little')))
 
 
     def _set_stream_segment_size(self, size):
         scope_logger.warning('Changing this parameter can degrade performance and/or cause reads to fail entirely; use at your own risk.')
-        self._stream_segment_size = size
         #Notify capture system
         self.oa.setStreamSegmentSize(size)
 
@@ -2210,7 +2205,7 @@ class TriggerSettings(util.DisableNewAttr):
         return int.from_bytes(raw, byteorder='little')
 
     def _get_stream_segment_size(self):
-        return self._stream_segment_size
+        return self.oa._stream_segment_size
 
     def _set_test_mode(self, enabled):
         self._test_mode = enabled
