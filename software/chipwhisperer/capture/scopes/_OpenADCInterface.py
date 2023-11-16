@@ -2354,7 +2354,7 @@ class TriggerSettings(util.DisableNewAttr):
     def _set_presamples(self, samples):
         if self._is_husky:
             min_samples = 8
-            max_samples = min(self.samples, 32767)
+            max_samples = min(self.samples-2, 32767)
             presamp_bytes = 2
             if self.decimate > 1:
                 raise Warning("Decimating with presamples is not supported on Husky.")
