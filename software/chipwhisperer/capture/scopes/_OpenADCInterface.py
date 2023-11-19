@@ -1396,29 +1396,6 @@ class GainSettings(util.DisableNewAttr):
 
         self.setGain(g)
 
-    def auto_gain(self, margin=20):
-        '''Increment gain until clipping occurs, then reduce by <margin> dB (default: 20 dB)
-
-        :meta private:
-        '''
-        if not self._is_husky:
-            raise ValueError("Only supported on Husky")
-        self.adc.clip_errors_disabled = False
-        self.adc.clear_clip_errors()
-        self.oa.sendMessage(CODE_WRITE, "CLIP_TEST", [1])
-        found = False
-        for gain in range(-15+margin, 65):
-            self.db = gain
-            if self.oa.sendMessage(CODE_READ, "FIFO_STAT", maxResp=1)[0] & 32:
-                self.db = gain - margin
-                found = True
-                self.adc.clear_clip_errors()
-                break
-        if not found:
-            scope_logger.warning("Couldn't clip ADC, using maximum gain")
-
-        self.oa.sendMessage(CODE_WRITE, "CLIP_TEST", [0])
-
 class TriggerSettings(util.DisableNewAttr):
     _name = 'Trigger Setup'
 
@@ -2045,7 +2022,7 @@ class TriggerSettings(util.DisableNewAttr):
         """
         if not self._is_husky:
             raise ValueError("For CW-Husky only.")
-        raw = self.oa.sendMessage(CODE_READ, "FIFO_FIRST_ERROR_STATE", maxResp=1)[0]
+        raw = self.oa.sendMessage(CODE_READ, "FIFO_FIRST_ERROR", maxResp=3)[2]
         if   raw == 0: return "IDLE"
         elif raw == 1: return "PRESAMP_FILLING"
         elif raw == 2: return "PRESAMP_FULL"
@@ -2070,6 +2047,11 @@ class TriggerSettings(util.DisableNewAttr):
         if raw[0] & 64:  stat += 'invalid downsample setting, '
         if raw[0] & 128: stat += 'segmenting error, '
         if raw[1] & 1:   stat += 'gain too low error, '
+        if self._is_pro:
+            if raw[1] & 2:   stat += 'pre-DDR FIFO underflow, '
+            if raw[1] & 4:   stat += 'pre-DDR FIFO overflow, '
+            if raw[1] & 8:   stat += 'reading too soon, '
+            if raw[1] & 16:  stat += 'DDR full, '
         if stat == '':
             stat = False
         return stat
@@ -2210,12 +2192,16 @@ class TriggerSettings(util.DisableNewAttr):
     def _set_test_mode(self, enabled):
         self._test_mode = enabled
         if enabled:
-            self.oa.sendMessage(CODE_WRITE, "DATA_SOURCE_SELECT", [0])
+            fifo_config = self.oa.sendMessage(CODE_READ, "FIFO_CONFIG", maxResp=1)[0]
+            fifo_config &= 0b11111101
+            self.oa.sendMessage(CODE_WRITE, "FIFO_CONFIG", [fifo_config])
             self.oa.sendMessage(CODE_WRITE, "NO_CLIP_ERRORS", [1])
             if self._bits_per_sample == 8:
                 self.oa.sendMessage(CODE_WRITE, "ADC_LOW_RES", [3]) # store LSB instead of MSB
         else:
-            self.oa.sendMessage(CODE_WRITE, "DATA_SOURCE_SELECT", [1])
+            fifo_config = self.oa.sendMessage(CODE_READ, "FIFO_CONFIG", maxResp=1)[0]
+            fifo_config |= 0b00000010
+            self.oa.sendMessage(CODE_WRITE, "FIFO_CONFIG", [fifo_config])
             self.oa.sendMessage(CODE_WRITE, "NO_CLIP_ERRORS", [0])
             self.bits_per_sample = self._bits_per_sample #shorthand to clear the LSB setting
 
