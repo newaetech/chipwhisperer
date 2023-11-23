@@ -132,14 +132,14 @@ class OpenADCInterface(util.DisableNewAttr):
                         radix = 10
                     self.registers[match.group(1)] = int(match.group(3),radix) + block_offset
                     #setattr(self, match.group(1), int(match.group(3),radix) + block_offset)
-                    #print('XXX setting %s to %d' % (match.group(1), int(match.group(3),radix) + block_offset))
+                    scope_logger.debug('_slurp_registers: setting %s to %d' % (match.group(1), int(match.group(3),radix) + block_offset))
                 else:
                     match = define_regex_noradix.search(define)
                     if match:
                         self.verilog_define_matches += 1
                         self.registers[match.group(1)] = int(match.group(2),10) + block_offset
                         #setattr(self, match.group(1), int(match.group(2),10) + block_offset)
-                        #print('YYY setting %s to %d' % (match.group(1), int(match.group(2),10) + block_offset))
+                        scope_logger.debug('_slurp_registers: setting %s to %d' % (match.group(1), int(match.group(2),10) + block_offset))
                     else:
                         scope_logger.warning("Couldn't parse line: %s", define)
         registers.close()
@@ -2046,12 +2046,13 @@ class TriggerSettings(util.DisableNewAttr):
         if raw[0] & 32:  stat += 'ADC clipped, '
         if raw[0] & 64:  stat += 'invalid downsample setting, '
         if raw[0] & 128: stat += 'segmenting error, '
-        if raw[1] & 1:   stat += 'gain too low error, '
+        if raw[1] & 1:   stat += 'trigger too soon error, '
+        if raw[1] & 2:   stat += 'gain too low error, '
         if self._is_pro:
-            if raw[1] & 2:   stat += 'pre-DDR FIFO underflow, '
-            if raw[1] & 4:   stat += 'pre-DDR FIFO overflow, '
-            if raw[1] & 8:   stat += 'reading too soon, '
-            if raw[1] & 16:  stat += 'DDR full, '
+            if raw[1] & 4:   stat += 'pre-DDR FIFO underflow, '
+            if raw[1] & 8:   stat += 'pre-DDR FIFO overflow, '
+            if raw[1] & 16:  stat += 'reading too soon, '
+            if raw[1] & 32:  stat += 'DDR full, '
         if stat == '':
             stat = False
         return stat
