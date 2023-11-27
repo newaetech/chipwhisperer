@@ -2281,6 +2281,8 @@ class TriggerSettings(util.DisableNewAttr):
     def bits_per_sample(self, bits):
         if bits not in [8,12]:
             raise ValueError("Valid settings: 8 or 12.")
+        if not self._is_husky:
+            raise ValueError('For CW-Husky only.')
         self._set_bits_per_sample(bits)
 
 
