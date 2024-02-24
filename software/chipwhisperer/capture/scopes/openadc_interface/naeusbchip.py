@@ -106,6 +106,7 @@ class OpenADCInterface_NAEUSBChip(DisableNewAttr):
 
     def dis(self):
         if not self.ser is None:
+            self.ser.reset()
             self.ser.close()
             self.ser = None
         else:
