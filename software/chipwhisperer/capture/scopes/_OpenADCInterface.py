@@ -1635,7 +1635,7 @@ class TriggerSettings(util.DisableNewAttr):
                 scope_logger.warning("Sakura G samples must be divisible by 12, rounding up to {}...".format(samples))
 
         if self._get_fifo_fill_mode() == "segment":
-            diff = (3 - (samples - 1) % 3)
+            diff = ((3 - (samples - 1)) % 3)
             samples += diff
             if diff > 0:
                 scope_logger.warning("segment mode requires (samples-1) divisible by 3, rounding up to {}...".format(samples))
