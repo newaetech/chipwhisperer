@@ -68,7 +68,10 @@ int main(void)
     platform_init();
   init_uart();
   trigger_setup();
-
+#if PLATFORM == CWNANO
+  led_ok_off()
+  led_error_off()    
+#endif
     char passwd[32];
     char correct_passwd[] = "h0px3";
 
@@ -116,10 +119,18 @@ int main(void)
             delay_2_ms();
             delay_2_ms();
             my_puts("PASSWORD FAIL\n");
+#if PLATFORM == CWNANO
+            led_ok_off();
+            led_error_on();
+ #endif
             led_error(1);
         } else {
             my_puts("Access granted, Welcome!\n");
-            led_ok(1);
+ #if PLATFORM == CWNANO
+            led_ok_on();
+            led_error_off();
+ #endif           
+            led_ok_on(1);
         }
 
         //All done;
@@ -128,5 +139,3 @@ int main(void)
 
   return 1;
   }
-
-
