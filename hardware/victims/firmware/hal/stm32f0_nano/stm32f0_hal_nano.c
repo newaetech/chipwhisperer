@@ -148,3 +148,27 @@ void led_ok(unsigned int status)
 {
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, status);
 }
+void led_error_off(void)
+{
+
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, RESET);
+    
+}
+void led_error_on(void)
+{
+
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, SET);
+    
+}
+void led_ok_off(void)
+{
+
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, RESET);
+    
+}
+void led_ok_on(void)
+{
+
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, SET);
+    
+}
