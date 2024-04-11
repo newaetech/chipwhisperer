@@ -6826,7 +6826,7 @@ void HAL_RCCEx_SelectLSEMode(uint8_t Mode);
 #define RCC_CFGR_MCO2EN_BB         (PERIPH_BB_BASE + (RCC_CFGR_OFFSET * 32U) + (RCC_MCO2EN_BIT_NUMBER * 4U))
 #endif /* STM32F410Tx || STM32F410Cx || STM32F410Rx */
 
-#define PLL_TIMEOUT_VALUE          2U  /* 2 ms */
+#define PLL_TIMEOUT_VALUE          1E6 * 2U  /* 2 ms */
 /**
   * @}
   */
