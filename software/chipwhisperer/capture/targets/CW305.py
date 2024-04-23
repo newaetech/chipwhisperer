@@ -30,7 +30,7 @@ import os.path
 import re
 import io
 from ._base import TargetTemplate
-from .SimpleSerial2 import SimpleSerial2
+from .SimpleSerial2 import SimpleSerial2, SimpleSerial2_CDC
 from ...hardware.naeusb.naeusb import NAEUSB,packuint32
 from ...hardware.naeusb.pll_cdce906 import PLLCDCE906
 from ...hardware.naeusb.fpga import FPGA
@@ -385,7 +385,8 @@ class CW305(TargetTemplate, ChipWhispererCommonInterface):
         resp = self._naeusb.readCtrl(CW305_USB.REQ_VCCINT, dlen=3)
         return float(resp[1] | (resp[2] << 8)) / 1000.0
 
-    def _con(self, scope=None, bsfile=None, force=False, fpga_id=None, defines_files=None, slurp=True, prog_speed=20E6, hw_location=None, sn=None, platform='cw305', version=None):
+    def _con(self, scope=None, bsfile=None, force=False, fpga_id=None, defines_files=None, slurp=True,
+             prog_speed=20E6, hw_location=None, sn=None, platform='cw305', version=None, program=True, cdc_port=None):
         """Connect to CW305 board, and download bitstream.
 
         If the target has already been programmed it skips reprogramming
@@ -454,6 +455,20 @@ class CW305(TargetTemplate, ChipWhispererCommonInterface):
             self.toggle_user_led = True
             self.check_done = True
 
+        elif 'cdc' in self.platform:
+            if force or sn or hw_location:
+                target_logger.warning("force, sn and hw_location parameters have no effect on this platform")
+
+            if cdc_port is None:
+                raise ValueError("Must specify cdc_port")
+
+            ss2 = SimpleSerial2_CDC()
+            ss2.con(scope, dev_path=cdc_port)
+            self.ss2 = ss2
+            self.pll = SS2_CW305_NoPll()
+            self._naeusb = None
+            self.bytecount_size = 8   
+
         elif 'ss2' in self.platform:
             if force or sn or hw_location:
                 target_logger.warning("force, sn and hw_location parameters have no effect on this platform")
@@ -500,8 +515,8 @@ class CW305(TargetTemplate, ChipWhispererCommonInterface):
             self.ss2 = ss2
             self.pll = SS2_CW305_NoPll()
             self._naeusb = None
-            self.bytecount_size = 8
-
+            self.bytecount_size = 8   
+        
         else:
             raise ValueError("Invalid platform %s. Use 'cw305' or 'ss2'." % platform)
 
