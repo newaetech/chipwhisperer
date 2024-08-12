@@ -2046,8 +2046,8 @@ class TriggerSettings(util.DisableNewAttr):
         if raw[0] & 32:  stat += 'ADC clipped, '
         if raw[0] & 64:  stat += 'invalid downsample setting, '
         if raw[0] & 128: stat += 'segmenting error, '
-        if raw[1] & 1:   stat += 'trigger too soon error, '
-        if raw[1] & 2:   stat += 'gain too low error, '
+        if raw[1] & 1:   stat += 'gain too low error, '
+        if raw[1] & 2:   stat += 'trigger too soon error, '
         if self._is_pro:
             if raw[1] & 4:   stat += 'pre-DDR FIFO underflow, '
             if raw[1] & 8:   stat += 'pre-DDR FIFO overflow, '
