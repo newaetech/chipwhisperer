@@ -20,6 +20,8 @@ import re
 
 from chipwhisperer.logging import *
 
+from typing import Optional, Type, Union, List, Any
+
 CODE_READ       = 0x80
 CODE_WRITE      = 0xC0
 
@@ -1735,7 +1737,7 @@ class TriggerSettings(util.DisableNewAttr):
         self._cached_presamples = self._set_presamples(setting)
 
     @property
-    def basic_mode(self):
+    def basic_mode(self) -> str:
         """The type of event to use as a trigger.
 
         Only applies to the ADC capture - the glitch module
@@ -1767,7 +1769,7 @@ class TriggerSettings(util.DisableNewAttr):
         return param_alias[self._get_mode()]
 
     @basic_mode.setter
-    def basic_mode(self, mode):
+    def basic_mode(self, mode : str):
         api_alias = {
             "rising_edge": "rising edge",
             "falling_edge": "falling edge",
@@ -1780,7 +1782,7 @@ class TriggerSettings(util.DisableNewAttr):
         self._set_mode(api_alias[mode])
 
     @property
-    def trig_count(self):
+    def trig_count(self) -> int:
         """The number of samples that the trigger input was active.
 
         This value indicates how long the trigger was high or low last time
@@ -1795,7 +1797,7 @@ class TriggerSettings(util.DisableNewAttr):
         return self._get_duration()
 
     @property
-    def fifo_fill_mode(self):
+    def fifo_fill_mode(self) -> str:
         """The ADC buffer fill strategy - allows segmented usage for CW-lite and CW-pro.
 
         .. warning:: THIS REQUIRES NEW FPGA BITSTREAM - NOT YET IN THE PYTHON.
@@ -1835,7 +1837,7 @@ class TriggerSettings(util.DisableNewAttr):
         return self._get_fifo_fill_mode()
 
     @fifo_fill_mode.setter
-    def fifo_fill_mode(self, mode):
+    def fifo_fill_mode(self, mode : str):
         known_modes = ["normal", "enable", "segment"]
         if mode not in known_modes:
             raise ValueError("Invalid fill mode %s. Valid modes: %s" % (mode, known_modes), mode)
@@ -1878,7 +1880,7 @@ class TriggerSettings(util.DisableNewAttr):
 
 
     @property
-    def segments(self):
+    def segments(self) -> int:
         """Number of sample segments to capture.
 
         .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
@@ -1918,7 +1920,7 @@ class TriggerSettings(util.DisableNewAttr):
 
 
     @segments.setter
-    def segments(self, num):
+    def segments(self, num : int):
         if num < 1 or num > 2**16-1 or not type(num) is int or not self._is_husky:
             raise ValueError("Number of segments must be in range [1, 2^16-1]. For CW-Husky only.")
         self._cached_segments = num
@@ -1941,7 +1943,7 @@ class TriggerSettings(util.DisableNewAttr):
 
 
     @property
-    def errors(self):
+    def errors(self) -> Union[str, bool, int]:
         """Internal error flags (FPGA FIFO over/underflow)
 
         .. warning:: Supported by CW-Husky only.
@@ -1987,7 +1989,7 @@ class TriggerSettings(util.DisableNewAttr):
         return self._get_errors("FIFO_STAT")
 
     @errors.setter
-    def errors(self, val):
+    def errors(self, val : Any):
         """Internal error flags (FPGA FIFO over/underflow)
 
         .. warning:: Supported by CW-Husky only.
@@ -2012,7 +2014,7 @@ class TriggerSettings(util.DisableNewAttr):
 
 
     @property
-    def first_error_state(self):
+    def first_error_state(self) -> str:
         """Reports the state the FPGA FSM state at the time of the first flagged error. Useful for debugging. Read-only.
 
         .. warning:: Supported by CW-Husky only.
@@ -2059,7 +2061,7 @@ class TriggerSettings(util.DisableNewAttr):
 
 
     @property
-    def segment_cycles(self):
+    def segment_cycles(self) -> int:
         """Number of clock cycles separating segments.
 
         .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
@@ -2092,7 +2094,7 @@ class TriggerSettings(util.DisableNewAttr):
         return self._cached_segment_cycles
 
     @segment_cycles.setter
-    def segment_cycles(self, num):
+    def segment_cycles(self, num : int):
         if num < 0 or num > 2**20-1 or not type(num) is int or not self._is_husky:
             raise ValueError("Number of segments must be in range [0, 2^20-1]. For CW-Husky only.")
         self._cached_segment_cycles = num
@@ -2115,7 +2117,7 @@ class TriggerSettings(util.DisableNewAttr):
 
 
     @property
-    def segment_cycle_counter_en(self):
+    def segment_cycle_counter_en(self) -> bool:
         """Number of clock cycles separating segments.
 
         .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
@@ -2142,7 +2144,7 @@ class TriggerSettings(util.DisableNewAttr):
             raise ValueError("Unexpected: read %d" % raw)
 
     @segment_cycle_counter_en.setter
-    def segment_cycle_counter_en(self, enable):
+    def segment_cycle_counter_en(self, enable : bool):
         if enable:
             val = [1]
         else:
@@ -2251,7 +2253,7 @@ class TriggerSettings(util.DisableNewAttr):
         return self._bits_per_sample
 
     @property
-    def bits_per_sample(self):
+    def bits_per_sample(self) -> int:
         """Bits per ADC sample. Only available on CW-Husky.
 
         Husky has a 12-bit ADC; optionally, we read back only 8 bits per
@@ -2265,7 +2267,7 @@ class TriggerSettings(util.DisableNewAttr):
         return self._get_bits_per_sample()
 
     @bits_per_sample.setter
-    def bits_per_sample(self, bits):
+    def bits_per_sample(self, bits : int):
         if bits not in [8,12]:
             raise ValueError("Valid settings: 8 or 12.")
         if not self._is_husky:
@@ -2525,7 +2527,7 @@ class ClockSettings(util.DisableNewAttr):
         return self.__repr__()
 
     @property
-    def enabled(self):
+    def enabled(self) -> bool:
         """Controls whether the Xilinx MMCM used to generate the target clock
         is powered on or not. In Husky, an external PLL is used instead; this
         FPGA PLL is still present but disabled by default because MMCMs are
@@ -2537,14 +2539,14 @@ class ClockSettings(util.DisableNewAttr):
         return self._getEnabled()
 
     @enabled.setter
-    def enabled(self, enable):
+    def enabled(self, enable : bool):
         if not self._is_husky:
             raise ValueError("For CW-Husky only.")
         self._setEnabled(enable)
 
 
     @property
-    def adc_src(self):
+    def adc_src(self) -> str:
         """The clock source for the ADC module.
 
         The ADC can be clocked by one of five possible sources:
@@ -2570,7 +2572,7 @@ class ClockSettings(util.DisableNewAttr):
             return ret
 
     @adc_src.setter
-    def adc_src(self, src):
+    def adc_src(self, src : str):
         # We need to pass a tuple into _setAdcSource() so the ADC source
         # parameter recognizes this input
         self._cached_adc_freq = None
@@ -2590,7 +2592,7 @@ class ClockSettings(util.DisableNewAttr):
         self.reset_adc()
 
     @property
-    def adc_phase(self):
+    def adc_phase(self) -> int:
         """Fine adjustment for the ADC sampling point.
 
         This setting moves the sampling point approximately 5 ns forward or
@@ -2612,11 +2614,11 @@ class ClockSettings(util.DisableNewAttr):
         return self._get_phase()
 
     @adc_phase.setter
-    def adc_phase(self, phase):
+    def adc_phase(self, phase : int):
         self._set_phase(phase)
 
     @property
-    def adc_freq(self):
+    def adc_freq(self) -> int:
         """The current frequency of the ADC clock in Hz. Read-only.
 
         This clock frequency is derived from one of the ADC clock sources as
@@ -2628,7 +2630,7 @@ class ClockSettings(util.DisableNewAttr):
         return self._getAdcFrequency()
 
     @property
-    def adc_rate(self):
+    def adc_rate(self) -> int:
         """The current sampling rate of the ADC clock in samples/s. Read-only.
 
         Note that the sampling rate may be less than the clock frequency if
@@ -2639,7 +2641,7 @@ class ClockSettings(util.DisableNewAttr):
         return self._adcSampleRate()
 
     @property
-    def adc_locked(self):
+    def adc_locked(self) -> bool:
         """The current status of the ADC DCM. Read-only.
 
         To try re-locking the ADC, see reset_adc().
@@ -2649,7 +2651,7 @@ class ClockSettings(util.DisableNewAttr):
         return self._get_adcclk_locked()
 
     @property
-    def freq_ctr(self):
+    def freq_ctr(self) -> int:
         """The current frequency at the frequency counter in Hz. Read-only.
 
         The frequency counter can be used to check the speed of the CLKGEN
@@ -2661,7 +2663,7 @@ class ClockSettings(util.DisableNewAttr):
         return self._get_extfrequency()
 
     @property
-    def freq_ctr_src(self):
+    def freq_ctr_src(self) -> str:
         """The current input to the frequency counter.
 
         There are two possible inputs to the frequency counter:
@@ -2684,7 +2686,7 @@ class ClockSettings(util.DisableNewAttr):
             raise IOError("Invalid clock source reported by hardware: %d"%src)
 
     @freq_ctr_src.setter
-    def freq_ctr_src(self, src):
+    def freq_ctr_src(self, src : str):
         if src == "clkgen":
             s = 1
         elif src == "extclk":
@@ -2694,7 +2696,7 @@ class ClockSettings(util.DisableNewAttr):
         self._set_freqcounter_src(s)
 
     @property
-    def clkgen_src(self):
+    def clkgen_src(self) -> str:
         """The input source for the CLKGEN DCM.
 
         This DCM can receive input from one of two places:
@@ -2712,7 +2714,7 @@ class ClockSettings(util.DisableNewAttr):
         return self._get_clkgen_src()
 
     @clkgen_src.setter
-    def clkgen_src(self, src):
+    def clkgen_src(self, src : str):
         if src == "extclk":
             self._set_clkgen_src("extclk")
         elif src == "system" or src == "internal":
@@ -2723,7 +2725,7 @@ class ClockSettings(util.DisableNewAttr):
         self.reset_dcms()
 
     @property
-    def extclk_freq(self):
+    def extclk_freq(self) -> int:
         """The input frequency from the EXTCLK source in Hz.
 
         This value is used to help calculate the correct CLKGEN settings to
@@ -2738,11 +2740,11 @@ class ClockSettings(util.DisableNewAttr):
         return int(self._get_extclk_freq())
 
     @extclk_freq.setter
-    def extclk_freq(self, freq):
+    def extclk_freq(self, freq : int):
         self._set_extclk_freq(freq)
 
     @property
-    def clkgen_freq(self):
+    def clkgen_freq(self) -> str:
         """The CLKGEN output frequency in Hz.
 
         The CLKGEN module takes the input source and multiplies/divides it to
@@ -2771,7 +2773,7 @@ class ClockSettings(util.DisableNewAttr):
         self.reset_dcms()
 
     @property
-    def clkgen_locked(self):
+    def clkgen_locked(self) -> bool:
         """The current status of the CLKGEN DCM. Read-only.
 
         :Getter: Return whether the CLKGEN DCM is locked (True or False)
@@ -2865,7 +2867,7 @@ class ClockSettings(util.DisableNewAttr):
 
 
     @property
-    def clkgen_mul(self):
+    def clkgen_mul(self) -> int:
         """The multiplier in the CLKGEN DCM.
 
         This multiplier must be in the range [2, 256].
@@ -2877,7 +2879,7 @@ class ClockSettings(util.DisableNewAttr):
         return self._getClkgenMul()
 
     @clkgen_mul.setter
-    def clkgen_mul(self, mul):
+    def clkgen_mul(self, mul : int):
         self._setClkgenMulWrapper(mul)
 
     def _getClkgenMul(self):
@@ -2932,7 +2934,7 @@ class ClockSettings(util.DisableNewAttr):
 
 
     @property
-    def clkgen_div(self):
+    def clkgen_div(self) -> int:
         """The divider in the CLKGEN DCM.
 
         This divider must be in the range [1, 256].
@@ -2944,7 +2946,7 @@ class ClockSettings(util.DisableNewAttr):
         return self._getClkgenDiv()
 
     @clkgen_div.setter
-    def clkgen_div(self, div):
+    def clkgen_div(self, div : Union[int, List[int]]):
         if self.oa.hwInfo.is_cwhusky():
             # Husky PLL takes two dividers; if only one was provided, set the other to 1
             if type(div) == int:
@@ -3014,7 +3016,7 @@ class ClockSettings(util.DisableNewAttr):
         return self.mmcm.get_mul()
 
 
-    def reset_adc(self):
+    def reset_adc(self) -> None:
         """Reset the ADC DCM.
 
         After changing frequencies, the ADC DCM may become unlocked from its
@@ -3027,7 +3029,7 @@ class ClockSettings(util.DisableNewAttr):
 
     resetAdc = util.camel_case_deprecated(reset_adc)
 
-    def reset_clkgen(self):
+    def reset_clkgen(self) -> None:
         """Reset the CLKGEN DCM.
 
         After changing frequencies or input sources, the CLKGEN DCM may not
@@ -3040,7 +3042,7 @@ class ClockSettings(util.DisableNewAttr):
 
     resetClkgen = util.camel_case_deprecated(reset_clkgen)
 
-    def reset_dcms(self):
+    def reset_dcms(self) -> None:
         """Reset the CLKGEN DCM, then the ADC DCM.
 
         This order is necessary because the ADC may depend on having a locked
@@ -3310,3 +3312,43 @@ class ClockSettings(util.DisableNewAttr):
     def _adcSampleRate(self):
         """Return the sample rate, takes account of decimation factor (if set)"""
         return self._getAdcFrequency() / self.oa.decimate()
+
+    @property
+    def adc_mul(self) -> int:
+        """ Sets a new ADC clock frequency by multiplying this value by clkgen_freq
+
+        On Husky, must be a positive integer, or 0. If 0, turns the ADC clock off.
+
+        On Lite/Pro, must be either 1 or 4
+
+        adc_freq = adc_mul * clkgen_freq
+
+        Note that the value of adc_mul affects how closely clkgen_freq can be matched
+        to the requested frequency. See clkgen_freq for more information.
+
+        :Getter: The currently set adc multiplier
+
+        :Setter: Set the adc multiplier
+
+        .. versionchanged:: 6.0
+            Added ChipWhisperer-Lite/Pro version of this property
+        """
+        x4 = ["clkgen_x4", "extclk_x4"]
+        x1 = ["clkgen_x1", "extclk_x1", "extclk_dir"]
+        if self.adc_src in x4:
+            return 4
+        elif self.adc_src in x1:
+            return 1
+        else:
+            raise ValueError("Unknown adc_src {}".format(self.adc_src))
+
+    @adc_mul.setter
+    def adc_mul(self, mul : int):
+        x4 = ["clkgen_x4", "extclk_x4"]
+        x1 = ["clkgen_x1", "extclk_x1", "extclk_dir"]
+        if self.adc_src in x4:
+            return 4
+        elif self.adc_src in x1:
+            return 1
+        else:
+            raise ValueError("Unknown adc_src {}".format(self.adc_src))
