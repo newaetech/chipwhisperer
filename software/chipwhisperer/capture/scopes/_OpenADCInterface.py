@@ -2485,6 +2485,7 @@ class ClockSettings(util.DisableNewAttr):
     _name = 'Clock Setup'
     _readMask = [0x1f, 0xff, 0xff, 0xfd]
 
+    # TODO: tidy up for Husky!
     def __init__(self, oaiface : OpenADCInterface, hwinfo=None, is_husky=False):
         from .cwhardware.ChipWhispererHuskyMisc import XilinxDRP, XilinxMMCMDRP
         super().__init__()
@@ -2608,7 +2609,7 @@ class ClockSettings(util.DisableNewAttr):
         :Setter: Set a new phase offset
 
         Raises:
-           ValueError: if offset not in [-32767, 32767] (Husky) or [-255, 255] (others)
+           ValueError: if offset not in [-255, 255]
            TypeError: if offset not integer
         """
         return self._get_phase()
