@@ -383,6 +383,8 @@ class NAEUSB_Backend:
         self._timeout = 500
         self.device = None
         self.handle = None
+        self._async_dbuf = bytearray(0xFFFF)
+        self._async_read_completed = False
 
         try:
             self.usb_ctx = usb1.USBContext()
@@ -473,6 +475,7 @@ class NAEUSB_Backend:
             self.rep = 0x81
             self.wep = 0x02
         self._timeout = 20000
+        self.init_async_bulk_read(0xFFFF)
 
         return self.handle
 
@@ -580,8 +583,16 @@ class NAEUSB_Backend:
         Returns:
             The received data.
         """
-        timeout = self._get_timeout(timeout)
-        return self.handle.bulkRead(self.rep, data, timeout)
+        # timeout = self._get_timeout(timeout)
+        # while not self._async_read_completed:
+        self.usb_ctx.handleEvents()
+        if type(data) is int:
+            data = bytearray(data)
+        data = self._async_dbuf[:len(data)]
+        self._bulk_read_transfer.submit()
+        # self._async_dbuf = []
+        return data
+        # return self.handle.bulkRead(self.rep, data, self._timeout)
 
     def _bulk_write(self, data, timeout):
         """Writes data over the bulk-transfer endpoint.
@@ -685,16 +696,34 @@ class NAEUSB_Backend:
 
     def flushInput(self):
         """Dump all the crap left over"""
-        try:
-            # TODO: This probably isn't needed, and causes slow-downs on Mac OS X.
-            self._bulk_read(1000, 0.010)
-        except:
-            pass
+        pass
+        # try:
+        #     # TODO: This probably isn't needed, and causes slow-downs on Mac OS X.
+        #     self._bulk_read(1000, 0.010)
+        # except:
+        #     pass
 
     def read(self, dbuf : bytearray, timeout : int) -> bytearray:
         resp = self._bulk_read(dbuf, timeout)
         naeusb_logger.debug("BULK READ: data = {}".format(dbuf))
         return resp
+
+    def init_async_bulk_read(self, dlen):
+        transfer = self.handle.getTransfer()
+
+        transfer.setBulk(usb1.ENDPOINT_IN | self.rep, self._async_dbuf)
+        transfer.submit()
+        self._bulk_read_transfer = transfer
+
+    def _async_bulk_read_cb(self, transfer : usb1.USBTransfer):
+        if transfer.getStatus() != usb1.TRANSFER_COMPLETED:
+            return
+        self._async_dbuf[:transfer.getActualLength()] = transfer.getBuffer()[:transfer.getActualLength()]
+        self._async_read_completed = True
+        # transfer.submit()
+
+    def submit_async_bulk_write(self, dbuf):
+        pass
 
 class NAEUSB:
     """
