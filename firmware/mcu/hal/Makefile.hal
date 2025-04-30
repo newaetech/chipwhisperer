@@ -302,8 +302,8 @@ endif
   else
       $(error Invalid or empty PLATFORM: $(PLATFORM). Known platforms: $(KNOWN_PLATFORMS))
   endif
-  HALPATH = $(FIRMWAREPATH)/hal/$(EXTRAPATH)
-  HALBASE = $(FIRMWAREPATH)/hal/
+  HALPATH = $(FIRMWAREPATH)/hal$(EXTRAPATH)
+  HALBASE = $(FIRMWAREPATH)/hal
   VPATH += :$(HALPATH):$(HALBASE)
 
   #Default stuff
