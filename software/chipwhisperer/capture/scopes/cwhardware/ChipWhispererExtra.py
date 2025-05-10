@@ -2475,40 +2475,40 @@ class CWPLLDriver(object):
 
     def readByte(self, regaddr, slaveaddr=0x69):
         d = bytearray([0x00, 0x80 | 0x69, 0x80 |  regaddr])
-        self.oa.sendMessage(CODE_WRITE, ADDR_I2CSTATUS, d, Validate=False)
+        self.oa.sendMessage(CODE_WRITE, self.ADDR_I2CSTATUS, d, Validate=False)
         time.sleep(0.001)
 
         d = bytearray([0x04, 0x80 | 0x69, 0x80 |  regaddr])
-        self.oa.sendMessage(CODE_WRITE, ADDR_I2CSTATUS, d, Validate=False)
+        self.oa.sendMessage(CODE_WRITE, self.ADDR_I2CSTATUS, d, Validate=False)
         time.sleep(0.001)
 
         d = bytearray([0x00, 0x80 | 0x69, 0x80 |  regaddr])
-        self.oa.sendMessage(CODE_WRITE, ADDR_I2CSTATUS, d, Validate=False)
+        self.oa.sendMessage(CODE_WRITE, self.ADDR_I2CSTATUS, d, Validate=False)
         time.sleep(0.001)
 
-        stat = self.oa.sendMessage(CODE_READ, ADDR_I2CSTATUS, Validate=False, maxResp=3)
+        stat = self.oa.sendMessage(CODE_READ, self.ADDR_I2CSTATUS, Validate=False, maxResp=3)
         if stat[0] & 0x01:
             raise IOError("No ACK from Slave in I2C")
 
-        stat = self.oa.sendMessage(CODE_READ, ADDR_I2CDATA, Validate=False, maxResp=1)
+        stat = self.oa.sendMessage(CODE_READ, self.ADDR_I2CDATA, Validate=False, maxResp=1)
         return stat[0]
 
     def writeByte(self, regaddr, data, slaveaddr=0x69):
         d = bytearray([data])
-        self.oa.sendMessage(CODE_WRITE, ADDR_I2CDATA, d, Validate=False)
+        self.oa.sendMessage(CODE_WRITE, self.ADDR_I2CDATA, d, Validate=False)
 
         d = bytearray([0x00, 0x69, 0x80 | regaddr])
-        self.oa.sendMessage(CODE_WRITE, ADDR_I2CSTATUS, d, Validate=False)
+        self.oa.sendMessage(CODE_WRITE, self.ADDR_I2CSTATUS, d, Validate=False)
         time.sleep(0.005)
 
         d = bytearray([0x04, 0x69, 0x80 | regaddr])
-        self.oa.sendMessage(CODE_WRITE, ADDR_I2CSTATUS, d, Validate=False)
+        self.oa.sendMessage(CODE_WRITE, self.ADDR_I2CSTATUS, d, Validate=False)
         time.sleep(0.005)
 
         d = bytearray([0x00, 0x69, 0x80 | regaddr])
-        self.oa.sendMessage(CODE_WRITE, ADDR_I2CSTATUS, d, Validate=False)
+        self.oa.sendMessage(CODE_WRITE, self.ADDR_I2CSTATUS, d, Validate=False)
         time.sleep(0.005)
 
-        stat = self.oa.sendMessage(CODE_READ, ADDR_I2CSTATUS, Validate=False, maxResp=3)
+        stat = self.oa.sendMessage(CODE_READ, self.ADDR_I2CSTATUS, Validate=False, maxResp=3)
         if stat[0] & 0x01:
             raise IOError("No ACK from Slave in I2C")
