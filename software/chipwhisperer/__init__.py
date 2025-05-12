@@ -311,16 +311,16 @@ def scope(scope_type : Optional[Type[scopes.ScopeTypes]]=None, name : opstr=None
      * :class:`scopes.OpenADC` (Pro and Lite)
      * :class:`scopes.CWNano` (Nano)
 
-    If multiple chipwhisperers are connected, the serial number of the one you
+    If multiple ChipWhisperers are connected, the serial number of the one you
     want to connect to can be specified by passing sn=<SERIAL_NUMBER>
 
     Args:
         scope_type: Scope type to connect to. Types
             can be found in chipwhisperer.scopes. If None, will try to detect
             the type of ChipWhisperer connected. Defaults to None.
-        name: model name of the ChipWhisperer that you want to
+        name: Model name of the ChipWhisperer that you want to
             connect to. Alternative to specifying the serial number when
-            multiple ChipWhisperers, all of different type, are connected.
+            multiple ChipWhisperers, all of different types, are connected.
             Defaults to None. Valid values:
 
             * Nano
@@ -333,7 +333,7 @@ def scope(scope_type : Optional[Type[scopes.ScopeTypes]]=None, name : opstr=None
 
         idProduct: idProduct of the ChipWhisperer that you want to
             connect to. Alternative to specifying the serial number when
-            multiple ChipWhisperers, all of different type, are connected.
+            multiple ChipWhisperers, all of different types, are connected.
             Defaults to None. Valid values:
 
             * 0xace0: CW-Nano
@@ -361,10 +361,10 @@ def scope(scope_type : Optional[Type[scopes.ScopeTypes]]=None, name : opstr=None
         Connected scope object.
 
     Raises:
-        OSError: Can be raised for issues connecting to the chipwhisperer, such
+        OSError: Can be raised for issues connecting to the ChipWhisperer, such
             as not having permission to access the USB device or no ChipWhisperer
             being connected.
-        Warning: Raised if multiple chipwhisperers are connected, but the type
+        Warning: Raised if multiple ChipWhisperers are connected, but the type
             and/or the serial numbers are not specified
 
     .. versionchanged:: 5.1
@@ -441,7 +441,7 @@ def capture_trace(scope : scopes.ScopeTypes, target : targets.TargetTypes, plain
 
     Does all individual steps needed to capture a trace (arming the scope
     sending the key/plaintext, getting the trace data back, etc.). Uses
-    target.output_len as the length of the expected target reponse for
+    target.output_len as the length of the expected target response for
     simpleserial.
 
     Args:
@@ -454,7 +454,7 @@ def capture_trace(scope : scopes.ScopeTypes, target : targets.TargetTypes, plain
             bytearray. If None, don't send key. Defaults to None.
         ack (bool, optional): Check for ack when reading response from target.
             Defaults to True.
-        poll_done (bool, optional): poll Husky to find out when it's done
+        poll_done (bool, optional): Poll Husky to find out when it's done
             capturing, instead of calculating the capture time based on the
             capture parameters. Useful for long trigger-based segmented
             captures.  Can also result in slightly faster captures when the

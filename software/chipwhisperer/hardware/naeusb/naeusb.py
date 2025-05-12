@@ -246,7 +246,7 @@ def _WINDOWS_USB_CHECK_DRIVER(device) -> Optional[str]:
         try:
             keyhandle_device = winreg.OpenKey(keyhandle, subkey) # type: ignore
         except Exception as e:
-            naeusb_logger.info("Could not get keyhandle device " + str(e))
+            naeusb_logger.info("Could not get KeyHandle device " + str(e))
             return None
         i = 0
         address = None
@@ -274,7 +274,7 @@ def _WINDOWS_USB_CHECK_DRIVER(device) -> Optional[str]:
                 try:
                     keyhandle_driver = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Services\\{}\\Enum".format(service)) # type: ignore
                 except Exception as e:
-                    naeusb_logger.info("Could not get keyhandle driver " + str(e))
+                    naeusb_logger.info("Could not get KeyHandle driver " + str(e))
                     return None
                 num_enums = get_enum_by_name(keyhandle_driver, "Count")
                 if num_enums:
@@ -290,7 +290,7 @@ def _WINDOWS_USB_CHECK_DRIVER(device) -> Optional[str]:
         try:
             keyhandle_sn = winreg.OpenKey(keyhandle_device, sn) # type: ignore
         except Exception as e:
-            naeusb_logger.debug("Could not get keyhandle sn " + str(e))
+            naeusb_logger.debug("Could not get KeyHandle sn " + str(e))
             return None
 
         service = get_enum_by_name(keyhandle_sn, "Service")
@@ -496,10 +496,10 @@ class NAEUSB_Backend:
         """Get list of USB devices that match NewAE vendor ID (0x2b3e) and
         optionally a product ID
 
-        Checks VendorID, then makes sure the devices are accessable
+        Checks VendorID, then makes sure the devices are accessible
         Args:
             idProduct (list of int, optional): If not None, the product ID to match
-            sn (string, optional): If not None,
+            sn (string, optional): If not None, the serial number to match
         Returns:
             List of USBDevice that match Vendor/Product IDs
             """
@@ -547,7 +547,7 @@ class NAEUSB_Backend:
                     bRequest: {:02X}, wValue: {:04X}, wIndex: {:04X}, data: {}".format(0x41, cmd, \
                         value, 0, data))
         if len(data) > NAEUSB_CTRL_IO_MAX:
-            naeusb_logger.error("The naeusb fw ctrl buffer is 128 bytes, but len(data) > 128. If you get a pipe error, this is why.")
+            naeusb_logger.error("The NAEUSB fw ctrl buffer is 128 bytes, but len(data) > 128. If you get a pipe error, this is why.")
         self.handle.controlWrite(0x41, cmd, value, 0, data, timeout=self._timeout)
         #return self.usbdev().ctrl_transfer(0x41, cmd, value, 0, data, timeout=self._timeout)
 
@@ -557,7 +557,7 @@ class NAEUSB_Backend:
         """
         # Vendor-specific, IN, interface control transfer
         if dlen > NAEUSB_CTRL_IO_MAX:
-            naeusb_logger.error("The naeusb fw ctrl buffer is 128 bytes, but len(data) > 128. If you get a pipe error, this is why.")
+            naeusb_logger.error("The NAEUSB fw ctrl buffer is 128 bytes, but len(data) > 128. If you get a pipe error, this is why.")
         response = self.handle.controlRead(0xC1, cmd, value, 0, dlen, timeout=self._timeout)
         naeusb_logger.debug("READ_CTRL: bmRequestType: {:02X}, \
                     bRequest: {:02X}, wValue: {:04X}, wIndex: {:04X}, data_len: {:04X}, response: {}".format(0xC1, cmd, \
@@ -591,7 +591,7 @@ class NAEUSB_Backend:
 
     def _cmd_ctrl_send_data(self, pload, cmd : int):
         """Sends data over the control-transfer channel and attempts a pipe error fix if an initial
-        error occured.
+        error occurred.
         """
         try:
             self.sendCtrl(cmd, data=pload)
@@ -898,7 +898,7 @@ class NAEUSB:
 
     def writeBulkEP(self, data : bytearray, timeout = None):
         """
-        Write directoly to the bulk endpoint.
+        Write directly to the bulk endpoint.
         :param data: Data to be written.
         :return:
         """
@@ -1059,8 +1059,8 @@ class NAEUSB:
         with overflow buffer status. When an overflow occurs the samples left to stream goes to
         zero.
         samples_left_to_stream is number of samples not yet streamed out of buffer.
-        overflow_lcoation is the value of samples_left_to_stream when a buffer overflow occured.
-        unknown_overflow is a flag indicating if an overflow occured at an unknown time.
+        overflow_location is the value of samples_left_to_stream when a buffer overflow occurred.
+        unknown_overflow is a flag indicating if an overflow occurred at an unknown time.
         Returns:
             Tuple indicating (samples_left_to_stream, overflow_location, unknown_overflow)
         """
@@ -1079,7 +1079,7 @@ class NAEUSB:
 
     def cmdReadStream_size_of_fpgablock(self) -> int:
         """ Asks the hardware how many BYTES are read in one go from FPGA, which indicates where the sync
-            bytes will be located. These sync bytes must be removed in post-processing. CW-pro only. """
+            bytes will be located. These sync bytes must be removed in post-processing. CW-Pro only. """
         return 4096
 
     def cmdReadStream_bufferSize(self, dlen : int):

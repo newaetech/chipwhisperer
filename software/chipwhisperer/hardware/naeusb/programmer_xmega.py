@@ -213,7 +213,7 @@ class XMEGAPDI(object):
 
 
     def autoProgram(self, hexfile, erase=True, verify=True, logfunc=print_fun, waitfunc=None):
-        """Helper funciton for GUI, auto-programs XMEGA device while printing messages to different options. Returns true/false."""
+        """Helper function for GUI, auto-programs XMEGA device while printing messages to different options. Returns true/false."""
 
         status = "FAILED"
 
@@ -232,7 +232,7 @@ class XMEGAPDI(object):
                     try:
                         self.erase()
                     except IOError:
-                        if logfunc: logfunc("**chip-erase timeout, erasing application only**")
+                        if logfunc: logfunc("**Chip-erase timeout, erasing application only**")
                         if waitfunc: waitfunc()
                         self.enablePDI(False)
                         self.enablePDI(True)

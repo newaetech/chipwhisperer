@@ -44,9 +44,9 @@ If you've installed natively:
    notebooks use bash to run **make** or remove files for building
    firmware. This may be changed in the future but for now it is
    required. If you installed using the Virtual Machine (VM) the
-   terminal is a bash like terminal and you should have no problem.
+   terminal is a bash-like terminal and you should have no problem.
    If you installed on linux, same deal. However, if you installed
-   on Windows/Mac you may have to install a bash like terminal. If
+   on Windows/Mac you may have to install a bash-like terminal. If
    you installed Git to install **chipwhisperer** you already have
    **git-bash** available to you. Here are a few bash-like terminals
    available on other windows:

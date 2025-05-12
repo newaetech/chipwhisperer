@@ -1,6 +1,6 @@
 # CW520 ChipSHOUTER
 
-The CW520 (ChipSHOUTER) is a fully-featured Electromagnetic Fault  Injection  platform  that  can  be  used  to  discover  and  characterize vulnerabilities in embedded systems. ChipSHOUTER    makes   EMFI   available   to   test   labs,   engineering   development firms, educators, and embedded enthusiasts. With a flexible API and bundled practice targets the system is a platform for experimentation and education right out of the box. Paired with an X-Y table and some basic python scripting  the  ChipSHOUTER  becomes  a  fully  automatable  EMFI  platform capable of precision testing and fault characterization.  
+The CW520 (ChipSHOUTER) is a fully-featured Electromagnetic Fault Injection platform that can be used to discover and characterize vulnerabilities in embedded systems. ChipSHOUTER makes EMFI available to test labs, engineering development firms, educators, and embedded enthusiasts. With a flexible API and bundled practice targets the system is a platform for experimentation and education right out of the box. Paired with an X-Y table and some basic python scripting the ChipSHOUTER becomes a fully automatable EMFI platform capable of precision testing and fault characterization. 
 
 ![](Images/chipshouter.png)
 
@@ -14,7 +14,7 @@ https://chipshouter.readthedocs.io/en/latest/
 
 The ChipSHOUTER generates large voltages and electromagnetic fields that can be hazardous to human health and
 can cause nearby devices to malfunction. Carefully read the safety sections in the ChipSHOUTER manual, available
-on the [ChipSHOUTER github](https://github.com/newaetech/ChipSHOUTER/raw/master/documentation/ChipSHOUTER%20User%20Manual.pdf) before use.
+on the [ChipSHOUTER GitHub](https://github.com/newaetech/ChipSHOUTER/raw/master/documentation/ChipSHOUTER%20User%20Manual.pdf) before use.
 
 ## Product Highlights
 
@@ -36,7 +36,7 @@ with triggering mechanisms, such as oscilloscopes or the ChipWhisperer platform
 |---------|--------------|
 | Serial command interface | 3.3V CMOS Serial, 115200, 8N1 |
 | Protocol | ASCII command prompt, Binary |
-| Serial connection | RJ12 connector with GND, TX/RX, 3.3V output and switchable pulse/arm pin. |
+| Serial connection | RJ12 connector with GND, TX/RX, 3.3V output and switchable pulse/arm pin |
 | Hardware trigger connector type | SMB connector, center positive |
 | Hardware trigger threshold | 2V |
 | Hardware trigger absolute maximum ratings | -0.5V to 6.5V |

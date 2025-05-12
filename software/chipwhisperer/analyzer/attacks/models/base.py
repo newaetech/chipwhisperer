@@ -19,7 +19,7 @@ from chipwhisperer.common.utils.parameter import Parameterized, setupSetParam
 from chipwhisperer.common.utils import util
 import numpy as np
 
-#The following is placed here for backwards compatability with imports expected the getHW function
+#The following is placed here for backwards compatibility with imports expected the getHW function
 _HW = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3,
        4, 2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4,
        4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 1, 2, 2, 3, 2,
@@ -66,7 +66,7 @@ class ModelsBase(Parameterized):
         self.permPerSubkey = permPerSubkey
         self.numRoundKeys = 0
         self.model = model
-        #Update interal models (if required)
+        #Update interval models (if required)
         self._updateHwModel()
 
         if model.name in self.hwModels:

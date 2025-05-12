@@ -35,7 +35,7 @@ from ...capture.utils.IntelHex import IntelHex
 
 import warnings
 def gen_app_binary(rom):
-    """Replicate image_gen.c from the neorv32 project
+    """Replicate image_gen.c from the NEORV32 project
     """
 
     #
@@ -80,7 +80,7 @@ def close_on_fail(func):
 
 class Neorv32Programmer:
     """
-    Class for programming a Neorv32 RISC-V processor, including FPGA loading of ChipWhisperer targets
+    Class for programming a NEORV32 RISC-V processor, including FPGA loading of ChipWhisperer targets
     """
 
     def __init__(self, scope, timeout=200):
@@ -106,7 +106,7 @@ class Neorv32Programmer:
         fpga.erase_and_init()
 
         if bsfile is None:
-            target_logger.info("ice40: Loading prebuilt Neorv32 core.")
+            target_logger.info("ice40: Loading prebuilt NEORV32 core.")
 
             if force_ice40type:
                 target_logger.info("ice40: Assuming device type is: %s"%force_ice40type)
@@ -224,7 +224,7 @@ class Neorv32Programmer:
 
         # Log startup message
         start_msg = bytes(self.sp.read())
-        target_logger.debug(b"Start Message from Bootlader: " + start_msg)
+        target_logger.debug(b"Start Message from bootloader: " + start_msg)
 
         # Check the menu worked
         self.do_cmd("h", expected="Available CMDs:\r\n h: Help\r\n r: Restart\r\n u: Upload\r\n")

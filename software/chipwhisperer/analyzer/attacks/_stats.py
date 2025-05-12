@@ -226,7 +226,7 @@ class Results(object):
                         self.maxes[i][j]['point'] = where
                         self.maxes[i][j]['value'] = self.diffs[i][self.maxes[i][j]['hyp']][where]
 
-                self.maxes[i][::-1].sort(order='value') # sorts nunpy array in place and in reverse order
+                self.maxes[i][::-1].sort(order='value') # sorts numpy array in place and in reverse order
                 self.maxValid[i] = True
 
                 if self.known_key is not None:

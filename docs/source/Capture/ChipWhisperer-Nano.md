@@ -252,9 +252,9 @@ the STM32F0 to the input stage.
 Similar to the ChipWhisperer-Lite, you can break off the end section. To
 do that, you will have to do the following:
 
-1.  Use an xacto knife or similar to deeply score along the perforated
+1.  Use an X-Acto knife or similar to deeply score along the perforated
     holes on both top and bottom, being very careful not to cut towards
-    or near your hand. You will need to hold the CWNANO in an
+    or near your hand. You will need to hold the CW-Nano in an
     appropriate jig or vice.
 2.  Align the holes on the edge of a hard surface (suggested: block of
     wood), and firmly push down on the target end while pushing against

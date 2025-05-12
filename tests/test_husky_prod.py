@@ -35,7 +35,7 @@ from test_common import *
 
 """ 
 Args:
-    stress: run more iterations of the tests that stess temperature and voltage rails
+    stress: run more iterations of the tests that stress temperature and voltage rails
 
 """
 
@@ -286,7 +286,7 @@ def test_internal_ramp(stress, samples, presamples, testmode, clock, fastreads, 
         scope.arm()
         scope.sc.triggerNow()
         scope.sc.arm(False)
-        assert scope.capture() == False, 'unable to capture (rep %d), highly unusual error' % i
+        assert scope.capture() == False, 'Unable to capture (rep %d), highly unusual error' % i
         raw = np.int64(scope.get_last_trace(True))
         errors, first_error = check_ramp(raw, testmode, bits, samples, segment_cycles)
         assert errors == 0, "%d errors (rep %d); First error: %d; scope.adc.errors: %s" % (errors, i, first_error, scope.adc.errors)
@@ -324,7 +324,7 @@ def test_target_internal_ramp (samples, presamples, testmode, clock, fastreads, 
     target.flush()
     target.write('x\n')
     time.sleep(0.2)
-    assert target.read() != '', 'unable to communicate with target'
+    assert target.read() != '', 'Unable to communicate with target'
 
     scope.trigger.module = 'basic'
     scope.adc.basic_mode = "rising_edge"
@@ -362,7 +362,7 @@ def test_target_internal_ramp (samples, presamples, testmode, clock, fastreads, 
         scope.errors.clear()
         time.sleep(2)
     else:
-        assert scope.adc.errors == False, 'unexpected ADC errors: %s' % scope.adc.errors
+        assert scope.adc.errors == False, 'Unexpected ADC errors: %s' % scope.adc.errors
     if check: 
         errors, first_error = check_ramp(raw, testmode, bits, samples, segment_cycles)
         assert errors == 0, "%d errors in ramp pattern; First error: %d" % (errors, first_error)

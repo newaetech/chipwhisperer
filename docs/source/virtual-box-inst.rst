@@ -35,9 +35,9 @@ VirtualBox Image
 
 * Verify that the VM boots.
 
-.. note:: If you are on linux you need to add yourself to the *vboxusers*
+.. note:: If you are on Linux you need to add yourself to the *vboxusers*
     permission group using, so Virtual Box is given permission to access
-    usb devices::
+    USB devices::
 
         sudo usermod -aG vboxusers <your username>
 

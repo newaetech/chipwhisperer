@@ -118,7 +118,7 @@ class AttackBaseClass(PassiveTraceObserver):
             analysis_algorithm (AlgorithmsBase): Algorithm used for analyzing
                 trace data. Only use cpa_algorithms.Progressive for now.
             leakage_object (ModelsBase, optional): Model used to get the
-                leakage of the target (i.e. the sbox output). Needs to be set
+                leakage of the target (i.e. the S-box output). Needs to be set
                 before the attack can happen
         """
         self.attack = analysis_algorithm()
@@ -163,7 +163,7 @@ class AttackBaseClass(PassiveTraceObserver):
 
     processTraces = camel_case_deprecated(process_traces)
 
-    # for backwards compatability
+    # for backwards compatibility
     def processTracesNoGUI(self, callback=None, show_progress_bar=False):
         return self.processTraces(callback, show_progress_bar)
 

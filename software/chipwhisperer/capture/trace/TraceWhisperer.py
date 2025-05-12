@@ -46,7 +46,7 @@ class TraceWhisperer(util.DisableNewAttr):
 
     """ Trace interface object.
 
-    This class contains the public API for the Arm Coresight trace sniffing
+    This class contains the public API for the Arm CoreSight trace sniffing
     hardware, which exists on several platforms:
     - CW-Husky
     - CW305, as DesignStartTrace
@@ -453,7 +453,7 @@ class TraceWhisperer(util.DisableNewAttr):
 
         Args:
             mode (str): "normal": as labeled (armed/capturing)
-                        "hearbeat": armed = front-end clock heartbeat; capturing = trace clock heartbeat
+                        "heartbeat": armed = front-end clock heartbeat; capturing = trace clock heartbeat
         """
         if self.platform == 'CW305':
             return 'normal'
@@ -462,7 +462,7 @@ class TraceWhisperer(util.DisableNewAttr):
             if raw == 0:
                 return 'normal'
             elif raw == 1:
-                return 'hearbeat'
+                return 'heartbeat'
             else:
                 raise ValueError
 
@@ -576,7 +576,7 @@ class TraceWhisperer(util.DisableNewAttr):
 
 
     def simpleserial_write(self, cmd, data, printresult=False, wait=0.6):
-        """Convenience function to send a simpleserial command to the simpleserial target,
+        """Convenience function to send a SimpleSerial command to the SimpleSerial target,
         and optionally fetch and print the result.
         """
         if self._ss is None:
@@ -742,7 +742,7 @@ class TraceWhisperer(util.DisableNewAttr):
 
     def resync(self):
         """Force trace sniffer to resynchronize (using sync frames that are
-        continously emitted on the parallel trace port). Failure could be from
+        continuously emitted on the parallel trace port). Failure could be from
         absence of a trace clock, or mis-sampling of trace data due to
         setup/hold violations (clock edge too close to data edge).
         """
@@ -797,7 +797,7 @@ class TraceWhisperer(util.DisableNewAttr):
 
 
     def check_fifo_errors(self, underflow=0, overflow=0):
-        """Check whether an underflow or overflow occured on the capture FIFO.
+        """Check whether an underflow or overflow occurred on the capture FIFO.
 
         Args:
             underflow (int, optional): expected status, 0 or 1
@@ -892,7 +892,7 @@ class TraceWhisperer(util.DisableNewAttr):
 
         # then check that no underflows or overflows occurred during capture:
         if  self.errors:
-            tracewhisperer_logger.warning("FIFO errors occured: %s" % self.errors)
+            tracewhisperer_logger.warning("FIFO errors occurred: %s" % self.errors)
 
         while not self.fifo_empty():
             data.append(self.fpga_read(self.REG_SNIFF_FIFO_RD, 4)[1:4])
@@ -1112,7 +1112,7 @@ class TraceWhisperer(util.DisableNewAttr):
             raw (array): raw trace data as obtained from
                 get_raw_trace_packets()
             filename (string): output file
-            presyncs (int): number of long syncronization frames which are
+            presyncs (int): number of long synchronization frames which are
                 prepended to the collected trace data.
         """
         binout = open(filename, "wb")
@@ -1367,7 +1367,7 @@ class clock(util.DisableNewAttr):
             self.swo_mmcm.set_sec_div(best[2])
             actual = input_freq*best[0]/best[1]/best[2]
             if abs(actual-freq)/freq*100 > threshold:
-                scope_logger.warning("Coudln't achieve exact desired frequency (%f); setting to %f instead." % (freq, input_freq*best[0]/best[1]/best[2]))
+                scope_logger.warning("Couldn't achieve exact desired frequency (%f); setting to %f instead." % (freq, input_freq*best[0]/best[1]/best[2]))
             time.sleep(0.1)
             if freq > self._warning_frequency:
                 scope_logger.warning("""
@@ -1513,8 +1513,8 @@ class clock(util.DisableNewAttr):
 
     @property
     def trace_clock_shift_range(self):
-        """Returns number of phase shift steps in one trace pll cycle.  This
-        is simply 56 times the MMCM's multiplier, indepedent of the trace
+        """Returns number of phase shift steps in one trace PLL cycle.  This
+        is simply 56 times the MMCM's multiplier, independent of the trace
         clock frequency.  (ref: Xilinx UG472 v1.14, "Dynamic Phase Shift
         Interface in the MMCM")
         The trace clock frequency must be provided via `trace_clock_set_freq()`
@@ -1778,7 +1778,7 @@ class capture(util.DisableNewAttr):
         """Set which matching rules are enabled.
 
         Args:
-            rules (list of ints): turn on the specified rules; others are turned off.  example: [0, 5, 7]: turns on rules 0, 5 and 7.
+            rules (list of ints): turn on the specified rules; others are turned off.  Example: [0, 5, 7] turns on rules 0, 5 and 7.
         """
         raw = self.main.fpga_read(self.main.REG_PATTERN_ENABLE, 1)[0]
         rules = []

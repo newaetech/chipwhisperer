@@ -47,19 +47,19 @@ class AESLeakageHelper(object):
     INVSHIFT_undo = [0, 5, 10, 15, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11]
 
     def sbox(self, data):
-        """Helper function: performs AES sbox on single byte"""
+        """Helper function: performs AES S-box on single byte"""
         return sbox(data)
 
     def inv_sbox(self, data):
-        """Helper function: performs AES inv-sbox on single byte"""
+        """Helper function: performs AES inverse S-box on single byte"""
         return inv_sbox(data)
 
     def subbytes(self, state):
-        """Helper function: performs AES sbox on all bytes of state"""
+        """Helper function: performs AES S-box on all bytes of state"""
         return subbytes(state)
 
     def inv_subbytes(self, state):
-        """Helper function: performs AES inv-sbox on all bytes of state"""
+        """Helper function: performs AES inverse S-box on all bytes of state"""
         return inv_subbytes(state)
 
     def mixcolumns(self, state):
@@ -67,7 +67,7 @@ class AESLeakageHelper(object):
         return mixcolumns(state)
 
     def inv_mixcolumns(self, state):
-        """Helper function: performs AES inv-mixcols on all bytes of state"""
+        """Helper function: performs AES inverse mixcols on all bytes of state"""
         return inv_mixcolumns(state)
 
     def shiftrows(self, state):
@@ -75,7 +75,7 @@ class AESLeakageHelper(object):
         return shiftrows(state)
 
     def inv_shiftrows(self, state):
-        """Helper function: performs AES inv-shiftrows on all bytes of state"""
+        """Helper function: performs AES inverse shiftrows on all bytes of state"""
         return inv_shiftrows(state)
 
     def key_schedule_rounds(self, inputkey, inputround, desiredround):
@@ -95,7 +95,7 @@ class AESLeakageHelper(object):
 
     def leakage(self, pt, ct, key, bnum):
         """
-        Override this function with specific leakage function (S-Box output, HD, etc).
+        Override this function with specific leakage function (S-box output, HD, etc).
 
         Args:
             pt: 16-byte plain-text input
@@ -198,7 +198,7 @@ class LastroundStateDiffAlternate(AESLeakageHelper):
         return k
 
 class SBoxInOutDiff(AESLeakageHelper):
-    name = 'HD: AES SBox Input to Output'
+    name = 'HD: AES S-box Input to Output'
     c_model_enum_value = 3
     c_model_enum_name = 'LEAK_HD_SBOX_IN_OUT'
     def leakage(self, pt, ct, key, bnum):
@@ -207,7 +207,7 @@ class SBoxInOutDiff(AESLeakageHelper):
         return st1 ^ st2
 
 class SBoxInputSuccessive(AESLeakageHelper):
-    name = 'HD: AES SBox Input i to i+1'
+    name = 'HD: AES S-box Input i to i+1'
     c_model_enum_value = 4
     c_model_enum_name = 'LEAK_HD_SBOX_IN_SUCCESSIVE'
     def leakage(self, pt, ct, key, bnum):
@@ -222,7 +222,7 @@ class SBoxInputSuccessive(AESLeakageHelper):
         return st1 ^ st2
 
 class SBoxOutputSuccessive(AESLeakageHelper):
-    name = 'HD: AES SBox Output i to i+1'
+    name = 'HD: AES S-box Output i to i+1'
     c_model_enum_value = 5
     c_model_enum_name = 'LEAK_HD_SBOX_OUT_SUCCESSIVE'
     def leakage(self, pt, ct, key, bnum):
@@ -349,7 +349,7 @@ class AES128_8bit(ModelsBase):
             pt (list): Plaintext/textin
             ct (list): Ciphertext/textout
             guess (list): Key guess
-            bnum (list): Subkey Byte Number
+            bnum (list): Subkey byte number
             state (list): The state of the key finding
 
         Returns:
@@ -402,7 +402,7 @@ class AES128_ttable(AES128_8bit):
             pt (list): Plaintext/textin
             ct (list): Ciphertext/textout
             guess (list): Key guess
-            bnum (list): Subkey Byte Number
+            bnum (list): Subkey byte number
             state (list): The state of the key finding
 
         Returns:
@@ -439,7 +439,7 @@ class AES128_ttable_dec(AES128_8bit):
             pt (list): Plaintext/textin
             ct (list): Ciphertext/textout
             guess (list): Key guess
-            bnum (list): Subkey Byte Number
+            bnum (list): Subkey byte number
             state (list): The state of the key finding
 
         Returns:
@@ -483,7 +483,7 @@ class AES128_prev(AES128_8bit):
             prev_pt (list): Plaintext/textin for the previous encryption
             prev_ct (list): Ciphertext/textout for the previous encryption
             guess (list): Key guess
-            bnum (list): Subkey Byte Number
+            bnum (list): Subkey byte number
             state (list): The state of the key finding
 
         Returns:

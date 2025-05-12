@@ -26,8 +26,8 @@
 Package containing all of the target types that the ChipWhisperer API can connect to:
 
 Targets:
-* SimpleSerial - Communication via CW Uart Pins
-* SimpleSerial2 - Communication via CW Uart Pins (updated protocol)
+* SimpleSerial - Communication via CW UART Pins
+* SimpleSerial2 - Communication via CW UART Pins (updated protocol)
 * CW305 - USB communication to CW305 (also CW305_ECC, CW305_AES_PIPELINED for extensions for those particular targets)
 * CW310 - USB communication to CW310
 * CW340 - USB communication to CW340

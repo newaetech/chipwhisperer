@@ -86,7 +86,7 @@ class LascarDisplay:
         return df.head(255).style.format(self.format_stat).apply(self.color_corr_key, axis=1)
         
     def results(self): #getStatistics
-        """CW Interfae Function"""
+        """CW Interface Function"""
         self.dt.known_key = self.hlk
         return self.dt
     

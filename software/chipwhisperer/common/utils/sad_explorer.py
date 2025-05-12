@@ -94,7 +94,7 @@ class SADExplorer(util.DisableNewAttr):
         # to indicate which samples are disabled:
         self.quads = []
 
-        # intial legend shows what to do:
+        # initial legend shows what to do:
         self.legend = self.create_legend()
         self.p.add_layout(self.legend)
 

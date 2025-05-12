@@ -105,7 +105,7 @@ class GlitchLoopDefaultVCCGlitch(GlitchLoopGlitchMethod):
     """Base class to provide the functionality for VCC glitching.  This does not set default_setup,
     use GlitchDefaultTargetDriver to initialize default_setup settings.
 
-    This configures the glitch mosfets each iteration and resets the mosfets immediately after
+    This configures the glitch MOSFETs each iteration and resets the MOSFETs immediately after
     capture.
     """
 
@@ -130,7 +130,7 @@ class GlitchLoopDefaultVCCGlitch(GlitchLoopGlitchMethod):
 
 class GlitchLoopDefaultVCCFastGlitch(GlitchLoopDefaultVCCGlitch):
     """Base class meant to implement a constant VCC glitch method.  This only configures glitch
-    hardware before the loop and only resets the glitch mosfets after each capture iteration.
+    hardware before the loop and only resets the glitch MOSFETs after each capture iteration.
 
     This class can be initialized directly to specify a runtime configuration.
     """
@@ -149,7 +149,7 @@ class GlitchLoopDefaultVCCFastGlitch(GlitchLoopDefaultVCCGlitch):
         pass
 
 class GlitchLoopDefaultVLowGlitch(GlitchLoopDefaultVCCFastGlitch):
-    """Class that statically sets the glitch method to use the low power mosfet only.
+    """Class that statically sets the glitch method to use the low power MOSFET only.
     """
 
     def __init__(self):
@@ -160,7 +160,7 @@ class GlitchLoopDefaultVLowGlitch(GlitchLoopDefaultVCCFastGlitch):
         return GPIOSettings.VCC_GLITCHT_LP
 
 class GlitchLoopDefaultVHighGlitch(GlitchLoopDefaultVCCFastGlitch):
-    """Class that statically sets the glitch method to use the high power mosfet only.
+    """Class that statically sets the glitch method to use the high power MOSFET only.
     """
 
     def __init__(self):
@@ -171,7 +171,7 @@ class GlitchLoopDefaultVHighGlitch(GlitchLoopDefaultVCCFastGlitch):
         return GPIOSettings.VCC_GLITCHT_HP
 
 class GlitchLoopDefaultVBothGlitch(GlitchLoopDefaultVCCFastGlitch):
-    """Class that statically sets the glitch method to use both the mosfets.
+    """Class that statically sets the glitch method to use both the MOSFETs.
     """
 
     def __init__(self):

@@ -63,17 +63,17 @@ from collections import defaultdict
 
 
 def fastdtw(x, y, radius=1, dist=None):
-    ''' return the approximate distance between 2 time series with O(N)
+    ''' Return the approximate distance between 2 time series with O(N)
         time and memory complexity
 
         Parameters
         ----------
         x : array_like
-            input array 1
+            Input array 1
         y : array_like
-            input array 2
+            Input array 2
         radius : int
-            size of neighborhood when expanding the path. A higher value will
+            Size of neighborhood when expanding the path. A higher value will
             increase the accuracy of the calculation but also increase time
             and memory consumption. A radius equal to the size of x and y will
             yield an exact dynamic time warping calculation.
@@ -86,7 +86,7 @@ def fastdtw(x, y, radius=1, dist=None):
         Returns
         -------
         float
-            the approximate distance between the 2 time series
+            The approximate distance between the 2 time series
 
         Examples
         --------
@@ -140,14 +140,14 @@ def __fastdtw(x, y, radius, dist):
 
 
 def dtw(x, y, window=None, dist=lambda a, b: abs(a - b)):
-    ''' return the distance between 2 time series without approximation
+    ''' Teturn the distance between 2 time series without approximation
 
         Parameters
         ----------
         x : array_like
-            input array 1
+            Input array 1
         y : array_like
-            input array 2
+            Input array 2
         dist : function or int
             The method for calculating the distance between x[i] and y[j]. If
             dist is an int of value p > 0, then the p-norm will be used. If
@@ -157,7 +157,7 @@ def dtw(x, y, window=None, dist=lambda a, b: abs(a - b)):
         Returns
         -------
         float
-            the approximate distance between the 2 time series
+            The approximate distance between the 2 time series
 
         Examples
         --------

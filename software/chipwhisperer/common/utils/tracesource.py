@@ -33,7 +33,7 @@ from typing import Dict
 class TraceSource(object):
     """
     It has traces as output
-    Keeps a dictionary with all the registered objets and emits a signal when a new one is added
+    Keeps a dictionary with all the registered objects and emits a signal when a new one is added
     """
     registeredObjects : Dict[str, object] = {}
     registeredObjects["None"] = None
@@ -58,7 +58,7 @@ class TraceSource(object):
         return 0
 
     def getSampleRate(self):
-        """Return the Sample Rate used to generate the traces"""
+        """Return the sample rate used to generate the traces"""
         return 0
 
     def getTextin(self, n):
@@ -141,7 +141,7 @@ class PassiveTraceObserver(Parameterized):
         pass
 
     def processTraces(self):
-        """Process the Traces acording to its current state"""
+        """Process the Traces according to its current state"""
         pass
 
     def traceSourcesChanged(self):

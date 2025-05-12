@@ -255,7 +255,7 @@ class LEDSettings(util.DisableNewAttr):
 
         In all cases, blinking red lights indicate a temperature, voltage, or
         sampling error (see scope.XADC.status and scope.adc.errors for details),
-        whlie blinking green and blue lights indicate that a frequency change
+        while blinking green and blue lights indicate that a frequency change
         was detected on the external clock input (and that scope.clock should
         be updated to account for this).
 
@@ -779,13 +779,13 @@ class XADCSettings(util.DisableNewAttr):
 
     @property
     def temp(self):
-        """Returns the current FPGA temperature (in celcius).
+        """Returns the current FPGA temperature (in celsius).
         """
         return self._get_temp(0)
 
     @property
     def max_temp(self):
-        """Returns the highest observed FPGA temperature (in celcius) since last power-up
+        """Returns the highest observed FPGA temperature (in celsius) since last power-up
         or :class:`user_reset()` call.
         """
         return self._get_temp(32)
@@ -841,7 +841,7 @@ class XADCSettings(util.DisableNewAttr):
             addr (int): DRP address (0: current; 32: max; 36: min)
 
         Returns:
-            Temperature in celcius (float).
+            Temperature in celsius (float).
         """
         raw = self.drp.read(addr)
         return (raw>>4) * 503.975/4096 - 273.15 # ref: UG480
@@ -851,10 +851,10 @@ class XADCSettings(util.DisableNewAttr):
 
         Args:
             addr (int): DRP address
-            temp (float): temperature threshold [celcius]
+            temp (float): temperature threshold [celsius]
 
         Returns:
-            Temperature in celcius (float).
+            Temperature in celsius (float).
         """
         raw = (int((temp + 273.15)*4096/503.975) << 4) & 0xffff
         self.drp.write(addr, raw)
@@ -1336,7 +1336,7 @@ class LASettings(util.DisableNewAttr):
         * "rising_userio_d[0-7]": a rising edge (0->1) on a USERIO pin
         * "falling_userio_d[0-7]": a falling edge (1->0) on a USERIO pin
         * "rising_tio[0-3]": a rising edge (0->1) on a tio pin
-        * "failling_tio[0-3]": a falling edge (0->1) on a tio pin
+        * "falling_tio[0-3]": a falling edge (0->1) on a tio pin
 
         In addition, capture can be triggered manually, irrespective of the trigger_source
         setting, by calling :class:`trigger_now`.

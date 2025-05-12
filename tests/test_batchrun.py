@@ -17,7 +17,7 @@ TESTED_BATCHSIZE = 2**np.arange(1,11)
 bitstream_path = "../hardware/victims/cw305_artixtarget/fpga/vivado_examples/aes128_verilog/aes128_verilog.runs/impl_35t/cw305_top.bit"
 
 print("####################")
-print("# Programming the target with default bitsteam")
+print("# Programming the target with default bitstream")
 print("####################\n")
 target = CW305()
 target.con(bsfile=bitstream_path, force=False)

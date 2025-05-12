@@ -307,7 +307,7 @@ class CWExtraSettings:
         return self.set_ioroute_value(io_num, mode)
 
     def get_xio_index(self, io_num):
-        """Gets a bitmask for a valid Extra IO pin for the IROUTE state.
+        """Gets a bitmask for a valid Extra IO pin for the IOROUTE state.
 
         Return:
             A bitmask representing the CTL IO pin.
@@ -1591,7 +1591,7 @@ class TriggerSettings(util.DisableNewAttr):
         * "tio1 NAND tio2 NAND sma"
         * "nrst"
 
-        Examples of unallowed trigger inputs:
+        Examples of prohibited trigger inputs:
 
         * "tio1 tio2"
         * "tio1 AND tio2 OR tio3"
@@ -1685,7 +1685,7 @@ class TriggerSettings(util.DisableNewAttr):
     def module(self):
         """The trigger module in use.
 
-        The trigger modules available depend on the hardware. On the CWLite,
+        The trigger modules available depend on the hardware. On the CW-Lite,
         only the basic trigger module can be used; on the CW1200, the serial
         data and SAD triggers are available too.
 
@@ -1713,15 +1713,15 @@ class ProTrigger(TriggerSettings):
     def module(self):
         """The trigger module in use.
 
-        The trigger modules available depend on the hardware. On the CWLite,
+        The trigger modules available depend on the hardware. On the CW-Lite,
         only the basic trigger module can be used; on the CW1200, the serial
         data and SAD triggers are available too.
 
         Available trigger modules:
 
         * 'basic': Trigger on a logic level or edge
-        * 'SAD':   Trigger from SAD module (CWPro only)
-        * 'DECODEIO': Trigger from decode_IO module (CWPro only)
+        * 'SAD':   Trigger from SAD module (CW-Pro only)
+        * 'DECODEIO': Trigger from decode_IO module (CW-Pro only)
 
         :Getter: Return the active trigger module
 
@@ -1752,9 +1752,9 @@ class ProTrigger(TriggerSettings):
 
     @property
     def aux_out(self):
-        """Controls AUX out on the CWPro
+        """Controls AUX out on the CW-Pro
 
-        CWPro only
+        CW-Pro only
 
         :Getter: Returns True for 'trigger', 'glitch' for 'glitch', 'clock' for 'clock' or False for no output.
 
@@ -1950,7 +1950,7 @@ class HuskyTrigger(TriggerSettings):
     def module(self):
         """The trigger module in use.
 
-        The trigger modules available depend on the hardware. On the CWLite,
+        The trigger modules available depend on the hardware. On the CW-Lite,
         only the basic trigger module can be used; on the CW1200, the serial
         data and SAD triggers are available too.
 
@@ -2181,7 +2181,7 @@ class HuskyTrigger(TriggerSettings):
 
     @property
     def level(self):
-        """For triggering on ADC sample exceeding a treshold,
+        """For triggering on ADC sample exceeding a threshold,
         when scope.trigger.module = 'ADC'.
 
         Sets the trigger threshold, in the range [-0.5, 0.5].

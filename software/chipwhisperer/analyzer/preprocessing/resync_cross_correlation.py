@@ -34,7 +34,7 @@ from chipwhisperer.common.utils.parameter import setupSetParam
 
 class ResyncCrossCorrelation(PreprocessingBase):
     """
-    Cross-Correlation Resyncronization
+    Cross-Correlation Resynchronization
     """
     _name = "Resync: Cross Correlation"
     _description = "Use cross-correlation to detect shift between a 'reference trace' and every input trace. "\

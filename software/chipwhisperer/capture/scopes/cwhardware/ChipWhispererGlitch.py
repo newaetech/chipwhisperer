@@ -308,7 +308,7 @@ class GlitchSettings(util.DisableNewAttr):
         notebook in jupyter/demos/husky_glitch.ipynb to visualize glitch
         settings.
 
-        For other capture hardware (CW-lite, CW-pro), width is expressed as a
+        For other capture hardware (CW-Lite, CW-Pro), width is expressed as a
         percentage of one period. One pulse can range from -49.8% to roughly
         49.8% of a period. The system may not be reliable at 0%. Note that
         negative widths are allowed; these act as if they are positive widths
@@ -317,12 +317,12 @@ class GlitchSettings(util.DisableNewAttr):
         :Getter: Return an int (Husky) or float (others) with the current
             glitch width.
 
-        :Setter: Update the glitch pulse width. For CW-lite/pro, the value is
+        :Setter: Update the glitch pulse width. For CW-Lite/Pro, the value is
             adjusted to the closest possible glitch width.
 
         Raises:
            UserWarning: Width outside of [-49.8, 49.8]. The value is rounded
-               to one of these. (CW-lite/pro only)
+               to one of these. (CW-Lite/Pro only)
         """
         return self.cwg.getGlitchWidth()
 
@@ -376,23 +376,23 @@ class GlitchSettings(util.DisableNewAttr):
         scope.glitch.phase_shift_steps+x). Run the notebook in
         jupyter/demos/husky_glitch.ipynb to visualize glitch settings.
 
-        For other capture hardware (CW-lite, CW-pro), offset is expressed 
+        For other capture hardware (CW-Lite, CW-Pro), offset is expressed 
         as a percentage of one period.
         A pulse may begin anywhere from -49.8% to 49.8% away from a rising
         edge, allowing glitches to be swept over the entire clock cycle.
 
         .. warning:: very large negative offset <-45 may result in double glitches
-            (CW-lite/pro only).
+            (CW-Lite/Pro only).
 
-        :Getter: Return an int (Husky) or float (CW-lite/pro) with the current
+        :Getter: Return an int (Husky) or float (CW-Lite/Pro) with the current
             glitch offset.
 
-        :Setter: Set the glitch offset. For CW-lite/pro, the new value is
+        :Setter: Set the glitch offset. For CW-Lite/Pro, the new value is
             rounded to the nearest possible offset.
 
         Raises:
            UserWarning: value outside range [-50, 50] (value is rounded)
-               (CW-lite/pro only)
+               (CW-Lite/Pro only)
         """
         return self.cwg.getGlitchOffset()
 
@@ -453,7 +453,7 @@ class GlitchSettings(util.DisableNewAttr):
           emitted each time the trigger condition is satisfied, whether or
           not the scope is armed.
 
-        .. warning:: calling :code:`scope.arm()` in manual gitch mode will cause a glitch to trigger.
+        .. warning:: calling :code:`scope.arm()` in manual glitch mode will cause a glitch to trigger.
 
         :Getter: Return the current trigger source.
 
@@ -546,12 +546,12 @@ class GlitchSettings(util.DisableNewAttr):
 
         This offset must be in the range [0, 2**32).
 
-        :Getter: Return the current external trigger offset(s). For CW-lite/pro
+        :Getter: Return the current external trigger offset(s). For CW-Lite/Pro
            or when num_glitches=1, this is an integer (for backwards
            compatibility).  Otherwise, it is a MultiGlitchList, which behaves as a list,
            but allows ext_offset[x] = y to set settings for glitch x.
 
-        :Setter: Set the external trigger offset(s). Integer for CW-lite/pro,
+        :Setter: Set the external trigger offset(s). Integer for CW-Lite/Pro,
            list of integers for Husky.
 
         Raises:
@@ -587,11 +587,11 @@ class GlitchSettings(util.DisableNewAttr):
 
         Repeat counter must be in the range [1, 8192].
 
-        :Getter: Return the current repeat value. For CW-lite/pro or when
+        :Getter: Return the current repeat value. For CW-Lite/Pro or when
            num_glitches=1, this is an integer (for backwards compatibility).
            Otherwise, it is a list of integers.
 
-        :Setter: Set the repeat counter. Integer for CW-lite/pro, list of
+        :Setter: Set the repeat counter. Integer for CW-Lite/Pro, list of
            integers for Husky.
 
         Raises:
@@ -642,8 +642,8 @@ class GlitchSettings(util.DisableNewAttr):
 
 class ChipWhispererGlitch(object):
     """
-    Drives the Glitch Module inside the ChipWhisperer Capture Hardware Rev2, or can be used to drive this FPGA
-     module inserted into other systems.
+    Drives the Glitch Module inside the ChipWhisperer Capture Hardware Rev2, or can be used to drive this FPGA 
+    module inserted into other systems.
     """
     CLKSOURCE0_BIT = 0b00000000
     CLKSOURCE1_BIT = 0b00000001
@@ -829,7 +829,7 @@ class ChipWhispererGlitch(object):
     def getPhaseShiftSteps(self):
         """Husky only. Returns number of phase shift steps in one target pll
         cycle.  This is simply 56 times the pll glitch MMCM's multiplier,
-        indepedent of the target clock frequency.  (ref: Xilinx UG472 v1.14,
+        independent of the target clock frequency.  (ref: Xilinx UG472 v1.14,
         "Dynamic Phase Shift Interface in the MMCM")
         """
         return self.pll._mmcm_muldiv * 56
@@ -1170,7 +1170,7 @@ class ChipWhispererGlitch(object):
 
 
     def setGlitchTrigger(self, trigger):
-        """Set glitch trigger type (manual, continous, adc-trigger)"""
+        """Set glitch trigger type (manual, continuous, adc-trigger)"""
         resp = self.oa.sendMessage(CODE_READ, "CLOCKGLITCH_SETTINGS", Validate=False, maxResp=8)
         resp[5] = (resp[5] & ~(0x0C)) | (trigger << 2)
         self.oa.sendMessage(CODE_WRITE, "CLOCKGLITCH_SETTINGS", resp, Validate=False)

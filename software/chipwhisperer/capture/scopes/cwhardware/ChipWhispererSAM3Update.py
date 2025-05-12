@@ -179,7 +179,7 @@ class SAMFWLoader:
             if not os.path.exists(fw_path):
                 raise OSError("File {} does not exist. Firmware has not been erased.".format(fw_path))
         if (not self._hw_type) and (not fw_path):
-            raise OSError("Unable to detect chipwhisperer hardware type and firmware not specified")
+            raise OSError("Unable to detect ChipWhisperer hardware type and firmware not specified")
         before = serial.tools.list_ports.comports()
         before = get_at91_ports()
         # time.sleep(0.5)
@@ -278,7 +278,7 @@ class SAMFWLoader:
                 if i > 10:
                     sam.reset()
                     sam.ser.close()
-                    self.logfunc("Upgrade succeded")
+                    self.logfunc("Upgrade succeeded")
                     self.logfunc("Unable to set boot flash, may need to power cycle")
                     return True
 

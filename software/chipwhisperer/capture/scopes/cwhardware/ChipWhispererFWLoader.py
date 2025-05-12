@@ -109,8 +109,8 @@ class CW_Loader:
         """
         Selects where configuration data comes from:
         * 'builtin' uses data from python release.
-        * 'zipfile' uses seperate zip-file with everything
-        * 'debug' expects a seperate .bit file
+        * 'zipfile' uses separate zip-file with everything
+        * 'debug' expects a separate .bit file
         """
 
         if (release_mode != "builtin") and (release_mode != "debug") and (release_mode != "zipfile"):

@@ -419,7 +419,7 @@ class OpenADCInterface(util.DisableNewAttr):
         return self.msg_read(address, maxResp=num_bytes)
 
     def reset_fpga(self):
-        """ Reset all FPGA resgiters to their defaults.
+        """ Reset all FPGA registers to their defaults.
         """
         if not self._is_husky:
             raise ValueError("For CW-Husky only.")
@@ -709,13 +709,13 @@ class OpenADCInterface(util.DisableNewAttr):
             self.arm(False)
 
             if self._is_husky and self.sendMessage(CODE_READ, "FIFO_STAT", maxResp=1)[0] & 0x0f:
-                scope_logger.warning("FIFO error occured; see scope.adc.errors for details.")
+                scope_logger.warning("FIFO error occurred; see scope.adc.errors for details.")
 
             if stream_timeout:
                 if self._stream_rx_bytes == 0: # == (self._stream_len - 3072):
-                    scope_logger.warning("Streaming mode OVERFLOW occured as trigger too fast - Adjust offset upward (suggest = 200 000)")
+                    scope_logger.warning("Streaming mode OVERFLOW occurred as trigger too fast - Adjust offset upward (suggest = 200 000)")
                 else:
-                    scope_logger.warning("Streaming mode OVERFLOW occured during capture - ADC sample clock probably too fast for stream mode (keep ADC Freq < 10 MHz)")
+                    scope_logger.warning("Streaming mode OVERFLOW occurred during capture - ADC sample clock probably too fast for stream mode (keep ADC Freq < 10 MHz)")
                 timeout = True
         else:
             status = self.getStatus()
@@ -1057,7 +1057,7 @@ class OpenADCInterface(util.DisableNewAttr):
             self._int_data = np.append([0x00]*diff, self._int_data)
             scope_logger.debug("Diff > 0, fpData: {}, int_data: {}".format(len(fpData), len(self._int_data)))
             scope_logger.warning('Pretrigger not met: Do not use downsampling and pretriggering at same time.')
-            scope_logger.debug('Pretrigger not met: can attempt to increase presampleTempMargin(in the code).')
+            scope_logger.debug('Pretrigger not met: can attempt to increase presampleTempMargin (in the code).')
         else:
             scope_logger.debug("Diff <= 0, fpData: {}, int_data: {}".format(len(fpData), len(self._int_data)))
             fpData = fpData[-diff:]
@@ -1613,9 +1613,9 @@ class TriggerSettings(util.DisableNewAttr):
         """The number of ADC samples to record in a single capture.
 
         The maximum number of samples is hardware-dependent:
-        - cwlite: 24400
-        - cw1200: 96000
-        - cwhusky: 131070
+        - CW-Lite: 24400
+        - CW-1200: 96000
+        - CW-Husky: 131070
 
         :Getter: Return the current number of total samples (integer)
 
@@ -1798,7 +1798,7 @@ class TriggerSettings(util.DisableNewAttr):
 
     @property
     def fifo_fill_mode(self) -> str:
-        """The ADC buffer fill strategy - allows segmented usage for CW-lite and CW-pro.
+        """The ADC buffer fill strategy - allows segmented usage for CW-Lite and CW-Pro.
 
         .. warning:: THIS REQUIRES NEW FPGA BITSTREAM - NOT YET IN THE PYTHON.
 
@@ -1883,8 +1883,8 @@ class TriggerSettings(util.DisableNewAttr):
     def segments(self) -> int:
         """Number of sample segments to capture.
 
-        .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
-            CW-pro, see 'fifo_fill_mode' instead.
+        .. warning:: Supported by CW-Husky only. For segmenting on CW-Lite or
+            CW-Pro, see 'fifo_fill_mode' instead.
 
         This setting must be a 16-bit positive integer. 
 
@@ -2064,8 +2064,8 @@ class TriggerSettings(util.DisableNewAttr):
     def segment_cycles(self) -> int:
         """Number of clock cycles separating segments.
 
-        .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
-            CW-pro, see 'fifo_fill_mode' instead.
+        .. warning:: Supported by CW-Husky only. For segmenting on CW-Lite or
+            CW-Pro, see 'fifo_fill_mode' instead.
 
         This setting must be a 20-bit positive integer. 
 
@@ -2122,8 +2122,8 @@ class TriggerSettings(util.DisableNewAttr):
     def segment_cycle_counter_en(self) -> bool:
         """Number of clock cycles separating segments.
 
-        .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
-            CW-pro, see 'fifo_fill_mode' instead.
+        .. warning:: Supported by CW-Husky only. For segmenting on CW-Lite or
+            CW-Pro, see 'fifo_fill_mode' instead.
 
         Set to 0 to capture a new power trace segment every time the target
         issues a trigger event.

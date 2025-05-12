@@ -57,7 +57,7 @@ class AddNoiseRandom(PreprocessingBase):
         If 0, the traces are passed through without being modified. Otherwise,
         random values from N(0, noise) are added to each of the points.
 
-        Setter raises TypeError if noise level isn't a number
+        Setter raises TypeError if noise level isn't a number.
         """
         return self._getNoise()
 

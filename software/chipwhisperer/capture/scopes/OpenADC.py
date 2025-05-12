@@ -45,7 +45,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
     """OpenADC scope object.
 
     This class contains the public API for the OpenADC hardware, including the
-    ChipWhisperer Lite/ CW1200 Pro boards. It includes specific settings for
+    CW-Lite/CW1200 Pro boards. It includes specific settings for
     each of these devices.
 
     To connect to one of these devices, the easiest method is::
@@ -173,7 +173,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
         Args:
             enable (bool): Enable or disable. Optional, defaults to True
             husky_userio (str or None): Enables communication using the Husky's user IO pins.
-                If "jtag", route jtag over those pins. If "swd", route swd. If None, do not route.
+                If "jtag", route JTAG over those pins. If "swd", route SWD. If None, do not route.
                 Optional, defaults to None
             scope_default_setup (bool): Calls `default_setup()` before enabling JTAG mode (resets clock,
                 IOs, etc to default). Useful when working with standard targets, but set this to `False`
@@ -194,7 +194,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
                 elif husky_userio == "swd":
                     self.userio.mode = "target_debug_swd"
                 else:
-                    raise ValueError("Invalid husky userio mode: {}".format(husky_userio))
+                    raise ValueError("Invalid Husky userio mode: {}".format(husky_userio))
             self._getNAEUSB().set_husky_tms_wr(1)
         super().enable_MPSSE(enable)
 
@@ -630,7 +630,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
         return self.scopetype.fpga
 
     def con(self, sn=None, idProduct=None, bitstream=None, force=False, prog_speed=10E6, **kwargs):
-        """Connects to attached chipwhisperer hardware (Lite, Pro, or Husky)
+        """Connects to attached ChipWhisperer hardware (Lite, Pro, or Husky)
 
         Args:
             sn (str): The serial number of the attached device. Does not need to
@@ -884,8 +884,8 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
 
         Floating point values are scaled and shifted to be between -0.5 and 0.5.
 
-        Integer values are raw readings from the ChipWhisperer ADC. The ChipWhisperer-Lite
-        has a 10-bit ADC, the Nano has an 8-bit ADC, and the Husky can read either
+        Integer values are raw readings from the ChipWhisperer ADC. The CW-Lite
+        has a 10-bit ADC, the CW-Nano has an 8-bit ADC, and the CW-Husky can read either
         8-bits or 12-bits of ADC data.
 
         Args:
@@ -914,7 +914,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
         enough triggers for segmented mode.
 
         Returns:
-           True if capture timed out, false if it didn't.
+           True if capture timed out, False if it didn't.
 
         Raises:
            IOError: Unknown failure.
@@ -938,7 +938,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             return timeout or timeout2
 
     def get_last_trace_segmented(self):
-        """Return last trace assuming it was captued with segmented mode.
+        """Return last trace assuming it was captured with segmented mode.
 
         NOTE: The length of each returned trace is 1 less sample than requested.
 

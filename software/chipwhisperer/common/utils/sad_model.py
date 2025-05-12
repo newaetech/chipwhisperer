@@ -91,10 +91,12 @@ class SADCounter(object):
 
 
     def update(self, sample, time, armed_and_ready):
-        # returns matched, covered:
-        # - matched: True on a SAD counter match
-        # - covered: True is sample is covered by a counter *as the first sample of a potential match pattern*
-        # - logscore: log SAD score for the overall system, i.e. when it's time for this counter to trigger (or not)
+        """Returns :code:``(matched, covered, logscore)``:
+        - matched: True on a SAD counter match
+        - covered: True is sample is covered by a counter *as the first sample of a potential match pattern*
+        - logscore: log SAD score for the overall system, i.e. when it's time for this counter to trigger (or not)
+        """
+
         match = False
         covered = True
         logscore = None
@@ -323,14 +325,14 @@ class SADModel(object):
                 self.match_scores.append(c.SAD)
                 self.match_counters.append(c.idx)
                 self.triggered = True
-                if self.verbose: print("counter %d matched at time %6d with score: %d" % (self.index, c.idx, c.SAD))
+                if self.verbose: print("Counter %d matched at time %6d with score: %d" % (self.index, c.idx, c.SAD))
             if not covered:
                 self.uncovered_samples.append(self.index+1)
                 try:
                     self.covered[self.index+1] = 0 
                 except:
                     pass
-                if self.verbose: print("warning: sample %d is not covered" % (self.index+1))
+                if self.verbose: print("Warning: sample %d is not covered" % (self.index+1))
         self.index += 1
         return matched
 

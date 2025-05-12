@@ -37,10 +37,10 @@ connections are as follows:
 
 ### Building Firmware
 
-Building firmware for this target requires make and avr-gcc.
+Building firmware for this target requires `make` and `avr-gcc`.
 Installation of both these are covered in the {doc}`installation instructions <../installation>`.
 
-If you have make and avr-gcc, you can build firmware by navigating via command line to the relevant
+If you have `make` and `avr-gcc`, you can build firmware by navigating via command line to the relevant
 build directory and running:
 
 ```bash

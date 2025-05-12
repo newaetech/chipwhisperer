@@ -77,7 +77,7 @@ class SimpleSerial2(TargetTemplate):
 
     [cmd, subcmd, data_len, data_0, ..., data_n, crc (poly=0x4D)]
 
-    The frame is then consistant overhead byte stuffed (COBS) to remove
+    The frame is then consistent overhead byte stuffed (COBS) to remove
     all 0x00 bytes. An 0x00 byte is then appended to the end of the frame.
 
     Uses 230400bps by default.
@@ -151,7 +151,7 @@ class SimpleSerial2(TargetTemplate):
                         crc <<= 1
                         crc &= 0xFF
         except:
-            target_logger.error("crc error: {}. Try rebuilding firmware if you only get this error.".format(buf))
+            target_logger.error("CRC error: {}. Try rebuilding firmware if you only get this error.".format(buf))
         return crc
 
 
@@ -302,7 +302,7 @@ class SimpleSerial2(TargetTemplate):
     # TODO: Improve this
     def simpleserial_read_witherrors(self, cmd=None, pay_len=None, end='\n',\
                                     timeout=250, glitch_timeout=1000, ack=True):
-        r""" Reads a simpleserial command from the target over serial, but returns invalid responses.
+        r""" Reads a SimpleSerial command from the target over serial, but returns invalid responses.
 
         Reads a command starting with <start> with a COBS encoded bytearray
         payload of length pay_len (i.e. pay_len=16 for an AES128 key) and
@@ -447,7 +447,7 @@ class SimpleSerial2(TargetTemplate):
         return {'valid': True, 'payload': bytearray(response[3:-2]), 'full_response': response, 'rv': rv}
 
     def get_simpleserial_commands(self, timeout=250, flush_on_err=None, ack=True):
-        """Gets available simpleserial commands for target
+        """Gets available SimpleSerial commands for target
 
         Args:
             timeout (int, optional): Value to use for timeouts during initial
@@ -460,7 +460,7 @@ class SimpleSerial2(TargetTemplate):
                 True.
 
         Returns:
-            List of dics with fields 'cmd' command_byte, 'len' 0x00, 'flags' 0x00
+            List of dicts with fields 'cmd' command_byte, 'len' 0x00, 'flags' 0x00
         """
         self.flush()
         self.simpleserial_write('w', [])
@@ -486,7 +486,7 @@ class SimpleSerial2(TargetTemplate):
         pass
 
     def read_cmd(self, cmd=None, pay_len=None, timeout=250, flush_on_err=None, as_dict=False):
-        """Read and decode simpleserial-v2 command. Returns the decoded raw packet, with the
+        """Read and decode SimpleSerial-v2 command. Returns the decoded raw packet, with the
         preceding and following null bytes present.
 
         Args:
@@ -764,8 +764,8 @@ class SimpleSerial2(TargetTemplate):
     def in_waiting_tx(self):
         """Returns the number of characters waiting to be sent by the ChipWhisperer.
 
-        Requires firmware version >= 0.2 for the CWLite/Nano and firmware version and
-        firmware version >= 1.2 for the CWPro.
+        Requires firmware version >= 0.2 for the CW-Lite/Nano and firmware version and
+        firmware version >= 1.2 for the CW-Pro.
 
         Used internally to avoid overflowing the TX buffer, since CW version 5.3
 
@@ -828,8 +828,8 @@ class SimpleSerial2_CDC(SimpleSerial2):
 
         target = cw.target(scope, cw.targets.SimpleSerial2_CDC, dev_path='COM5')
 
-    Other than that, usage is mostly the same as regular simpleserial
-    V2, except the read timeout is always fixed to 250ms.
+    Other than that, usage is mostly the same as regular SimpleSerialV2, 
+    except the read timeout is always fixed to 250ms.
 
     It does offer better performance than the regular SSV2 object
     if reading serial data back from the target.

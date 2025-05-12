@@ -1,6 +1,6 @@
 # CW1173 ChipWhisperer-Lite
 
-The ChipWhisperer-Lite represents NewAE Technology Inc.’s most aggressive pursuit of it’s mission to bring side-channel power analysis and glitching attacks to every engineer and student. The FULLY open-source (hardware, software, 
+The ChipWhisperer-Lite represents NewAE Technology Inc.'s most aggressive pursuit of it's mission to bring side-channel power analysis and glitching attacks to every engineer and student. The FULLY open-source (hardware, software, 
 firmware, FPGA code) is launching a revolution in hardware security. In particular, the ChipWhisperer-Lite
 serves as a good middle ground between the full feature-set of the ChipWhisperer-Pro, and the affordability of
 the ChipWhisperer-Nano.
@@ -204,7 +204,7 @@ This new serial port has a few advantages:
 
 As well as a few disadvantages:
 
-* Need to keep track of a serial port (/dev/ttyACMX or COMX) if not using pyserial
+* Need to keep track of a serial port (/dev/ttyACMX or COMX) if not using PySerial
     - In addition, old versions of PySerial don't allow us to associate 
 
 #### **Mounting Jumpers**
@@ -233,7 +233,7 @@ The following lists jumpers on the ChipWhisperer-Lite Capture Section:
   You may wish to break the target section apart from the main capture
   board. This can easily be accomplished by following these instructions:
 
-1.  Using a sharp knife (such as Xacto knife or retractable safety knife), cut the traces on the bottom side of the board along the cut line. Pass the knife back and forth several times. Scoring the board deeply will make the breaking process easier and less stressful on the PCB:
+1.  Using a sharp knife (such as X-Acto knife or retractable safety knife), cut the traces on the bottom side of the board along the cut line. Pass the knife back and forth several times. Scoring the board deeply will make the breaking process easier and less stressful on the PCB:
 
 ![image](Images/breakstep1.png "image")
 

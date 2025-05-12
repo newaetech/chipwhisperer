@@ -109,7 +109,7 @@ included in the main ChipWhisperer repository at :code:`chipwhisperer/cw_openocd
 
 After this file is used by OpenOCD, additional commands are required to select the correct 
 ChipWhisperer via its USB VendorID and ProductID, as well as select JTAG or SWD mode. After this,
-you can select your target file. Configuration must be done in this order, or openocd will exit 
+you can select your target file. Configuration must be done in this order, or OpenOCD will exit 
 with an error. The general command line configuration is:
 
 .. code:: bash
@@ -203,15 +203,15 @@ Included OpenOCD Scripts
 ========================
 
 To make interacting with OpenOCD easier, some scripts are included in ChipWhisperer's `openocd` folder.
-This includes both normal openocd scripts/config files, as well as `run_openocd.sh`, a shell script
-that puts ChipWhisperer into MPSSE mode and can either use openocd to program a target, or
-set openocd up for debugging. Usage can be printed by:
+This includes both normal OpenOCD scripts/config files, as well as `run_openocd.sh`, a shell script
+that puts ChipWhisperer into MPSSE mode and can either use OpenOCD to program a target, or
+set OpenOCD up for debugging. Usage can be printed by:
 
 .. code:: bash
 
     ./run_openocd.sh -h
 
-You can debug by specifying the ChipWhisperer, jtag/swd mode, and the openocd target config file:
+You can debug by specifying the ChipWhisperer, JTAG/SWD mode, and the OpenOCD target config file:
 
 .. code:: bash
 

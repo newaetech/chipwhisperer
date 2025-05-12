@@ -160,7 +160,7 @@ class CW312T_XC7A35T(XilinxGeneric):
      * Assumes done is 'PDID' (default, but R22/R29 can change that to TIO pin instead)
      * Assumes program is 'PDIC'
 
-    Note - suggested to set HS2 to 'none' during programming, as seems to cause programming to be less reliable.
+    Note - suggested to set HS2 to None during programming, as seems to cause programming to be less reliable.
 
     Example::
         from chipwhisperer.hardware.naeusb.programmer_targetfpga import CW312T_XC7A35T
@@ -219,7 +219,7 @@ class LatticeICE40(FPGASlaveSPI):
 
 
     def erase_and_init(self):
-        """Erase the ice40 CRAM and prepare device for slave SPI mode"""
+        """Erase the iCE40 CRAM and prepare device for slave SPI mode"""
 
         #DONE pin is high-z
         setattr(self.scope.io, self.cdone, None)
@@ -381,7 +381,7 @@ class LatticeICE40(FPGASlaveSPI):
             bram_blocksize = [2560, 2560, 1280, 1280, 2560, 2560, 1280, 1280]
             bram_shiftamount = [5, 5, 5, 5, 5, 5, 5, 5]
         else:
-            raise NotImplementedError("Only ice40UP5K supported for readback")
+            raise NotImplementedError("Only iCE40UP5K supported for readback")
 
         #Initial clocks after bitstream loaded
         spi.transfer([0xFF]*126, writeonly=True)
@@ -439,7 +439,7 @@ class LatticeICE40(FPGASlaveSPI):
         raise IOError("Device never indicated ready.")
 
     def check_idcode(self, csname="pdid"):
-        """Reads idcode (this is undocumented feature of ICE40 so very beta).
+        """Reads idcode (this is undocumented feature of iCE40 so very beta).
         
         Requires MISO connection (not always required). Only tested with certain
         devices, so if this fails try programming anyway.
@@ -472,14 +472,14 @@ class LatticeICE40(FPGASlaveSPI):
             full_idcode = spi.transfer([0x0]*13, start=False, stop=False)
 
             # I think this is ID code? No documentation though.
-            # Ohter bytes
+            # Other bytes
             idcode = full_idcode[12]
 
             #Other data used for finerprinting(? not done by ice)
             full_afteridcode = spi.transfer([0x0]*128, start=False)
 
             # ice programmer does the following, shouldn't matter since we are done with
-            # the idcoe read by now?
+            # the idcode read by now?
             self.wait_until_notbusy(spi)
             spi.transfer([0xFF]*2, stop=False, start=False, writeonly=True)
             spi.transfer([0x83, 0x00, 0x00, 0x25, 0x00])

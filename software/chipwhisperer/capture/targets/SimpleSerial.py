@@ -43,7 +43,7 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
         scope = cw.scope()
         target = cw.target(scope)
 
-    The target is automatically connected to if the default configuration
+    The target is automatically connected to if the default configuration is
     adequate.
 
     A `noflush=True` kwarg may be used to suppress an initial protocol-specific
@@ -68,7 +68,7 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
     * :meth:`target.get_simpleserial_commands <.SimpleSerial.get_simpleserial_commands>`
 
     .. warning::
-        The CWLite, CW1200, and CWNano have a 128 byte read buffer and a 128
+        The CW-Lite, CW1200, and CW-Nano have a 128 byte read buffer and a 128
         byte send buffer. If the read buffer overflows, a warning message
         will be printed. Prior to firmware 0.20, the send buffer can silently
         overflow. In ChipWhisperer 5.4, this is upgraded to a 200 byte read/send buffer.
@@ -245,7 +245,7 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
         return True
 
     def get_simpleserial_commands(self, timeout=250, ack=True):
-        """Gets available simpleserial commands for target
+        """Gets available SimpleSerial commands for the target
 
         Args:
             timeout (int, optional): Value to use for timeouts during initial
@@ -255,7 +255,7 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
                 True.
 
         Returns:
-            List of dics with fields 'cmd' command_byte, 'len' command_length, 'flags' command_flags
+            List of dicts with fields 'cmd' command_byte, 'len' command_length, 'flags' command_flags
         """
         self.flush()
         self.simpleserial_write('y', bytearray())
@@ -362,18 +362,18 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
         return ret
 
     def simpleserial_write(self, cmd, num, end='\n', var_len=False):
-        """ Writes a simpleserial command to the target over serial.
+        """ Writes a SimpleSerial command to the target over serial.
 
         Writes 'cmd' + ascii(num) + 'end' over serial. Flushes the read and
         write buffers before writing.
 
         Args:
-            cmd (str): String to start the simpleserial command with. For
+            cmd (str): String to start the SimpleSerial command with. For
                 'p'.
             num (bytearray): Number to write as part of command. For example,
                 the 16 byte plaintext for the 'p' command. Converted to hex-ascii
                 before being sent. If set to 'none' is omitted.
-            end (str, optional): String to end the simpleserial command with.
+            end (str, optional): String to end the SimpleSerial command with.
                 Defaults to '\\n'.
             var_len (bool, optional): Indicates that this command is variable length.
                 Must be supported by firmware. Defaults to False.
@@ -406,7 +406,7 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
         self._simpleserial_last_sent = cmd
 
     def simpleserial_read(self, cmd, pay_len, end='\n', timeout=250, ack=True):
-        r""" Reads a simpleserial command from the target over serial.
+        r""" Reads a SimpleSerial command from the target over serial.
 
         Reads a command starting with <start> with an ASCII encoded bytearray
         payload of length exp_len*2 (i.e. exp_len=16 for an AES128 key) and
@@ -476,7 +476,7 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
         return payload
 
     def simpleserial_read_witherrors(self, cmd, pay_len, end="\n", timeout=250, glitch_timeout=8000, ack=True):
-        r""" Reads a simpleserial command from the target over serial, but returns invalid responses.
+        r""" Reads a SimpleSerial command from the target over serial, but returns invalid responses.
 
         Reads a command starting with <start> with an ASCII encoded bytearray
         payload of length exp_len*2 (i.e. exp_len=16 for an AES128 key) and
@@ -621,8 +621,8 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
     def in_waiting_tx(self):
         """Returns the number of characters waiting to be sent by the ChipWhisperer.
 
-        Requires firmware version >= 0.2 for the CWLite/Nano and firmware version and
-        firmware version >= 1.2 for the CWPro.
+        Requires firmware version >= 0.2 for the CW-Lite/Nano and firmware version and
+        firmware version >= 1.2 for the CW-Pro.
 
         Used internally to avoid overflowing the TX buffer, since CW version 5.3
 

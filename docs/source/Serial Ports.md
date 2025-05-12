@@ -19,7 +19,7 @@ This new serial port has a few advantages:
 
 As well as a few disadvantages:
 
-* Need to keep track of a serial port (`/dev/ttyACM*` or `COMX`) if not using pyserial
+* Need to keep track of a serial port (`/dev/ttyACM*` or `COMX`) if not using PySerial
     - Old versions of PySerial don't allow us to figure out the correct
         serial port from the custom USB interface, meaning the serial port must also be input manually.
 * USART settings can be changed by the serial client, which will mess up your communication

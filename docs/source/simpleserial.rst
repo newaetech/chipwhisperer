@@ -9,10 +9,10 @@ a command field.
 
 In general, communication has the following steps:
 
-1. Host PC sends a packet using ChipWhisperer’s Python API
+1. Host PC sends a packet using ChipWhisperer's Python API
 2. Capture device sends this packet over UART
 3. Target receives the packet and decodes it
-4. Target utilizes the data in a callback selected by the packet’s
+4. Target utilizes the data in a callback selected by the packet's
    command field
 5. Target optionally sends data back
 6. Target sends back an acknowledgement packet
@@ -143,7 +143,7 @@ Your callback can be registered in both V1 and V2 in ``main()`` by
    simpleserial_addcmd(cmd, cmd_len, my_callback);
 
 **By default, V1 does not support variable length commands, so V1 will
-ignore all packets that don’t send** ``cmd_len`` **bytes of data unless
+ignore all packets that don't send** ``cmd_len`` **bytes of data unless
 specified as a variable length command.**
 
 To wait for a packet, use ``simpleserial_get()`` after registering your
@@ -154,7 +154,7 @@ commands:
    while (1) simpleserial_get();
 
 ``simpleserial_get()`` **blocks until a packet is received, so your
-target device won’t be able to do anything between calling**
+target device won't be able to do anything between calling**
 ``simpleserial_get()`` **and receiving a packet.**
 
 Sending Data in C
@@ -283,7 +283,7 @@ V2 is used it will equal ``SS_VER_2_1``. For example:
        return 0x00;
    }
 
-Using SimpleSerial Outside of ChipWhipserer’s HAL
+Using SimpleSerial Outside of ChipWhipserer's HAL
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 SimpleSerial can be used in other projects by including
@@ -298,7 +298,7 @@ makefile and defining the following function signatures in a file called
 The implementation of these functions is up to you, so long as
 ``getch()`` blocks.
 
-Using V2’s Additional Features
+Using V2's Additional Features
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Variable Length Commands
@@ -321,7 +321,7 @@ document). For example:
 Sub Commands
 ^^^^^^^^^^^^
 
-In addition to the main ``cmd`` field, there’s an additional byte,
+In addition to the main ``cmd`` field, there's an additional byte,
 ``scmd``, which is passed to your callback function. This field can be
 useful for changing behaviour of callbacks. For example, you can use
 ``scmd`` when transferring large amounts of data to indicate which chunk
@@ -598,7 +598,7 @@ It might return without calling a callback for several reasons:
 
 -  There are no handler listening to the command send.
 
--  The send packet is invalid. e.g. in SimpleSerial this could be due to
+-  The send packet is invalid. e.g. in SimpleSerial this could be due to
    data bytes not being in HexASCII format.
 
 -  The data buffer has an unexpected length.

@@ -66,12 +66,12 @@ class EightBitAES128LeakageModels:
 
     @property
     def sbox_output(self):
-        """Hamming weight of 1st round SBox output"""
+        """Hamming weight of 1st round S-box output"""
         return AES128_8bit(aes128_leakage.SBox_output)
 
     @property
     def inverse_sbox_output(self):
-        """Hamming weight of 1st round InvSBox (for decryption)"""
+        """Hamming weight of 1st round inverse S-box (for decryption)"""
         return AES128_8bit(aes128_leakage.InvSBox_output)
 
     @property
@@ -121,17 +121,17 @@ class EightBitAES128LeakageModels:
 
     @property
     def sbox_in_out_diff(self):
-        """Hamming distance between SBox input and output."""
+        """Hamming distance between S-box input and output."""
         return AES128_8bit(aes128_leakage.SBoxInOutDiff)
 
     @property
     def sbox_input_successive(self):
-        """Hamming distance between 2 AES sbox inputs"""
+        """Hamming distance between 2 AES S-box inputs"""
         return AES128_8bit(aes128_leakage.SBoxInputSuccessive)
 
     @property
     def sbox_output_successive(self):
-        """Hamming distance between 2 AES sbox outputs"""
+        """Hamming distance between 2 AES S-box outputs"""
         return AES128_8bit(aes128_leakage.SBoxOutputSuccessive)
 
     @property
@@ -146,7 +146,7 @@ class EightBitAES128LeakageModels:
 
     @property
     def round_1_2_state_diff_sbox(self):
-        """Hamming distance between round 1 and round 2 sbox output"""
+        """Hamming distance between round 1 and round 2 S-box output"""
         return AES128_8bit(aes128_leakage.Round1Round2StateDiff_SBox)
 
     def __str__(self):

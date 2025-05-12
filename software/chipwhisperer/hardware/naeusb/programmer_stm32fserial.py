@@ -292,7 +292,7 @@ class STM32FSerial:
             self.scope.io.nrst = 'high'
             time.sleep(0.025)
         else:
-            raise ValueError('requires either scope or api to be set')
+            raise ValueError('Requires either scope or api to be set')
 
     @close_on_fail
     def set_boot(self, enter_bootloader):
@@ -300,13 +300,13 @@ class STM32FSerial:
             if self.scope:
                 self.scope.io.pdic = 'high'
             else:
-                raise ValueError('requires either scope or api to be set')
+                raise ValueError('Requires either scope or api to be set')
         else:
             if self.scope:
                 self.scope.io.pdic = 'low'
             else:
-                raise ValueError('requires either scope or api to be set')
-        target_logger.info("Assuming appropriate BOOT pins set HIGH on STM32F Hardware now")
+                raise ValueError('Requires either scope or api to be set')
+        target_logger.info("Assuming appropriate BOOT pins set HIGH on STM32F hardware now")
 
 
 
@@ -366,7 +366,7 @@ class STM32FSerial:
 
     def cmdGet(self):
         if self.cmdGeneric(0x00):
-            target_logger.info("*** Get command");
+            target_logger.info("*** Get command")
             length, version = self.sp.read(2)
             # version = self.sp.read(1)[0]
             target_logger.info("    Bootloader version: " + hex(version))

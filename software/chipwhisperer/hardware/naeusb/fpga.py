@@ -32,7 +32,7 @@ from ...logging import *
 try:
     import numpy as np
 except:
-    naeusb_logger.info("numpy is required for parallel CW340 programming")
+    naeusb_logger.info("Numpy is required for parallel CW340 programming")
     np = None # type: ignore
 
 class FPGA(object):
@@ -140,7 +140,7 @@ class FPGA(object):
         """
 
         if np is None and bitorder != 0x00:
-            raise ValueError("numpy not installed and parallel programming selected. Install numpy or use serial programming")
+            raise ValueError("Numpy not installed and parallel programming selected. Install Numpy or use serial programming")
 
         # reverse bitwise endianness
         def reverse_bits(x):

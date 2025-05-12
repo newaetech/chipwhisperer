@@ -83,11 +83,11 @@ class AES(object):
             0x21, 0x0c, 0x7d]
 
     def getSBoxValue(self, num):
-        """Retrieves a given S-Box Value"""
+        """Retrieves a given S-box value"""
         return self.sbox[num]
 
     def getSBoxInvert(self, num):
-        """Retrieves a given Inverted S-Box Value"""
+        """Retrieves a given inverted S-box value"""
         return self.rsbox[num]
 
     def galois_multiplication(self, a, b):
@@ -202,7 +202,7 @@ class AES256_8bit(ModelsBase):
         return a
 
     def HypHW(self, pt, ct, key, bnum):
-        """Given either plaintext or ciphertext (not both) + a key guess, return hypothetical hamming weight of result"""
+        """Given either plaintext or ciphertext (not both) + a key guess, return hypothetical Hamming weight of result"""
         if pt != None:
             return self.HW[sbox(pt[bnum] ^ key)]
         elif ct != None:
@@ -227,7 +227,7 @@ class AES256_8bit(ModelsBase):
         return self.HW[xtime(a^b)]
 
     def HypHD(self, pt, ct, key, bnum):
-        """Given either plaintext or ciphertext (not both) + a key guess, return hypothetical hamming distance of result"""
+        """Given either plaintext or ciphertext (not both) + a key guess, return hypothetical Hamming distance of result"""
         #Get output
         if pt != None:
             #TODO: This does't work too well, need to fix

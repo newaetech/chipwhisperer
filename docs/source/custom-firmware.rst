@@ -9,15 +9,15 @@ Basic Overview
 **************
 
 ChipWhisperer firmware projects can be broken down into four separate parts: the main project files,
-the hardware abstraction layer (HAL), crypto files, and simpleserial.
+the hardware abstraction layer (HAL), crypto files, and SimpleSerial.
 
 Main Project Files
 ==================
 
 These files are contained in different project folders and are unique to each project. This includes source files and the project
-makefile. For example, simpleserial-aes has :code:`simpleserial-aes.c` which contains :code:`main()` and various other
-functions for reading a key/plaintext over serial, doing an encryption, etc. The makefile for this project tells the build
-which custom files to use, as well as includes the simpleserial makefile and the main build makefile :code:`Makefile.inc`.
+Makefile. For example, simpleserial-aes has :code:`simpleserial-aes.c` which contains :code:`main()` and various other
+functions for reading a key/plaintext over serial, doing an encryption, etc. The Makefile for this project tells the build
+which custom files to use, as well as includes the SimpleSerial Makefile and the main build Makefile :code:`Makefile.inc`.
 
 HAL
 ===
@@ -26,7 +26,7 @@ The HAL part of the build system is contained in the HAL folder and includes fil
 For example, the STM32F3, XMEGA, and SAM4S targets all have their own folder in the HAL folder and include sourcefiles
 for implementing things like serial communication, clock setup, etc, as well as interface functions to allow 
 the main project files to do setup and send and receive serial characters. 
-They also include a makefile which specifies which compiler to use, as well as compile and build flags. 
+They also include a Makefile which specifies which compiler to use, as well as compile and build flags. 
 Finally, they will typically have a linker script file, which defines the various memory regions for flash, RAM, etc.
 
 Crypto
@@ -39,7 +39,7 @@ algorithms in the same project.
 SimpleSerial
 ============
 
-The simpleserial folder contains the implementation of the target side of the simpleserial protocol. If you want to modify
+The simpleserial folder contains the implementation of the target side of the SimpleSerial protocol. If you want to modify
 anything related to that, this is the spot to do it in.
 
 ********
@@ -120,9 +120,9 @@ plaintext and send it back. Our project files typically support both simpleseria
 Note that the above doesn't use the crypto portion of the build system. Unless you want to use your algorithm
 across multiple projects, typically it's easier to just include your algorithm in the main project files.
 
-The final thing we need to do is setup our makefile. Your makefile just needs to
+The final thing we need to do is setup our Makefile. Your Makefile just needs to
 include the build filename that you want, the source files, and include the simpleserial and main
-makefiles:
+Makefiles:
 
 .. code:: Makefile
 

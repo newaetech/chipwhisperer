@@ -34,7 +34,7 @@ CODE_READ   = 0x80
 CODE_WRITE  = 0xC0
 
 class ChipWhispererSAD(util.DisableNewAttr):
-    """Communicates with the SAD module inside the CW Pro.
+    """Communicates with the SAD module inside the CW-Pro.
 
     This submodule is only available on the ChipWhisperer1200 Pro.
 
@@ -629,7 +629,7 @@ class HuskySAD(util.DisableNewAttr):
 
     @property
     def _ref_fifo_errors(self):
-        """Whether internal SAD FIFO errors have occured.
+        """Whether internal SAD FIFO errors have occurred.
         0 means no errors;
         non-zero: see Verilog source file for definitions.
         """
