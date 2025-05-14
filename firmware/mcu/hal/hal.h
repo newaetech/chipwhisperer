@@ -199,5 +199,6 @@ void platform_init(void);
 
 void led_ok(unsigned int status);
 void led_error(unsigned int status);
+uint64_t hal_get_time(void);
 
 #endif //HAL_H_
