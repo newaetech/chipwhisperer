@@ -43,6 +43,7 @@
 #include "stm32f3xx_hal_uart.h"
 #include "stm32f3xx_hal_flash.h"
 #include "stm32f3xx_hal_cortex.h"
+#include "arm_const_structs.h"
 
 #define assert_param(expr) ((void)0U)
 uint32_t hal_sys_tick = 0;
@@ -613,7 +614,8 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, ui
 
   /* Configure the source of time base considering new system clocks settings*/
   //HAL_InitTick (TICK_INT_PRIORITY);
-  
+  SysTick_Config(1 << 24);
+
   return HAL_OK;
 }
 

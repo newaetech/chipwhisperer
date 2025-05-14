@@ -153,3 +153,22 @@ void change_ok_led(int x)
 {
 }
 #endif //PLATFORM==CWLITEARM
+
+static volatile unsigned long long overflowcnt = 0;
+
+/* SysTick Interrupt */
+void SysTick_Handler(void)
+{
+	  ++overflowcnt;
+}
+
+uint64_t hal_get_time(void)
+{
+  while (1) {
+    unsigned long long before = overflowcnt;
+    unsigned long long result = (before + 1) * 16777216llu - SysTick->VAL;
+    if (overflowcnt == before) {
+      return result;
+    }
+  }
+}

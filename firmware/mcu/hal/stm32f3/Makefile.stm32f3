@@ -30,6 +30,7 @@ CPPFLAGS += -mthumb -mfloat-abi=soft -fmessage-length=0 -ffunction-sections
 ASFLAGS += -mthumb -mfloat-abi=soft -fmessage-length=0 -ffunction-sections
 
 CDEFS += -DSTM32F303xC -DSTM32F3 -DSTM32 -DDEBUG
+CDEFS += -DARM_MATH_CM4
 CPPDEFS += -DSTM32F303xC -DSTM32F3 -DSTM32 -DDEBUG
 
 LDFLAGS += --specs=nano.specs --specs=nosys.specs -T $(HALPATH)/stm32f3/LinkerScript.ld -Wl,--gc-sections -lm
