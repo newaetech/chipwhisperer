@@ -811,7 +811,7 @@ class NAEUSB_Backend:
         naeusb_logger.debug("FPGA_WRITE: bulk: {}, addr: {:08X}, dlen: {:08X}, response: {}"\
             .format("yes" if len(pload) >= NAEUSB_CTRL_IO_THRESHOLD else "no", addr, len(pload), data))
 
-    def write_bulk(self, data : bytearray, timeout = None):
+    def write_bulk(self, data : bytearray, timeout : Union[int, float, None]=None):
         """Write data directly to the bulk endpoint.
 
         Args:
