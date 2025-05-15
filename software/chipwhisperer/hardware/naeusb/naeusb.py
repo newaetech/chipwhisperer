@@ -370,6 +370,17 @@ NEWAE_PIDS = {
 class NAEUSB_Backend:
     """
     Backend to talk to the USB device.
+
+    Attributes:
+        _usbdev (usb1.USBDeviceHandle): The USB device handle.
+        _timeout (int): Timeout for USB operations.
+        device (usb1.USBDevice): The USB device object.
+        handle (usb1.USBDeviceHandle): The USB device handle.
+        usb_ctx (usb1.USBContext): The USB context.
+        sn (str): Serial number of the device.
+        pid (int): Product ID of the device.
+        rep (int): Read endpoint address.
+        wep (int): Write endpoint address.
     """
 
     CMD_READMEM_BULK = 0x10
@@ -379,6 +390,9 @@ class NAEUSB_Backend:
     CMD_MEMSTREAM = 0x14
 
     def __init__(self):
+        """Initializes the USB backend with default values.
+        
+        The timeout is set to 500ms and a USB context is created."""
         self._usbdev = None
         self._timeout = 500
         self.device = None
@@ -395,12 +409,28 @@ class NAEUSB_Backend:
         self.device = None
 
     def usbdev(self) -> usb1.USBDeviceHandle:
-        """Safely get USB device, throwing error if not connected"""
+        """Safely get USB device, throwing an error if not connected.
+        
+        Returns:
+            A usb1.USBDeviceHandle object.
+        
+        Raises:
+            OSError: If the USB device is not connected."""
 
         if not self._usbdev: raise OSError("USB Device not found. Did you connect it first?")
         return self._usbdev
 
-    def is_accessable(self, dev : usb1.USBDevice) -> bool:
+    def is_accessible(self, dev : usb1.USBDevice) -> bool:
+        """Notes whether the device can be accessed or not.
+        
+        Calls the :code:`getSerialNumber()` device attribute.
+
+        Args:
+            dev (usb1.USBDevice): The device to check.
+
+        Returns:
+            bool: True if no errors are thrown, False otherwise.
+        """
         try:
             dev.getSerialNumber()
             return True
@@ -481,7 +511,7 @@ class NAEUSB_Backend:
         self.close()
 
     def close(self):
-        # """Close the USB connection"""
+        """Close the USB connection and clear attributes."""
         if self.device:
             del self.device
             self.device = None
