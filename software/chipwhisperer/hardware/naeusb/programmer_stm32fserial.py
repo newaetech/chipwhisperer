@@ -144,7 +144,7 @@ class STM32FSerial:
 
             self.sp = self._cwserial
         else:
-            raise NotImplementedError("CW-Serial is only supported method (for now)")
+            raise NotImplementedError("CWSerial is only supported method (for now)")
 
     def close_port(self):
         if self._old_baud:
@@ -165,7 +165,7 @@ class STM32FSerial:
 
     @close_on_fail
     def find(self, logfunc=print_fun):
-        #setup serial port (or CW-serial port?)
+        #setup serial port (or CWSerial port?)
 
         if logfunc is None:
             logfunc = print_fun

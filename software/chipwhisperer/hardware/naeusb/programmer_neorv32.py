@@ -150,7 +150,7 @@ class Neorv32Programmer:
 
             self.sp = self._cwserial
         else:
-            raise NotImplementedError("CW-Serial is only supported method (for now)")
+            raise NotImplementedError("CWSerial is only supported method (for now)")
 
     def close_port(self):
         if self._old_baud:

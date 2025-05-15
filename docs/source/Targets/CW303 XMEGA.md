@@ -1,7 +1,7 @@
 # CW303 XMEGA Target
 
 The ChipWhisperer-Lite board has a break-away target board section. This
-target can be used attached to the CW-Lite or separated and connected
+target can be used attached to the CWLite or separated and connected
 via ribbon cable. The breakaway target board has a slightly different
 feature set than the CW308T-XMEGA target board.
 

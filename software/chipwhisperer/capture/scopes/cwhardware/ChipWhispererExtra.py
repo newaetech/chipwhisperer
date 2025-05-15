@@ -1152,7 +1152,7 @@ class GPIOSettings(util.DisableNewAttr):
         * "hs2": output: provide the same clock that's on HS2.
         """
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         data = self.cwe.oa.sendMessage(CODE_READ, "CW_AUX_IO", Validate=False, maxResp=1)[0]
         if data & 0x01:
             return "hs2"
@@ -1162,7 +1162,7 @@ class GPIOSettings(util.DisableNewAttr):
     @aux_io_mcx.setter
     def aux_io_mcx(self, state : str):
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         data = self.cwe.oa.sendMessage(CODE_READ, "CW_AUX_IO", Validate=False, maxResp=1)[0]
         if state == 'high_z':
             data &= 0xfe
@@ -1182,7 +1182,7 @@ class GPIOSettings(util.DisableNewAttr):
         * "inverted [glitch | trigger]": inverted glitch or trigger signal
         """
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         data = self.cwe.oa.sendMessage(CODE_READ, "CW_AUX_IO", Validate=False, maxResp=1)[0]
         if data & 0x04:
             setting = 'inverted '
@@ -1197,7 +1197,7 @@ class GPIOSettings(util.DisableNewAttr):
     @glitch_trig_mcx.setter
     def glitch_trig_mcx(self, state : str):
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         data = self.cwe.oa.sendMessage(CODE_READ, "CW_AUX_IO", Validate=False, maxResp=1)[0]
         if 'trigger' in state:
             data &= 0xfd
@@ -1685,7 +1685,7 @@ class TriggerSettings(util.DisableNewAttr):
     def module(self):
         """The trigger module in use.
 
-        The trigger modules available depend on the hardware. On the CW-Lite,
+        The trigger modules available depend on the hardware. On the CWLite,
         only the basic trigger module can be used; on the CW1200, the serial
         data and SAD triggers are available too.
 
@@ -1713,15 +1713,15 @@ class ProTrigger(TriggerSettings):
     def module(self):
         """The trigger module in use.
 
-        The trigger modules available depend on the hardware. On the CW-Lite,
+        The trigger modules available depend on the hardware. On the CWLite,
         only the basic trigger module can be used; on the CW1200, the serial
         data and SAD triggers are available too.
 
         Available trigger modules:
 
         * 'basic': Trigger on a logic level or edge
-        * 'SAD':   Trigger from SAD module (CW-Pro only)
-        * 'DECODEIO': Trigger from decode_IO module (CW-Pro only)
+        * 'SAD':   Trigger from SAD module (CWPro only)
+        * 'DECODEIO': Trigger from decode_IO module (CWPro only)
 
         :Getter: Return the active trigger module
 
@@ -1752,9 +1752,9 @@ class ProTrigger(TriggerSettings):
 
     @property
     def aux_out(self):
-        """Controls AUX out on the CW-Pro
+        """Controls AUX out on the CWPro
 
-        CW-Pro only
+        CWPro only
 
         :Getter: Returns True for 'trigger', 'glitch' for 'glitch', 'clock' for 'clock' or False for no output.
 
@@ -1822,7 +1822,7 @@ class SequenceTriggerList(list):
 
 class HuskyTrigger(TriggerSettings):
     """Husky trigger object.
-    Communicates with all the trigger modules inside CW-Husky.
+    Communicates with all the trigger modules inside CWHusky.
     Usage depends on the active trigger module.
     """
     MODULE = {'basic':          0x00,
@@ -1950,7 +1950,7 @@ class HuskyTrigger(TriggerSettings):
     def module(self):
         """The trigger module in use.
 
-        The trigger modules available depend on the hardware. On the CW-Lite,
+        The trigger modules available depend on the hardware. On the Lite,
         only the basic trigger module can be used; on the CW1200, the serial
         data and SAD triggers are available too.
 

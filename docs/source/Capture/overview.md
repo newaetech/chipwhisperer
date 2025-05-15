@@ -6,7 +6,7 @@ title: Overview & Comparison
 
 ChipWhisperer is a platform that makes researching and testing embedded side channel attacks simple, easy, replicable, and convenient. In particular, ChipWhisperer focuses on power analysis and voltage/clock glitching.
 
-This page compares the features of five capture side hardware devices: the ChipWhisperer-Husky, the ChipWhisperer-Husky-Plus, the CW1200 ChipWhisperer-Pro (CW-Pro), the CW1173 ChipWhisperer-Lite (CW-Lite), and the CW1101 ChipWhisperer-Nano (CW-Nano). As a quick overview
+This page compares the features of five capture side hardware devices: the ChipWhisperer-Husky, the ChipWhisperer-Husky-Plus, the CW1200 ChipWhisperer-Pro (CWPro), the CW1173 ChipWhisperer-Lite (CWLite), and the CW1101 ChipWhisperer-Nano (CWNano). As a quick overview
 
 * All are capable of power analysis and glitching
     * The ChipWhisperer Nano cannot clock glitch, but can voltage glitch

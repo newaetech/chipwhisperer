@@ -34,7 +34,7 @@ CODE_READ   = 0x80
 CODE_WRITE  = 0xC0
 
 class ChipWhispererSAD(util.DisableNewAttr):
-    """Communicates with the SAD module inside the CW-Pro.
+    """Communicates with the SAD module inside the CWPro.
 
     This submodule is only available on the ChipWhisperer1200 Pro.
 
@@ -228,7 +228,7 @@ class Lister(list):
 
 
 class HuskySAD(util.DisableNewAttr):
-    """Communicates with the SAD module inside CW-Husky.
+    """Communicates with the SAD module inside CWHusky.
 
     Because SAD is by far the largest FPGA module, XADC alarms
     (temperature/voltage) shut down the SAD.

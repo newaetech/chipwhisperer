@@ -192,7 +192,7 @@ class LatticeICE40(FPGASlaveSPI):
     Physical connections (ChipWhisperer <-> ICE40)
      * SCK/MOSI to SCK/SI (optional - MISO/SO as well)
      * nRST to CRST
-     * PDIC to CDONE (optional - read not supported on CW-Lite/CW-1200)
+     * PDIC to CDONE (optional - read not supported on CWLite/CW1200)
      * PDID to CS
 
     Example::

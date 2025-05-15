@@ -1,7 +1,7 @@
 # CW304 Notduino Target
 
 The Notduino is used as a target for the ChipWhisperer Capture system.
-This includes interfacing to the CW-Lite (CW1173) and related platforms.
+This includes interfacing to the CWLite (CW1173) and related platforms.
 
 ![](Images/Notduino.jpg)
 
@@ -105,7 +105,7 @@ and C9 if not using the ChipWhisperer for a clock source.
 | Silkscreen | ATMega328P | Arduino Name | Notes                                            |
 | ---------- | ---------- | ------------ | ------------------------------------------------ |
 | GND        | Ground     |              |                                                  |
-| 3V3        | VCC        |              | If NOT connected to CW-Lite, can power from 3-5V |
+| 3V3        | VCC        |              | If NOT connected to CWLite, can power from 3-5V  |
 | TXD        | PORTD.1    | Pin 1        | Output from AVR                                  |
 | RXD        | PORTD.0    | Pin 0        | Input to AVR                                     |
 | RST        | Reset      |              |                                                  |

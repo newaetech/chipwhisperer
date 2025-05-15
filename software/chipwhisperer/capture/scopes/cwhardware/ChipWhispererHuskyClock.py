@@ -1603,7 +1603,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
     @property
     def adc_src(self):
         """Convenience function for backwards compatibility with how ADC clocks
-        are set on CW-Lite and CW-Pro.
+        are set on CWLite and CWPro.
 
         The ADC can be clocked by one of five possible sources:
 
@@ -1649,7 +1649,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
     @clear_adc_unlock # type: ignore
     def reset_adc(self):
         """Convenience function for backwards compatibility with how ADC clocks
-        are managed on CW-Lite and CW-Pro.
+        are managed on CWLite and CWPro.
         """
         self._cached_adc_freq = None
         self.pll.reset()
@@ -1664,7 +1664,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
     @property
     def adc_locked(self):
         """Convenience function for backwards compatibility with how ADC clocks
-        are managed on CW-Lite and CW-Pro.
+        are managed on CWLite and CWPro.
         """
         return self.pll.pll_locked
 

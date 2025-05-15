@@ -593,7 +593,7 @@ class CWNano(util.DisableNewAttr, ChipWhispererCommonInterface):
         * glitch module off
 
         .. versionadded:: 5.1
-            Added default setup for CW-Nano
+            Added default setup for CWNano
         """
         self.adc.clk_freq = 7.5E6
         self.io.clkout = 7.5E6
@@ -739,8 +739,8 @@ is in an error state, or is being used by another tool.") from e
 
         Floating point values are scaled and shifted to be between -0.5 and 0.5.
 
-        Integer values are raw readings from the ChipWhisperer ADC. The CW-Lite
-        has a 10-bit ADC, the CW-Nano has an 8-bit ADC, and the CW-Husky can read either
+        Integer values are raw readings from the ChipWhisperer ADC. The CWLite
+        has a 10-bit ADC, the CWNano has an 8-bit ADC, and the CWHusky can read either
         8-bits or 12-bits of ADC data.
 
         Args:

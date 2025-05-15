@@ -15,7 +15,7 @@ analysis.
 **NOTE:** This page will only cover the capture side of the board. See
 `targets/CW303` for documentation on the target side of the board.
 
-![CW-Lite Thing](Images/cwlite_basic.png "image")
+![CWLite Thing](Images/cwlite_basic.png "image")
 
 Available in the [ChipWhisperer-Lite starter kit](../Starter%20Kits/ChipWhisperer-Lite.md), the [Level 1 Starter Kit](../Starter%20Kits/SCAPACK-L1.md), and the [Level 2 Starter Kit](../Starter%20Kits/SCAPACK-L2.md)
 

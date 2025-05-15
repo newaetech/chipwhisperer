@@ -336,13 +336,13 @@ def scope(scope_type : Optional[Type[scopes.ScopeTypes]]=None, name : opstr=None
             multiple ChipWhisperers, all of different types, are connected.
             Defaults to None. Valid values:
 
-            * 0xace0: CW-Nano
+            * 0xace0: CWNano
 
-            * 0xace2: CW-Lite
+            * 0xace2: CWLite
 
-            * 0xace3: CW-Pro
+            * 0xace3: CWPro
 
-            * 0xace5: CW-Husky
+            * 0xace5: CWHusky
 
         sn: Serial number of ChipWhisperer that you want to
             connect to. sn is required if more than one ChipWhisperer of the

@@ -156,7 +156,7 @@ point TP9 (the large red test point).
 
 ## XMEGA Programming & Voltage Levels
 
-If you want to program an XMEGA target with the CW506 and CW-Lite,
+If you want to program an XMEGA target with the CW506 and CWLite,
 you'll have to place a resistor on your UFO Board. You must connect a
 330 Ohm resistor between the GPIO3 and PDIC pin (you can use jumper
 cables instead of soldering or physically modifying your board).

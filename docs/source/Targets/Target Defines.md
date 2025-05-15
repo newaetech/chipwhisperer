@@ -10,17 +10,17 @@ firmware build system (e.g. `make PLATFORM=CWLITEXMEGA`).
 | MOST COMMON TARGETS                                   |
 +=======================================================+
 +-------------------------------------------------------+
-| CWLITEARM     | CW-Lite Arm (Alias for CW308_STM32F3) |
+| CWLITEARM     | CWLite Arm (Alias for CW308_STM32F3)  |
 +-------------------------------------------------------+
-| CWNANO        | CW-Lite Nano (STM32F0_NANO)           |
+| CWNANO        | CWLite Nano (STM32F0_NANO)            |
 +-------------------------------------------------------+
-| CWHUSKY       | CW-Husky (Alias for CW308_SAM4S)      |
+| CWHUSKY       | CWHusky (Alias for CW308_SAM4S)       |
 +-------------------------------------------------------+
 +=======================================================+
 | AVR/XMEGA Targets (8-Bit RISC)                        |
 +=======================================================+
 +-------------------------------------------------------+
-| CWLITEXMEGA   | CW-Lite XMEGA (Alias for CW303)       |
+| CWLITEXMEGA   | CWLite XMEGA (Alias for CW303)        |
 +-------------------------------------------------------+
 | CW301_AVR     | Multi-Target Board, AVR Target        |
 +-------------------------------------------------------+
@@ -36,11 +36,11 @@ firmware build system (e.g. `make PLATFORM=CWLITEXMEGA`).
 + ARM Cortex-M Targets (Generic)                        |
 +=======================================================+
 +-------------------------------------------------------+
-| CWLITEARM     | CW-Lite Arm (Alias for CW308_STM32F3) |
+| CWLITEARM     | CWLite Arm (Alias for CW308_STM32F3)  |
 +-------------------------------------------------------+
-| CWNANO        | CW-Lite Nano (STM32F0_NANO)           |
+| CWNANO        | CWLite Nano (STM32F0_NANO)            |
 +-------------------------------------------------------+
-| CWHUSKY       | CW-Husky (Alias for CW308_SAM4S)      |
+| CWHUSKY       | CWHusky (Alias for CW308_SAM4S)       |
 +-------------------------------------------------------+
 | CW308_STM32F0 | CW308T-STM32F0 (ST Micro STM32F0)     |
 +-------------------------------------------------------+
@@ -61,7 +61,7 @@ firmware build system (e.g. `make PLATFORM=CWLITEXMEGA`).
 | CW308_        | CW308T-EFM32GG11                      |
 |   EFM32GG11   | (Silicon Labs Giant Gecko)            |
 +-------------------------------------------------------+
-| CW308_        | CW-Lite EFM32TG11B                    |
+| CW308_        | CWLite EFM32TG11B                     |
 |   EFM32TG11B  | (Silicon Labs Tiny Geko)              |
 +-------------------------------------------------------+
 | CW308_        | CW308T-EFR32MG21 (A version without   |
@@ -82,7 +82,7 @@ firmware build system (e.g. `make PLATFORM=CWLITEXMEGA`).
 +-------------------------------------------------------+
 | CW308_SAM4L   | CW308T-SAM4L (Atmel SAM4L)            |
 +-------------------------------------------------------+
-| CW308_SAML11  | CW-Lite SAML11 (Atmel SAML11)         |
+| CW308_SAML11  | CWLite SAML11 (Atmel SAML11)          |
 +-------------------------------------------------------+
 | CW308_STM32F2 | CW308T-STM32F2HWC (ST Micro STM32F215)|
 +-------------------------------------------------------+
@@ -98,7 +98,7 @@ firmware build system (e.g. `make PLATFORM=CWLITEXMEGA`).
 + Other 32-bit Architecture                             |
 +=======================================================+
 +-------------------------------------------------------+
-| CW308_AURIX   | CW-Lite AURIX (Infineon TC233A)       |
+| CW308_AURIX   | CWLite AURIX (Infineon TC233A)        |
 +-------------------------------------------------------+
 | CW308_FE310   | CW308T-FE310-G002 (RISC-V)            |
 +-------------------------------------------------------+

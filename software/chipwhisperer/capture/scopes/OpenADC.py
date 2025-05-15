@@ -45,7 +45,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
     """OpenADC scope object.
 
     This class contains the public API for the OpenADC hardware, including the
-    CW-Lite/CW1200 Pro boards. It includes specific settings for
+    CWLite/CW1200 Pro boards. It includes specific settings for
     each of these devices.
 
     To connect to one of these devices, the easiest method is::
@@ -83,7 +83,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
     * :attr:`scope.DecodeIO <chipwhisperer.capture.scopes.cwhardware.ChipWhispererDecodeTrigger.ChipWhispererDecodeTrigger>`
     * :attr:`scope.adc.stream_mode <chipwhisperer.capture.scopes._OpenADCInterface.TriggerSettings.stream_mode>`
 
-    If you have a CW-Husky, you have access to even more additional features:
+    If you have a CWHusky, you have access to even more additional features:
 
     * :attr:`scope.SAD <chipwhisperer.capture.scopes.cwhardware.ChipWhispererSAD.HuskySAD>`
     * :attr:`scope.LA <chipwhisperer.capture.scopes.cwhardware.ChipWhispererHuskyMisc.LASettings>`
@@ -377,7 +377,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
                     raise OSError("Could not lock DCM. Try rerunning this function or calling scope.clock.reset_dcms(): {}".format(self))
 
         if verbose:
-            # on CW-lite, although scope.clock.adc_locked may indicate true, if we read scope.clock.adc_freq right now we'll get (and cache)
+            # on CWLite, although scope.clock.adc_locked may indicate true, if we read scope.clock.adc_freq right now we'll get (and cache)
             # an unsettled value, so let's wait a bit:
             if not self._is_husky:
                 time.sleep(sleep)
@@ -440,7 +440,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             return "ChipWhisperer Husky Plus"
 
     def adc_test(self, samples=131070, reps=3, verbose=False):
-        """Run a series of ADC sampling tests on CW-Husky.
+        """Run a series of ADC sampling tests on CWHusky.
 
         Useful when pushing the ADC sampling frequency, to get an idea (but
         not a guarantee!) of whether Husky is able to sample properly at
@@ -612,14 +612,14 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
         """When the FPGA bitfile was generated. Husky only.
         """
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         return self.sc.hwInfo.get_fpga_buildtime()
 
     def reset_fpga(self):
         """Reset Husky FPGA. This causes all FPGA-based settings to return to their default values.
         """
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         self.sc.reset_fpga()
         self.adc._clear_caches()
         self.sc._clear_caches()
@@ -884,8 +884,8 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
 
         Floating point values are scaled and shifted to be between -0.5 and 0.5.
 
-        Integer values are raw readings from the ChipWhisperer ADC. The CW-Lite
-        has a 10-bit ADC, the CW-Nano has an 8-bit ADC, and the CW-Husky can read either
+        Integer values are raw readings from the ChipWhisperer ADC. The CWLite
+        has a 10-bit ADC, the CWNano has an 8-bit ADC, and the CWHusky can read either
         8-bits or 12-bits of ADC data.
 
         Args:

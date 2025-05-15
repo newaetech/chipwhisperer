@@ -3,9 +3,9 @@ Package containing all of the scope types that the ChipWhisperer API can connect
 
 Scopes:
 
-   * OpenADC- CW-Lite, CW-Pro, and CW-Husky
+   * OpenADC- CWLite, CWPro, and CWHusky
 
-   * CWNano - CW-Nano
+   * CWNano - CWNano
 
    * PicoScope - PicoScope (old, untested)
 

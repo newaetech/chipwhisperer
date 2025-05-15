@@ -48,13 +48,13 @@ class TraceWhisperer(util.DisableNewAttr):
 
     This class contains the public API for the Arm CoreSight trace sniffing
     hardware, which exists on several platforms:
-    - CW-Husky
+    - CWHusky
     - CW305, as DesignStartTrace
     - CW610 (PhyWhisperer)
 
     Connecting depends on the platform:
 
-    (a) CW-Husky case: available as scope.trace, no additional steps needed.
+    (a) CWHusky case: available as scope.trace, no additional steps needed.
 
     (b) CW305 (DesignStart) case:
     

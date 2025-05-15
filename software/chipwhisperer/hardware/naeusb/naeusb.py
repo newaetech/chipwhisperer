@@ -918,7 +918,7 @@ class NAEUSB:
                 dlen: Number of samples to request.
                 dbuf_temp: Temporary data buffer, must be of size cmdReadStream_bufferSize(dlen) or bad things happen
                 timeout_ms: Timeout in ms to wait for stream to start, otherwise returns a zero-length buffer
-                is_husky: False for CW-Pro, True for CW-Husky
+                is_husky: False for CWPro, True for CWHusky
             Returns:
                 Tuple of (samples_per_block, total_bytes_rx)
             """
@@ -1079,7 +1079,7 @@ class NAEUSB:
 
     def cmdReadStream_size_of_fpgablock(self) -> int:
         """ Asks the hardware how many BYTES are read in one go from FPGA, which indicates where the sync
-            bytes will be located. These sync bytes must be removed in post-processing. CW-Pro only. """
+            bytes will be located. These sync bytes must be removed in post-processing. CWPro only. """
         return 4096
 
     def cmdReadStream_bufferSize(self, dlen : int):

@@ -175,7 +175,7 @@ class AVRISP(object):
     ISP_CMD_XPROG = 0x50
     ISP_CMD_XPROG_SETMODE = 0x51
 
-    # next 3 are CW-Lite specific, not part of regular protocol
+    # next 3 are CWLite specific, not part of regular protocol
     ISP_CMD_GET_STATUS = 0x20
     ISP_CMD_SET_RAMBUF = 0x21
     ISP_CMD_GET_RAMBUF = 0x22

@@ -1,7 +1,7 @@
 # CW303 Arm Target
 
 The ChipWhisperer-Lite board has a break-away target board section. This
-target can be used attached to the CW-Lite or separated and connected
+target can be used attached to the CWLite or separated and connected
 via ribbon cable. The breakaway target board has a slightly different
 feature set than the CW308T-STM32F3 target board. For more info,
 see the CW308T-STM32F documentation.

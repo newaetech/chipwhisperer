@@ -68,7 +68,7 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
     * :meth:`target.get_simpleserial_commands <.SimpleSerial.get_simpleserial_commands>`
 
     .. warning::
-        The CW-Lite, CW1200, and CW-Nano have a 128 byte read buffer and a 128
+        The CWLite, CW1200, and CWNano have a 128 byte read buffer and a 128
         byte send buffer. If the read buffer overflows, a warning message
         will be printed. Prior to firmware 0.20, the send buffer can silently
         overflow. In ChipWhisperer 5.4, this is upgraded to a 200 byte read/send buffer.
@@ -621,8 +621,8 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
     def in_waiting_tx(self):
         """Returns the number of characters waiting to be sent by the ChipWhisperer.
 
-        Requires firmware version >= 0.2 for the CW-Lite/Nano and firmware version and
-        firmware version >= 1.2 for the CW-Pro.
+        Requires firmware version >= 0.2 for the CWLite/Nano and firmware version and
+        firmware version >= 1.2 for the CWPro.
 
         Used internally to avoid overflowing the TX buffer, since CW version 5.3
 
