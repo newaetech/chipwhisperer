@@ -633,7 +633,7 @@ class NAEUSB_Backend:
 
         return dev_list
 
-    def sendCtrl(self, cmd : int, value : int=0, data : bytearray=bytearray()):
+    def send_ctrl(self, cmd : int, value : int=0, data : bytearray=bytearray()):
         """Send data over control endpoint.
         
         Args:
@@ -650,7 +650,7 @@ class NAEUSB_Backend:
         self.handle.controlWrite(0x41, cmd, value, 0, data, timeout=self._timeout)
         #return self.usbdev().ctrl_transfer(0x41, cmd, value, 0, data, timeout=self._timeout)
 
-    def readCtrl(self, cmd : int, value : int=0, dlen : int=0) -> bytearray:
+    def read_ctrl(self, cmd : int, value : int=0, dlen : int=0) -> bytearray:
         """Read data from control endpoint.
         
         Args:
@@ -715,11 +715,11 @@ class NAEUSB_Backend:
             cmd (int): The command to send.
         """
         try:
-            self.sendCtrl(cmd, data=pload)
+            self.send_ctrl(cmd, data=pload)
         except usb1.USBErrorPipe:
             naeusb_logger.info("Attempting pipe error fix - typically safe to ignore")
-            self.sendCtrl(0x22, 0x11)
-            self.sendCtrl(cmd, data=pload)
+            self.send_ctrl(0x22, 0x11)
+            self.send_ctrl(cmd, data=pload)
 
     def _cmd_ctrl_send_header(self, addr : int, dlen : int, cmd : int):
         """Sends the standard length/addr header over the control-transfer endpoint."""
@@ -734,7 +734,7 @@ class NAEUSB_Backend:
             bytearray: The received data.
         """
         self._cmd_ctrl_send_header(addr, dlen, self.CMD_READMEM_CTRL)
-        return self.readCtrl(self.CMD_READMEM_CTRL, dlen=dlen)
+        return self.read_ctrl(self.CMD_READMEM_CTRL, dlen=dlen)
 
     def _cmd_readmem_bulk(self, addr : int, dlen : int) -> bytearray:
         """Reads data from the external memory interface over the bulk-transfer endpoint.
@@ -745,7 +745,7 @@ class NAEUSB_Backend:
         self._cmd_ctrl_send_header(addr, dlen, self.CMD_READMEM_BULK)
         return self._bulk_read(dlen, None)
 
-    def cmdReadMem(self, addr : int, dlen : int) -> bytearray:
+    def cmd_read_mem(self, addr : int, dlen : int) -> bytearray:
         """Send command to read over external memory interface from FPGA.
         
         It automatically decides to use control-transfer or bulk-endpoint transfer based on
@@ -792,7 +792,7 @@ class NAEUSB_Backend:
         self._cmd_ctrl_send_header(addr, len(data), self.CMD_WRITEMEM_BULK)
         self._bulk_write(data, None)
 
-    def cmdWriteMem(self, addr : int, data : bytearray):
+    def cmd_write_mem(self, addr : int, data : bytearray):
         """Send command to write memory over external memory interface to FPGA.
         
         It automatically decides to use control-transfer or bulk-endpoint transfer based
@@ -822,7 +822,7 @@ class NAEUSB_Backend:
         naeusb_logger.debug("BULK WRITE: data = {}".format(data))
         self._bulk_write(data, timeout)
 
-    def flushInput(self):
+    def flush_input(self):
         """Dump all the crap left over"""
         try:
             # TODO: This probably isn't needed, and causes slow-downs on Mac OS X.
@@ -880,7 +880,7 @@ class NAEUSB:
 
     def get_cdc_settings(self) -> list:
         if self.check_feature("CDC"):
-            return self.usbtx.readCtrl(self.CMD_CDC_SETTINGS_EN, dlen=4)
+            return self.usbtx.read_ctrl(self.CMD_CDC_SETTINGS_EN, dlen=4)
         else:
             return [0, 0, 0, 0]
 
@@ -903,7 +903,7 @@ class NAEUSB:
         if self.check_feature("CDC"):
             if isinstance(port, int):
                 port = (port, port, 0, 0)
-            self.usbtx.sendCtrl(self.CMD_CDC_SETTINGS_EN, (port[0]) | (port[1] << 1) | (port[2] << 2) | (port[3] << 3))
+            self.usbtx.send_ctrl(self.CMD_CDC_SETTINGS_EN, (port[0]) | (port[1] << 1) | (port[2] << 2) | (port[3] << 3))
 
     def set_smc_speed(self, val : int):
         """
@@ -911,12 +911,12 @@ class NAEUSB:
         val = 1: fast read timing, should only be used for reading ADC samples; FPGA must also be set in fast FIFO
                  read mode for this to work correctly.
         """
-        self.usbtx.sendCtrl(self.CMD_SMC_READ_SPEED, data=[val])
+        self.usbtx.send_ctrl(self.CMD_SMC_READ_SPEED, data=[val])
 
     def get_fw_build_date(self) -> str:
         if self.check_feature("SAM_BUILD_DATE"):
             try:
-                build_date = bytes(self.usbtx.readCtrl(0x40, dlen=100)).decode()
+                build_date = bytes(self.usbtx.read_ctrl(0x40, dlen=100)).decode()
                 return build_date
             except usb1.USBErrorPipe:
                 naeusb_logger.info("Build date unavailable") 
@@ -927,7 +927,7 @@ class NAEUSB:
         # TODO: add in check_feature
         if self.check_feature("HUSKY_PIN_CONTROL"):
             num &= 0xFF
-            self.usbtx.sendCtrl(0x22, 0x43 | (num << 8))
+            self.usbtx.send_ctrl(0x22, 0x43 | (num << 8))
         else:
             naeusb_logger.error("Cannot set Husky TMS direction pin. SWD mode will not work! A firmware update to >=1.4 is highly recommended!")
 
@@ -1019,14 +1019,14 @@ class NAEUSB:
         Send data over control endpoint
         """
         # Vendor-specific, OUT, interface control transfer
-        self.usbserializer.sendCtrl(cmd, value, data)
+        self.usbserializer.send_ctrl(cmd, value, data)
 
     def readCtrl(self, cmd : int, value : int=0, dlen : int=0) -> bytearray:
         """
         Read data from control endpoint
         """
         # Vendor-specific, IN, interface control transfer
-        return self.usbserializer.readCtrl(cmd, value, dlen)
+        return self.usbserializer.read_ctrl(cmd, value, dlen)
 
     def cmdReadMem(self, addr : int, dlen : int) -> bytearray:
         """
@@ -1034,7 +1034,7 @@ class NAEUSB:
         decides to use control-transfer or bulk-endpoint transfer based on data length.
         """
 
-        return self.usbserializer.cmdReadMem(addr, dlen)
+        return self.usbserializer.cmd_read_mem(addr, dlen)
 
     def cmdWriteMem(self, addr : int, data : bytearray):
         """
@@ -1042,7 +1042,7 @@ class NAEUSB:
         decides to use control-transfer or bulk-endpoint transfer based on data length.
         """
 
-        return self.usbserializer.cmdWriteMem(addr, data)
+        return self.usbserializer.cmd_write_mem(addr, data)
 
     def writeBulkEP(self, data : bytearray, timeout = None):
         """
@@ -1054,7 +1054,7 @@ class NAEUSB:
 
     def flushInput(self):
         """Dump all the crap left over"""
-        self.usbserializer.flushInput()
+        self.usbserializer.flush_input()
 
     class StreamModeCaptureThreadHusky(Thread):
         def __init__(self, serial, dlen, segment_size, dbuf_temp, timeout_ms=2000, is_husky=False):
