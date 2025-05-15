@@ -191,16 +191,33 @@ SAM_FW_FEATURE_BY_DEVICE = {
     }
 }
 
-def quick_firmware_erase(product_id, serial_number=None):
+def quick_firmware_erase(product_id : int, serial_number : str=None):
+    """Quickly erase the firmware on a device by entering bootloader mode.
+    
+    Args:
+        product_id (int): The product ID of the device.
+        serial_number (str, optional): The serial number of the device. If not provided, the function will attempt to find the device by product ID."""
     naeusb = NAEUSB()
     naeusb.con(serial_number=serial_number, idProduct=[product_id])
     naeusb.enterBootloader(True)
 
-
-def _check_sam_feature(feature, fw_version, prod_id):
+def _check_sam_feature(feature : str, fw_version : str, prod_id : int) -> bool:
+    """Checks if a feature is available for a given firmware version and product ID.
+    
+    Args:
+        feature (str): The feature name to check, defined in :code:`SAM_FW_FEATURES`.
+        fw_version (str): The firmware version to check against.
+        prod_id (int): The product ID of the device.
+        
+    Returns:
+        bool: True if the feature is available for the given firmware version and product ID, False otherwise.
+        
+    Raises:
+        ValueError: If the feature is not recognized.
+    """
     if prod_id not in SAM_FW_FEATURE_BY_DEVICE:
         naeusb_logger.debug("Features for ProdID {:04X} not stored, skipping...".format(prod_id))
-        return
+        return False
     if feature not in SAM_FW_FEATURES:
         raise ValueError("Unknown feature {}".format(feature))
     feature_set = SAM_FW_FEATURE_BY_DEVICE[prod_id]
@@ -213,13 +230,19 @@ def _check_sam_feature(feature, fw_version, prod_id):
 
     return True
 
-def _WINDOWS_USB_CHECK_DRIVER(device) -> Optional[str]:
-    """Checks which driver device is using
+def _WINDOWS_USB_CHECK_DRIVER(device : usb1.USBDevice) -> Optional[str]:
+    """Checks which driver the device is using.
 
-    Checks whether the device is connected to the PC (harder than you'd think)
+    Checks whether the device is connected to the PC (harder than you'd think).
 
     Does not check the actual driver in use for custom interfaces in composite devices.
     Instead, it just resolves to usbcggp, which is the composite device driver for Windows.
+
+    Args:
+        device (usb1.USBDevice): The USB device to check.
+
+    Returns:
+        Optional[str]: The driver if found, None otherwise.
     """
     try:
         import winreg
@@ -227,7 +250,7 @@ def _WINDOWS_USB_CHECK_DRIVER(device) -> Optional[str]:
         subkey = r"ControlSet001\Enum\USB"
         subkey += "\\VID_{:04X}&PID_{:04X}".format(device.getVendorID(), device.getProductID())
 
-        def get_enum_by_name(handle, name):
+        def get_enum_by_name(handle : winreg.PyHKEY, name : str):
             try:
                 cnt = 0
                 enum_name = ""
@@ -308,14 +331,14 @@ def _WINDOWS_USB_CHECK_DRIVER(device) -> Optional[str]:
         naeusb_logger.warning("Could not check driver ({}), assuming WINUSB is used".format(str(e)))
         return None
 
-def packuint32(data):
-    """Converts a 32-bit integer into format expected by USB firmware"""
+def packuint32(data : int) -> List[int]:
+    """Converts a 32-bit integer into format expected by USB firmware."""
 
     data = int(data)
     return [data & 0xff, (data >> 8) & 0xff, (data >> 16) & 0xff, (data >> 24) & 0xff]
 
-def unpackuint32(buf):
-    """"Converts an array into a 32-bit integer"""
+def unpackuint32(buf : List[int]) -> int:
+    """"Converts an array into a 32-bit integer."""
 
     pint = buf[0]
     pint |= buf[1] << 8
@@ -323,23 +346,24 @@ def unpackuint32(buf):
     pint |= buf[3] << 24
     return pint
 
-def packuint16(data):
-    """Converts a 16-bit integer into format expected by USB firmware"""
+def packuint16(data : int) -> List[int]:
+    """Converts a 16-bit integer into format expected by USB firmware."""
 
     data = int(data)
-
     return [data & 0xff, (data >> 8) & 0xff, (data >> 16) & 0xff, (data >> 24) & 0xff]
 
 LEN_ADDR_HDR_SIZE = 8
     
-def set_len_addr(buf, dlen, addr):
+def set_len_addr(buf : bytearray, dlen : int, addr : int):
     """Populates a buffer with the command header.
+    
+    Sets the length and address in the buffer using little-endian format. Modifies
+    the buffer in place.
     """
-    # Little endian
     util.pack_u32_into(buf, 0, dlen)
     util.pack_u32_into(buf, 4, addr)
 
-def make_len_addr(dlen, addr):
+def make_len_addr(dlen : int, addr : int) -> bytearray:
     """Creates a command header buffer.
 
     Return:
@@ -352,19 +376,19 @@ def make_len_addr(dlen, addr):
 NAEUSB_CTRL_IO_MAX = 128
 NAEUSB_CTRL_IO_THRESHOLD = 48
 
-#List of all NewAE PID's
+# List of all NewAE PIDs
 NEWAE_VID = 0x2B3E
 NEWAE_PIDS = {
-    0xACE2: {'name': "ChipWhisperer-Lite",     'fwver': fwver("cwlite")},
-    0xACE3: {'name': "ChipWhisperer-CW1200",   'fwver': fwver("cw1200")},
-    0xC305: {'name': "CW305 Artix FPGA Board", 'fwver': fwver("cw305")},
-    0xC310: {'name': "CW305 Artix FPGA Board", 'fwver': fwver("cwbergen")},
-    0xC340: {'name': "CW305 Artix FPGA Board", 'fwver': fwver("cwluna")},
-    0xACE0: {'name': "ChipWhisperer-Nano", 'fwver': fwver("cwnano")},
-    0xACE5: {'name': "ChipWhisperer-Husky",   'fwver': fwver("cwhusky")},
-    0xACE6: {'name': "ChipWhisperer-Husky-Plus",   'fwver': fwver("cwhuskyplus")},
-    0xC521: {'name': "CW521 Ballistic-Gel",   'fwver': None},
-    0xC610: {'name': "PhyWhisperer-USB",   'fwver': None},
+    0xACE2: {'name': "ChipWhisperer-Lite",          'fwver': fwver("cwlite")},
+    0xACE3: {'name': "ChipWhisperer-CW1200",        'fwver': fwver("cw1200")},
+    0xC305: {'name': "CW305 Artix FPGA Board",      'fwver': fwver("cw305")},
+    0xC310: {'name': "CW305 Artix FPGA Board",      'fwver': fwver("cwbergen")},
+    0xC340: {'name': "CW305 Artix FPGA Board",      'fwver': fwver("cwluna")},
+    0xACE0: {'name': "ChipWhisperer-Nano",          'fwver': fwver("cwnano")},
+    0xACE5: {'name': "ChipWhisperer-Husky",         'fwver': fwver("cwhusky")},
+    0xACE6: {'name': "ChipWhisperer-Husky-Plus",    'fwver': fwver("cwhuskyplus")},
+    0xC521: {'name': "CW521 Ballistic-Gel",         'fwver': None},
+    0xC610: {'name': "PhyWhisperer-USB",            'fwver': None},
 }
 
 class NAEUSB_Backend:
@@ -392,7 +416,8 @@ class NAEUSB_Backend:
     def __init__(self):
         """Initializes the USB backend with default values.
         
-        The timeout is set to 500ms and a USB context is created."""
+        The timeout is set to 500ms and a USB context is created.
+        """
         self._usbdev = None
         self._timeout = 500
         self.device = None
@@ -415,7 +440,8 @@ class NAEUSB_Backend:
             A usb1.USBDeviceHandle object.
         
         Raises:
-            OSError: If the USB device is not connected."""
+            OSError: If the USB device is not connected.
+        """
 
         if not self._usbdev: raise OSError("USB Device not found. Did you connect it first?")
         return self._usbdev
@@ -439,6 +465,24 @@ class NAEUSB_Backend:
 
     def find(self, serial_number : Optional[str]=None, idProduct : Optional[List[int]]=None, 
         hw_location : Optional[Tuple[int, int]]=None) -> usb1.USBDevice:
+        """Find a ChipWhisperer device by serial number, product ID, or hardware location tuple.
+        
+        All arguments are optional. If only one ChipWhisperer is connected, it will be returned.
+        If multiple are connected but no arguments were provided, or if no devices are found, 
+        an exception will be raised.
+        
+        Args:
+            serial_number (str, optional): The serial number of the device to find.
+            idProduct (list, optional): The product ID(s) to match.
+            hw_location (tuple, optional): The hardware location tuple (bus number, device address).
+            
+        Returns:
+            usb1.USBDevice: The found USB device.
+            
+        Raises:
+            OSError: If no devices are found or if the specified device cannot be accessed.
+            Warning: If multiple devices are found and no serial number is provided.
+        """
         # check if we got anything
         dev_list = self.get_possible_devices(idProduct, attempt_access=(not hw_location))
         if len(dev_list) == 0:
@@ -451,6 +495,7 @@ class NAEUSB_Backend:
             if len(dev_list) != 1:
                 raise OSError("Unable to find ChipWhisperer with hw_location {}, got {}".format(hw_location, dev_list))
             return dev_list[0]
+        
         sns = ["{}:{}".format(dev.getProduct(), dev.getSerialNumber()) for dev in dev_list]
         if (len(dev_list) > 1) and (serial_number is None):
             if len(dev_list) > 1:
@@ -468,11 +513,26 @@ class NAEUSB_Backend:
         # finally, we know we have the right device and can return
         return dev_list[0]
 
-
     def open(self, serial_number : Optional[str]=None, idProduct : Optional[List[int]]=None, 
-        connect_to_first : bool =False, hw_location : Optional[Tuple[int, int]]=None) -> Optional[usb1.USBDeviceHandle]:
-        """
-        Connect to device using default VID/PID
+        connect_to_first : bool=False, hw_location : Optional[Tuple[int, int]]=None) -> Optional[usb1.USBDeviceHandle]:
+        """Connect to device using serial number, product ID, or hardware location tuple.
+
+        If :code:`connect_to_first` is set to False, then :code:`self.device` will be
+        set and None will be returned. Otherwise, the device will be opened and the
+        handle will be returned.
+
+        Args:
+            serial_number (str, optional): The serial number of the device to connect to.
+            idProduct (list, optional): The product ID(s) to match.
+            connect_to_first (bool, optional): If True, open the device and return the handle.
+            hw_location (tuple, optional): The hardware location tuple (bus number, device address).
+
+        Returns:
+            usb1.USBDeviceHandle: The opened USB device handle if :code:`connect_to_first` is True.
+            None: If :code:`connect_to_first` is False.
+
+        Raises:
+            usb1.USBError: If the device cannot be opened.
         """
 
         self.device = self.find(serial_number, idProduct, hw_location=hw_location)
@@ -484,7 +544,7 @@ class NAEUSB_Backend:
             naeusb_logger.error("Could not open USB device.")
             if e.value == -3:
                 naeusb_logger.error("Check that the ChipWhisperer is not already connected")
-                naeusb_logger.error("Or that you have the proper permissions to access it")
+                naeusb_logger.error("And that you have the proper permissions to access it")
             raise
         self._usbdev = self.handle
         if os.name == "nt" or sys.platform == "darwin":
@@ -524,15 +584,20 @@ class NAEUSB_Backend:
     def get_possible_devices(self, idProduct : Optional[List[int]]=None, dictonly : bool=True, 
         attempt_access : bool=False) -> List[usb1.USBDevice]:
         """Get list of USB devices that match NewAE vendor ID (0x2b3e) and
-        optionally a product ID
+        optionally a product ID.
 
-        Checks VendorID, then makes sure the devices are accessable
+        Checks the VendorID, then ensures the devices are accessible.
+
         Args:
-            idProduct (list of int, optional): If not None, the product ID to match
-            sn (string, optional): If not None,
+            idProduct (list, optional): If not None, the product ID to match
+            sn (string, optional): If not None, the serial number to match
+
         Returns:
             List of USBDevice that match Vendor/Product IDs
-            """
+
+        Raises:
+            OSError: If no devices are found or if the specified device cannot be accessed.
+        """
         
         dev_list = [dev for dev in self.usb_ctx.getDeviceIterator(skip_on_error=True) if dev.getVendorID() == 0x2b3e]
         naeusb_logger.info("Found NAEUSB devices {}".format(dev_list))
@@ -569,8 +634,12 @@ class NAEUSB_Backend:
         return dev_list
 
     def sendCtrl(self, cmd : int, value : int=0, data : bytearray=bytearray()):
-        """
-        Send data over control endpoint
+        """Send data over control endpoint.
+        
+        Args:
+            cmd (int): The command to send.
+            value (int, optional): The value to send. Defaults to 0.
+            data (bytearray, optional): The data to send. Defaults to an empty bytearray.
         """
         # Vendor-specific, OUT, interface control transfer
         naeusb_logger.debug("WRITE_CTRL: bmRequestType: {:02X}, \
@@ -582,8 +651,15 @@ class NAEUSB_Backend:
         #return self.usbdev().ctrl_transfer(0x41, cmd, value, 0, data, timeout=self._timeout)
 
     def readCtrl(self, cmd : int, value : int=0, dlen : int=0) -> bytearray:
-        """
-        Read data from control endpoint
+        """Read data from control endpoint.
+        
+        Args:
+            cmd (int): The command to read.
+            value (int, optional): The value to read. Defaults to 0.
+            dlen (int, optional): The length of the data to read. Defaults to 0.
+            
+        Returns:
+            bytearray: The received data.
         """
         # Vendor-specific, IN, interface control transfer
         if dlen > NAEUSB_CTRL_IO_MAX:
@@ -594,34 +670,49 @@ class NAEUSB_Backend:
                         value, 0, dlen, response))
         return response
 
-    def _get_timeout(self, timeout):
+    def _get_timeout(self, timeout : Union[int, float, None]=None) -> int:
         """Gets the default timeout if the operation caller did not specify one.
 
         Returns:
-            A valid timeout value.
+            int: A valid timeout value.
         """
         if timeout is None:
             timeout = self._timeout
         return timeout
 
-    def _bulk_read(self, data, timeout):
+    def _bulk_read(self, dlen : int, timeout : Union[int, float, None]):
         """Reads data over the bulk-transfer endpoint.
 
+        Args:
+            dlen (int): The length of the data to read.
+            timeout (int, float, optional): The timeout for the read operation.
+                If None, the default timeout is used.
+
         Returns:
-            The received data.
+            bytearray: The received data.
         """
         timeout = self._get_timeout(timeout)
-        return self.handle.bulkRead(self.rep, data, timeout)
+        return self.handle.bulkRead(self.rep, dlen, timeout)
 
-    def _bulk_write(self, data, timeout):
+    def _bulk_write(self, data : bytearray, timeout : Union[int, float, None]):
         """Writes data over the bulk-transfer endpoint.
+
+        Args:
+            data (bytearray): The data to write.
+            timeout (int, float, optional): The timeout for the write operation.
+                If None, the default timeout is used.
         """
         timeout = self._get_timeout(timeout)
         self.handle.bulkWrite(self.wep, data, timeout)
 
-    def _cmd_ctrl_send_data(self, pload, cmd : int):
-        """Sends data over the control-transfer channel and attempts a pipe error fix if an initial
-        error occured.
+    def _cmd_ctrl_send_data(self, pload : bytearray, cmd : int):
+        """Sends data over the control-transfer channel.
+        
+        If a pipe error occurs, it attempts to fix it.
+
+        Args:
+            pload (bytearray): The data to send.
+            cmd (int): The command to send.
         """
         try:
             self.sendCtrl(cmd, data=pload)
@@ -631,34 +722,41 @@ class NAEUSB_Backend:
             self.sendCtrl(cmd, data=pload)
 
     def _cmd_ctrl_send_header(self, addr : int, dlen : int, cmd : int):
-        """Sends the standard length/addr header over the control-transfer endpoint.
-        """
+        """Sends the standard length/addr header over the control-transfer endpoint."""
         # TODO: Alloc header class member? Won't hafta alloc mem every read and writectrl call...
         pload = make_len_addr(dlen, addr)
         self._cmd_ctrl_send_data(pload, cmd)
 
-    def _cmd_readmem_ctrl(self, addr : int, dlen : int):
+    def _cmd_readmem_ctrl(self, addr : int, dlen : int) -> bytearray:
         """Reads data from the external memory interface over the control-transfer endpoint.
 
         Returns:
-            The received data.
+            bytearray: The received data.
         """
-        self._cmd_ctrl_send_header(addr, dlen, self.CMD_READMEM_CTRL);
+        self._cmd_ctrl_send_header(addr, dlen, self.CMD_READMEM_CTRL)
         return self.readCtrl(self.CMD_READMEM_CTRL, dlen=dlen)
 
-    def _cmd_readmem_bulk(self, addr : int, dlen : int):
+    def _cmd_readmem_bulk(self, addr : int, dlen : int) -> bytearray:
         """Reads data from the external memory interface over the bulk-transfer endpoint.
 
         Returns:
-            The received data.
+            bytearray: The received data.
         """
-        self._cmd_ctrl_send_header(addr, dlen, self.CMD_READMEM_BULK);
+        self._cmd_ctrl_send_header(addr, dlen, self.CMD_READMEM_BULK)
         return self._bulk_read(dlen, None)
 
     def cmdReadMem(self, addr : int, dlen : int) -> bytearray:
-        """
-        Send command to read over external memory interface from FPGA. Automatically
-        decides to use control-transfer or bulk-endpoint transfer based on data length.
+        """Send command to read over external memory interface from FPGA.
+        
+        It automatically decides to use control-transfer or bulk-endpoint transfer based on
+        data length.
+
+        Args:
+            addr (int): The address to read from.
+            dlen (int): The length of the data to read.
+
+        Returns:
+            bytearray: The received data.
         """
         dlen = int(dlen)
         if dlen < NAEUSB_CTRL_IO_THRESHOLD:
@@ -670,8 +768,12 @@ class NAEUSB_Backend:
             .format("yes" if dlen >= NAEUSB_CTRL_IO_THRESHOLD else "no", addr, dlen, data))
         return data
 
-    def _cmd_writemem_ctrl(self, addr : int, data):
+    def _cmd_writemem_ctrl(self, addr : int, data : bytearray):
         """Writes data to the external memory interface via the control-transfer endpoint.
+        
+        Args:
+            addr (int): The address to write to.
+            data (bytearray): The data to write.
         """
         # TODO: Investigate if we don't hafta combine header with the data and can send separately.
         # Is this is a FW implementation or a limitation from middleware interfaces?
@@ -680,16 +782,25 @@ class NAEUSB_Backend:
         util.bytes_fast_copy(pload, LEN_ADDR_HDR_SIZE, data)
         self._cmd_ctrl_send_data(pload, self.CMD_WRITEMEM_CTRL)
 
-    def _cmd_writemem_bulk(self, addr : int, data):
+    def _cmd_writemem_bulk(self, addr : int, data : bytearray):
         """Writes data to the external memory interface via the bulk-transfer endpoint.
+
+        Args:
+            addr (int): The address to write to.
+            data (bytearray): The data to write.
         """
         self._cmd_ctrl_send_header(addr, len(data), self.CMD_WRITEMEM_BULK)
         self._bulk_write(data, None)
 
-    def cmdWriteMem(self, addr : int, data):
-        """
-        Send command to write memory over external memory interface to FPGA. Automatically
-        decides to use control-transfer or bulk-endpoint transfer based on data length.
+    def cmdWriteMem(self, addr : int, data : bytearray):
+        """Send command to write memory over external memory interface to FPGA.
+        
+        It automatically decides to use control-transfer or bulk-endpoint transfer based
+        on data length.
+
+        Args:
+            addr (int): The address to write to.
+            data (bytearray): The data to write.
         """
         pload = util.get_bytes_memview(data)
         if len(pload) < NAEUSB_CTRL_IO_THRESHOLD:
@@ -700,18 +811,16 @@ class NAEUSB_Backend:
         naeusb_logger.debug("FPGA_WRITE: bulk: {}, addr: {:08X}, dlen: {:08X}, response: {}"\
             .format("yes" if len(pload) >= NAEUSB_CTRL_IO_THRESHOLD else "no", addr, len(pload), data))
 
-        return None
+    def write_bulk(self, data : bytearray, timeout = None):
+        """Write data directly to the bulk endpoint.
 
-    def cmdWriteBulk(self, data : bytearray, timeout = None):
-        """
-        Write data directly to the bulk endpoint.
-        :param data: Data to be written
-        :return:
+        Args:
+            data (bytearray): The data to write.
+            timeout (int, float, optional): The timeout for the write operation.
+                If None, the default timeout is used.
         """
         naeusb_logger.debug("BULK WRITE: data = {}".format(data))
         self._bulk_write(data, timeout)
-
-    writeBulk = cmdWriteBulk
 
     def flushInput(self):
         """Dump all the crap left over"""
@@ -722,6 +831,15 @@ class NAEUSB_Backend:
             pass
 
     def read(self, dbuf : bytearray, timeout : int) -> bytearray:
+        """Read data from the bulk endpoint.
+
+        Args:
+            dbuf (bytearray): The buffer to read data into.
+            timeout (int): The timeout for the read operation.
+        
+        Returns:
+            bytearray: The received data.
+        """
         resp = self._bulk_read(dbuf, timeout)
         naeusb_logger.debug("BULK READ: data = {}".format(dbuf))
         return resp
@@ -932,7 +1050,7 @@ class NAEUSB:
         :param data: Data to be written.
         :return:
         """
-        return self.usbserializer.writeBulk(data, timeout=timeout)
+        return self.usbserializer.write_bulk(data, timeout=timeout)
 
     def flushInput(self):
         """Dump all the crap left over"""
