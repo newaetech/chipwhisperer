@@ -17,22 +17,14 @@
 #    limitations under the License.
 # ==========================================================================
 import time
-import warnings
 import math
 from threading import Thread
 import usb1  # type: ignore
 import os
 import sys
 import array
-from typing import Optional, Union, List, Tuple, Dict, cast
+from typing import Optional, Union, List, Tuple, Dict, Any
 from ...common.utils import util
-from ...common.utils.util import CWByteArray # type: ignore
-
-from ..firmware import cwlite as fw_cwlite
-from ..firmware import cw1200 as fw_cw1200
-from ..firmware import cw305  as fw_cw305
-from ..firmware import cwnano  as fw_nano
-from ..firmware import cwhusky as fw_cwhusky
 
 from ..firmware.open_fw import fwver
 
@@ -191,7 +183,7 @@ SAM_FW_FEATURE_BY_DEVICE = {
     }
 }
 
-def quick_firmware_erase(product_id : int, serial_number : str=None):
+def quick_firmware_erase(product_id : int, serial_number : Optional[str]=None):
     """Quickly erase the firmware on a device by entering bootloader mode.
     
     Args:
@@ -199,7 +191,7 @@ def quick_firmware_erase(product_id : int, serial_number : str=None):
         serial_number (str, optional): The serial number of the device. If not provided, the function will attempt to find the device by product ID.
     """
     naeusb = NAEUSB()
-    naeusb.con(serial_number=serial_number, idProduct=[product_id])
+    naeusb.con(serial_number=serial_number, idProduct=(product_id,))
     naeusb.enterBootloader(True)
 
 def _check_sam_feature(feature : str, fw_version : str, prod_id : int) -> bool:
@@ -251,7 +243,7 @@ def _WINDOWS_USB_CHECK_DRIVER(device : usb1.USBDevice) -> Optional[str]:
         subkey = r"ControlSet001\Enum\USB"
         subkey += "\\VID_{:04X}&PID_{:04X}".format(device.getVendorID(), device.getProductID())
 
-        def get_enum_by_name(handle : winreg.PyHKEY, name : str):
+        def get_enum_by_name(handle, name : str):
             try:
                 cnt = 0
                 enum_name = ""
@@ -262,7 +254,9 @@ def _WINDOWS_USB_CHECK_DRIVER(device : usb1.USBDevice) -> Optional[str]:
                     enum_name = myenum[0]
                     cnt += 1
                     naeusb_logger.debug('Found {}'.format(enum_name))
-                return myenum[1]
+                if myenum is not None:
+                    return myenum[1]
+                return None
             except OSError as e:
                 return None
 
@@ -338,7 +332,7 @@ def packuint32(data : int) -> List[int]:
     data = int(data)
     return [data & 0xff, (data >> 8) & 0xff, (data >> 16) & 0xff, (data >> 24) & 0xff]
 
-def unpackuint32(buf : List[int]) -> int:
+def unpackuint32(buf : Union[List[int], bytearray]) -> int:
     """"Converts an array into a 32-bit integer."""
 
     pint = buf[0]
@@ -671,7 +665,7 @@ class NAEUSB_Backend:
                         value, 0, dlen, response))
         return response
 
-    def _get_timeout(self, timeout : Union[int, float, None]=None) -> int:
+    def _get_timeout(self, timeout : Union[int, float, None]=None) -> Union[int, float, Any]:
         """Gets the default timeout if the operation caller did not specify one.
 
         Returns:
@@ -831,18 +825,18 @@ class NAEUSB_Backend:
         except:
             pass
 
-    def read(self, dbuf : bytearray, timeout : int) -> bytearray:
+    def read(self, dlen : int, timeout : int) -> bytearray:
         """Read data from the bulk endpoint.
 
         Args:
-            dbuf (bytearray): The buffer to read data into.
+            dlen (int): The length of the data to read.
             timeout (int): The timeout for the read operation.
         
         Returns:
             bytearray: The received data.
         """
-        resp = self._bulk_read(dbuf, timeout)
-        naeusb_logger.debug("BULK READ: data = {}".format(dbuf))
+        resp = self._bulk_read(dlen, timeout)
+        naeusb_logger.debug("BULK READ: data = {}".format(dlen))
         return resp
 
 class NAEUSB:
@@ -1288,7 +1282,7 @@ class NAEUSB:
 
         # Ensure stream mode disabled
         if not is_husky:
-            self.sendCtrl(NAEUSB.CMD_MEMSTREAM, data=packuint32(0))
+            self.sendCtrl(NAEUSB.CMD_MEMSTREAM, data=bytearray(packuint32(0)))
         return self.streamModeCaptureStream.drx, self.streamModeCaptureStream.timeout
 
     # def readCDCSettings(self):
