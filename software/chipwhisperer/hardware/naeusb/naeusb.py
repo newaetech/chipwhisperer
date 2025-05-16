@@ -196,7 +196,8 @@ def quick_firmware_erase(product_id : int, serial_number : str=None):
     
     Args:
         product_id (int): The product ID of the device.
-        serial_number (str, optional): The serial number of the device. If not provided, the function will attempt to find the device by product ID."""
+        serial_number (str, optional): The serial number of the device. If not provided, the function will attempt to find the device by product ID.
+    """
     naeusb = NAEUSB()
     naeusb.con(serial_number=serial_number, idProduct=[product_id])
     naeusb.enterBootloader(True)
