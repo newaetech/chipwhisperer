@@ -56,8 +56,8 @@ def list_devices(idProduct : Optional[List[int]]=None, get_sn=True, get_hw_loc=T
     Returns:
         List[dict]: A list of dicts with fields :code:`{'name': str, 'sn', str, 'hw_loc': (int, int)}`
 
-    If an unknown NewAE device is connected, :code:`'name'` will be :code:`'unknown'`. If :code:`'sn'`
-    or :code:`'hw_loc'` are not desired (or cannot be accessed), they will be :code:`None`.
+    If an unknown NewAE device is connected, :code:`name` will be :code:`'unknown'`. If :code:`sn`
+    or :code:`hw_loc` are not desired (or cannot be accessed), they will be :code:`None`.
 
     .. versionadded:: 5.6.2
     """
@@ -87,6 +87,7 @@ def list_devices(idProduct : Optional[List[int]]=None, get_sn=True, get_hw_loc=T
 
     be.usb_ctx.close()
     return rtn
+
 
 def check_for_updates() -> str:
     """Check if current ChipWhisperer version is the latest.
@@ -145,15 +146,24 @@ def program_sam_firmware(serial_port : opstr=None,
         port (str, optional): Serial port that the ChipWhisperer bootloader is on
         fw_path (str, optional): Path to firmware, if specified don't set :code:`hardware_type`.
         hardware_type (str, optional): The type of hardware that you want to program.
-            If specified, don't set :code:`fw_path`. Valid types::
+            If specified, don't set :code:`fw_path`. Valid types:
+            
             * :code:`'cwlite'`
+
             * :code:`'cwnano'`
+
             * :code:`'cw305'`
+
             * :code:`'cw310'`
+
             * :code:`'cw340'`
+
             * :code:`'cw1200'`
+
             * :code:`'cwbergen'`
+
             * :code:`'cwhusky'`
+
             * :code:`'cwhuskyplus'`
 
     Raises:
@@ -179,7 +189,8 @@ def program_sam_firmware(serial_port : opstr=None,
     prog = SAMFWLoader(None)
     prog.program(serial_port, hardware_type=hardware_type, fw_path=fw_path)
 
-def program_target(scope : scopes.ScopeTypes, prog_type : programmers.Programmer, fw_path : str, **kwargs):
+
+def program_target(scope : scopes.ScopeTypes, prog_type : Type[programmers.Programmer], fw_path : str, **kwargs):
     """Program the target using a :code:`Programmer` class and the firmware filepath.
 
     Programmers can be found in the :code:`programmers` submodule.
@@ -213,7 +224,6 @@ def program_target(scope : scopes.ScopeTypes, prog_type : programmers.Programmer
             scope.io.pdic = None
             time.sleep(0.05)
         raise
-
 
 
 def open_project(filename : str) -> project.Project:
@@ -349,26 +359,37 @@ def scope(scope_type : Optional[Type[scopes.ScopeTypes]]=None, name : opstr=None
     want to connect to can be specified by passing :code:`sn='<SERIAL_NUMBER>'`.
 
     Args:
-        scope_type (ScopeTypes, optional): Scope type to connect to. Typescan be
+        scope_type (ScopeTypes, optional): Scope type to connect to. Types can be
             found in :code:`chipwhisperer.scopes`. If :code:`None`, will try to
             detect the type of ChipWhisperer connected. Defaults to :code:`None`.
         name (str, optional): Model name of the ChipWhisperer that you want to
             connect to. Alternative to specifying the serial number when
             multiple ChipWhisperers, all of different type, are connected.
-            Defaults to :code:`None`. Valid values::
+            Defaults to :code:`None`. Valid values:
+
             * :code:`'Nano'`
+
             * :code:`'Lite'`
+
             * :code:`'Pro'`
+
             * :code:`'Husky'`
+
             * :code:`'HuskyPlus'`
+
         idProduct (int, optional): idProduct of the ChipWhisperer that you want to
             connect to. Alternative to specifying the serial number when
             multiple ChipWhisperers, all of different type, are connected.
-            Defaults to :code:`None`. Valid values::
+            Defaults to :code:`None`. Valid values:
+
             * :code:`0xace0` (CW-Nano)
+
             * :code:`0xace2` (CW-Lite)
+
             * :code:`0xace3` (CW-Pro)
+
             * :code:`0xace5` (CW-Husky)
+
         sn (str, optional): Serial number of ChipWhisperer that you want to
             connect to. :code:`sn` is required if more than one ChipWhisperer of the
             same type is connected (i.e. two CWNano's or a CWLite and CWPro).

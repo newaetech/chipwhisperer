@@ -17,6 +17,7 @@ software/*.egg-info/*
 software/build/*
 doc/sphinx/_build/html/_static
 doc/sphinx/_build
+docs/source/_build
 *.epf
 *_data
 default-data-dir/
