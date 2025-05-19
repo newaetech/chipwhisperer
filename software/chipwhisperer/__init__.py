@@ -42,21 +42,22 @@ opstr = Optional[str]
 bytearray = util.CWByteArray # type: ignore
 
 def list_devices(idProduct : Optional[List[int]]=None, get_sn=True, get_hw_loc=True) -> List[dict]:
-    """Get a list of devices by NewAE (VID 0x2b3e) currently connected
+    """Get a list of devices by NewAE (Vendor ID 0x2b3e) currently connected.
 
     Args:
-        idProduct (Optional[List[int]], optional): List of PIDs to restrict devices to. If None, do 
-            not restrict. Defaults to None.
-        get_sn (bool, optional): Whether or not to try to access serial number. Can fail if another 
-            process is connected or if we don't have permission to access the device. Defaults to True.
+        idProduct (Optional[List[int]], optional): List of Product IDs to restrict devices to. If 
+            :code:`None`, do not restrict. Defaults to :code:`None`.
+        get_sn (bool, optional): Whether or not to try to retrieve the serial number. Can fail if
+            another process is connected or if we don't have permission to access the device. Defaults
+            to :code:`True`.
         get_hw_loc (bool, optional): Whether or not to access the hardware location of the device.
-            Can fail due to the same reasons as above. Defaults to True.
+            Can fail due to the same reasons as above. Defaults to :code:`True`.
 
     Returns:
-        List[dict]: A list of dicts with fields {'name': str, 'sn', str, 'hw_loc': (int, int)}
+        List[dict]: A list of dicts with fields :code:`{'name': str, 'sn', str, 'hw_loc': (int, int)}`
 
-    If an unknown NewAE device is connected, 'name' will be 'unknown'. If 'sn' or 'hw_loc'
-    are not desired, or cannot be accessed, they will be None.
+    If an unknown NewAE device is connected, :code:`'name'` will be :code:`'unknown'`. If :code:`'sn'`
+    or :code:`'hw_loc'` are not desired (or cannot be accessed), they will be :code:`None`.
 
     .. versionadded:: 5.6.2
     """
@@ -133,9 +134,32 @@ ktp = key_text_patterns #alias
 
 def program_sam_firmware(serial_port : opstr=None,
     hardware_type : opstr=None, fw_path : opstr=None):
-    """Program firmware onto an erased chipwhisperer scope or target
+    """Program firmware onto an erased ChipWhisperer scope or target.
 
-    See https://chipwhisperer.readthedocs.io/en/latest/firmware.html for more information
+    Either :code:`hardware_type` or :code:`fw_path` MUST be specified. You have to specify at least
+    one but not both.
+    
+    See https://chipwhisperer.readthedocs.io/en/latest/firmware.html for more information.
+
+    Args:
+        port (str, optional): Serial port that the ChipWhisperer bootloader is on
+        fw_path (str, optional): Path to firmware, if specified don't set :code:`hardware_type`.
+        hardware_type (str, optional): The type of hardware that you want to program.
+            If specified, don't set :code:`fw_path`. Valid types::
+            * :code:`'cwlite'`
+            * :code:`'cwnano'`
+            * :code:`'cw305'`
+            * :code:`'cw310'`
+            * :code:`'cw340'`
+            * :code:`'cw1200'`
+            * :code:`'cwbergen'`
+            * :code:`'cwhusky'`
+            * :code:`'cwhuskyplus'`
+
+    Raises:
+        ValueError: If neither :code:`port` or :code:`hardware_type` are specified.
+        OSError: If the bootloader serial port cannot be found or if multiple
+            bootloader serial ports are found.
 
     .. versionadded:: 5.6.1
         Improved programming interface
@@ -148,21 +172,21 @@ def program_sam_firmware(serial_port : opstr=None,
         if len(at91_ports) == 0:
             raise OSError("Could not find bootloader serial port, please see https://chipwhisperer.readthedocs.io/en/latest/firmware.html")
         if len(at91_ports) > 1:
-            raise OSError("Found multiple bootloaders, please specify com port. See https://chipwhisperer.readthedocs.io/en/latest/firmware.html")
+            raise OSError("Found multiple bootloaders, please specify COM port. See https://chipwhisperer.readthedocs.io/en/latest/firmware.html")
 
         serial_port = at91_ports[0]
         print("Found {}".format(serial_port))
     prog = SAMFWLoader(None)
     prog.program(serial_port, hardware_type=hardware_type, fw_path=fw_path)
 
-def program_target(scope : scopes.ScopeTypes, prog_type, fw_path : str, **kwargs):
-    """Program the target using the programmer <type>
+def program_target(scope : scopes.ScopeTypes, prog_type : programmers.Programmer, fw_path : str, **kwargs):
+    """Program the target using a :code:`Programmer` class and the firmware filepath.
 
-    Programmers can be found in the programmers submodule
+    Programmers can be found in the :code:`programmers` submodule.
 
     Args:
-       scope (ScopeTemplate): Connected scope object to use for programming
-       prog_type (Programmer): Programmer to use. See chipwhisperer.programmers
+       scope (ScopeTypes): Connected :code:`scope` object to use for programming
+       prog_type (Programmer): Programmer to use. See :code:`chipwhisperer.programmers`
            for available programmers
        fw_path (str): Path to hex file to program
 
@@ -172,11 +196,10 @@ def program_target(scope : scopes.ScopeTypes, prog_type, fw_path : str, **kwargs
     if prog_type is None: #[makes] automating notebooks much easier
         scope_logger.warning("prog_type is None, target will not be programmed")
         return
-    prog = prog_type(**kwargs)
+    prog : programmers.Programmer = prog_type(**kwargs)
 
     try:
         prog.scope = scope
-        prog._logging = None
         prog.open()
         prog.find()
         prog.erase()
@@ -193,17 +216,17 @@ def program_target(scope : scopes.ScopeTypes, prog_type, fw_path : str, **kwargs
 
 
 
-def open_project(filename : str):
+def open_project(filename : str) -> project.Project:
     """Load an existing project from disk.
 
     Args:
        filename (str): Path to project file.
 
     Returns:
-       A chipwhisperer project object.
+        project.Project: A ChipWhisperer :code:`Project` object.
 
     Raises:
-       OSError: filename does not exist.
+       OSError: If :code:`filename` does not exist or can't be opened.
     """
     filename = project.ensure_cwp_extension(filename)
 
@@ -212,22 +235,23 @@ def open_project(filename : str):
     return proj
 
 
-def create_project(filename : str, overwrite : bool=False):
-    """Create a new project with the path <filename>.
+def create_project(filename : str, overwrite : bool=False) -> project.Project:
+    """Create a new project saved at the path :code:`filename`.
 
-    If <overwrite> is False, raise an OSError if this path already exists.
+    If :code:`overwrite` is :code:`False`, raise an :code:`OSError` if this path
+    already exists.
 
     Args:
-       filename (str): File path to create project file at. Must end with .cwp
+       filename (str): File path to create project file at. Must end with :code:`.cwp`
        overwrite (bool, optional): Whether or not to overwrite an existing
-           project with <filename>. Raises an OSError if path already exists
-           and this is false. Defaults to false.
+           project with :code:`filename`. Raises an :code:`OSError` if path already exists
+           and this is :code:`False`. Defaults to :code:`False`.
 
     Returns:
-       A chipwhisperer project object.
+        project.Project: A ChipWhisperer :code:`Project` object.
 
     Raises:
-       OSError: filename exists and overwrite is False.
+       OSError: If :code:`filename` exists and :code:`overwrite` is :code:`False`.
     """
     filename = project.ensure_cwp_extension(filename)
 
@@ -243,28 +267,38 @@ def create_project(filename : str, overwrite : bool=False):
     return proj
 
 
-def import_project(filename : str, file_type : str='zip', overwrite : bool=False):
+def import_project(filename : str, file_type : str='zip', overwrite : bool=False) -> project.Project:
     """Import and open a project.
 
-    Will import the **filename** by extracting to the current working
-    directory.
+    Will import :code:`filename` by extracting it to the current working
+    directory. If a project with the same name already exists in the current
+    working directory, :code:`overwrite` will be used to determine if the project
+    should be overwritten.
 
-    Currently support file types:
-     * zip
+    Currently supported file types:
+     * :code:`zip`
 
     Args:
         filename (str): The file name to import.
         file_type (str): The type of file that is being imported.
-            Default is zip.
-        overwrite (bool): Whether or not to overwrite the project given as
-            the **import_as** project.
+            Default is :code:`zip`.
+        overwrite (bool): Whether or not to overwrite the project in the
+            current working directory if there's a name collision. Defaults
+            to :code:`False`.
+
+    Returns:
+        project.Project: A ChipWhisperer :code:`Project` object.
+
+    Raises:
+        OSError: If the extract :code:`.cwp` file already exists and
+            :code:`overwrite` is :code:`False`.
+        ValueError: If the :code:`filename` does not contain a :code:`.cwp` file
+            or if the :code:`file_type` is not supported.
 
     .. versionadded:: 5.1
-        Add **import_project** function.
+        Addded the **import_project** function.
     """
-    # extract name from input file
-    input_dir, input_file = os.path.split(filename)
-    input_file_root, input_file_ext = os.path.splitext(input_file)
+    # get the absolute path to the file
     input_abs_path = os.path.abspath(filename)
 
     # use the appropriate type of import
@@ -286,7 +320,7 @@ def import_project(filename : str, file_type : str='zip', overwrite : bool=False
                     project_zip.extractall(path=os.getcwd())
 
             if output_path is None:
-                raise ValueError('Zipfile does not contain a .cwp file, so it cannot be imported')
+                raise ValueError('Zip file does not contain a .cwp file, so it cannot be imported')
     else:
         raise ValueError('Import from file type not supported: {}'.format(file_type))
 
@@ -304,74 +338,65 @@ def scope(scope_type : Optional[Type[scopes.ScopeTypes]]=None, name : opstr=None
     """Create a scope object and connect to it.
 
     This function allows any type of scope to be created. By default, the
-    object created is based on the attached hardware (OpenADC for
-    CWLite/CW1200, CWNano for CWNano).
+    object created is based on the attached hardware (:code:`OpenADC` for
+    CWLite/CW1200, :code:`CWNano` for CWNano).
 
     Scope Types:
      * :class:`scopes.OpenADC` (Pro and Lite)
      * :class:`scopes.CWNano` (Nano)
 
-    If multiple chipwhisperers are connected, the serial number of the one you
-    want to connect to can be specified by passing sn=<SERIAL_NUMBER>
+    If multiple ChipWhisperers are connected, the serial number of the one you
+    want to connect to can be specified by passing :code:`sn='<SERIAL_NUMBER>'`.
 
     Args:
-        scope_type: Scope type to connect to. Types
-            can be found in chipwhisperer.scopes. If None, will try to detect
-            the type of ChipWhisperer connected. Defaults to None.
-        name: model name of the ChipWhisperer that you want to
+        scope_type (ScopeTypes, optional): Scope type to connect to. Typescan be
+            found in :code:`chipwhisperer.scopes`. If :code:`None`, will try to
+            detect the type of ChipWhisperer connected. Defaults to :code:`None`.
+        name (str, optional): Model name of the ChipWhisperer that you want to
             connect to. Alternative to specifying the serial number when
             multiple ChipWhisperers, all of different type, are connected.
-            Defaults to None. Valid values:
-
-            * Nano
-
-            * Lite
-
-            * Pro
-
-            * Husky
-
-        idProduct: idProduct of the ChipWhisperer that you want to
+            Defaults to :code:`None`. Valid values::
+            * :code:`'Nano'`
+            * :code:`'Lite'`
+            * :code:`'Pro'`
+            * :code:`'Husky'`
+            * :code:`'HuskyPlus'`
+        idProduct (int, optional): idProduct of the ChipWhisperer that you want to
             connect to. Alternative to specifying the serial number when
             multiple ChipWhisperers, all of different type, are connected.
-            Defaults to None. Valid values:
-
-            * 0xace0: CW-Nano
-
-            * 0xace2: CW-Lite
-
-            * 0xace3: CW-Pro
-
-            * 0xace5: CW-Husky
-
-        sn: Serial number of ChipWhisperer that you want to
-            connect to. sn is required if more than one ChipWhisperer of the
+            Defaults to :code:`None`. Valid values::
+            * :code:`0xace0` (CW-Nano)
+            * :code:`0xace2` (CW-Lite)
+            * :code:`0xace3` (CW-Pro)
+            * :code:`0xace5` (CW-Husky)
+        sn (str, optional): Serial number of ChipWhisperer that you want to
+            connect to. :code:`sn` is required if more than one ChipWhisperer of the
             same type is connected (i.e. two CWNano's or a CWLite and CWPro).
-            Defaults to None.
-        bitstream: Path to bitstream to program. If None,
-            programs default bitstream. Optional, defaults to None. Ignored
-            on Nano.
-        force: If True, always erase and program
-            FPGA. If False, only erase and program FPGA if it
-            is currently blank. Defaults to False. Ignored on Nano.
-        prog_speed: Sets the FPGA programming speed for Lite, Pro, and Husky.
+            Defaults to :code:`None`.
+        bitstream (str, optional): Path to bitstream to program. If :code:`None`,
+            programs default bitstream. Optional, defaults to :code:`None`. Ignored
+            on CWNano.
+        force (bool): If :code:`True`, always erase and program FPGA. If :code:`False`,
+            only erase and program FPGA if it is currently blank. Defaults to :code:`False`.
+            Ignored on CWNano.
+        prog_speed (int): Sets the FPGA programming speed for CWLite, CWPro, and CWHusky.
             If you get programming errors, try turning this down.
 
     Returns:
-        Connected scope object.
+        scopes.ScopeTypes: Connected scope object specified by :code:`scope_type`.
 
     Raises:
-        OSError: Can be raised for issues connecting to the chipwhisperer, such
+        OSError: Can be raised for issues connecting to the ChipWhisperer, such
             as not having permission to access the USB device or no ChipWhisperer
             being connected.
-        Warning: Raised if multiple chipwhisperers are connected, but the type
-            and/or the serial numbers are not specified
+        Warning: Raised if multiple ChipWhisperers are connected, but the type
+            and/or the serial numbers are not specified.
 
     .. versionchanged:: 5.1
-        Added autodetection of scope_type
+        Added autodetection of :code:`scope_type`
 
     .. versionchanged:: 5.5
-            Added idProduct, name, bitstream, and force parameters.
+            Added :code:`idProduct`, :code:`name`, :code:`bitstream`, and :code:`force` parameters.
     """
     from chipwhisperer.common.utils.util import get_cw_type
     if isinstance(prog_speed, float):
