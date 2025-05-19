@@ -214,15 +214,24 @@ class SAMFWLoader:
             port (str): Serial port that the ChipWhisperer bootloader is on
             fw_path (str, optional): Path to firmware, if specified don't set :code:`hardware_type`.
             hardware_type (str, optional): The type of hardware that you want to program.
-                If specified, don't set :code:`fw_path`. Valid types::
+                If specified, don't set :code:`fw_path`. Valid types:
+
                 * :code:`'cwlite'`
+
                 * :code:`'cwnano'`
+
                 * :code:`'cw305'`
+
                 * :code:`'cw310'`
+
                 * :code:`'cw340'`
+
                 * :code:`'cw1200'`
+
                 * :code:`'cwbergen'`
+
                 * :code:`'cwhusky'`
+
                 * :code:`'cwhuskyplus'`
 
         Returns:
