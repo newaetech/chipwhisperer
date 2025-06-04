@@ -83,12 +83,12 @@ int main(void)
         // delay_2_ms();
         // my_puts("Masquerading flash...[DONE]\n");
         // delay_2_ms();
-        my_puts("Decrypting database..[DONE]\n");
-        delay_2_ms();
-        my_puts("\n\n");
+        // my_puts("Decrypting database..[DONE]\n");
+        // delay_2_ms();
+        // my_puts("\n\n");
 
         //Give them one last warning
-        my_puts("WARNING: UNAUTHORIZED ACCESS WILL BE PUNISHED\n");
+        // my_puts("WARNING: UNAUTHORIZED ACCESS WILL BE PUNISHED\n");
 
         trigger_low();
 
