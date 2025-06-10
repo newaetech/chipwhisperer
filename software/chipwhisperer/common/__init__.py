@@ -1,22 +1,22 @@
 import zarr
 
 class TraceContainer:
-    def __init__(self, trace, plaintext=None, ciphertext=None, key=None):
-        self._trace = trace
+    def __init__(self, trace, plaintext=None, ciphertext=None, key=None, metadata=None):
+        self.trace = trace
+        self.plaintext = plaintext
+        self.ciphertext = ciphertext
+        self.key = key
+        self.metadata = metadata
         pass
 
 class Project:
-    def __init__(self, path, samples, num_traces=100, dtype='int32'):
+    def __init__(self, path=None, num_traces=100, dtype='int32'):
 
         self._storage = zarr.create_group(store=path)
-        self._traces = None
-        self._plaintexts = None
-        self._ciphertexts = None
-        self._keys = None
         pass
 
     def append(self, trace):
-        if type(trace) in [list, tuple]:
+        if type(trace) is TraceContainer:
             pass
         pass
 
@@ -30,13 +30,16 @@ class Project:
         pass
 
     def plaintexts(self):
-        pass
+        return self._storage.plaintexts[:]
 
     def ciphertexts(self):
-        pass
+        return self._storage.ciphertexts[:]
 
     def keys(self):
-        pass
+        return self._storage.keys[:]
 
     def containers(self):
+        rtn = []
+        for i in range(len(self._storage.traces)):
+            pass
         pass
