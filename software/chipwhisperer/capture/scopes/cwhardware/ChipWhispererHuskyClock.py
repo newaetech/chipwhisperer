@@ -583,16 +583,16 @@ class CDCI6214(util.DisableNewAttr):
         # input to the PLL between 1MHz and 100MHz
         if self._allow_rdiv:
             # can lead to phase variability so disabled by default
-            scope_logger.warning('scope.clock.pll._allow_rdiv is True; this can cause an inconsistant phase relationship between the target and sampling clocks. Do you really want this?')
+            scope_logger.warning('scope.clock.pll._allow_rdiv is True; this can cause an inconsistent phase relationship between the target and sampling clocks. Do you really want this?')
             okay_in_divs = list(range(1,256))
             okay_in_divs.append(0.5)
         elif input_freq > self._max_pfd:
             # in this case we *need* to divide (but we don't need the x2 option)
-            scope_logger.warning('input frequency > 100 MHz requires input divider to be used; this can cause an inconsistant phase relationship between the target and sampling clocks.')
+            scope_logger.warning('input frequency > 100 MHz requires input divider to be used; this can cause an inconsistent phase relationship between the target and sampling clocks.')
             okay_in_divs = list(range(1,256))
         # TODO: uncomment if support is added for frequencies < 1 MHz
         #elif input_freq < self._min_pfd:
-        #    scope_logger.warning('input frequency < 1 MHz requires input divider to be used; this can cause an inconsistant phase relationship between the target and sampling clocks.')
+        #    scope_logger.warning('input frequency < 1 MHz requires input divider to be used; this can cause an inconsistent phase relationship between the target and sampling clocks.')
         #    okay_in_divs = [0.5]
         else:
             okay_in_divs = [1]
@@ -668,7 +668,7 @@ class CDCI6214(util.DisableNewAttr):
                 with a different adc_mul.
                 It may also be possible to get closer to the requested
                 frequency if you set scope.clock.pll._allow_rdiv to True;
-                however this can result in an inconsistant clock phase between
+                however this can result in an inconsistent clock phase between
                 the target and ADC clocks; use at your own risk!
                 """ % (target_freq, best_real_target_freq))
 
@@ -723,7 +723,7 @@ class CDCI6214(util.DisableNewAttr):
 
     @property
     def f_pfd(self):
-        """ PFD freqency, using the input frequency against which PLL
+        """ PFD frequency, using the input frequency against which PLL
         parameters were calculated.
         """
         pfd = self.input_freq/self.get_input_div()
@@ -733,7 +733,7 @@ class CDCI6214(util.DisableNewAttr):
 
     @property
     def f_vco(self):
-        """ VCO freqency, using the input frequency against which PLL
+        """ VCO frequency, using the input frequency against which PLL
         parameters were calculated.
         """
         vco =  self.f_pfd * self.get_fb_prescale() * self.get_pll_mul()
@@ -743,21 +743,21 @@ class CDCI6214(util.DisableNewAttr):
 
     @property
     def f_out(self):
-        """ Target freqency, using the input frequency against which PLL
+        """ Target frequency, using the input frequency against which PLL
         parameters were calculated.
         """
         return self.f_vco / self.get_prescale() / self.get_outdiv(1)
 
     @property
     def f_out_adc(self):
-        """ ADC freqency, using the input frequency against which PLL
+        """ ADC frequency, using the input frequency against which PLL
         parameters were calculated.
         """
         return self.f_vco / self.get_prescale() / self.get_outdiv(3)
 
     @property
     def f_out_error(self):
-        """ Difference between target freqency and requested target frequency,
+        """ Difference between target frequency and requested target frequency,
         using the input frequency against which PLL parameters were calculated.
         """
         return abs(self.f_out - self._given_target_freq)
@@ -1615,7 +1615,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
     @property
     def adc_src(self):
         """Convenience function for backwards compatibility with how ADC clocks
-        are set on CW-lite and CW-pro.
+        are set on CWLite and CWPro.
 
         The ADC can be clocked by one of five possible sources:
 
@@ -1637,7 +1637,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
 
     @adc_src.setter
     def adc_src(self, src):
-        scope_logger.warning("scope.clock.adc_src is provided for backwards compability, but scope.clock.clkgen_src and scope.clock.adc_mul should be used for Husky.")
+        scope_logger.warning("scope.clock.adc_src is provided for backwards compatibility, but scope.clock.clkgen_src and scope.clock.adc_mul should be used for Husky.")
         self._cached_adc_freq = None
 
         if src == "clkgen_x4":
@@ -1661,7 +1661,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
     @clear_adc_unlock # type: ignore
     def reset_adc(self):
         """Convenience function for backwards compatibility with how ADC clocks
-        are managed on CW-lite and CW-pro.
+        are managed on CWLite and CWPro.
         """
         self._cached_adc_freq = None
         self.pll.reset()
@@ -1676,7 +1676,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
     @property
     def adc_locked(self):
         """Convenience function for backwards compatibility with how ADC clocks
-        are managed on CW-lite and CW-pro.
+        are managed on CWLite and CWPro.
         """
         return self.pll.pll_locked
 

@@ -1,7 +1,7 @@
 # CW303 Arm Target
 
 The ChipWhisperer-Lite board has a break-away target board section. This
-target can be used attached to the CW-Lite or separated and connected
+target can be used attached to the CWLite or separated and connected
 via ribbon cable. The breakaway target board has a slightly different
 feature set than the CW308T-STM32F3 target board. For more info,
 see the CW308T-STM32F documentation.
@@ -38,10 +38,10 @@ connections are as follows:
 
 ### Building Firmware
 
-Building Firmware for this target requires make and arm-none-eabi-gcc.
+Building Firmware for this target requires `make` and `arm-none-eabi-gcc`.
 Installation of both these are covered in the {doc}`installation instructions <../installation>`.
 
-If you have make and arm-none-eabi-gcc, you can build firmware by navigating via command line to the relevant
+If you have `make` and `arm-none-eabi-gcc`, you can build firmware by navigating via command line to the relevant
 build directory and running:
 
 ```bash

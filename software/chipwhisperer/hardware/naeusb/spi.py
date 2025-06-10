@@ -111,7 +111,7 @@ class SPI(object):
             self.set_cs(None)
 
     def transfer(self, data, start=True, stop=True, writeonly=False):
-        """Transfers arbitrary amount of data, dropping cs (if `start` is True)
+        """Transfers arbitrary amount of data, dropping CS (if `start` is True)
         and raising it after (if `stop` is set)."""
 
         if start:
@@ -171,7 +171,7 @@ class SPI(object):
         return readdata
     
     def toggle_sck(self, toggles, mosistate=False):
-        """Toggles SCK line an aribtrary number of times (sometimes required for synchronizing states).
+        """Toggles SCK line an arbitrary number of times (sometimes required for synchronizing states).
         
         Does not respect the SCK setting, only uses a fixed SCK value."""
 

@@ -48,7 +48,7 @@ def fft(signal, freq=None):
 
 class DecimationClockRecovery(PreprocessingBase):
     """
-    Attempts Clock recovery & then decimates based on that. Currently broken.
+    Attempts clock recovery & then decimates based on that. Currently broken.
     """
     _name = "Decimation: Clock Recovery"
     _description = "Attempts to 'recover' the clock by band-pass filtering, and then uses that to "\
@@ -126,7 +126,7 @@ class DecimationClockRecovery(PreprocessingBase):
                 #         if you only api a waveform AFTER the trigger, this means you need to
                 #         throw away data from the api until the filter is running. If the system
                 #         clock frequency changes, you've now thrown away a differing amount of clock
-                #         cycles and syncronization is lost.
+                #         cycles and synchronization is lost.
                 #
                 # For now we just throw away a fixed number of samples, but it doesn't work for varying
                 # clock frequencies.

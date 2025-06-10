@@ -80,7 +80,7 @@ All differences between Husky and Husky Plus are summarized
 | Glitch Width | **Based on Internal PLL (600-1200MHz)**, 100% (enable-only) | 0-49.8% of a clock cycle, 100% (enable-only) | 0-49.8% of a clock cycle, 100% | Time increments between [0, 2^32) |
 | Glitch Width Increments | **Based on Internal PLL (600-1200MHz)** | 0.4% of a clock cycle | 0.4% of a clock cycle | ~8.3ns |
 | Glitch Offset | **Based on Internal PLL (600-1200MHz)** | 0-49.8% of a clock cycle, 100% (enable-only) | 0-49.8% of a clock cycle, 100% | Time increments between [0, 2^32), high jitter |
-| Glitch Offset Increments | **Based on Internal Pll (600-1200MHz)** | 0.4% of a clock cycle | 0.4% of a clock cycle | ~8.3ns, high jitter |
+| Glitch Offset Increments | **Based on Internal PLL (600-1200MHz)** | 0.4% of a clock cycle | 0.4% of a clock cycle | ~8.3ns, high jitter |
 | Glitch Cycle Offset | [0, 2^32) | [0, 2^32) | [0, 2^32) | N/A |
 | Glitch Cycle Repeat | [0, 8192] | [0, 8192] | [0, 8192] | N/A |
 | Voltage Glitch Type | High-power, low-power crowbar | High-power, low-power crowbar | High-power, low-power crowbar | Low-power crowbar |

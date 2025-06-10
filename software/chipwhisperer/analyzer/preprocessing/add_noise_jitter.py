@@ -35,7 +35,7 @@ class AddNoiseJitter(PreprocessingBase):
     """Add random time jitter to each of the traces.
     """
     _name = "Add Noise: Time Jitter"
-    _description = "Add random jitter. This module is used for testing resyncronization modules, and has no use " \
+    _description = "Add random jitter. This module is used for testing resynchronization modules, and has no use " \
                   "in actual analysis."
 
     def __init__(self, traceSource=None, name=None):

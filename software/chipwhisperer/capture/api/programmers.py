@@ -88,15 +88,15 @@ class Programmer:
         raise NotImplementedError
 
 def save_and_restore_pins(func):
-    """Decorator to save and restore pins needed to comunicate and program hardware
+    """Decorator to save and restore pins needed to communicate and program hardware
 
         Purpose: to move from changing pins in the background needed to communicate
          with the hardware and leaving them changed (very confusing), to saving the
          pin states before the function is called, changing them during function
-         executation and restoring them after the function is done executing
+         execution and restoring them after the function is done executing
          (less confusing).
         """
-    @wraps(func) # updates func_wrapper aatributes to be same
+    @wraps(func) # updates func_wrapper attributes to be same
     def func_wrapper(self : Programmer, *args, **kwargs):
 
         #If no scope, we don't do any pin magic

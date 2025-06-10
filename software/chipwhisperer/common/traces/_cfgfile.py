@@ -160,13 +160,13 @@ class TraceContainerConfig(object):
         return lst
      
     def setConfigFilename(self, fname):
-        """Set the config filename, WITHOUT syncronizing internal DB to File. Use load or save for this feature."""
+        """Set the config filename, WITHOUT synchronizing internal DB to File. Use load or save for this feature."""
         if fname is not None:
             fname = os.path.normpath(fname)
         self._configfile = fname
         
     def configFilename(self):
-        """Get Config Filename"""
+        """Get config filename"""
         return self._configfile
      
     def attr(self, attr, moduleName=None):
@@ -239,7 +239,7 @@ class TraceContainerConfig(object):
         self.syncFile()
         
     def saveTrace(self, configfile = None):
-        """Save internal DB to Config File"""
+        """Save internal DB to config file"""
         self.config.filename = self._configfile
         self.syncFile()     
         self.config.write()

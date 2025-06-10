@@ -31,7 +31,7 @@ class NoGUIPlots(object):
         self._results = attack_results
 
     def set_results(self, attack_results):
-        """ sets results to attack_results
+        """ Sets results to attack_results
         """
         self._results = attack_results
 
@@ -180,7 +180,7 @@ class NoGUIPlots(object):
         if bnum_it is None:
             bnum_it = range(16)
         ret = self.pge_vs_trace(bnum_it[0])
-        curve = hv.Curve((ret[0],ret[1]), "Traces Used in Calculation", "Partial Guessing Entrop of Byte").options(title="PGE Vs. Traces")
+        curve = hv.Curve((ret[0],ret[1]), "Traces Used in Calculation", "Partial Guessing Entropy of Byte").options(title="PGE Vs. Traces")
         for bnum in bnum_it[1:]:
             ret = self.pge_vs_trace(bnum)
             curve *= hv.Curve((ret[0],ret[1])).opts(color=byte_to_color(bnum)).opts(width=900, height=600)

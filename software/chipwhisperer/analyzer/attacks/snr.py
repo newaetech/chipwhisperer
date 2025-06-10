@@ -40,7 +40,7 @@ def calculate_snr(input, leak_model, bnum=0, db=True):
         leak_model (ModelsBase): A leakage model selected from
             :data:`leakage_models <chipwhisperer.analyzer.leakage_models>`.
         bnum (int): Byte number used for leakage model.
-        bd (bool): Return signal-to-noise ratio in decibals.
+        bd (bool): Return signal-to-noise ratio in decibels.
     """
 
     textin = None

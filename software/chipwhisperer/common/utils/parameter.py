@@ -35,7 +35,7 @@ import functools
 class Parameterized(object):
     """
     Abstract class that implements basic functionality required by parameterized objects.
-    All parameterized objects should have _name overriden in the class. The objects can also override this attribute
+    All parameterized objects should have _name overridden in the class. The objects can also override this attribute
      with different names in the case of having two or more instances. The _description is optional.
     """
     _name = "None"
@@ -51,7 +51,7 @@ class Parameterized(object):
         return self.params
 
     def findParam(self, nameOrPath):
-        """Return the paramenter child with the given name/path."""
+        """Return the parameter child with the given name/path."""
         return self.getParams().getChild(nameOrPath)
 
     def getName(self):
@@ -93,9 +93,9 @@ class Parameter(object):
     "int", "float"        - A value to be selected between a min and max limit
     "range", "rangegraph" - An interval and an interval that can be selected using a graph widget (graphwidget option)
     "file"                - A string type with a file dialog button
-    "filelist"            - Complex widged with a file list and mangement buttons to add/remove/edit/copy/set active.
-     "color"              - Opens a color seletion dialog
-     "menu"               - Hiden widget that inserts a new menu option
+    "filelist"            - Complex widget with a file list and management buttons to add/remove/edit/copy/set active.
+    "color"               - Opens a color selection dialog
+    "menu"                - Hidden widget that inserts a new menu option
 
     Supported Attributes:
     "name", "type"        - Mandatory attributes
@@ -108,7 +108,7 @@ class Parameter(object):
     "linked"              - Refreshes (calls set(get)) the values in the given list with other parameters
     "default"             - Set the initial value (skips initialization when using set/get)
     "tip"                 - Description of the parameter
-    "action"              - Calls the provided method with the current paramenter as argument when the value is changed
+    "action"              - Calls the provided method with the current parameter as argument when the value is changed
     "visible"             - Show/hides the parameter
     "children"            - Insert other parameters to be accessed within the current parameter hierarchy
     "readonly"            - Prevents the user of changing its value (it can be forced though)
@@ -270,7 +270,7 @@ class Parameter(object):
         return self.getKeyFromValue(self.getValue())
 
     def addChildren(self, children):
-        """Add a list of children to the current paramenter"""
+        """Add a list of children to the current parameter"""
         addedChildren = []
         for child in children:
             addedChildren.append(Parameter(self, ignoreChildren=True, **child))
@@ -431,7 +431,7 @@ class Parameter(object):
         self.parent.removeChild(self)
 
     def delete(self):
-        """Deletes itself (makes the GC job easier removing cicles). WARNING: Can't be called again!!!"""
+        """Deletes itself (makes the GC job easier removing circles). WARNING: Can't be called again!!!"""
         self.remove()
         for c in self.childs:
             c.delete()
@@ -472,7 +472,7 @@ class Parameter(object):
         self.sigParametersChanged.emit()
 
     def getChild(self, nameOrPath):
-        """Return the paramenter child with the given name/path."""
+        """Return the parameter child with the given name/path."""
         if isinstance(nameOrPath, list) or isinstance(nameOrPath, tuple):
             item = self.keys.get(nameOrPath[0], None)
 

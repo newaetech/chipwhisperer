@@ -180,9 +180,9 @@ class TraceContainer(Parameterized):
     
     def getAuxDataConfig(self, newmodule):
         """
-        Get auxilary data section in config file, searches based on both 'modname'
+        Get auxiliary data section in config file, searches based on both 'modname'
         and 'uniquedict'. Checks file itself & NOT the local database, since the
-        auxilary data is not loaded into database.
+        auxiliary data is not loaded into database.
         """
 
         # Get all section names

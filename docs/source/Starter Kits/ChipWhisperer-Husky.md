@@ -27,6 +27,6 @@ also comes with multiple targets (a CW312T-ICE40 and a CW312T-SAM4S).
 * 12" SMA-SMA cable x2
 * 6" BNC-MCX cable x1
 * 6" SMA-MCX cable x1
-* USB-c cable
-* USBC-A adapter
+* USB-C cable
+* USB-A adapter
 * [CW308 to CW312 adapter/breakout board](../Targets/CW308_CW312_adapter) x3

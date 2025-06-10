@@ -419,10 +419,10 @@ class OpenADCInterface(util.DisableNewAttr):
         return self.msg_read(address, maxResp=num_bytes)
 
     def reset_fpga(self):
-        """ Reset all FPGA resgiters to their defaults.
+        """ Reset all FPGA registers to their defaults.
         """
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         self.sendMessage(CODE_WRITE, "RESET", [1])
         self.sendMessage(CODE_WRITE, "RESET", [0])
 
@@ -487,7 +487,7 @@ class OpenADCInterface(util.DisableNewAttr):
                     # need to capture a multiple of 3 otherwise processHuskyData may fail
                     sbuf_len += 3 - sbuf_len % 3
                 self._sbuf = array.array('B', [0]) * sbuf_len
-                # For CW-Pro, _stream_len is the number of (10-bit) samples (which was previously set), whereas for Husky, to accomodate 8/12-bit samples, 
+                # For CWPro, _stream_len is the number of (10-bit) samples (which was previously set), whereas for Husky, to accomodate 8/12-bit samples, 
                 # it's the total number of bytes, so we need to update _stream_len accordingly:
                 self._stream_len = sbuf_len
         else:
@@ -528,7 +528,7 @@ class OpenADCInterface(util.DisableNewAttr):
 
     def set_clip_errors_disabled(self, disable):
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         raw = self.sendMessage(CODE_READ, "NO_CLIP_ERRORS", maxResp=1)[0]
         if disable:
             raw |= 1 # set bit 0
@@ -538,7 +538,7 @@ class OpenADCInterface(util.DisableNewAttr):
 
     def clip_errors_disabled(self):
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         if self.sendMessage(CODE_READ, "NO_CLIP_ERRORS", maxResp=1)[0] & 1:
             return True
         else:
@@ -546,7 +546,7 @@ class OpenADCInterface(util.DisableNewAttr):
 
     def set_lo_gain_errors_disabled(self, disable):
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         raw = self.sendMessage(CODE_READ, "NO_CLIP_ERRORS", maxResp=1)[0]
         if disable:
             raw |= 2 # set bit 1
@@ -556,7 +556,7 @@ class OpenADCInterface(util.DisableNewAttr):
 
     def lo_gain_errors_disabled(self):
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         if self.sendMessage(CODE_READ, "NO_CLIP_ERRORS", maxResp=1)[0] & 2:
             return True
         else:
@@ -709,13 +709,13 @@ class OpenADCInterface(util.DisableNewAttr):
             self.arm(False)
 
             if self._is_husky and self.sendMessage(CODE_READ, "FIFO_STAT", maxResp=1)[0] & 0x0f:
-                scope_logger.warning("FIFO error occured; see scope.adc.errors for details.")
+                scope_logger.warning("FIFO error occurred; see scope.adc.errors for details.")
 
             if stream_timeout:
                 if self._stream_rx_bytes == 0: # == (self._stream_len - 3072):
-                    scope_logger.warning("Streaming mode OVERFLOW occured as trigger too fast - Adjust offset upward (suggest = 200 000)")
+                    scope_logger.warning("Streaming mode OVERFLOW occurred as trigger too fast - Adjust offset upward (suggest = 200 000)")
                 else:
-                    scope_logger.warning("Streaming mode OVERFLOW occured during capture - ADC sample clock probably too fast for stream mode (keep ADC Freq < 10 MHz)")
+                    scope_logger.warning("Streaming mode OVERFLOW occurred during capture - ADC sample clock probably too fast for stream mode (keep ADC Freq < 10 MHz)")
                 timeout = True
         else:
             status = self.getStatus()
@@ -1057,7 +1057,7 @@ class OpenADCInterface(util.DisableNewAttr):
             self._int_data = np.append([0x00]*diff, self._int_data)
             scope_logger.debug("Diff > 0, fpData: {}, int_data: {}".format(len(fpData), len(self._int_data)))
             scope_logger.warning('Pretrigger not met: Do not use downsampling and pretriggering at same time.')
-            scope_logger.debug('Pretrigger not met: can attempt to increase presampleTempMargin(in the code).')
+            scope_logger.debug('Pretrigger not met: can attempt to increase presampleTempMargin (in the code).')
         else:
             scope_logger.debug("Diff <= 0, fpData: {}, int_data: {}".format(len(fpData), len(self._int_data)))
             fpData = fpData[-diff:]
@@ -1290,7 +1290,7 @@ class GainSettings(util.DisableNewAttr):
         return self.setMode(val)
 
     def setGain(self, gain):
-        '''Set the Gain range: 0-78 for CW-Lite and CW-Pro; 0-109 for CW-Husky
+        '''Set the Gain range: 0-78 for CWLite and CWPro; 0-109 for CWHusky
 
         :meta private:
 
@@ -1485,7 +1485,7 @@ class TriggerSettings(util.DisableNewAttr):
 
     @property
     def stream_mode(self):
-        """The ChipWhisperer's streaming status. Only available on CW1200 and CW-Husky.
+        """The ChipWhisperer's streaming status. Only available on CW1200 and CWHusky.
 
         When stream mode is enabled, the ChipWhisperer sends back ADC data as
         soon as it is recorded. In this mode, there is no hardware limit on the
@@ -1508,7 +1508,7 @@ class TriggerSettings(util.DisableNewAttr):
 
     @property
     def stream_segment_threshold(self):
-        """Only available on CW-Husky. ** Internal parameter which should not
+        """Only available on CWHusky. ** Internal parameter which should not
         be tweaked unless you know what you're doing. **
         
         For streaming, this many samples must be available to be read from the
@@ -1531,7 +1531,7 @@ class TriggerSettings(util.DisableNewAttr):
 
     @property
     def stream_segment_size(self):
-        """Only available on CW-Husky. ** Internal parameter which should not
+        """Only available on CWHusky. ** Internal parameter which should not
         be tweaked unless you know what you're doing. **
         
         For streaming, this is the size of the burst that the SAM3U reads from
@@ -1613,9 +1613,9 @@ class TriggerSettings(util.DisableNewAttr):
         """The number of ADC samples to record in a single capture.
 
         The maximum number of samples is hardware-dependent:
-        - cwlite: 24400
-        - cw1200: 96000
-        - cwhusky: 131070
+        - CWLite: 24400
+        - CW1200: 96000
+        - CWHusky: 131070
 
         :Getter: Return the current number of total samples (integer)
 
@@ -1650,7 +1650,7 @@ class TriggerSettings(util.DisableNewAttr):
         """Husky only, for debugging; state of the Husky FIFO FSM.
         """
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         state = self.oa.sendMessage(CODE_READ, "FIFO_STATE", maxResp=1)[0]
         if state == 0:
             return 'IDLE'
@@ -1798,14 +1798,14 @@ class TriggerSettings(util.DisableNewAttr):
 
     @property
     def fifo_fill_mode(self) -> str:
-        """The ADC buffer fill strategy - allows segmented usage for CW-lite and CW-pro.
+        """The ADC buffer fill strategy - allows segmented usage for CWLite and CWPro.
 
         .. warning:: THIS REQUIRES NEW FPGA BITSTREAM - NOT YET IN THE PYTHON.
 
         Only the 'Normal' mode is well supported, the other modes can
         be used carefully.
 
-        For segmenting on CW-Husky, see 'segments' instead.
+        For segmenting on CWHusky, see 'segments' instead.
 
         There are four possible modes:
          * "normal": Trigger line & logic work as expected.
@@ -1817,7 +1817,7 @@ class TriggerSettings(util.DisableNewAttr):
            of 3 (will be enforced by API).
 
         .. warning:: The "enable" and "segment" modes requires you to fill
-                    the **full buffer** (~25K on CW-Lite, ~100K on CW-Pro).
+                    the **full buffer** (~25K on CWLite, ~100K on CWPro).
                     This requires you to ensure the physical trigger line will
                     be high (enable mode) or toggle (segment mode) enough. The
                     ChipWhisperer hardware will currently stall until the
@@ -1883,8 +1883,8 @@ class TriggerSettings(util.DisableNewAttr):
     def segments(self) -> int:
         """Number of sample segments to capture.
 
-        .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
-            CW-pro, see 'fifo_fill_mode' instead.
+        .. warning:: Supported by CWHusky only. For segmenting on CWLite or
+            CWPro, see 'fifo_fill_mode' instead.
 
         This setting must be a 16-bit positive integer. 
 
@@ -1922,7 +1922,7 @@ class TriggerSettings(util.DisableNewAttr):
     @segments.setter
     def segments(self, num : int):
         if num < 1 or num > 2**16-1 or not type(num) is int or not self._is_husky:
-            raise ValueError("Number of segments must be in range [1, 2^16-1]. For CW-Husky only.")
+            raise ValueError("Number of segments must be in range [1, 2^16-1]. For CWHusky only.")
         self._cached_segments = num
         self._set_segments(num)
 
@@ -1946,7 +1946,7 @@ class TriggerSettings(util.DisableNewAttr):
     def errors(self) -> Union[str, bool, int]:
         """Internal error flags (FPGA FIFO over/underflow)
 
-        .. warning:: Supported by CW-Husky only.
+        .. warning:: Supported by CWHusky only.
 
         Error types and their causes:
             * 'presample error': capture trigger occurs before the requested
@@ -1992,7 +1992,7 @@ class TriggerSettings(util.DisableNewAttr):
     def errors(self, val : Any):
         """Internal error flags (FPGA FIFO over/underflow)
 
-        .. warning:: Supported by CW-Husky only.
+        .. warning:: Supported by CWHusky only.
 
         """
         self.oa.sendMessage(CODE_WRITE, "FIFO_STAT", [1])
@@ -2003,13 +2003,13 @@ class TriggerSettings(util.DisableNewAttr):
     def first_error(self):
         """Reports the first error that was flagged (self.errors reports *all* errors). Useful for debugging. Read-only.
 
-        .. warning:: Supported by CW-Husky only.
+        .. warning:: Supported by CWHusky only.
 
         :Getter: Return the error flags.
 
         """
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         return self._get_errors("FIFO_FIRST_ERROR")
 
 
@@ -2017,13 +2017,13 @@ class TriggerSettings(util.DisableNewAttr):
     def first_error_state(self) -> str:
         """Reports the state the FPGA FSM state at the time of the first flagged error. Useful for debugging. Read-only.
 
-        .. warning:: Supported by CW-Husky only.
+        .. warning:: Supported by CWHusky only.
 
         :Getter: Return the error flags.
 
         """
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         raw = self.oa.sendMessage(CODE_READ, "FIFO_FIRST_ERROR", maxResp=3)[2]
         if   raw == 0: return "IDLE"
         elif raw == 1: return "PRESAMP_FILLING"
@@ -2064,8 +2064,8 @@ class TriggerSettings(util.DisableNewAttr):
     def segment_cycles(self) -> int:
         """Number of clock cycles separating segments.
 
-        .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
-            CW-pro, see 'fifo_fill_mode' instead.
+        .. warning:: Supported by CWHusky only. For segmenting on CWLite or
+            CWPro, see 'fifo_fill_mode' instead.
 
         This setting must be a 20-bit positive integer. 
 
@@ -2098,7 +2098,7 @@ class TriggerSettings(util.DisableNewAttr):
     @segment_cycles.setter
     def segment_cycles(self, num : int):
         if num < 0 or num > 2**20-1 or not type(num) is int or not self._is_husky:
-            raise ValueError("Number of segments must be in range [0, 2^20-1]. For CW-Husky only.")
+            raise ValueError("Number of segments must be in range [0, 2^20-1]. For CWHusky only.")
         self._cached_segment_cycles = num
         self._set_segment_cycles(num)
 
@@ -2122,8 +2122,8 @@ class TriggerSettings(util.DisableNewAttr):
     def segment_cycle_counter_en(self) -> bool:
         """Number of clock cycles separating segments.
 
-        .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
-            CW-pro, see 'fifo_fill_mode' instead.
+        .. warning:: Supported by CWHusky only. For segmenting on CWLite or
+            CWPro, see 'fifo_fill_mode' instead.
 
         Set to 0 to capture a new power trace segment every time the target
         issues a trigger event.
@@ -2136,7 +2136,7 @@ class TriggerSettings(util.DisableNewAttr):
         :Setter: Set segment_cycles.
         """
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         raw = self.oa.sendMessage(CODE_READ, "SEGMENT_CYCLE_COUNTER_EN", Validate=False, maxResp=1)[0]
         if raw == 1:
             return True
@@ -2157,7 +2157,7 @@ class TriggerSettings(util.DisableNewAttr):
 
     def _set_stream_mode(self, enabled):
         if self._is_lite:
-            raise ValueError("Not supported on CW-Lite.")
+            raise ValueError("Not supported on CWLite.")
         self._stream_mode = enabled
 
         #Write to FPGA
@@ -2216,7 +2216,7 @@ class TriggerSettings(util.DisableNewAttr):
 
     @property
     def test_mode(self):
-        """The ChipWhisperer's test mode. Only available on CW-Husky.
+        """The ChipWhisperer's test mode. Only available on CWHusky.
 
         When test mode is enabled, an internally-generated count-up pattern is
         captured, instead of the ADC sample data.
@@ -2256,7 +2256,7 @@ class TriggerSettings(util.DisableNewAttr):
 
     @property
     def bits_per_sample(self) -> int:
-        """Bits per ADC sample. Only available on CW-Husky.
+        """Bits per ADC sample. Only available on CWHusky.
 
         Husky has a 12-bit ADC; optionally, we read back only 8 bits per
         sample.  This does *not* allow for more samples to be collected; it
@@ -2273,7 +2273,7 @@ class TriggerSettings(util.DisableNewAttr):
         if bits not in [8,12]:
             raise ValueError("Valid settings: 8 or 12.")
         if not self._is_husky:
-            raise ValueError('For CW-Husky only.')
+            raise ValueError('For CWHusky only.')
         self._set_bits_per_sample(bits)
 
 
@@ -2366,13 +2366,13 @@ class TriggerSettings(util.DisableNewAttr):
         self.presamples_desired = samples
 
         if self._is_pro or self._is_lite or self._is_husky:
-            #CW-1200 Hardware / CW-Lite / CW-Husky
+            # CW1200 Hardware / CWLite / CWHusky
             samplesact = int(samples)
             self.presamples_actual = samplesact
         else:
             #Other Hardware
             if samples > 0:
-                scope_logger.warning('Pre-sample on CW-Lite is unreliable with many FPGA bitstreams. '
+                scope_logger.warning('Pre-sample on CWLite is unreliable with many FPGA bitstreams. '
                                 'Check data is reliably recorded before using in capture.')
 
             #enforce samples is multiple of 3
@@ -2409,7 +2409,7 @@ class TriggerSettings(util.DisableNewAttr):
         temp = self.oa.sendMessage(CODE_READ, "PRESAMPLES_ADDR", maxResp=presamp_bytes)
         samples = int.from_bytes(temp, byteorder='little')
 
-        #CW1200/CW-Lite/Husky reports presamples using different method
+        # CW1200/CWLite/Husky reports presamples using different method
         if self._is_pro or self._is_lite or self._is_husky:
             self.presamples_actual = samples
 

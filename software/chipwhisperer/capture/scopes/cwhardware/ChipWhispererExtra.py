@@ -307,7 +307,7 @@ class CWExtraSettings:
         return self.set_ioroute_value(io_num, mode)
 
     def get_xio_index(self, io_num):
-        """Gets a bitmask for a valid Extra IO pin for the IROUTE state.
+        """Gets a bitmask for a valid Extra IO pin for the IOROUTE state.
 
         Return:
             A bitmask representing the CTL IO pin.
@@ -1157,7 +1157,7 @@ class GPIOSettings(util.DisableNewAttr):
         * "hs2": output: provide the same clock that's on HS2.
         """
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         data = self.cwe.oa.sendMessage(CODE_READ, "CW_AUX_IO", Validate=False, maxResp=1)[0]
         if data & 0x01:
             return "hs2"
@@ -1167,7 +1167,7 @@ class GPIOSettings(util.DisableNewAttr):
     @aux_io_mcx.setter
     def aux_io_mcx(self, state : str):
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         data = self.cwe.oa.sendMessage(CODE_READ, "CW_AUX_IO", Validate=False, maxResp=1)[0]
         if state == 'high_z':
             data &= 0xfe
@@ -1187,7 +1187,7 @@ class GPIOSettings(util.DisableNewAttr):
         * "inverted [glitch | trigger]": inverted glitch or trigger signal
         """
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         data = self.cwe.oa.sendMessage(CODE_READ, "CW_AUX_IO", Validate=False, maxResp=1)[0]
         if data & 0x04:
             setting = 'inverted '
@@ -1202,7 +1202,7 @@ class GPIOSettings(util.DisableNewAttr):
     @glitch_trig_mcx.setter
     def glitch_trig_mcx(self, state : str):
         if not self._is_husky:
-            raise ValueError("For CW-Husky only.")
+            raise ValueError("For CWHusky only.")
         data = self.cwe.oa.sendMessage(CODE_READ, "CW_AUX_IO", Validate=False, maxResp=1)[0]
         if 'trigger' in state:
             data &= 0xfd
@@ -1591,7 +1591,7 @@ class TriggerSettings(util.DisableNewAttr):
         * "tio1 NAND tio2 NAND sma"
         * "nrst"
 
-        Examples of unallowed trigger inputs:
+        Examples of prohibited trigger inputs:
 
         * "tio1 tio2"
         * "tio1 AND tio2 OR tio3"
@@ -1822,7 +1822,7 @@ class SequenceTriggerList(list):
 
 class HuskyTrigger(TriggerSettings):
     """Husky trigger object.
-    Communicates with all the trigger modules inside CW-Husky.
+    Communicates with all the trigger modules inside CWHusky.
     Usage depends on the active trigger module.
     """
     MODULE = {'basic':          0x00,
@@ -1950,7 +1950,7 @@ class HuskyTrigger(TriggerSettings):
     def module(self):
         """The trigger module in use.
 
-        The trigger modules available depend on the hardware. On the CWLite,
+        The trigger modules available depend on the hardware. On the Lite,
         only the basic trigger module can be used; on the CW1200, the serial
         data and SAD triggers are available too.
 
@@ -2181,7 +2181,7 @@ class HuskyTrigger(TriggerSettings):
 
     @property
     def level(self):
-        """For triggering on ADC sample exceeding a treshold,
+        """For triggering on ADC sample exceeding a threshold,
         when scope.trigger.module = 'ADC'.
 
         Sets the trigger threshold, in the range [-0.5, 0.5].
@@ -2475,40 +2475,40 @@ class CWPLLDriver(object):
 
     def readByte(self, regaddr, slaveaddr=0x69):
         d = bytearray([0x00, 0x80 | 0x69, 0x80 |  regaddr])
-        self.oa.sendMessage(CODE_WRITE, ADDR_I2CSTATUS, d, Validate=False)
+        self.oa.sendMessage(CODE_WRITE, self.ADDR_I2CSTATUS, d, Validate=False)
         time.sleep(0.001)
 
         d = bytearray([0x04, 0x80 | 0x69, 0x80 |  regaddr])
-        self.oa.sendMessage(CODE_WRITE, ADDR_I2CSTATUS, d, Validate=False)
+        self.oa.sendMessage(CODE_WRITE, self.ADDR_I2CSTATUS, d, Validate=False)
         time.sleep(0.001)
 
         d = bytearray([0x00, 0x80 | 0x69, 0x80 |  regaddr])
-        self.oa.sendMessage(CODE_WRITE, ADDR_I2CSTATUS, d, Validate=False)
+        self.oa.sendMessage(CODE_WRITE, self.ADDR_I2CSTATUS, d, Validate=False)
         time.sleep(0.001)
 
-        stat = self.oa.sendMessage(CODE_READ, ADDR_I2CSTATUS, Validate=False, maxResp=3)
+        stat = self.oa.sendMessage(CODE_READ, self.ADDR_I2CSTATUS, Validate=False, maxResp=3)
         if stat[0] & 0x01:
             raise IOError("No ACK from Slave in I2C")
 
-        stat = self.oa.sendMessage(CODE_READ, ADDR_I2CDATA, Validate=False, maxResp=1)
+        stat = self.oa.sendMessage(CODE_READ, self.ADDR_I2CDATA, Validate=False, maxResp=1)
         return stat[0]
 
     def writeByte(self, regaddr, data, slaveaddr=0x69):
         d = bytearray([data])
-        self.oa.sendMessage(CODE_WRITE, ADDR_I2CDATA, d, Validate=False)
+        self.oa.sendMessage(CODE_WRITE, self.ADDR_I2CDATA, d, Validate=False)
 
         d = bytearray([0x00, 0x69, 0x80 | regaddr])
-        self.oa.sendMessage(CODE_WRITE, ADDR_I2CSTATUS, d, Validate=False)
+        self.oa.sendMessage(CODE_WRITE, self.ADDR_I2CSTATUS, d, Validate=False)
         time.sleep(0.005)
 
         d = bytearray([0x04, 0x69, 0x80 | regaddr])
-        self.oa.sendMessage(CODE_WRITE, ADDR_I2CSTATUS, d, Validate=False)
+        self.oa.sendMessage(CODE_WRITE, self.ADDR_I2CSTATUS, d, Validate=False)
         time.sleep(0.005)
 
         d = bytearray([0x00, 0x69, 0x80 | regaddr])
-        self.oa.sendMessage(CODE_WRITE, ADDR_I2CSTATUS, d, Validate=False)
+        self.oa.sendMessage(CODE_WRITE, self.ADDR_I2CSTATUS, d, Validate=False)
         time.sleep(0.005)
 
-        stat = self.oa.sendMessage(CODE_READ, ADDR_I2CSTATUS, Validate=False, maxResp=3)
+        stat = self.oa.sendMessage(CODE_READ, self.ADDR_I2CSTATUS, Validate=False, maxResp=3)
         if stat[0] & 0x01:
             raise IOError("No ACK from Slave in I2C")

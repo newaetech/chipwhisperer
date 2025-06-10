@@ -362,7 +362,7 @@ class PLLCDCE906(object):
         # Set PLL Mode (high-speed or regular)
         fvco = (self.reffreq * float(N)) / float(M)
         if fvco < 80E6 or fvco > 300E6:
-            raise IOError("Fvco set to $d, out of range" % fvco)
+            raise IOError("FVCO set to %d, out of range" % fvco)
 
         data = self.cdce906read(6)
         if pllnum == 0:

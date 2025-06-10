@@ -87,7 +87,7 @@ def check_ramp(raw, testmode, bits_per_sample, samples, segment_cycles, verbose=
 
     if testmode == 'ADCramp':
         if segment_cycles > 0 and (samples % 4 or segment_cycles % 4):
-            raise ValueError('not supported: for ADC testing, samples and segment_cycles must be a multiple of 4')
+            raise ValueError('Not supported: for ADC testing, samples and segment_cycles must be a multiple of 4')
         started = False
         for i, byte in enumerate(raw[1:]):
             if started:
@@ -120,7 +120,7 @@ def check_ramp(raw, testmode, bits_per_sample, samples, segment_cycles, verbose=
 
     elif testmode == 'ADCalt':
         if segment_cycles > 0 or bits_per_sample != 12:
-            raise ValueError('not supported')
+            raise ValueError('Not supported')
         for i, byte in enumerate(raw[1:]):
             if current_count == 0xaaa:
                 current_count = 0x555

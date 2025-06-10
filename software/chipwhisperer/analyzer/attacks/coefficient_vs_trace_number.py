@@ -79,8 +79,8 @@ class CoefficientVsTracesNumber:
         for j in range(256):
             all_coef[j][0] = maxcpa[j]
 
-        # Update correaltion by coming traces.
-        for i in tnrange(1, int(N/interval)):
+        # Update correlation by coming traces.
+        for i in tnrange(1, int(N/self.interval)):
             trace_array = all_traces[i * self.interval:(i  +1) * self.interval]
             maxcpa = [0] * 256
             t_bar = self.continue_mean(trace_array, t_bar, i)

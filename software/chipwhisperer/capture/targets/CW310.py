@@ -209,7 +209,7 @@ class CW310(CW305):
             maximum (bool): if True, return the maximum observed temperature (since last reset);
                 otherwise, return current measured temperature
         Returns:
-            Temperature in celcius (float).
+            Temperature in celsius (float).
         """
         if maximum:
             addr = 0x20
@@ -398,7 +398,7 @@ class CW310(CW305):
         status = self.usb_i2c_write(pdo_reg, snk_pdo)
 
     def usb_negotiate_pdo(self):
-        """Renegotate the USBC PDOs. Must be done for new PDOs settings to take effect
+        """Renegotiate the USBC PDOs. Must be done for new PDOs settings to take effect
         """
         #soft reset
         # self._naeusb.sendCtrl(0x43, 0, [0x28, 0x51])

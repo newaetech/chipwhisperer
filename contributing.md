@@ -249,7 +249,7 @@ contributing to the documentation here are some rough guidelines to follow:
     properties. Just use **autoattribute**. **autoproperty** causes errors
     on ReadTheDocs.
 
-  * Follow the [google style guide](https://www.sphinx-doc.org/en/1.5/ext/example_google.html) for docstrings this makes the
+  * Follow the [google style guide](https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html) for docstrings this makes the
     documentation easier to read while looking at the source code.
 
   * Keep in mind that people will be reading both the generated
@@ -284,7 +284,7 @@ contributing to the documentation here are some rough guidelines to follow:
 
 ### Guidelines for Markdown Files
 
-- keep in mind that markdown files in the `chipwhisperer-target-cw308t`
+- Keep in mind that markdown files in the `chipwhisperer-target-cw308t`
   submodule need to also render on [GitHub](https://github.com/newaetech/chipwhisperer-target-cw308t)
 
 
@@ -340,7 +340,7 @@ When editing or creating tutorials here are a few things to consider:
     use with nbparameterize for running our automated tests so we can figure
     it out for you.
 
-  * When writing in markdown cells please use the [pandoc style markdown](https://rmarkdown.rstudio.com/authoring_pandoc_markdown.html)
+  * When writing in markdown cells please use the [pandoc style markdown](https://pandoc.org/MANUAL.html#pandocs-markdown)
 
   * This list contains guidelines and will update over time. We will run the
     tutorials through the tutorial build system and fix errors that come up.

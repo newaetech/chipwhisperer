@@ -33,7 +33,7 @@ from chipwhisperer.common.utils.parameter import setupSetParam
 
 class ResyncPeakDetect(PreprocessingBase):
     """
-    Resyncronize based on peak value.
+    Resynchronize based on peak value.
     """
     _name = "Resync: Peak Detect"
     _description = "Line up traces so peak (either max positive or max negative) within" \

@@ -103,11 +103,11 @@ the proper clean way to do it:
 
 
 ### Formatting
-* markdown blockquoted headings `>#` (which rendered well on our
+* Markdown blockquoted headings `>#` (which rendered well on our
   https://rtfm.newae.com site) do not render nicely here and prevent that
   section from being included in the table of contents; omit the
   blockquote
-* in "pure" Sphinx, extra whitespace at the start of a line renders well
+* In "pure" Sphinx, extra whitespace at the start of a line renders well
   (there was lots of this in pre-Jupyter Book versions of this site), but
   with Jupyter Book this creates an ugly box
 
@@ -129,18 +129,18 @@ the proper clean way to do it:
 
 
 ### Miscellaneous
-* if a markdown source file does not begin with a top-level header, its
+* If a Markdown source file does not begin with a top-level header, its
   table of contents entry will be incorrect
-* `<img src>` tags in markdown aren't supported by default and are 
+* `<img src>` tags in Markdown aren't supported by default and are 
   [not recommended](https://jupyterbook.org/en/stable/content/figures.html#raw-html-images)
-    * note that in our case, `<img src>` was used for things like sizing
+    * Note that in our case, `<img src>` was used for things like sizing
       images, which Jupyter Book does a pretty good job of by default
-* GitHub-style markdown admonitions (e.g. `!!! warning`) are not supported; use
+* GitHub-style Markdown admonitions (e.g. `!!! warning`) are not supported; use
   ```` ```{warning} ```` instead.
 * if using github submodules (as we are here), be aware that **all** `.md` and
   `.rst` files in that submodule will get built, even if not explicitly
   included in your `_toc.yml`, and will show up in your search results (this
-  happened here with markdown files in a submodule's `.github` folder); to
+  happened here with Markdown files in a submodule's `.github` folder); to
   avoid this, use `only_build_toc_files` and `exclude_patterns` in your
   `_config.yml` file
 

@@ -1,6 +1,6 @@
 # ChipWhisperer-Lite
 
-The ChipWhisperer-Lite represents NewAE Technology Inc.’s most aggressive pursuit of it’s mission to bring side-channel power analysis and glitching attacks to every engineer and student. The FULLY open-source (hardware, software, 
+The ChipWhisperer-Lite represents NewAE Technology Inc.'s most aggressive pursuit of it's mission to bring side-channel power analysis and glitching attacks to every engineer and student. The FULLY open-source (hardware, software, 
 firmware, FPGA code) is launching a revolution in hardware security. In particular, the ChipWhisperer-Lite
 serves as a good middle ground between the full feature-set of the ChipWhisperer-Pro, and the affordability of
 the ChipWhisperer-Nano.
@@ -17,17 +17,17 @@ The ChipWhisperer-Lite has a few available hardware options:
 
 | ChipWhisperer-Lite Version | Target | Single Board | Also comes with | Purchase Link |
 |---------------------------|-------------|----------|----|----|
-| ChipWhisperer-Lite 1-Part | CW303 XMEGA | Yes | micro-usb cable | [Mouser](https://www.mouser.com/ProductDetail/NewAE/NAE-CW1173?qs=r5DSvlrkXmKKNcTDix800Q%3D%3D) |
-| ChipWhisperer-Lite 32-bit 1-Part | CW303 Arm  | Yes | micro-usb cable | [Mouser](https://www.mouser.com/ProductDetail/NewAE/NAE-CWLITE-ARM?qs=r5DSvlrkXmIUEZprO%2Fombw%3D%3D) |
-| ChipWhisperer-Lite 2-Part | CW303 XMEGA | No | micro-usb cable, 20-pin cable, SMA cables | [Mouser](https://www.mouser.com/ProductDetail/NewAE/NAE-CW1173-2PART?qs=r5DSvlrkXmI%2FI%2FEYu37YCg%3D%3D) |
-| ChipWhisperer-Lite Standalone | None | No | micro-usb cable, 20-pin cable, SMA cables | [Mouser](https://www.mouser.com/ProductDetail/NewAE/NAE-CWLITE-CAPTURE?qs=r5DSvlrkXmKUDG90PYjKIA%3D%3D) |
+| ChipWhisperer-Lite 1-Part | CW303 XMEGA | Yes | Micro-USB cable | [Mouser](https://www.mouser.com/ProductDetail/NewAE/NAE-CW1173?qs=r5DSvlrkXmKKNcTDix800Q%3D%3D) |
+| ChipWhisperer-Lite 32-bit 1-Part | CW303 Arm  | Yes | Micro-USB cable | [Mouser](https://www.mouser.com/ProductDetail/NewAE/NAE-CWLITE-ARM?qs=r5DSvlrkXmIUEZprO%2Fombw%3D%3D) |
+| ChipWhisperer-Lite 2-Part | CW303 XMEGA | No | Micro-USB cable, 20-pin cable, SMA cables | [Mouser](https://www.mouser.com/ProductDetail/NewAE/NAE-CW1173-2PART?qs=r5DSvlrkXmI%2FI%2FEYu37YCg%3D%3D) |
+| ChipWhisperer-Lite Standalone | None | No | Micro-USB cable, 20-pin cable, SMA cables | [Mouser](https://www.mouser.com/ProductDetail/NewAE/NAE-CWLITE-CAPTURE?qs=r5DSvlrkXmKUDG90PYjKIA%3D%3D) |
 
 ## Turning a 1-Part into a 2-Part
 
 Want to attack other targets with your 1-part board? Simply break the 
 target portion of the board off as described on the ChipWhisperer-Lite capture page, 
 solder a 20-pin connector on your capture board, and solder SMA connectors onto the
-capture board's 
+capture board's.
 
 ## Hardware List
 

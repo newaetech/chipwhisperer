@@ -229,8 +229,8 @@ class GlitchController:
             plotdots (dict): Dictionary mapping groups to shapes and colours
             x_index (int or str): Which parameter to use for the x-axis.
             y_index (int or str): Which parameter to use for the y-axis.
-            x_bound (list or None): Boundarys for x-axis in plot
-            y_bound (list or None): Boundarys for y-axis in plot
+            x_bound (list or None): Boundaries for x-axis in plot
+            y_bound (list or None): Boundaries for y-axis in plot
             buffer_len (int): Size to make the buffer that holds the points.
 
         x_index and y_index can be either the index for the desired parameter in the original
@@ -486,7 +486,7 @@ class GlitchResults:
         
     def clear(self):
         '''
-        Clears stored statistics in preperation for a new run.
+        Clears stored statistics in preparation for a new run.
         '''
         self._result_dict = {}
 
@@ -566,7 +566,7 @@ class GlitchResults:
         Calculate how many glitches had various effects. Return updated stats.
 
         Can ignore parameters, combining their results. For example, with 3 parameters,
-        ignoring parmameter 2 will combine the results where parameter 0 and 1 are the same,
+        ignoring parameter 2 will combine the results where parameter 0 and 1 are the same,
         but 2 is different.
         '''
 

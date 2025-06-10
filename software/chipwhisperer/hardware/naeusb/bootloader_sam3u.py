@@ -796,7 +796,7 @@ class EefcFlash(object):
 
     def writePage(self, page):
         if (page >= self.pages):
-            raise AttributeError("Invalid Page")
+            raise AttributeError("Invalid page")
 
         self.word_copy.set_dst_addr(self.addr + (page * self.size))
         if self._onBufferA:

@@ -106,7 +106,7 @@ class PartitionRandvsFixed(object):
     for a given key length.
     """
 
-    sectionName = "Partition Based on Rand vs Fixed "
+    sectionName = "Partition Based on Rand vs Fixed"
     partitionType = "Rand vs Fixed"
 
     def getNumPartitions(self):
@@ -145,7 +145,7 @@ class PartitionRandDebug(object):
 
 class Partition(Parameterized):
     """
-    Base Class for all partioning modules
+    Base Class for all partitioning modules
     """
     # traceDone = Signal(int)
 
@@ -174,7 +174,7 @@ class Partition(Parameterized):
         self.attrDictPartition["moduleName"] = self.partMethod.__class__.__name__
 
     def init(self):
-        """Do any initilization required once all traces are loaded"""
+        """Do any initialization required once all traces are loaded"""
         pass
 
     def createBlankTable(self, num_keys, num_parts):

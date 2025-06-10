@@ -9,7 +9,7 @@ import random
 
 """ 
 USAGE:
-    CW-Husky is used to measure and validate the glitch output from a
+    CWHusky is used to measure and validate the glitch output from a
     Spartan6-based CW (i.e. Lite or Pro). Connect Husky HS1 to target CW's HS2
     (and ground).  The target CW drives its glitch clock output on HS2, which
     Husky samples to checks that the glitch clock offset and width are within
@@ -27,8 +27,8 @@ USAGE:
 print('\n\n\n\n**************************************************************************************')
 print('*                                                                                    *')
 print('* IMPORTANT NOTE:                                                                    *')
-print('* This script is intended for basic regression testing of CW-lite/pro glitching      *')
-print('* during  development. If you are having issues connecting to your CW-lite or target *')
+print('* This script is intended for basic regression testing of CWLite/Pro glitching       *')
+print('* during  development. If you are having issues connecting to your CWLite or target  *')
 print('* device, running this script is unlikely to provide you with useful information.    *')
 print('* Instead, seek assistance on forum.newae.com or discord by providing details of     *')
 print('* your setup (including the target), and the full error log from your Jupyter        *')

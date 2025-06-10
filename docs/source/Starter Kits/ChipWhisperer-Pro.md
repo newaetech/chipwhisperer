@@ -1,7 +1,7 @@
 # CW1200 ChipWhisperer-Pro Level 3 Starter Kit
 
-The CW1200 (ChipWhisperer Pro) is an upgraded version of the
-ChipWhisperer Lite capture hardware. The Pro includes an FPGA with much
+The CW1200 (ChipWhisperer-Pro) is an upgraded version of the
+ChipWhisperer-Lite capture hardware. The Pro includes an FPGA with much
 more space than the Lite, allowing many new features to be added,
 including a larger sample buffer, streaming-mode captures, additional
 trigger methods, and a touchscreen interface. These features make it a

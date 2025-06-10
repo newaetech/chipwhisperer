@@ -60,11 +60,11 @@ def appendAndForwardErrorMessage(msg, e):
 
 def list2hexstr(data, delim='', prefix=''):
     """
-    Convert a list of integers to a hex string, with optional deliminators/prefix
+    Convert a list of integers to a hex string, with optional delimiters/prefix
 
     delim is inserted between each list item
 
-    prefix is inserted infront of each item (including first item)
+    prefix is inserted in front of each item (including first item)
     """
 
     rstr = ["%02x" % t for t in data]
@@ -308,7 +308,7 @@ class Observable(Signal):
 
 _consoleBreakRequested = False
 class ConsoleBreakException(BaseException):
-    """Custom exception class. Raised when pressing ctrl-C in console.
+    """Custom exception class. Raised when pressing CTRL-C in console.
 
     This inherits from BaseException so that the generic "Save project?" window
     doesn't catch it.
@@ -474,7 +474,7 @@ class NoneTypeScope(object):
 
 
 class NoneTypeTarget(object):
-    """Raises an intelligble error related to target disconnect when any attribute is accessed
+    """Raises an intelligible error related to target disconnect when any attribute is accessed
     """
     def __getattr__(self, item):
         raise AttributeError('Target has not been connected')
@@ -584,7 +584,7 @@ def get_cw_type(sn=None, idProduct=None, hw_location=None, **kwargs):
     elif name == "ChipWhisperer Nano":
         return scopes.CWNano
     else:
-        raise OSError("Got chipwhisperer with unknown name {} (ID = {})".format(name, possible_ids))
+        raise OSError("Got ChipWhisperer with unknown name {} (ID = {})".format(name, possible_ids))
 
 def better_delay(ms):
     t = time.perf_counter() + ms / 1000

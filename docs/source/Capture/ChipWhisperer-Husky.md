@@ -114,7 +114,7 @@ offering vastly improved performance over a typical asynchronous oscilloscope se
 | Glitch Width \* | Based on Internal PLL (600-1200MHz), 100% (enable-only) | 
 | Glitch Width Increments | Based on Internal PLL (600-1200MHz) | 
 | Glitch Offset | Based on Internal PLL (600-1200MHz) | 
-| Glitch Offset Increments | Based on Internal Pll (600-1200MHz) | 
+| Glitch Offset Increments | Based on Internal PLL (600-1200MHz) | 
 | Glitch Cycle Offset | [0, 2^32) | [0, 2^32) | N/A |
 | Glitch Cycle Repeat | [0, 8192] | [0, 8192] | N/A |
 | Voltage Glitch Type | High-power, low-power crowbar | 

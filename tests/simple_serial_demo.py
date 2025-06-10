@@ -503,7 +503,7 @@ if __name__ == '__main__':
 
     finally:
         context.dis()
-        print('finished')
+        print('Finished')
         if looper:
             print('Analyzing results...')
             range_glitch = context.make_res_range(KEY_GLITCH)

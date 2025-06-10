@@ -173,7 +173,7 @@ class CW305(TargetTemplate, ChipWhispererCommonInterface):
         rtn['platform']         = self.platform
         for prop in self.__dir__():
             if 'REG_' in prop:
-                if getattr(self, prop): # this some stock registers are delcared as None and may remain so
+                if getattr(self, prop): # this some stock registers are declared as None and may remain so
                     rtn[prop] = getattr(self, prop)
         return rtn
 
@@ -260,7 +260,7 @@ class CW305(TargetTemplate, ChipWhispererCommonInterface):
         """ Returns the value of the target's REG_CRYPT_TYPE register (if it exists).
         """
         if self.REG_CRYPT_TYPE is None:
-            target_logger.error("target.REG_CRYPT_TYPE unset. Have you given target a verilog defines file?")
+            target_logger.error("target.REG_CRYPT_TYPE unset. Have you given target a Verilog defines file?")
         return self.fpga_read(self.REG_CRYPT_TYPE, 1)[0]
 
     @property
@@ -268,7 +268,7 @@ class CW305(TargetTemplate, ChipWhispererCommonInterface):
         """ Returns the value of the target's REG_CRYPT_REV register (if it exists).
         """
         if self.REG_CRYPT_REV is None:
-            target_logger.error("target.REG_CRYPT_REV unset. Have you given target a verilog defines file?")
+            target_logger.error("target.REG_CRYPT_REV unset. Have you given target a Verilog defines file?")
         return self.fpga_read(self.REG_CRYPT_REV, 1)[0]
 
     @property
@@ -607,7 +607,7 @@ class CW305(TargetTemplate, ChipWhispererCommonInterface):
     def loadEncryptionKey(self, key):
         """Write encryption key to FPGA."""
         if self.REG_CRYPT_KEY is None:
-            target_logger.error("target.REG_CRYPT_KEY unset. Have you given target a verilog defines file?")
+            target_logger.error("target.REG_CRYPT_KEY unset. Have you given target a Verilog defines file?")
             return
         self.key = key
         key = key[::-1]
@@ -616,7 +616,7 @@ class CW305(TargetTemplate, ChipWhispererCommonInterface):
     def loadInput(self, inputtext):
         """Write input to FPGA."""
         if self.REG_CRYPT_TEXTIN is None:
-            target_logger.error("target.REG_CRYPT_TEXTIN unset. Have you given target a verilog defines file?")
+            target_logger.error("target.REG_CRYPT_TEXTIN unset. Have you given target a Verilog defines file?")
             return
         self.input = inputtext
         text = inputtext[::-1]
@@ -626,7 +626,7 @@ class CW305(TargetTemplate, ChipWhispererCommonInterface):
         """Check if FPGA is done."""
         if self.check_done:
             if (self.REG_CRYPT_GO is None) or (self.REG_USER_LED is None):
-                target_logger.error("target.REG_CRYPT_GO or target.REG_USER_LED unset. Have you given target a verilog defines file?")
+                target_logger.error("target.REG_CRYPT_GO or target.REG_USER_LED unset. Have you given target a Verilog defines file?")
                 return
             result = self.fpga_read(self.REG_CRYPT_GO, 1)[0]
             if result == 0x01:
@@ -643,7 +643,7 @@ class CW305(TargetTemplate, ChipWhispererCommonInterface):
     def readOutput(self):
         """Read output from FPGA."""
         if self.REG_CRYPT_CIPHEROUT is None:
-            target_logger.error("target.REG_CRYPT_CIPHEROUT unset. Have you given target a verilog defines file?")
+            target_logger.error("target.REG_CRYPT_CIPHEROUT unset. Have you given target a Verilog defines file?")
             return
         data = self.fpga_read(self.REG_CRYPT_CIPHEROUT, 16)
         data = data[::-1]
@@ -691,7 +691,7 @@ class CW305(TargetTemplate, ChipWhispererCommonInterface):
     def go(self):
         """Disable USB clock (if requested), perform encryption, re-enable clock"""
         if (self.REG_USER_LED is None):
-            target_logger.error("target.REG_USER_LED unset. Have you given target a verilog defines file?")
+            target_logger.error("target.REG_USER_LED unset. Have you given target a Verilog defines file?")
             return
         if self.platform == 'cw305' and self.clkusbautooff:
                 self.usb_clk_setenabled(False)
@@ -714,10 +714,10 @@ class CW305(TargetTemplate, ChipWhispererCommonInterface):
     def simpleserial_read(self, cmd, pay_len, end='\n', timeout=250, ack=True):
         """Read data from target
 
-        Mimics simpleserial protocol of serial based targets
+        Mimics SimpleSerial protocol of serial-based targets
 
         Args:
-            cmd (str): Command to ues. Only accepts 'r' for now.
+            cmd (str): Command to use. Only accepts 'r' for now.
             pay_len: Unused
             end: Unused
             timeout: Unused
@@ -736,7 +736,7 @@ class CW305(TargetTemplate, ChipWhispererCommonInterface):
     def simpleserial_write(self, cmd, data, end=None):
         """Write data to target.
 
-        Mimics simpleserial protocol of serial based targets.
+        Mimics SimpleSerial protocol of serial-based targets.
 
         Args:
             cmd (str): Command to use. Target supports 'p' (write plaintext),
@@ -781,7 +781,7 @@ class CW305(TargetTemplate, ChipWhispererCommonInterface):
                 batchsize (int): The number of encryption to run (default 1024).
                 random_key (bool): True if the key is random (default False).
                 random_pt (bool): True if the plaintext are random (default True).
-                seed (int): random int32 for the PRG.
+                seed (int): random int32 for the PRNG.
         """
         if seed is None:
             seed = random.randint(0,2**32)

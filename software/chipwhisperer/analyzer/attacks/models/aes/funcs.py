@@ -170,51 +170,51 @@ _galNI=_gal2,_gal3,_gal1,_gal1
 
 
 def sbox(inp):
-    """Perform an SBox lookup.
+    """Perform an S-box lookup.
 
     Args:
-        inp (int): Byte used for the Sbox lookup.
+        inp (int): Byte used for the S-box lookup.
 
     Returns:
-        int: The result of the SBox lookup.
+        int: The result of the S-box lookup.
     """
     return _sbox[inp]
 
 
 def inv_sbox(inp):
-    """Perform an inverse SBox lookup.
+    """Perform an inverse S-box lookup.
 
     Args:
-        inp (int): Byte used for the inverse Sbox lookup.
+        inp (int): Byte used for the inverse S-box lookup.
 
     Returns:
-        int: The result of the inverse SBox lookup.
+        int: The result of the inverse S-box lookup.
     """
     return _i_sbox[inp]
 
 
 def subbytes(inp):
-    """Perform an Sbox lookup for multiple bytes.
+    """Perform an S-box lookup for multiple bytes.
 
     Args:
-        inp (iterable): Bytes to perform Sbox lookup on.
+        inp (iterable): Bytes to perform S-box lookup on.
 
     Returns:
         list: List of bytes resulting from the multiple
-            SBox lookups.
+            S-box lookups.
     """
     return [sbox(i) for i in inp]
 
 
 def inv_subbytes(inp):
-    """Perform an inverse Sbox lookup for multiple bytes.
+    """Perform an inverse S-box lookup for multiple bytes.
 
     Args:
-        inp (iterable): Bytes to perform inverse Sbox lookup on.
+        inp (iterable): Bytes to perform inverse S-box lookup on.
 
     Returns:
         list: List of bytes resulting from the multiple
-            inverse SBox lookups.
+            inverse S-box lookups.
     """
     return [inv_sbox(i) for i in inp]
 

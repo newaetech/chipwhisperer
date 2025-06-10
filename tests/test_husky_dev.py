@@ -637,7 +637,7 @@ def test_adc_freq_sweep(fulltest, samples, presamples, freq_start, freq_stop, fr
                 outfile.flush()
 
     outfile.close()
-    assert all_passed, "see %s for details" % outfilename
+    assert all_passed, "See %s for details" % outfilename
     scope.sc._fast_fifo_read_enable = True # return to default
 
 

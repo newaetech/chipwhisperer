@@ -35,7 +35,7 @@ class XORLeakageHelper(object):
 
     def leakage(self, pt, ct, key, bnum):
         """
-        Override this function with specific leakage function (S-Box output, HD, etc).
+        Override this function with specific leakage function (S-box output, HD, etc).
 
         Args:
             pt: 16-byte plain-text input

@@ -21,10 +21,10 @@ The starter kits also come with the following hardware/tools:
 
 | Starter Kit |  Additional Hardware |
 |----------------|--------------|
-| ChipWhisperer-Nano | micro-usb cable
-| ChipWhisperer-Lite | micro-usb cable, 20-pin connector and coax cables (2-part only) | 
-| SCAPACK-L1 | micro-usb cable, CW308T Generic PCB, CW308T-STM32F blank PCB, 2x Lifter tool to remove targets, SMA Tee adapter, SMA Cables, SMA to BNC Cable | 
-| SCAPACK-L2 | micro-usb cable, CW308T Generic PCB, CW308T-STM32F blank PCB, 2x Lifter tool to remove targets, SMA Tee adapter, SMA Cables, SMA to BNC Cable, H-Field Probe, Differential Probe, Probe power supply (DC-DC), 5V wall adapter for probe/CW308 power | 
+| ChipWhisperer-Nano | Micro-USB cable
+| ChipWhisperer-Lite | Micro-USB cable, 20-pin connector and coax cables (2-part only) | 
+| SCAPACK-L1 | Micro-USB cable, CW308T Generic PCB, CW308T-STM32F blank PCB, 2x Lifter tool to remove targets, SMA Tee adapter, SMA Cables, SMA to BNC Cable | 
+| SCAPACK-L2 | Micro-USB cable, CW308T Generic PCB, CW308T-STM32F blank PCB, 2x Lifter tool to remove targets, SMA Tee adapter, SMA Cables, SMA to BNC Cable, H-Field Probe, Differential Probe, Probe power supply (DC-DC), 5V wall adapter for probe/CW308 power | 
 | ChipWhisperer-Pro | USB A to B cable, CW506 advanced breakout (level shifter), H-Field Probe, Low Noise Amplifier, Differential Probe, Probe Power Supply (Isolated), 20MHz low-pass filter, SMA to BNC cable, SMA to SMA cable, CW308T Generic PCB, CW308T-STM32F Blank PCB, SMA adapters, 5V power supply |
 
 The ChipSHOUTER starter kit comes with the ChipSHOUTER, as well as 2 EMFI targets and a bunch of 

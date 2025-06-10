@@ -156,7 +156,7 @@ class ChipWhispererCommonInterface:
         """The date the SAM3U firmware was built on
 
         .. versionadded:: 5.6.1
-            Added sam build date to chipwhisperer
+            Added sam build date to ChipWhisperer
         """
         return self._getNAEUSB().get_fw_build_date()
 
@@ -190,7 +190,7 @@ class ChipWhispererCommonInterface:
         """Reset the ChipWhisperer's microcontroller
 
         .. versionadded:: 5.6.1
-            Add common cw interface
+            Add common CW interface
         """
         self._getNAEUSB().reset()
 

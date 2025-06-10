@@ -453,7 +453,7 @@ class Project(Parameterized):
             '/path/to/the/directory/containing/this/project'
 
         :Getter:
-            (str) Returns the file path of the projects parent directory.
+            (str) Returns the file path of the project's parent directory.
 
         .. versionadded:: 5.1
             Added **location** attribute to project.
@@ -461,7 +461,7 @@ class Project(Parameterized):
         return os.path.dirname(os.path.abspath(self.get_filename()))
 
     def export(self, file_path, file_type='zip'):
-        """Export a chipwhisperer project.
+        """Export a ChipWhisperer project.
 
         Saves project before exporting.
 
@@ -503,7 +503,7 @@ class Project(Parameterized):
     def close(self, save=True):
         """Closes the project cleanly.
 
-        Saves by default. Then closes all claimed files.
+        Saves by default, then closes all claimed files.
 
         Args:
             save (bool): Saves the project before closing.

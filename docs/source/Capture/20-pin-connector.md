@@ -46,7 +46,7 @@ O: output from ChipWhisperer capture device / input to target
 | 5      | nRST        | I/O | Target reset Pin (active low).                               |
 | 6      | HS2         | I/O | High Speed Output (normally clock output).                   |
 | 7      | MISO        | I/O | SPI input: MISO (for SPI + AVR Programmer). [^5]             |
-| 8      | VREF        | I   | CW-Lite [^3] and CW-Nano [^4] only; not connected on others. |
+| 8      | VREF        | I   | CWLite [^3] and CWNano [^4] only; not connected on others. |
 | 9      | MOSI        | I/O | SPI output: MOSI (for SPI + AVR Programmer). [^5]            |
 | 10     | TIO1        | I/O | TargetIO Pin 1 - usually UART Rx.                            |
 | 11     | SCK         | I/O | SPI output: SCK (for SPI + AVR Programmer). [^5]             |
@@ -61,10 +61,10 @@ O: output from ChipWhisperer capture device / input to target
 | 20     | +5V (VUSB)  | O   | \+5V to Target Device [^1]                                   |
 
 
-[^1]: Only connected on CW-Pro; not connected on other capture hardware.
+[^1]: Only connected on CWPro; not connected on other capture hardware.
 [^2]: 200 mA available; can be turned off via `scope.io.target_pwr` (except on Nano).
-[^3]: See [CW-Lite VTarget Usage](#vtarget-usage) for more information.
-[^4]: On CW-Nano, drive this pin with desired I/O voltage in range 1.5V - 5V.
-[^5]: Unused on CW-Nano.
-[^6]: User output on CW-Nano.
+[^3]: See [CWLite VTarget Usage](#vtarget-usage) for more information.
+[^4]: On CWNano, drive this pin with desired I/O voltage in range 1.5V - 5V.
+[^5]: Unused on CWNano.
+[^6]: User output on CWNano.
 

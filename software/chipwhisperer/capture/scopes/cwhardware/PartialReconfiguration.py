@@ -55,7 +55,7 @@ class PartialReconfigData(object):
 class PartialReconfigDataMulti:
     """
     Handles combining multiple partial reconfiguration files into a single file. Relies heavily on
-    modifications not happeneing to the same location. 
+    modifications not happening to the same location. 
     """
     def __init__(self):
         self.dataList = []

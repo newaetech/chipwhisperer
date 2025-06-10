@@ -56,7 +56,7 @@ class CPA(CPA_Old):
             proj (Project): c
             leak_model (AESLeakageHelper): Leakage model to use for getting
                 hamming weight
-            algorithm (AlgorithmsBase: Algorithm to use for attack
+            algorithm (AlgorithmsBase): Algorithm to use for attack
         """
         super().__init__()
         self.set_analysis_algorithm(algorithm, leak_model)

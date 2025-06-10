@@ -1,7 +1,7 @@
 # CW1200 ChipWhisperer-Pro
 
-The CW1200 (ChipWhisperer Pro) is an upgraded version of the
-ChipWhisperer Lite capture hardware. The Pro includes an FPGA with much
+The CW1200 (ChipWhisperer-Pro) is an upgraded version of the
+ChipWhisperer-Lite capture hardware. The Pro includes an FPGA with much
 more space than the Lite, allowing many new features to be added,
 including a larger sample buffer, streaming-mode captures, additional
 trigger methods, and a touchscreen interface. These features make it a
@@ -143,7 +143,7 @@ by NewAE.
 ---
 ### Power Supply
 
-The ChipWhisperer Pro can be powered either via the USB port,
+The ChipWhisperer-Pro can be powered either via the USB port,
 or via the 5V jack. If both are plugged in, the 5V jack will be used
 exclusively for power. This configuration (5V jack for power,
 USB for comms) is preferred. This is because of the high current draw 
@@ -239,7 +239,7 @@ See {doc}`../firmware` for more information on erasing and re-programming ChipWh
 
 ### **Streaming Mode**
 
-The ChipWhisperer Pro has a streaming mode that allows extremely long
+The ChipWhisperer-Pro has a streaming mode that allows extremely long
 captures as long as relatively low sampling rates are used. For example,
 this plot shows an excerpt from two traces with nearly 1 million samples:
 
@@ -301,7 +301,6 @@ looks directly at the power trace and does not use these trigger inputs.
 The edge/level detector can trigger on four different events:
 
   - Trigger input is low (0)
-
   - Trigger input is high (1)
   - Trigger input had a rising edge (0 -\> 1)
   - Trigger input had a falling edge (1 -\> 0)
@@ -322,7 +321,6 @@ this decoder are:
 
   - **Decode Type**: Which type of traffic is being captured in the
     trigger signal? Might be USART or SPI data.
-
   - **Trigger Data**: Which data are we searching for? This setting
     should be a list of bytes to be detected in order. For example,
     `['r', '0']` would detect the string "r0", and `[0x07]` would detect
@@ -364,7 +362,6 @@ The settings for the SAD module are:
     128.
   - **Set SAD Reference from Current Trace**: Sets the fixed 128 samples
     to the current selection.
-
   - **SAD Reference vs. Cursor**: Shows the current output of the SAD
     calculation. Useful for setting the threshold - it's easy to capture
     a number of traces and check what typical values are for this SAD
@@ -418,16 +415,13 @@ with the frequency counter.
 **TODO: picture**
 
   - **CLKGEN**: Current frequency of CLKGEN clock in kHz
-
       - **Source**: Input to CLKGEN DCM. Could be system clock or EXTCLK
-
       - **DCM**: Lock status of CLKGEN DCM
       - **Reset DCM**: Reset the CLKGEN output. Useful if clock has
         locked at the wrong frequency
   - **ADC Clock**: Current ADC sampling rate in kHz
       - **Source**: Input to ADC DCM. Could be related to CLKGEN or
         EXTCLK
-
       - **DCM**: Lock status of ADC DCM
       - **Reset DCM**: Reset the ADC clock output
   - **Frequency Counter**: Current frequency measured by the frequency
@@ -445,7 +439,6 @@ The routing screen shows the status of the various I/O pins.
 
   - **Aux Output**: Status of the aux SMA connections. Could be used as
     trigger input/output, glitch output, and/or clock output
-
   - **IO Pins**: Status of each of the IO pins on the 20 pin connector.
     Possible values depend on pin
   - **Target Power State**: Status of the 3.3 V output. Can be toggled
@@ -464,28 +457,19 @@ the ADC capture settings.
 
   - **Trigger Pins**: Whether each trigger input is enabled. Active
     inputs are highlighted
-
       - **Mode**: Trigger combination method. Could be AND, OR, or NAND
-
-
   - **Trigger Source**: The trigger type in use. Active trigger module
     is highlighted
-
       - **State**: The current output level of the trigger module
-
-
   - **Trigger Mode**: The ADC trigger type. Active mode is highlighted
-
   - **Samples**:
       - **Delay**: Current ADC offset. This is the number of samples to
         wait after trigger before recording begins
-
       - **Pre**: Number of pre-trigger samples to be saved
       - **Time**: Delay, but converted into a time
       - **Total**: Number of samples to be recorded in total
   - **ADC gain**:
       - **Mode**: Amplification type. Either low or high
-
       - **Setting**: Low noise amplifier gain level
 
 ---
@@ -498,15 +482,10 @@ The glitch screen shows the current settings for the glitch module.
 
   - **Clock Src**: Input to the glitch module's clock. Active clock is
     highlighted
-
       - **DCM**: Lock status of the glitch module's DCM
-
-
   - **Glitch Setup**:
-
       - **Width**: Duty cycle of glitch pulse, as a fraction of one
         period
-
       - **Fine**: Adjustment on width
       - **Offset**: Distance between clock rising edge and glitch pulse
         rising edge, as a fraction of one period
@@ -518,14 +497,12 @@ The glitch screen shows the current settings for the glitch module.
   - **Trigger Setup**:
       - **Trigger**: Cause a manual trigger. Has no effect unless
         trigger source is set to Manual
-
       - **Offset**: Number of cycles to wait before starting glitch
         pulses
       - **Repeat**: Number of consecutive pulses to generate
   - **Output Status**
       - **VCC**: Status of glitching MOSFETs. Shows warning sign if VCC
         glitching is enabled
-
       - **Cnt**: Total number of glitch pulses generated
 
 ## Errata
