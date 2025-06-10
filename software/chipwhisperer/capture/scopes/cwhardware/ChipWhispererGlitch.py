@@ -314,6 +314,8 @@ class GlitchSettings(util.DisableNewAttr):
         negative widths are allowed; these act as if they are positive widths
         on the other half of the clock cycle.
 
+        .. note:: Has no effect when :class:`output` is set to "enable_only".
+
         :Getter: Return an int (Husky) or float (others) with the current
             glitch width.
 
@@ -338,6 +340,8 @@ class GlitchSettings(util.DisableNewAttr):
         glitch pulses' width. Valid range is [-255, 255].
 
         .. warning:: This value is write-only. Reads will always return 0.
+
+        .. note:: Has no effect when :class:`output` is set to "enable_only".
 
         :Getter: Returns 0
 
@@ -568,6 +572,13 @@ class GlitchSettings(util.DisableNewAttr):
     def repeat(self) -> Union[int, list]:
         """The number of glitch pulses to generate per trigger.
 
+        When :class:`output` is set to "glitch_only", "clock_or", or
+        "clock_xor", these are indeed distinct glitch pulses.
+
+        But when :class:`output` is set to "enable_only", each glitch "pulse"
+        is a full clock cycle, so you actually get a **single** pulse which is
+        "repeat" cycles wide.
+
         When the glitch module is triggered, it produces a number of pulses
         that can be combined with the clock signal. This setting allows for
         the glitch module to produce stronger glitches (especially during
@@ -615,7 +626,7 @@ class GlitchSettings(util.DisableNewAttr):
         * "glitch_only": Output only the glitch pulses - do not use the clock.
         * "clock_or": Output is high if either the clock or glitch are high.
         * "clock_xor": Output is high if clock and glitch are different.
-        * "enable_only": Output is high for glitch.repeat cycles.
+        * "enable_only": Output is high for :class:`repeat` full clock cycles. :class:`width` and :class:`width_fine` have no effect, but :class:`offset` and :class:`offset_fine` do.
 
         Some of these settings are only useful in certain scenarios:
 

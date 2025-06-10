@@ -676,13 +676,22 @@ class USERIOSettings(util.DisableNewAttr):
 
 class XADCSettings(util.DisableNewAttr):
     ''' Husky FPGA XADC temperature and voltage monitoring.
-    XADC alarms are sticky and shut down generated clocks, glitching, and SAD logic; the
-    error condition must be manually cleared (by setting :class:`status` to 0) to re-enable
-    shutdown logic.
+    When a temperature or voltage exceeds its set limits, an XADC alarm is issued, and
+    the following modules are shut down:
+
+    * :class:`scope.glitch <chipwhisperer.capture.scopes.cwhardware.ChipWhispererGlitch.GlitchSettings>`
+    * :class:`scope.SAD <chipwhisperer.capture.scopes.cwhardware.ChipWhispererSAD.HuskySAD>`
+    * :class:`scope.UARTTrigger <chipwhisperer.capture.trace.TraceWhisperer.UARTTrigger>`
+    * :class:`scope.trace <chipwhisperer.capture.trace.TraceWhisperer.TraceWhisperer>`
+    * :class:`scope.LA <chipwhisperer.capture.scopes.cwhardware.ChipWhispererHuskyMisc.LASettings>`
+
+    XADC alarms are sticky: they must be manually cleared by setting :class:`status` to
+    0. This re-enables modules that were shutdown by the alarm.
 
     Some of the alarm thresholds can be adjusted, but do so with care. The
     default thresholds are set to keep the Husky FPGA within its recommended operating range.
-    If you move the thresholds beyond this range, you can irreversibly damage your Husky.
+    If you move the thresholds beyond this range, Husky may not behave as
+    intended, which can cause irreversible damage.
 
     Use :class:`vcc_limits()` for a full report on VCC limits and observed values.
 

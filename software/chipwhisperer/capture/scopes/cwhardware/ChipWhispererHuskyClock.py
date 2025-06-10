@@ -6,6 +6,7 @@ from ....logging import *
 import numpy as np
 from .._OpenADCInterface import OpenADCInterface, ClockSettings
 from ..cwhardware.ChipWhispererHuskyMisc import ADS4128Settings
+from typing import Callable
 
 import time
 
@@ -990,7 +991,6 @@ class CDCI6214(util.DisableNewAttr):
 
         return self._cached_adc_freq
 
-
     @property
     def input_freq(self):
         if self.pll_src == "xtal":
@@ -1121,7 +1121,7 @@ class CDCI6214(util.DisableNewAttr):
 
 class ChipWhispererHuskyClock(util.DisableNewAttr):
 
-    def clear_adc_unlock(fn):
+    def clear_adc_unlock(fn: Callable): # type: ignore
         """Use this to decorate methods that can cause the PLL to momentarily unlock. Clears
         the unlock status and then re-enables it. If PLL lock is regained, then the user will
         see the ADC LED turn on for a short time. If the PLL remains unlocked, then the ADC
@@ -1358,6 +1358,17 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         return self._cached_adc_freq
 
     @property
+    def adc_rate(self):
+        """The current sampling rate of the ADC clock in samples/s. Read-only.
+
+        Note that the sampling rate may be less than the clock frequency if
+        the downsampling factor is greater than 1.
+
+        :Getter: Return the current sampling rate in samples/s (float)
+        """
+        return self.adc_freq / self.oa.decimate()
+
+    @property
     def freq_ctr(self):
         """Reads the frequency of the external input clock.
 
@@ -1585,6 +1596,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         my_dict['clkgen_freq'] = self.clkgen_freq
         my_dict['adc_mul'] = self.adc_mul
         my_dict['adc_freq'] = self.adc_freq
+        my_dict['adc_rate'] = self.adc_rate
         my_dict['freq_ctr'] = self.freq_ctr
         my_dict['freq_ctr_src'] = self.freq_ctr_src
         my_dict['clkgen_locked'] = self.clkgen_locked

@@ -10,3 +10,6 @@ from .basic import AcqKeyTextPattern_Basic as Basic
 from .dpahelper import AcqKeyTextPattern_DPA as DPA
 from .tvlattest import AcqKeyTextPattern_TVLATTest as TVLATTest
 from .var_vec import AcqKeyTextPattern_VarVec as VarVec
+from .iterator import gen_iterator
+
+BasicIt = gen_iterator(Basic)

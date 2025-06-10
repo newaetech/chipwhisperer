@@ -382,7 +382,7 @@ class SimpleSerial2(TargetTemplate):
 
         next_frame = self._unstuff_data(response)
         if cmd and response[1] != cmd:
-            target_logger.warning(f"Unexpected start to command {hex(response[1])}")
+            target_logger.warning(f"Unexpected start to command {hex(response[1])}, expected {hex(cmd)}")
 
         l = response[2]
 
@@ -549,7 +549,7 @@ class SimpleSerial2(TargetTemplate):
 
         # can now check if cmd is correct
         if cmd and response[1] != cmd:
-            target_logger.warning(f"Unexpected start to command {hex(response[1])}")
+            target_logger.warning(f"Unexpected start to command {hex(response[1])}, expected {hex(cmd)}")
             if (next_frame[1] == ord('e')) and (next_frame[2] == 1):
                 target_logger.error("Error packet {} (0x{:02X}) detected".format(self.strerror(next_frame[3]), next_frame[3]))
                 # doing another read of 1 should get the final byte so user can do subsequent reads okay
@@ -571,7 +571,7 @@ class SimpleSerial2(TargetTemplate):
             return None
 
         if ord(x[-1]) != 0x00:
-            target_logger.error("Missing frame byte at end of packet {}".format(hex(ord[x[-1]])))
+            target_logger.error("Missing frame byte at end of packet {}".format(hex(ord(x[-1]))))
 
         target_logger.debug("2nd read: {}".format(bytearray(x.encode('latin-1'))))
 

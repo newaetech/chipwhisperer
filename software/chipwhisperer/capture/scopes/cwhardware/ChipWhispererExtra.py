@@ -520,11 +520,15 @@ class CWExtraSettings:
 
         self.oa.sendMessage(CODE_WRITE, "CW_IOROUTE_ADDR", data)
 
-    def setHuskySoftPowerOnParameters(self, pwm_cycles1, pwm_cycles2, pwm_period, pwm_off_time1, pwm_off_time2):
+    def setHuskySoftPowerOnParameters(self, pwm_cycles, pwm_period, pwm_off_time):
         """Sets the soft power-on PWM parameters.
         """
         if not self._is_husky:
             raise ValueError("For Husky only")
+        pwm_cycles1 = pwm_cycles
+        pwm_cycles2 = 0 # not using this because it doesn't work as intended
+        pwm_off_time1 = pwm_off_time
+        pwm_off_time2 = 0 # not using this because it doesn't work as intended
         raw = [pwm_cycles1, pwm_cycles2]
         raw.extend(list(int.to_bytes(pwm_period, length=2, byteorder='little')))
         raw.extend(list(int.to_bytes(pwm_off_time1, length=2, byteorder='little')))
@@ -542,7 +546,8 @@ class CWExtraSettings:
         pwm_period = int.from_bytes(raw[2:4], byteorder='little')
         pwm_off_time1 = int.from_bytes(raw[4:6], byteorder='little')
         pwm_off_time2 = int.from_bytes(raw[6:8], byteorder='little')
-        return (pwm_cycles1, pwm_cycles2, pwm_period, pwm_off_time1, pwm_off_time2)
+        # note: pwm_cycles2 and pwm_off_time2 are omitted because they don't work as intended
+        return (pwm_cycles1, pwm_period, pwm_off_time1)
 
     def getTargetPowerState(self):
         data = self.oa.sendMessage(CODE_READ, "CW_IOROUTE_ADDR", Validate=False, maxResp=8)
@@ -1122,7 +1127,7 @@ class GPIOSettings(util.DisableNewAttr):
 
         i.e. whether you can change USART settings (baud rate, 8n1) via a serial client like PuTTY
 
-        :getter: An array of length four for four possible CDC serial ports (though only one is used)
+        :getter: A list of length four for four possible CDC serial ports (though only one is used)
 
         :setter: Can set either via an integer (which sets both ports) or an array of length 4 (which sets each port)
 
@@ -1132,7 +1137,7 @@ class GPIOSettings(util.DisableNewAttr):
         ver = '{}.{}'.format(rawver[0], rawver[1])
         if ver < '0.30':
             return None
-        return self.cwe.oa.serial.get_cdc_settings()
+        return list(self.cwe.oa.serial.get_cdc_settings())
 
     @cdc_settings.setter
     def cdc_settings(self, port : Union[List[int], int]):
@@ -1309,6 +1314,8 @@ class GPIOSettings(util.DisableNewAttr):
         high-powered MOSFET shorts the power-rail to ground when the glitch
         module's output is active.
 
+        Can be more effective than :class:`glitch_lp` for power-hungry targets.
+
         .. warning:: Use with caution - ensure that the glitch module is properly
             configured before enabling this setting, as it is possible to
             permanently damage hardware with this output.
@@ -1327,8 +1334,9 @@ class GPIOSettings(util.DisableNewAttr):
     def glitch_lp(self):
         """Whether the low-power crowbar MOSFET is enabled.
 
-        This is the low-power version of glitch_hp - see that documentation
-        for more details.
+        This is the low-power version of :class:`glitch_hp`.
+
+        Has a faster response than :class:`glitch_hp`.
 
         .. warning:: Use with caution - ensure that the glitch module is properly
             configured before enabling this setting, as it is possible to
@@ -1362,7 +1370,8 @@ class GPIOSettings(util.DisableNewAttr):
         Husky's VCC lines to go out of their recommended operating ranges, which 
         triggers :class:`scope.XADC <chipwhisperer.capture.scopes.cwhardware.ChipWhispererHuskyMisc.XADCSettings>`
         errors and everything that this entails (some Husky logic gets shutdown
-        as a protective measure).
+        as a protective measure; refer to :class:`scope.XADC <chipwhisperer.capture.scopes.cwhardware.ChipWhispererHuskyMisc.XADCSettings>`
+        for details).
 
         The soft power-on parameters are tuned for NewAE targets. If you use a
         different target, you may need to tweak these parameters in order to
@@ -1373,40 +1382,31 @@ class GPIOSettings(util.DisableNewAttr):
             alarms firing when the target is powered on.
 
         Args:
-            settings: list of 5 parameters as follows:
+            settings: list of three parameters as follows:
 
-                * pwm_cycles1: 8-bit int, number of PWM periods in phase 1 of the soft power-on
-                * pwm_cycles2: 8-bit int, number of PWM periods in phase 2 of the soft power-on
+                * pwm_cycles: 8-bit int, number of PWM periods in the soft power-on
                 * pwm_period: 16-bit int, number of 96 MHz clock cycles in one PWM period
-                * pwm_off_time1: 16-bit int, in phase 1, number of clock cycles in one PWM period where power is off
-                * pwm_off_time2: 16-bit int, in phase 2, number of clock cycles in one PWM period where power is off
+                * pwm_off_time: 16-bit int, number of clock cycles in one PWM period where power is off
 
-        The soft power-on sequence lasts (pwm_cycles1 + pwm_cycles2) * pwm_period cycles of the 96 MHz USB clock.
+        The soft power-on sequence lasts pwm_cycles * pwm_period cycles of the 96 MHz USB clock.
         To better understand, consider this example (these are not necessarily good values!):
 
         * pwm_period = 100
-        * pwm_cycles1 = 50
-        * pwm_cycles2 = 20
-        * pwm_off_time1 = 90
-        * pwm_off_time2 = 95
+        * pwm_cycles = 50
+        * pwm_off_time = 90
 
         When the target is powered on, power is then applied as follows:
 
-        1. first 90 cycles (pwm_off_time1): power is off
-        2. next 10 cycles (pwm_period - pwm_off_time1): power is ON
-        3. repeat steps 1 and 2 50 (pwm_cycles1) times
-        4. next 95 cycles (pwm_off_time2): power is off
-        5. next 5 cycles (pwm_period - pwm_off_time2): power is ON
-        6. repeat steps 4 and 5 20 (pwm_cycles2) times
-        7. keep power ON
+        1. first 90 cycles (pwm_off_time): power is off
+        2. next 10 cycles (pwm_period - pwm_off_time): power is ON
+        3. repeat steps 1 and 2 50 (pwm_cycles) times
+        4. keep power ON
 
         The default values are as follows:
 
         * pwm_period = 2000
-        * pwm_cycles1 = 35
-        * pwm_cycles2 = 0
-        * pwm_off_time1 = 1995
-        * pwm_off_time2 = 0
+        * pwm_cycles = 35
+        * pwm_off_time = 1995
 
         """
 
@@ -1414,8 +1414,8 @@ class GPIOSettings(util.DisableNewAttr):
 
     @husky_soft_poweron.setter
     def husky_soft_poweron(self, settings):
-        pwm_cycles1, pwm_cycles2, pwm_period, pwm_off_time1, pwm_off_time2 = settings
-        self.cwe.setHuskySoftPowerOnParameters(pwm_cycles1, pwm_cycles2, pwm_period, pwm_off_time1, pwm_off_time2)
+        pwm_cycles, pwm_period, pwm_off_time = settings
+        self.cwe.setHuskySoftPowerOnParameters(pwm_cycles, pwm_period, pwm_off_time)
 
 
     def reset_target(self, initial_state=1, reset_state=0, reset_delay=0.01, postreset_delay=0.01):

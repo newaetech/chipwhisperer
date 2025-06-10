@@ -11,38 +11,26 @@ be easily adaptable to other Linux distributions.
 Quick Installation
 *******************
 
-If you're in a hurry, running the following commands and rebooting
+.. note:: To avoid conflicts with other packages and to avoid messing up your python environment, we recommend using a virtual environment for ChipWhisperer. 
+        Don't forget to activate the virtual environment before trying to run python or jupyter!
+
+If you're in a hurry and on Ubuntu, running the following commands and rebooting
 should get you up and running:
 
 .. code:: bash
 
     sudo apt update && sudo apt upgrade
 
-    # python prereqs
-    sudo apt-get install build-essential gdb lcov pkg-config \
-        libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev \
-        libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev \
-        lzma lzma-dev tk-dev uuid-dev zlib1g-dev curl
-
-    sudo apt install libusb-dev make git avr-libc gcc-avr \
-        gcc-arm-none-eabi libusb-1.0-0-dev usbutils
-
-    # install pyenv - skip if already done
-	curl https://pyenv.run | bash
-	echo 'export PATH="~/.pyenv/bin:$PATH"' >> ~/.bashrc
-	echo 'export PATH="~/.pyenv/shims:$PATH"' >> ~/.bashrc
-	echo 'eval "$(pyenv init -)"' >> ~/.bashrc 
-	echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
-
-    source ~/.bashrc
-
-    pyenv install 3.9.5
-    pyenv virtualenv 3.9.5 cw
-    pyenv activate cw
+    sudo apt install make git avr-libc gcc-avr \
+        gcc-arm-none-eabi libusb-1.0-0-dev usbutils python3 python3-venv python3-dev
 
     cd ~/
     git clone https://github.com/newaetech/chipwhisperer
     cd chipwhisperer
+
+    python3 -m venv ~/.cwvenv
+    source ~/.cwvenv/bin/activate
+
     sudo cp 50-newae.rules /etc/udev/rules.d/50-newae.rules
     sudo udevadm control --reload-rules
     sudo groupadd -f chipwhisperer
@@ -52,9 +40,14 @@ should get you up and running:
 
     python -m pip install -e .
     python -m pip install -r jupyter/requirements.txt
-    cd jupyter
-    python -m pip install nbstripout
-    nbstripout --install
+
+After installing, you can run:
+
+.. code:: bash
+
+    source ~/.cwvenv/bin/activate
+    cd ~/chipwhisperer
+    jupyter notebook
 
 After running these install instructions, make sure to restart your computer. This is required for the
 new udev rules to be applied.
@@ -64,6 +57,7 @@ and running:
 
 .. code:: bash
 
+    source ~/.cwvenv/bin/activate # if you haven't run this already
     jupyter notebook
 
 Which should open a window like the following in your browser:
@@ -86,58 +80,41 @@ Begin by updating all your packages:
 
     sudo apt update && sudo apt upgrade
 
-From there, we'll need prerequisites for building Python from pyenv:
 
-.. code:: bash
-
-    sudo apt install build-essential gdb lcov pkg-config \
-        libbz2-dev libffi-dev libgdbm-dev libgdbm-compat-dev liblzma-dev \
-        libncurses5-dev libreadline6-dev libsqlite3-dev libssl-dev \
-        lzma lzma-dev tk-dev uuid-dev zlib1g-dev curl
-
-Next, grab the prerequisites for building firmware for targets:
+Next, grab the prerequisites for building firmware for targets, as well as python:
 
 .. code:: bash
 
     sudo apt install libusb-dev make git avr-libc gcc-avr \
-        gcc-arm-none-eabi libusb-1.0-0-dev usbutils
+        gcc-arm-none-eabi libusb-1.0-0-dev usbutils 
 
 ======
 Python
 ======
 
-The recommended way to grab Python is to use pyenv, as it allows
-you to use multiple copies of Python without having to fiddle with
-paths. If you've already got pyenv installed, you can skip this step,
-though you may still want to setup your own copy of Python for ChipWhisperer.
+The recommended way to use Python with ChipWhisperer is to install everything in a
+virtual environment. Luckily, Python makes this easy!
 
-The first step is to grab pyenv:
+The first step is to grab the python, python-dev, and python-venv packages:
 
-.. code:: bash
-
-	curl https://pyenv.run | bash
-
-Next, we need to add the following to our :code:`.bashrc` file,
-so that pyenv starts properly with your terminal:
+..
 
 .. code:: bash
 
-	echo 'export PATH="~/.pyenv/bin:$PATH"' >> ~/.bashrc
-	echo 'export PATH="~/.pyenv/shims:$PATH"' >> ~/.bashrc
-	echo 'eval "$(pyenv init -)"' >> ~/.bashrc 
-	echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+	sudo apt install python3 python3-venv python3-dev
 
-    #apply these changes to current terminal
-    source ~/.bashrc 
+Next, we need to create a virtual environment:
+
+.. code:: bash
+
+    python3 -m venv ~/.cwvenv # place this anywhere you like, but don't forget to update path in the next step
 
 With that done, install a version of Python. Anything >= 3.9 should work,
 so we'll grab 3.9.5 here and make an env called cw:
 
 .. code:: bash
 
-	pyenv install 3.9.5
-	pyenv virtualenv 3.9.5 cw
-    pyenv activate cw
+    source ~/.cwvenv/bin/activate # or wherever you installed your venv
 
 .. _linux-install-chipwhisperer:
 
@@ -173,8 +150,6 @@ you'll need to create that group and add your user to that group:
     sudo usermod -aG chipwhisperer $USER
     sudo usermod -aG plugdev $USER
 
-Make sure you restart your computer after this step.
-
 .. note:: Older install instructions used the plugdev group, which is created by default on some distros
         and not on others. These install instructions instead use a dedicated chipwhisperer group,
         so if you've installed chipwhisperer before and want to update to a new rules file, make sure
@@ -195,11 +170,14 @@ You may also want to grab `nbstripout`_, which will make git and jupyter interac
     pip install nbstripout
     nbstripout --install # must be run from the jupyter folder
 
+You'll need to reboot now to get access to the ChipWhisperer USB devices.
+
 You can check that the install succeeded by navigating to :code:`chipwhisperer`
 and running:
 
 .. code:: bash
 
+    source ~/.cwvenv/bin/activate
     jupyter notebook
 
 Which should open a window like the following in your browser:

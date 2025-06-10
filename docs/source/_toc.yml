@@ -126,6 +126,8 @@ parts:
         - file: cw_tips_tricks/basics/stream
         - file: cw_tips_tricks/basics/baud
         - file: cw_tips_tricks/basics/external_clock
+        - file: cw_tips_tricks/basics/glitch_hp_vs_lp
+        - file: cw_tips_tricks/basics/cw305_standalone
   - file: cw_tips_tricks/advanced_usage/intro
     sections:
         - file: cw_tips_tricks/advanced_usage/regulators
@@ -134,6 +136,8 @@ parts:
         - file: cw_tips_tricks/advanced_usage/sequenced
         - file: cw_tips_tricks/advanced_usage/fast_captures
         - file: cw_tips_tricks/advanced_usage/get_trigger_times
+        - file: cw_tips_tricks/advanced_usage/target_powerup_xadc
+        - file: cw_tips_tricks/advanced_usage/uart_triggering
   - file: cw_tips_tricks/common_errors/intro
     sections:
         - file: cw_tips_tricks/common_errors/target_errors
@@ -141,6 +145,10 @@ parts:
   - file: cw_tips_tricks/common_questions/intro
     sections:
         - file: cw_tips_tricks/common_questions/finding_instructions
+        - file: cw_tips_tricks/common_questions/power_measurement_units
+        - file: cw_tips_tricks/common_questions/synchronous_sampling
+        - file: cw_tips_tricks/common_questions/em_probe
+        - file: cw_tips_tricks/common_questions/where_is_the_gui
 - caption: Protocols
   chapters:
   - file: simpleserial

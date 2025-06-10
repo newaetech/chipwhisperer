@@ -148,6 +148,8 @@ Module to control glitching. A block diagram of the module is shown below:
 
 .. thumbnail:: figures/cwlitepro_glitch.png
 
+.. note:: This diagram is slightly inaccurate because the "offset" parameter also affects the glitch output in "enable_only" mode.
+
 .. autoclass:: chipwhisperer.capture.scopes.cwhardware.ChipWhispererGlitch.GlitchSettings
     :members:
     :exclude-members: enabled, mmcm_locked, phase_shift_steps, actual_num_glitches, num_glitches
