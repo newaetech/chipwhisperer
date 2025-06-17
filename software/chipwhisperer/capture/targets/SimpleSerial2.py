@@ -788,7 +788,7 @@ class SimpleSerial2(TargetTemplate):
         return self.ser.currently_xoff
 
     def __repr__(self):
-        ret = "SimpleSerial Settings ="
+        ret = "SimpleSerial2 Settings ="
         for line in dict_to_str(self._dict_repr()).split("\n"):
             ret += "\n\t" + line
         return ret
@@ -801,8 +801,8 @@ class SimpleSerial2(TargetTemplate):
         rtn['output_len'] = self.output_len
 
         rtn['baud']     = self.baud
-        rtn['simpleserial_last_read'] = self.simpleserial_last_read
-        rtn['simpleserial_last_sent'] = self.simpleserial_last_sent
+        # rtn['simpleserial_last_read'] = self.simpleserial_last_read
+        # rtn['simpleserial_last_sent'] = self.simpleserial_last_sent
         rtn['xonxoff'] = self.xonxoff
         rtn['currently_xoff'] = self.currently_xoff
         rtn['parity'] = self.parity
