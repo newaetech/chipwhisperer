@@ -26,6 +26,7 @@ class KTPIterator:
         self._ktp_class = ktp
         self._ktp = ktp()
         self._N = N
+        self._count = 0
         self.is_first = False
         self.key_once = key_once
 
@@ -37,8 +38,11 @@ class KTPIterator:
         return self
 
     def __next__(self):
+        if self._count >= self._N:
+            raise StopIteration
+        self._count += 1
         key, text = self._ktp.next()
-        self.is_first = True
         if self.key_once is True and self.is_first:
             key = None
-        return key, text
+        self.is_first = True
+        return key, text, self._count
