@@ -8,17 +8,15 @@ dynamic = ["version"]
 description="ChipWhisperer Side-Channel Analysis Tool"
 name = "chipwhisperer"
 authors=[{name="Colin O'Flynn", email="coflynn@newae.com"}]
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dependencies = [
-        "configobj",
         "pyserial",
-        "numpy<=1.26.4",
-        "libusb1",
+        "numpy>=2.0.0",
         "ECpy",
-        "fastdtw",
         "Cython",
         "tqdm",
         "libusb1",
+        "zarr>=3.0.0",
 ]
 license = {file = "LICENSE.txt"}
 readme = "README.md"

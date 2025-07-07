@@ -27,7 +27,6 @@ import time
 import re
 import os.path
 import random
-from ...common.traces import Trace
 from ...common.utils import util
 from .CW305 import CW305, CW305_USB
 from chipwhisperer.logging import *
@@ -89,6 +88,7 @@ class CW305_AES_PIPELINED(CW305):
         Raises:
             Warning or OSError: Error during capture.
 
+        # NOTE: Trace
         """
         if type(plaintexts[0]) is int or len(plaintexts) == 1:
             plaintexts = [plaintexts]

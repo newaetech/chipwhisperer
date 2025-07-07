@@ -10,31 +10,29 @@ Main module for ChipWhisperer.
 """
 __version__ = '6.0.0'
 
-try:
-    import usb1 # type: ignore
-except Exception as e:
-    raise ImportError("Could not import usb1. usb1 is required for ChipWhisperer >= 5.6.1. Try pip install libusb1.") from e
+# try:
+#     import usb1 # type: ignore
+# except Exception as e:
+#     raise ImportError("Could not import usb1. usb1 is required for ChipWhisperer >= 5.6.1. Try pip install libusb1.") from e
 import os, os.path, time
-from zipfile import ZipFile
 
 from .capture import scopes, targets
 from .capture.api import programmers
 from .capture import acq_patterns as key_text_patterns
-from .common.api import ProjectFormat as project
-from .common.traces import Trace
+from .common.project import TraceContainer
+
 from .common.utils import util
 from .capture.scopes.cwhardware.ChipWhispererSAM3Update import SAMFWLoader, get_at91_ports
 import logging
 from .logging import *
 
 from .common.results.glitch import GlitchController, load_gc_results
-from .common.utils.looper import *
 from .common.utils.sad_model import SADModelWrapper
 from .common.utils.sad_explorer import SADExplorer
 import sys, subprocess
 
 
-from typing import Optional, Type, Union, List
+from typing import Optional, Type, Union, List, Any
 
 opstr = Optional[str]
 
@@ -229,72 +227,7 @@ def create_project(filename : str, overwrite : bool=False):
     Raises:
        OSError: filename exists and overwrite is False.
     """
-    filename = project.ensure_cwp_extension(filename)
-
-    if os.path.isfile(filename) and (overwrite is False):
-        raise OSError("File " + filename + " already exists")
-
-    # If the user gives a relative path including ~, expand to the absolute path
-    filename = os.path.abspath(os.path.expanduser(filename))
-
-    proj = project.Project()
-    proj.setFilename(filename)
-
-    return proj
-
-
-def import_project(filename : str, file_type : str='zip', overwrite : bool=False):
-    """Import and open a project.
-
-    Will import the **filename** by extracting to the current working
-    directory.
-
-    Currently support file types:
-     * zip
-
-    Args:
-        filename (str): The file name to import.
-        file_type (str): The type of file that is being imported.
-            Default is zip.
-        overwrite (bool): Whether or not to overwrite the project given as
-            the **import_as** project.
-
-    .. versionadded:: 5.1
-        Add **import_project** function.
-    """
-    # extract name from input file
-    input_dir, input_file = os.path.split(filename)
-    input_file_root, input_file_ext = os.path.splitext(input_file)
-    input_abs_path = os.path.abspath(filename)
-
-    # use the appropriate type of import
-    if file_type == 'zip':
-        with ZipFile(input_abs_path, 'r') as project_zip:
-            output_path = None
-            for path in project_zip.namelist():
-                root, ext = os.path.splitext(path)
-                if ext == '.cwp':
-                    directory, project_name = os.path.split(root)
-                    output_path = ''.join([project_name, '.cwp'])
-
-                    # check if name already exists in projects
-                    if os.path.isfile(output_path) and (overwrite == False):
-                        raise OSError("File " + output_path + " already exists")
-
-                    # extract the project.cwp file and project_data directory to
-                    # the PROJECT_DIR
-                    project_zip.extractall(path=os.getcwd())
-
-            if output_path is None:
-                raise ValueError('Zipfile does not contain a .cwp file, so it cannot be imported')
-    else:
-        raise ValueError('Import from file type not supported: {}'.format(file_type))
-
-    proj = project.Project()
-    proj.load(output_path)
-
-    return proj
-
+    pass
 
 def scope(scope_type : Optional[Type[scopes.ScopeTypes]]=None, name : opstr=None, 
     sn : opstr=None, idProduct : Optional[int]=None,
@@ -435,7 +368,7 @@ def target(scope : Optional[scopes.ScopeTypes],
 
 def capture_trace(scope : scopes.ScopeTypes, target : targets.TargetTypes, plaintext : bytearray,
     key : Optional[bytearray]=None, ack : bool=True, poll_done : bool=False,
-    as_int : bool=False, always_send_key=False) -> Optional[Trace]:
+    as_int : bool=True, always_send_key=False) -> Any: # type: ignore
 
     """Capture a trace, sending plaintext and key
 
@@ -521,7 +454,7 @@ def capture_trace(scope : scopes.ScopeTypes, target : targets.TargetTypes, plain
     wave = scope.get_last_trace(as_int=as_int)
 
     if len(wave) >= 1:
-        return Trace(wave, plaintext, response, key)
+        return TraceContainer(wave, plaintext, response, key)
     else:
         return None
 

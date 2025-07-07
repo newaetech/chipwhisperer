@@ -1,0 +1,190 @@
+import zarr
+import numpy as np
+
+class TraceContainer:
+    def __init__(self, trace, plaintext=None, ciphertext=None, key=None, metadata=None):
+        self.trace = trace
+        self.plaintext = plaintext
+        self.ciphertext = ciphertext
+        self.key = key
+        self.metadata = metadata
+        pass
+
+
+    def __getitem__(self, k):
+        assert type(k) is str
+        if k == "plaintext":
+            return self.plaintext
+        if k == "ciphertext":
+            return self.ciphertext
+        if k == "key":
+            return self.key
+        if k == "trace":
+            return self.trace
+        else:
+            raise KeyError("Unknown key {}".format(k))
+
+    def __str__(self):
+        return "trace: {}\nplaintext: {}\nciphertext: {}\nkey: {}\n".format(self.trace, self.plaintext, self.ciphertext, self.key)
+
+def _resize_func(arr):
+    # default function to resize length of array when we're at the end of the current storage
+    # by default doubles each time
+    new_size = (arr.shape[0] * 2, arr.shape[1])
+    arr.resize(new_size)
+
+def open_project(path, zip_in_ram=True):
+    group = zarr.open_group(path)
+    if path.endswith(".zip"):
+        if zip_in_ram:
+            new_store = zarr.storage.MemoryStore()
+        else:
+            pass
+            # new_store = zarr.storage.LocalStore("tmp file")
+        ngroup = group.from_store(new_store)
+        group.close()
+        group = ngroup
+    project = Project(group)
+    Project._path = path
+    return Project
+        
+
+class Project:
+    def __init__(self, group=None, num_traces=100, dtype='int16', pt_dtype='uint8', ct_dtype = 'uint8', key_dtype='uint8', \
+                 pt_len=16, ct_len=16, key_len=16, resize_func=_resize_func):
+        self._initialized = True
+        if group:
+            assert 'traces' in group
+            assert 'plaintexts' in group
+            assert 'ciphertexts' in group
+            assert 'keys' in group
+            self._initialized = True
+            
+            dtype = group['traces'].dtype
+            pt_dtype = group['plaintexts'].dtype
+            ct_dtype = group['ciphertexts'].dtype
+            key_dtype = group['keys'].dtype
+            
+        if not group:
+            self._initialized = False
+            group = zarr.create_group(store={})
+        self._num_traces = num_traces
+        self._dtype = dtype
+        self._pt_dtype = pt_dtype
+        self._ct_dtype = ct_dtype
+        self._key_dtype = key_dtype
+        self._len = 0
+
+        self._ptlen = pt_len
+        self._ctlen = ct_len
+        self._key_len = key_len
+        self._resize_func = resize_func
+        self._path = None
+        
+        self._storage = group
+        
+        pass
+
+    def _init_storage(self, trace, plaintext, ciphertext, key):
+        if self._initialized:
+            print("WARNING ALREADY INITIALIZED")
+
+        storage = self._storage
+        
+        trace_len = len(trace)
+        num_traces = self._num_traces
+        self._ptlen = len(plaintext)
+        self._ctlen = len(ciphertext)
+        self._keylen = len(key)
+        
+        
+        storage.create_array(name='traces', shape=(num_traces, trace_len), \
+                             chunks=(num_traces, trace_len), dtype=self._dtype)
+        
+        storage.create_array(name='plaintexts', shape=(self._num_traces, len(plaintext)), \
+                            chunks=(num_traces, len(plaintext)), dtype=self._pt_dtype)
+        
+        storage.create_array(name='ciphertexts', shape=(self._num_traces, len(ciphertext)), \
+                            chunks=(num_traces, len(ciphertext)), dtype=self._ct_dtype)
+        
+        storage.create_array(name='keys', shape=(self._num_traces, len(key)), \
+                            chunks=(num_traces, len(key)), dtype=self._key_dtype)
+        self._initialized = True
+        pass
+
+    def save(self, path):
+        if path is None:
+            pass
+            #use self._path
+        pass
+
+    def _resize_all(self):
+        for k in ['traces', 'keys', 'plaintexts', 'ciphertexts']:   
+            self._resize_func(self._storage[k])
+
+    def append(self, tracecontainer):
+        if type(tracecontainer) is tuple:
+            pass
+
+        if not self._initialized:
+            self._init_storage(tracecontainer['trace'], tracecontainer['plaintext'], tracecontainer['ciphertext'], tracecontainer['key'])
+
+        i = self._len
+        if self._len >= self._storage['traces'].shape[0]:
+            self._resize_all()
+            print("Resized")
+
+        for l in ['trace', 'plaintext', 'ciphertext', 'key']:
+            if tracecontainer[l] is None:
+                pass # TODO: Handle these fields being None (just replace with zeros?)
+            self._storage[l+'s'][i,:] = tracecontainer[l]
+            
+        self._len += 1
+
+        # note: by default, double array
+        pass
+
+    def extend(self, project):
+        # TODO: arr.resize all arrays, then copy over
+        pass
+
+    def save(self, path):
+        pass
+
+    @property
+    def traces(self):
+        return self._storage['traces']
+
+    @property
+    def plaintexts(self):
+        return self._storage['plaintexts']
+
+    @property
+    def ciphertexts(self):
+        return self._storage['ciphertexts']
+
+    @property
+    def keys(self):
+        return self._storage['keys']
+
+    def _make_container(self, n):
+        plaintext = None
+        ciphertext = None
+        key = None
+        metadata = None
+
+        if self._has_plaintexts:
+            plaintext = self._storage['plaintexts', n]
+
+        if self._has_ciphertexts:
+            ciphertext = self._storage['ciphertexts', n]
+
+        if self._has_keys:
+            key = self._storage['keys', n]
+        
+        return TraceContainer(self._storage['traces'][n], plaintext, ciphertext, key, metadata)
+
+    # iterator
+    def containers(self):
+        for i in range(self._len):
+            yield self._make_container(i)

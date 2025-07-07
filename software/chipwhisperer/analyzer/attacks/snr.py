@@ -26,8 +26,8 @@
 #=================================================
 
 import numpy as np
-from chipwhisperer.common.api.ProjectFormat import Project
-from chipwhisperer.common.traces import Trace
+# from chipwhisperer.common.api.ProjectFormat import Project
+# from chipwhisperer.common.traces import Trace
 
 
 def calculate_snr(input, leak_model, bnum=0, db=True):
