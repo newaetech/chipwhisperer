@@ -68,12 +68,12 @@ class Project:
         if not group:
             self._initialized = False
             group = zarr.create_group(store={})
-        self._num_traces = num_traces
+        self._tarr_len = num_traces
         self._dtype = dtype
         self._pt_dtype = pt_dtype
         self._ct_dtype = ct_dtype
         self._key_dtype = key_dtype
-        self._len = 0
+        self._num_traces = 0
 
         self._ptlen = pt_len
         self._ctlen = ct_len
@@ -81,7 +81,7 @@ class Project:
         self._resize_func = resize_func
         self._path = None
         
-        self._storage = group
+        self._group = group
         
         pass
 
@@ -89,26 +89,26 @@ class Project:
         if self._initialized:
             print("WARNING ALREADY INITIALIZED")
 
-        storage = self._storage
+        storage = self._group
         
         trace_len = len(trace)
-        num_traces = self._num_traces
+        tarr_len = self._tarr_len
         self._ptlen = len(plaintext)
         self._ctlen = len(ciphertext)
         self._keylen = len(key)
         
         
-        storage.create_array(name='traces', shape=(num_traces, trace_len), \
-                             chunks=(num_traces, trace_len), dtype=self._dtype)
+        storage.create_array(name='traces', shape=(tarr_len, trace_len), \
+                             chunks=(tarr_len, trace_len), dtype=self._dtype)
         
-        storage.create_array(name='plaintexts', shape=(self._num_traces, len(plaintext)), \
-                            chunks=(num_traces, len(plaintext)), dtype=self._pt_dtype)
+        storage.create_array(name='plaintexts', shape=(self._tarr_len, len(plaintext)), \
+                            chunks=(tarr_len, len(plaintext)), dtype=self._pt_dtype)
         
-        storage.create_array(name='ciphertexts', shape=(self._num_traces, len(ciphertext)), \
-                            chunks=(num_traces, len(ciphertext)), dtype=self._ct_dtype)
+        storage.create_array(name='ciphertexts', shape=(self._tarr_len, len(ciphertext)), \
+                            chunks=(tarr_len, len(ciphertext)), dtype=self._ct_dtype)
         
-        storage.create_array(name='keys', shape=(self._num_traces, len(key)), \
-                            chunks=(num_traces, len(key)), dtype=self._key_dtype)
+        storage.create_array(name='keys', shape=(self._tarr_len, len(key)), \
+                            chunks=(tarr_len, len(key)), dtype=self._key_dtype)
         self._initialized = True
         pass
 
@@ -120,7 +120,7 @@ class Project:
 
     def _resize_all(self):
         for k in ['traces', 'keys', 'plaintexts', 'ciphertexts']:   
-            self._resize_func(self._storage[k])
+            self._resize_func(self._group[k])
 
     def append(self, tracecontainer):
         if type(tracecontainer) is tuple:
@@ -129,17 +129,17 @@ class Project:
         if not self._initialized:
             self._init_storage(tracecontainer['trace'], tracecontainer['plaintext'], tracecontainer['ciphertext'], tracecontainer['key'])
 
-        i = self._len
-        if self._len >= self._storage['traces'].shape[0]:
+        i = self._num_traces
+        if self._num_traces >= self._group['traces'].shape[0]:
             self._resize_all()
             print("Resized")
 
         for l in ['trace', 'plaintext', 'ciphertext', 'key']:
             if tracecontainer[l] is None:
                 pass # TODO: Handle these fields being None (just replace with zeros?)
-            self._storage[l+'s'][i,:] = tracecontainer[l]
+            self._group[l+'s'][i,:] = tracecontainer[l]
             
-        self._len += 1
+        self._num_traces += 1
 
         # note: by default, double array
         pass
@@ -152,39 +152,41 @@ class Project:
         pass
 
     @property
+    def trace_len(self):
+        return self._group['traces'].shape[1]
+
+    @property
+    def num_traces(self):
+        return self._num_traces
+
+    @property
     def traces(self):
-        return self._storage['traces']
+        return self._group['traces']
 
     @property
     def plaintexts(self):
-        return self._storage['plaintexts']
+        return self._group['plaintexts']
 
     @property
     def ciphertexts(self):
-        return self._storage['ciphertexts']
+        return self._group['ciphertexts']
 
     @property
     def keys(self):
-        return self._storage['keys']
+        return self._group['keys']
 
     def _make_container(self, n):
         plaintext = None
         ciphertext = None
         key = None
         metadata = None
-
-        if self._has_plaintexts:
-            plaintext = self._storage['plaintexts', n]
-
-        if self._has_ciphertexts:
-            ciphertext = self._storage['ciphertexts', n]
-
-        if self._has_keys:
-            key = self._storage['keys', n]
+        plaintext = self._group['plaintexts', n]
+        ciphertext = self._group['ciphertexts', n]
+        key = self._group['keys', n]
         
-        return TraceContainer(self._storage['traces'][n], plaintext, ciphertext, key, metadata)
+        return TraceContainer(self._group['traces'][n], plaintext, ciphertext, key, metadata)
 
     # iterator
     def containers(self):
-        for i in range(self._len):
+        for i in range(self._num_traces):
             yield self._make_container(i)
