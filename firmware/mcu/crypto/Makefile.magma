@@ -1,0 +1,6 @@
+########
+CRYPTO_LIB = magma
+SRC += gost-magma.c gost-magma-independant.c  
+CDEFS += -DMAGMA  
+VPATH += :$(FIRMWAREPATH)/crypto/$(CRYPTO_LIB)  
+EXTRAINCDIRS += $(FIRMWAREPATH)/crypto/$(CRYPTO_LIB)  

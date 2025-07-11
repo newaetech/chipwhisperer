@@ -56,6 +56,14 @@ else ifeq ($(CRYPTO_TARGET),KUZNYECHIK)
   include $(FIRMWAREPATH)/crypto/Makefile.kuznyechik
 
 
+  else ifeq ($(CRYPTO_TARGET),MAGMA)
+#
+# Crypto Target: MAGMA (GOST 28147-89)
+# Crypto Options:
+#   None
+  include $(FIRMWAREPATH)/crypto/Makefile.magma
+
+
 else ifeq ($(CRYPTO_TARGET),MBEDTLS)
 #
 # Crypto Target: MBEDTLS

@@ -1,0 +1,20 @@
+#ifndef GOST_MAGMA_INDEPENDANT_H
+#define GOST_MAGMA_INDEPENDANT_H
+
+#include <stdint.h>
+
+#define MAGMA_KEY_LENGTH 32
+#define DEFAULT_MAGMA_KEY 0x6c,0xec,0xc6,0x7f,0x28,0x7d,0x08,0x3d, \
+                    0xeb,0x87,0x66,0xf0,0x73,0x8b,0x36,0xcf, \
+                    0x16,0x4e,0xd9,0xb2,0x46,0x95,0x10,0x90, \
+                    0x86,0x9d,0x08,0x28,0x5d,0x2e,0x19,0x3b
+
+void gost_magma_init(void);
+void gost_magma_key(uint8_t *key);
+void gost_magma_enc(uint8_t *block);
+void gost_magma_enc_pretrigger(uint8_t* block);
+void gost_magma_enc_posttrigger(uint8_t* block);
+void gost_magma_mask(uint8_t* m, uint8_t len);
+
+
+#endif
