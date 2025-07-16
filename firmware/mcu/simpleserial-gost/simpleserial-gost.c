@@ -137,7 +137,7 @@ int main(void)
     #if SS_VER == SS_VER_2_1
     simpleserial_addcmd(0x01, 16, gost);
     #else
-    simpleserial_addcmd('k', 16, get_key);
+    simpleserial_addcmd('k', 32, get_key);
     simpleserial_addcmd('p', 16,  get_pt);
     simpleserial_addcmd('x',  0,   reset);
     simpleserial_addcmd_flags('m', 18, get_mask, CMD_FLAG_LEN);
