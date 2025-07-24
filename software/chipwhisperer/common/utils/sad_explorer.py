@@ -29,25 +29,25 @@ import math
 import datetime
 import re
 
-try:
-    from bokeh.palettes import inferno # type: ignore
-    from bokeh.plotting import figure, show # type: ignore
-    from bokeh.resources import INLINE # type: ignore
-    from bokeh.io import push_notebook # type: ignore
-    from bokeh.models import Span, Legend, LegendItem # type: ignore
-    from ipywidgets import interact_manual, Layout, widgets # type: ignore
-except Exception as e:
-    inferno = None # type: ignore
-    figure = None # type: ignore
-    show = None # type: ignore
-    INLINE = None # type: ignore
-    push_notebook = None # type: ignore
-    Span = None # type: ignore
-    Legend = None # type: ignore
-    LegendItem = None # type: ignore
-    interact_manual = None # type: ignore
-    Layout = None # type: ignore
-    widgets = None # type: ignore
+# try:
+#     from bokeh.palettes import inferno # type: ignore
+#     from bokeh.plotting import figure, show # type: ignore
+#     from bokeh.resources import INLINE # type: ignore
+#     from bokeh.io import push_notebook # type: ignore
+#     from bokeh.models import Span, Legend, LegendItem # type: ignore
+#     from ipywidgets import interact_manual, Layout, widgets # type: ignore
+# except Exception as e:
+#     inferno = None # type: ignore
+#     figure = None # type: ignore
+#     show = None # type: ignore
+#     INLINE = None # type: ignore
+#     push_notebook = None # type: ignore
+#     Span = None # type: ignore
+#     Legend = None # type: ignore
+#     LegendItem = None # type: ignore
+#     interact_manual = None # type: ignore
+#     Layout = None # type: ignore
+#     widgets = None # type: ignore
 
 import itertools
 from chipwhisperer.common.utils import util

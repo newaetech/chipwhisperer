@@ -7,10 +7,10 @@ import random, math
 import pickle
 from copy import deepcopy
 
-try:
-    import ipywidgets as widgets # type: ignore
-except ModuleNotFoundError:
-    widgets = None
+# try:
+#     import ipywidgets as widgets # type: ignore
+# except ModuleNotFoundError:
+#     widgets = None
 
 def apply_ticks(value, ticks, round):
     value = float(value) * ticks
