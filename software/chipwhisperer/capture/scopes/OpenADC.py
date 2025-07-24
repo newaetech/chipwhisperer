@@ -876,7 +876,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
         b = self._capture_read(samples)
         return a or b
 
-    def get_last_trace(self, as_int : bool=False) -> np.ndarray:
+    def get_last_trace(self, as_int : bool=True) -> np.ndarray:
         """Return the last trace captured with this scope.
 
         Can return traces as floating point values (:code:`as_int=False`)
@@ -896,13 +896,16 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
 
         .. versionchanged:: 5.6.1
             Added as_int parameter
+        
+        .. versionchanged:: 7.0.0
+            Changed default value of as_int to True
         """
         if as_int:
             if self._is_husky:
                 # for Husky this is always appropriately sized (also there would be # of segments to consider)
-                return self.sc._int_data
+                return np.array(self.sc._int_data, dtype=np.int16)
             else:
-                return self.sc._int_data[:self.adc.samples]
+                return np.array(self.sc._int_data[:self.adc.samples], dtype=np.int16)
         return self.data_points
 
     getLastTrace = util.camel_case_deprecated(get_last_trace)
