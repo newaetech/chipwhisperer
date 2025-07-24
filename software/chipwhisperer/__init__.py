@@ -29,6 +29,7 @@ from .logging import *
 from .common.results.glitch import GlitchController, load_gc_results
 from .common.utils.sad_model import SADModelWrapper
 from .common.utils.sad_explorer import SADExplorer
+from .common.project import Project
 import sys, subprocess
 
 
@@ -368,7 +369,7 @@ def target(scope : Optional[scopes.ScopeTypes],
 
 def capture_trace(scope : scopes.ScopeTypes, target : targets.TargetTypes, plaintext : bytearray,
     key : Optional[bytearray]=None, ack : bool=True, poll_done : bool=False,
-    as_int : bool=True, always_send_key=False) -> Any: # type: ignore
+    as_int : bool=True, always_send_key=True) -> Any: # type: ignore
 
     """Capture a trace, sending plaintext and key
 
@@ -424,9 +425,10 @@ def capture_trace(scope : scopes.ScopeTypes, target : targets.TargetTypes, plain
 
     .. versionchanged:: 5.6.1
         Added poll_done parameter for Husky
-    """
 
-    import signal
+    .. versionchanged:: 6.1
+        Returns TraceContainer and make always_send_key and as_int default to True
+    """
 
     if key:
         target.set_key(key, ack=ack, always_send=always_send_key)
@@ -451,10 +453,10 @@ def capture_trace(scope : scopes.ScopeTypes, target : targets.TargetTypes, plain
         return None
 
     response = target.simpleserial_read('r', target.output_len, ack=ack)
-    wave = scope.get_last_trace(as_int=as_int)
+    trace = scope.get_last_trace(as_int=as_int)
 
-    if len(wave) >= 1:
-        return TraceContainer(wave, plaintext, response, key)
+    if len(trace) >= 1:
+        return TraceContainer(trace, plaintext, response, key)
     else:
         return None
 
