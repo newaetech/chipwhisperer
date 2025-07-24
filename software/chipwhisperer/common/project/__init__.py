@@ -1,4 +1,4 @@
-import zarr
+# import zarr
 import numpy as np
 
 class TraceContainer:
@@ -34,6 +34,7 @@ def _resize_func(arr):
     arr.resize(new_size)
 
 def open_project(path, zip_in_ram=True):
+    import zarr
     group = zarr.open_group(path)
     if path.endswith(".zip"):
         if zip_in_ram:
@@ -52,6 +53,7 @@ def open_project(path, zip_in_ram=True):
 class Project:
     def __init__(self, group=None, num_traces=100, dtype='int16', pt_dtype='uint8', ct_dtype = 'uint8', key_dtype='uint8', \
                  pt_len=16, ct_len=16, key_len=16, resize_func=_resize_func):
+        import zarr
         self._initialized = True
         if group:
             assert 'traces' in group
@@ -99,16 +101,16 @@ class Project:
         
         
         storage.create_array(name='traces', shape=(tarr_len, trace_len), \
-                             chunks=(tarr_len, trace_len), dtype=self._dtype)
+                             chunks=(tarr_len, trace_len), dtype=self._dtype, compressors=None)
         
         storage.create_array(name='plaintexts', shape=(self._tarr_len, len(plaintext)), \
-                            chunks=(tarr_len, len(plaintext)), dtype=self._pt_dtype)
+                            chunks=(tarr_len, len(plaintext)), dtype=self._pt_dtype, compressors=None)
         
         storage.create_array(name='ciphertexts', shape=(self._tarr_len, len(ciphertext)), \
-                            chunks=(tarr_len, len(ciphertext)), dtype=self._ct_dtype)
+                            chunks=(tarr_len, len(ciphertext)), dtype=self._ct_dtype, compressors=None)
         
         storage.create_array(name='keys', shape=(self._tarr_len, len(key)), \
-                            chunks=(tarr_len, len(key)), dtype=self._key_dtype)
+                            chunks=(tarr_len, len(key)), dtype=self._key_dtype, compressors=None)
         self._initialized = True
         pass
 
@@ -135,9 +137,11 @@ class Project:
             print("Resized")
 
         for l in ['trace', 'plaintext', 'ciphertext', 'key']:
+            val = tracecontainer[l]
             if tracecontainer[l] is None:
-                pass # TODO: Handle these fields being None (just replace with zeros?)
-            self._group[l+'s'][i,:] = tracecontainer[l]
+                continue
+                val = np.zeros(self._group[l+'s'][0].shape, dtype=self._group[l+'s'][0].dtype)
+            self._group[l+'s'][i,:] = val
             
         self._num_traces += 1
 
