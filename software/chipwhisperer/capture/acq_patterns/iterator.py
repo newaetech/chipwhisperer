@@ -46,3 +46,6 @@ class KTPIterator:
             key = None
         self.is_first = True
         return key, text, self._count
+
+    def __len__(self):
+        return self._N
