@@ -1435,6 +1435,12 @@ class GPIOSettings(util.DisableNewAttr):
     def cs(self):
         raise NotImplementedError()
 
+    def reset_target(self, io_name='nrst', delay=0.25):
+        setattr(self, io_name, 0)
+        time.sleep(delay)
+        setattr(self, io_name, None)
+        time.sleep(delay)
+
 class TriggerSettings(util.DisableNewAttr):
     def __init__(self, cwextra):
         super().__init__()
