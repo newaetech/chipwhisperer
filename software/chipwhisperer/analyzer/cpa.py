@@ -47,30 +47,33 @@ class CPA:
         pt_array = np.swapaxes(project.plaintexts, 0, 1)
         ct_array = np.swapaxes(project.ciphertexts, 0, 1)
         assert pt_array.shape[0] == self.subkeys
+
+        self.trace_array = project.traces
         
+        self.pt_array = pt_array
+        self.reset()
+        
+        self.known_key = None
+        self.ct_array = None
+        
+        self.correlations = None
+        self.leakage_model = leakage_model
+        self.gen_hyp()
+
+        self.known_key = np.array(project.keys[0])
+
+    def reset(self):
         self.th_sum = np.zeros((self.subkeys, self.trace_len, self.kguesses), dtype=np.int64)
         self.tsum = np.zeros((self.trace_len), dtype=np.int64)
         self.hsum = np.zeros((self.subkeys, self.kguesses), dtype=np.int64)
         
         self.t2_sum = np.zeros((self.trace_len), dtype=np.int64)
         self.h2_sum = np.zeros((self.subkeys, self.kguesses), dtype=np.int64)
-        
-        self.trace_array = project.traces
-        self.hyp_array = np.zeros((self.subkeys, pt_array.shape[1], self.kguesses), dtype=np.uint8)
-        
-        self.pt_array = pt_array
-        
-        self.known_key = None
-        self.ct_array = None
-        
-        self.correlations = []
-        self.leakage_model = leakage_model
-        self.gen_hyp()
-        self.corr_argsort = []
+        self.hyp_array = np.zeros((self.subkeys, self.pt_array.shape[1], self.kguesses), dtype=np.uint8)
         self.sorted_kguesses_hist = []
-        self.max_correlations = []
-
-        self.sorted_kguesses = None
+        self.traces_used_hist = []
+        self.max_correlations_hist = []
+        pass
 
     def leakage_model(self, leakage_model):
         self.leakage_model = leakage_model
@@ -82,6 +85,7 @@ class CPA:
     
     def update_state(self, start, stop):
         self.traces_used += stop - start
+        self.traces_used_hist.append(self.traces_used)
         
         # calculate sum of t
         self.tsum += sum_t_or_h(self.trace_array[start:stop])
@@ -104,7 +108,7 @@ class CPA:
     def calculate_correlation(self):
         # TODO important: only record the max correlation for each kguess
         # or could just get rid of corr v traces plot
-        corr = np.zeros((self.subkeys, self.trace_len, self.kguesses), dtype=np.float64)
+        corr = np.zeros((self.subkeys, self.trace_len, self.kguesses), dtype=np.float32)
 
         # calculate (sum of t) ^ 2
         t_sum2 = np.square(self.tsum, dtype=np.int64)
@@ -127,24 +131,21 @@ class CPA:
         np.nan_to_num(corr, copy=False)
         self.correlations = corr
 
-    def _update_sort_and_rank(self, index=-1):
+    def _calc_sort_and_rank(self, index=-1):
         sorted_kguesses = []
+        best_corrs = np.zeros((self.subkeys, self.kguesses), dtype=np.float32)
         for subkey in range(self.subkeys):
-            abscor = np.abs(self.correlations[index][subkey])
+            abscor = np.abs(self.correlations[subkey])
             max_corr_loc = np.argmax(abscor, axis=0) # arguments of abscor sorted by max: arg_along_trace[-1] has the location in correlation of largest corr
 
-            max_per_kguess = abscor[max_corr_loc].diagonal()
-            sorted_kguesses.append(np.flip(np.argsort(max_per_kguess)))
+            best_corrs[subkey] = abscor[max_corr_loc].diagonal()
 
-            # sorted_along_trace = np.take_along_axis(abscor, arg_along_trace, axis=0)
-            # tp = np.transpose(sorted_along_trace)
-            # arg_along_trace2 = np.argsort(tp, axis=0)
-            # #sorted_along_trace2 = np.flip(np.take_along_axis(tp, arg_along_trace2, axis=0), axis=(0,1))
-            # sorted_kguesses.append(np.flip(arg_along_trace2, axis=(0,1)))
+            sorted_kguesses.append(np.flip(np.argsort(best_corrs[subkey])))
+        self.max_correlations_hist.append(best_corrs)
         return sorted_kguesses
 
     def sort_and_rank(self):
-        self.sorted_kguesses_hist.append(self._update_sort_and_rank(i))
+        self.sorted_kguesses_hist.append(self._calc_sort_and_rank())
     
     def run(self, interval=None):
         if interval is None:
@@ -152,29 +153,77 @@ class CPA:
         for i in range(0, self.num_traces, interval):
             self.update_state(i, min(i + interval, self.num_traces))
             self.calculate_correlation()
-        self.sort_and_rank()
+            self.sort_and_rank()
 
-    def _corr_v_time(self, sub_byte, kguess, index=-1):
-        return self.correlations[index][sub_byte,:,kguess]
+    def _corr_v_time(self, sub_byte, kguess):
+        return self.correlations[sub_byte,:,kguess]
+
+    def corr_v_time(self, sub_byte):
+        return self._corr_v_time(sub_byte, self.known_key[sub_byte])
 
     def _corr_v_traces(self, sub_byte, kguess):
         maxes = []
-        for corr in self.correlations:
-            loc = np.argmax(np.abs(corr[sub_byte,:,kguess]))
-            maxes.append(corr[sub_byte,loc,kguess])
+        for corr in self.max_correlations_hist:
+            maxes.append(np.abs(corr[sub_byte,kguess]))
         return maxes
 
-    def _pge(self, sub_byte, kguess, index=-1):
-        return np.argwhere(self.sorted_kguesses_hist[index][sub_byte] == kguess)
+    def corr_v_traces(self, sub_byte, abval=True):
+        maxes = []
+        for corr in self.max_correlations_hist:
+            if abval:
+                maxes.append(np.abs(corr[sub_byte, self.known_key[sub_byte]]))
+            else:
+                maxes.append(corr[sub_byte, self.known_key[sub_byte]])
+        return maxes
+
+    def highest_corr_v_traces(self, sub_byte, exclude=None):
+        maxes = []
+        for corr in self.max_correlations_hist:
+            x = np.delete(corr, exclude, axis=1)
+            maxes.append()
+        pass
+
+    def lowest_corr_v_traces(self, sub_byte, exclude=None):
+        pass
+
+    def highest_corr_v_time(self, sub_byte, exclude=None):
+        maxes = []
+        ncorr = self.correlations[sub_byte]
+        if exclude is not None:
+            ncorr = np.delete(ncorr, exclude, axis=1)
+        return np.max(ncorr, axis=1)
+
+    def lowest_corr_v_time(self, sub_byte, exclude=None):
+        maxes = []
+        ncorr = self.correlations[sub_byte]
+        if exclude is not None:
+            ncorr = np.delete(ncorr, exclude, axis=1)
+        return np.min(ncorr, axis=1)
 
     def pge_v_traces(self, sub_byte):
-        pass
+        pges = []
+        for i in range(len(self.sorted_kguesses_hist)):
+            pges.append(self._pge(sub_byte, self.known_key[sub_byte], i))
+        return pges
+
+    def avg_pge(self):
+        avgs = []
+        for i in range(len(self.sorted_kguesses_hist)):
+            avg = 0
+            for j in range(self.subkeys):
+                avg += self._pge(j, self.known_key[j], i)
+            avg /= self.subkeys
+            avgs.append(avg)
+        return avgs
+
+    def _pge(self, sub_byte, kguess, index=-1):
+        return np.argwhere(self.sorted_kguesses_hist[index][sub_byte] == kguess)[0][0]
 
     def run_with_progress(self, interval, progbar):
         pass
 
     def key_guess(self):
-        pass
+        return np.array(self.sorted_kguesses_hist[-1], dtype=np.uint8)[:,0]
 
     def __str__(self):
         rtn = {}
