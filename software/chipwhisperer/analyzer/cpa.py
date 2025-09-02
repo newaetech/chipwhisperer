@@ -126,34 +126,36 @@ class CPA:
                 np.sqrt(-(h_sum2 - self.traces_used * self.h2_sum[subkey])),\
                 sqrt_t\
             )
-            with np.errstate(divide='ignore'):
+            with np.errstate(divide='ignore', invalid='ignore'):
                 corr[subkey] = num / dem.transpose()
         np.nan_to_num(corr, copy=False)
         self.correlations = corr
 
     def _calc_sort_and_rank(self, index=-1):
         sorted_kguesses = []
-        best_corrs = np.zeros((self.subkeys, self.kguesses), dtype=np.float32)
+        self.best_corrs = np.zeros((self.subkeys, self.kguesses), dtype=np.float32)
         for subkey in range(self.subkeys):
             abscor = np.abs(self.correlations[subkey])
-            max_corr_loc = np.argmax(abscor, axis=0) # arguments of abscor sorted by max: arg_along_trace[-1] has the location in correlation of largest corr
+            self.max_corr_loc = np.argmax(abscor, axis=0) # arguments of abscor sorted by max: arg_along_trace[-1] has the location in correlation of largest corr
 
-            best_corrs[subkey] = abscor[max_corr_loc].diagonal()
+            self.best_corrs[subkey] = abscor[self.max_corr_loc].diagonal()
 
-            sorted_kguesses.append(np.flip(np.argsort(best_corrs[subkey])))
-        self.max_correlations_hist.append(best_corrs)
+            sorted_kguesses.append(np.flip(np.argsort(self.best_corrs[subkey])))
+        self.max_correlations_hist.append(self.best_corrs)
         return sorted_kguesses
 
     def sort_and_rank(self):
         self.sorted_kguesses_hist.append(self._calc_sort_and_rank())
     
-    def run(self, interval=None):
+    def run(self, interval=None, callback=None):
         if interval is None:
             interval = self.num_traces
         for i in range(0, self.num_traces, interval):
             self.update_state(i, min(i + interval, self.num_traces))
             self.calculate_correlation()
             self.sort_and_rank()
+            if callback:
+                callback(self)
 
     def _corr_v_time(self, sub_byte, kguess):
         return self.correlations[sub_byte,:,kguess]
@@ -219,14 +221,105 @@ class CPA:
     def _pge(self, sub_byte, kguess, index=-1):
         return np.argwhere(self.sorted_kguesses_hist[index][sub_byte] == kguess)[0][0]
 
+    def pge(self):
+        return [self._pge(i, self.known_key[i]) for i in range(self.subkeys)]
+
     def run_with_progress(self, interval, progbar):
         pass
 
     def key_guess(self):
         return np.array(self.sorted_kguesses_hist[-1], dtype=np.uint8)[:,0]
 
+    def key_recovered(self):
+        return bool((self.key_guess() == self.known_key).all())
+
+    def kguess_corrs(self):
+        pass
+
+    def corr_v_traces_plot(self, subkeys=None):
+        pass
+
+    def corr_v_time_plot(self, subkeys=None):
+        pass
+
+    def pge_v_traces_plot(self, subkeys=None):
+        """Return a pge v traces plot object with sane labelling
+
+        Args:
+            subkeys (iterable or str)
+        """
+        pass
+
     def __str__(self):
         rtn = {}
         rtn['leakage_function']
         rtn['project']
         rtn['num_traces']
+
+def _default_jupyter_callback(cpa, head = 6, fmt = "{:02X}<br>{:.3f}"):
+    import pandas as pd # type: ignore
+    from IPython.display import clear_output # type: ignore
+
+    sub_byte = 0
+    corrs = []
+    fmt = "{:02X}<br>{:.3f}"
+    head = 6
+
+    # turn kguesses that match known_key red
+    def colour_corr_key(row):
+        ret = [""] * 16
+        #print(row)
+        key = cpa.known_key
+        for i,bnum in enumerate(row):
+            #print(bnum, i)
+            try:
+                if (type(bnum) is int) or (type(bnum) is float):
+                    continue
+                if bnum['kguess'] == key[i]:
+                    ret[i] = "color: red"
+                else:
+                    ret[i] = ""
+            except Exception as e:
+                print("bnum: {}, key: {}".format(bnum, key))
+        return ret
+                
+    # format display as determined by fmt
+    def format_stat(stat):
+        if type(stat) is dict:
+            return str(fmt.format(stat['kguess'], stat['corr']))
+        return str(stat)
+
+    # TODO: this should probably be something we do when updating correlations
+    for sub_byte in range(len(cpa.correlations)):
+        # get sorted list of correlations
+        corr = cpa.correlations[sub_byte]
+        abscor = np.abs(corr)
+        max_corr_loc = np.argmax(abscor, axis=0) # get location of max correlation for each kguess
+        sorted_kguesses = cpa.sorted_kguesses_hist[-1][sub_byte] # get sorted kguesses
+        max_corr = corr[max_corr_loc].diagonal()[sorted_kguesses] # get sorted correlations
+
+        # for each correlation, do a dict of the correlation and the kguess
+        rtn = []
+        for i in range(len(max_corr)):
+            rtn.append({'corr': max_corr[i], 'kguess': sorted_kguesses[i]})
+
+        corrs.append(rtn)
+        #corrs.append({'sub_byte': sub_byte, 'sorted_correlations': corr[max_corr_loc].diagonal()[sorted_kguesses], 'ranked_guesses': sorted_kguesses})
+        #pd.DataFrame({'corr_{}'.format(sub_byte): corr[max_corr_loc].diagonal()[sorted_kguesses], 'index_{}'.format(sub_byte): sorted_kguesses})
+        
+    df_pge = pd.DataFrame([cpa._pge(i, cpa.known_key[i]) for i in range(cpa.subkeys)]).transpose().rename(index={0:"PGE="}, columns=int)
+    df = pd.DataFrame(corrs).transpose()
+    df = pd.concat([df_pge, df], ignore_index=False)
+    if len(cpa.traces_used_hist) < 2:
+        tstart = 0
+    else:
+        tstart = cpa.traces_used_hist[-2]
+    tend = cpa.traces_used_hist[-1]
+    clear_output(wait=True)
+    chart = df.head(head).style.format(format_stat).apply(colour_corr_key, axis=1).set_caption("Finished traces {} to {} of {}".format(tstart, tend, cpa.num_traces))
+    display(chart)
+    # return chart
+
+def get_jupyter_callback(head = 6, fmt="{:02X}<br>{:.3f}"):
+    """Get callback for use in Jupyter"""
+    return lambda x : _default_jupyter_callback(x, head, fmt)
