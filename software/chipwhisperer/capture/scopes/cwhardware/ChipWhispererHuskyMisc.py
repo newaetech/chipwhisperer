@@ -1640,6 +1640,8 @@ class ADS4128Settings(util.DisableNewAttr):
         self.set_low_speed(True)
         self.set_hi_perf(2)
         self._adc_write(0x3d, 0xc0) # set offset binary output
+        self._adc_write(address=0x41, data=0b0000_1_01_1) # clock rise: setup +500ps, hold -500ps
+        self._adc_write(address=0x42, data=0b00_00_1_000) # clock fall: default
 
     def set_normal_settings(self):
         self._adc_write(0x42, 0x00) # enable low-latency mode
