@@ -165,19 +165,19 @@ class Project:
 
     @property
     def traces(self):
-        return self._group['traces']
+        return self._group['traces'][:self.num_traces]
 
     @property
     def plaintexts(self):
-        return self._group['plaintexts']
+        return self._group['plaintexts'][:self.num_traces]
 
     @property
     def ciphertexts(self):
-        return self._group['ciphertexts']
+        return self._group['ciphertexts'][:self.num_traces]
 
     @property
     def keys(self):
-        return self._group['keys']
+        return self._group['keys'][:self.num_traces]
 
     def _make_container(self, n):
         plaintext = None
