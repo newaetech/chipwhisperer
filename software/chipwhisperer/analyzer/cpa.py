@@ -1,5 +1,6 @@
 import numpy as np
 from numba import njit
+from ..__init__ import plot
 
 def generate_hw_table():
     ret = []
@@ -181,9 +182,12 @@ class CPA:
     def highest_corr_v_traces(self, sub_byte, exclude=None):
         maxes = []
         for corr in self.max_correlations_hist:
-            x = np.delete(corr, exclude, axis=1)
-            maxes.append()
-        pass
+            if exclude is None:
+                x = corr[sub_byte]
+            else:
+                x = np.delete(corr[sub_byte], exclude)
+            maxes.append(np.max(np.abs(x)))
+        return maxes
 
     def lowest_corr_v_traces(self, sub_byte, exclude=None):
         pass
@@ -237,24 +241,44 @@ class CPA:
         pass
 
     def corr_v_traces_plot(self, subkeys=None):
-        pass
+        import holoviews as hv
+        if subkeys is None:
+            subkeys = list(range(16))
+        plt = plot()
+        for i in subkeys:
+            plt *= plot((self.traces_used_hist, self.highest_corr_v_traces(i, self.known_key[i]))).opts(color='black')
+            plt *= plot((self.traces_used_hist, self.corr_v_traces(i)), label='Subkey {}'.format(i)).opts(color=hv.Palette('Spectral'))
+            
+        return plt.opts(title='Correlation v. Traces', xlabel='Traces used', ylabel='Correlation', legend_position='right', legend_limit=250, bgcolor='lightgray', height=800, width=1000)
 
     def corr_v_time_plot(self, subkeys=None):
-        pass
+        import holoviews as hv
+        if subkeys is None:
+            subkeys = list(range(16))
+        plt = plot()
+        for i in subkeys:
+            plt *= plot(self.lowest_corr_v_time(i, self.known_key[i])).opts(color='black')
+            plt *= plot(self.highest_corr_v_time(i, self.known_key[i])).opts(color='black')
+            plt *= plot(self.corr_v_time(i), label='Subkey {}'.format(i)).opts(color=hv.Palette('Spectral'))
+            
+        return plt.opts(title='Correlation vs. Time', xlabel='sample', ylabel='correlation', legend_position='right', legend_limit=250, bgcolor='lightgray', height=800, width=1000)
 
     def pge_v_traces_plot(self, subkeys=None):
-        """Return a pge v traces plot object with sane labelling
-
-        Args:
-            subkeys (iterable or str)
-        """
-        pass
+        import holoviews as hv
+        if subkeys is None:
+            subkeys = list(range(16))
+        plt = plot()
+        for i in subkeys:
+            plt *= plot((self.traces_used_hist, self.pge_v_traces(i)), label='Subkey {}'.format(i)).opts(color=hv.Palette('Spectral'))
+            
+        return plt.opts(title='Partial Guessing Entropy v. Traces', xlabel='traces used', ylabel='PGE', legend_position='right', legend_limit=250, bgcolor='lightgray', height=800, width=1000)
 
     def __str__(self):
         rtn = {}
         rtn['leakage_function']
         rtn['project']
         rtn['num_traces']
+
 
 def _default_jupyter_callback(cpa, head = 6, fmt = "{:02X}<br>{:.3f}"):
     import pandas as pd # type: ignore
@@ -320,6 +344,6 @@ def _default_jupyter_callback(cpa, head = 6, fmt = "{:02X}<br>{:.3f}"):
     display(chart)
     # return chart
 
-def get_jupyter_callback(head = 6, fmt="{:02X}<br>{:.3f}"):
+def get_table_cb(head = 6, fmt="{:02X}<br>{:.3f}"):
     """Get callback for use in Jupyter"""
     return lambda x : _default_jupyter_callback(x, head, fmt)

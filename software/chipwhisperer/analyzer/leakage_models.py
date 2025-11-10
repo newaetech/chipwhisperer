@@ -49,13 +49,13 @@ hw_table = generate_hw_table()
 ## LEAKAGE MODELS ###########################
 #############################################
 
-def sbox_output(pt, ct):
+def sbox_output(pt, ct=None):
     rtn = np.zeros((len(pt), 255), dtype=np.uint8)
     for kguess in range(255):
         rtn[:,kguess] = hw_table[sbox[pt ^ kguess]]
     return rtn
 
-def last_round_state_diff(pt, ct):
+def last_round_state_diff(pt, ct=None):
     rtn = np.zeros((len(ct), 255), dtype=np.uint8)
 
     pass
