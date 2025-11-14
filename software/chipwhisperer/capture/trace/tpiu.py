@@ -214,7 +214,7 @@ class TpiuDecoder:
         orbuculum tools on it to parse the file which since v2.2.0 requires the
         files to be using their OFLOW format."""
         try:
-            import pyorb
+            import pyorb # type: ignore
         except ImportError:
             warn("Can't import pyorb. Try `pip install python-orbuculum`")
             return []
@@ -241,7 +241,7 @@ class TpiuDecoder:
 def print_itm_messages(packets: list[ctypes.Structure]):
     """Helper function to pretty-print structures returned by pyorb ITM parser."""
     try:
-        import pyorb
+        import pyorb  # type: ignore
     except ImportError:
         warn("Can't import pyorb. Try `pip install python-orbuculum`")
         return
@@ -349,7 +349,7 @@ def test_decoder():
         # If we're here, it means that pyorb is installed as well as liborb
         # But it's only imported in the scope of functions so we need to import it
         # here again.
-        import pyorb
+        import pyorb  # type: ignore
 
         # We should only have PC sampling packets
         assert all([isinstance(p, pyorb.pcSampleMsg) for p in itm_packets])
