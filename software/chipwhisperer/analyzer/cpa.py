@@ -1,6 +1,6 @@
 import numpy as np
 from numba import njit
-from ..__init__ import plot
+# from ..__init__ import plot
 
 def generate_hw_table():
     ret = []
@@ -242,6 +242,7 @@ class CPA:
 
     def corr_v_traces_plot(self, subkeys=None):
         import holoviews as hv
+        from ..__init__ import plot
         if subkeys is None:
             subkeys = list(range(16))
         plt = plot()
@@ -253,6 +254,7 @@ class CPA:
 
     def corr_v_time_plot(self, subkeys=None):
         import holoviews as hv
+        from ..__init__ import plot
         if subkeys is None:
             subkeys = list(range(16))
         plt = plot()
@@ -265,6 +267,7 @@ class CPA:
 
     def pge_v_traces_plot(self, subkeys=None):
         import holoviews as hv
+        from ..__init__ import plot
         if subkeys is None:
             subkeys = list(range(16))
         plt = plot()
