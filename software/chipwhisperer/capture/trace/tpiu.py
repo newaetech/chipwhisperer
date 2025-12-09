@@ -88,7 +88,7 @@ class TpiuDecoder:
     stream ID as soon as a complete frame as been received.
 
     Typical usage with TraceWhisperer for getting PC sampling values:
-    >>> raw = trace.read_capture)data()
+    >>> raw = trace.read_capture_data()
     >>> decoder = TpiuDecoder()
     >>> for frame in trace.get_raw_trace_packets(raw, removesyncs=True, verbose=False):
     ...     decoder.accumulate(bytes(frame[1]))
