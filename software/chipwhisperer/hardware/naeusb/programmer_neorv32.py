@@ -26,6 +26,7 @@ import os
 import struct
 import time
 import traceback
+import binascii
 from datetime import datetime
 from .programmer_targetfpga import LatticeICE40
 from functools import reduce, wraps
@@ -35,34 +36,35 @@ from ...capture.utils.IntelHex import IntelHex
 
 import warnings
 def gen_app_binary(rom):
-    """Replicate image_gen.c from the neorv32 project
-    """
+    """Replicate image_gen.c from the neorv32 project (OP_EXE)"""
 
-    #
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        signature = 0x4788CAFE
-        if not isinstance(rom, bytes):
+        signature = 0xB007C0DE  # same as image_gen.c
+
+        if not isinstance(rom, (bytes, bytearray)):
             rom = rom.read()
 
         checksum = np.uint32(0)
-        size = 0
+        size = len(rom)  # raw_exe_size in BYTES (exactly like image_gen.c)
+
+        # NOTE: image_gen.c warns if size%4 != 0 but still processes full 32-bit reads.
+        # Here we assume rom length is multiple of 4 (recommended).
         for i in range(0, len(rom), 4):
             tmp = rom[i]
             tmp |= (rom[i+1] << 8)
             tmp |= (rom[i+2] << 16)
             tmp |= (rom[i+3] << 24)
             checksum += np.uint32(tmp)
-            # checksum &= 0xFFFFFFFF
-            size += 4
 
-        checksum = (~checksum) + 1
+        checksum = ~checksum  # SAME as image_gen.c (one's complement)
+
         new_rom = bytes([(signature >> (i*8)) & 0xFF for i in range(4)])
         new_rom += bytes([(size >> (i*8)) & 0xFF for i in range(4)])
-        new_rom += bytes([(checksum >> (i*8)) & 0xFF for i in range(4)])
+        new_rom += bytes([(int(checksum) >> (i*8)) & 0xFF for i in range(4)])
         new_rom += rom
         return new_rom
-     
+
 
 
 def print_fun(s):
@@ -220,23 +222,33 @@ class Neorv32Programmer:
         self.load_ice40(bsfile)
 
         # This time might need to be longer or adjusted on certain builds - TODO test
-        time.sleep(0.2)
+        time.sleep(0.3)
 
         # Log startup message
         start_msg = bytes(self.sp.read())
         target_logger.debug(b"Start Message from Bootlader: " + start_msg)
 
         # Check the menu worked
-        self.do_cmd("h", expected="Available CMDs:\r\n h: Help\r\n r: Restart\r\n u: Upload\r\n")
-        
+        self.sp.write(b" ")
+        time.sleep(0.5)
+        self.do_cmd("h", expected="Available CMDs:")
+
         # Upload
         self.do_cmd("u", "Awaiting neorv32_exe.bin... ")
         new_rom = gen_app_binary(romdata)
+        
+        #Check the header
+        #print("first4 =", new_rom[:4].hex())
+        #print("sig    =", hex(int.from_bytes(new_rom[:4], "little")))
+        #print("size   =", int.from_bytes(new_rom[4:8], "little"))
+        #print("csum   =", hex(int.from_bytes(new_rom[8:12], "little")))
+        #print("total  =", len(new_rom))
 
         self.sp.write(new_rom)
 
         time.sleep(0.1)
         resp = bytes(self.sp.read())
+    
 
         target_logger.debug(b"Response to upload of data: " + resp)
 
@@ -244,3 +256,4 @@ class Neorv32Programmer:
             raise IOError(b"Upload failed - bootloader responded with " + resp)
 
         boot_resp = self.do_cmd("e", expected="Booting", resp_read_len=13)
+
