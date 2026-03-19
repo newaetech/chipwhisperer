@@ -110,7 +110,10 @@ class OneWireHelper(util.DisableNewAttr):
             trigger_bit (int): timeslot on which to issue the trigger; if None, the packet's last timeslot is used.
 
         """
-        self.bb.sendpacket(self.get_rst_pd(rst=rst, wait=wait, check=check), trigger_en=trigger_en, trigger_bit=trigger_bit)
+        packet = self.get_rst_pd(rst=rst, wait=wait, check=check)
+        if trigger_bit != None:
+            packet.trig_bits[trigger_bit] = 1
+        self.bb.sendpacket(packet, trigger_en=trigger_en)
         assert self.bb.matched, 'no presence detect'
 
 
