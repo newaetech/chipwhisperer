@@ -441,9 +441,9 @@ class Samba(object):
         page_num = 0
         page_max = self.flash.pages
 
-        totalpages = (len(bindata) + page_size - 1) / page_size
+        totalpages = int((len(bindata) + page_size - 1) / page_size)
         if totalpages > page_max:
-            raise IOError("File too big (need %d pages, have %d)" % (totalpages, page_max))
+            raise IOError("File too big (need {} pages, have {})".format(totalpages, page_max))
 
         bytesleft = len(bindata)
 
@@ -482,9 +482,9 @@ class Samba(object):
         page_num = 0
         page_max = self.flash.pages
 
-        totalpages = (len(bindata) + page_size - 1) / page_size
+        totalpages = int((len(bindata) + page_size - 1) / page_size)
         if totalpages > page_max:
-            raise IOError("File too big (need %d pages, have %d)" % (totalpages, page_max))
+            raise IOError("File too big (need {} pages, have {})".format(totalpages, page_max))
 
         bytesleft = len(bindata)
 
