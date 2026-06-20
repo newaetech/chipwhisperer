@@ -203,16 +203,39 @@ class SAMFWLoader:
 
 
     def program(self, port, fw_path=None, hardware_type=None, bypass_warning=False):
-        """ Program the ChipWhisperer with new firmware.
+        """Program firmware onto an erased ChipWhisperer scope or target.
+
+        Either :code:`hardware_type` or :code:`fw_path` MUST be specified. You have to specify at least
+        one but not both.
+
+        See https://chipwhisperer.readthedocs.io/en/latest/firmware.html for more information.
 
         Args:
             port (str): Serial port that the ChipWhisperer bootloader is on
-            fw_path (str): Path to firmware, if specified leave out hardware type.
-            hardware_type (str): The type of hardware that you want to program.
-                If specified leave out fw_path. Valid types: (cwlite, cwnano, cw305, cw1200)
+            fw_path (str, optional): Path to firmware, if specified don't set :code:`hardware_type`.
+            hardware_type (str, optional): The type of hardware that you want to program.
+                If specified, don't set :code:`fw_path`. Valid types:
+
+                * :code:`'cwlite'`
+
+                * :code:`'cwnano'`
+
+                * :code:`'cw305'`
+
+                * :code:`'cw310'`
+
+                * :code:`'cw340'`
+
+                * :code:`'cw1200'`
+
+                * :code:`'cwbergen'`
+
+                * :code:`'cwhusky'`
+
+                * :code:`'cwhuskyplus'`
 
         Returns:
-            True if programming succeeded, False if it didn't
+            bool: True if programming succeeded, False if it didn't
 
         """
         type_whitelist = [
