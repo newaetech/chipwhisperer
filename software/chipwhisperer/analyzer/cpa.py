@@ -40,7 +40,7 @@ class CPA:
 
     def __init__(self, project, leakage_model, num_subkeys):
         self.trace_len = project.traces.shape[1]
-        self.kguesses = 255
+        self.kguesses = 256
         self.traces_used = 0
         self.subkeys = num_subkeys
         self.num_traces = project.num_traces
@@ -48,14 +48,16 @@ class CPA:
         pt_array = np.swapaxes(project.plaintexts, 0, 1)
         ct_array = np.swapaxes(project.ciphertexts, 0, 1)
         assert pt_array.shape[0] == self.subkeys
+        assert ct_array.shape[0] == self.subkeys
 
         self.trace_array = project.traces
         
         self.pt_array = pt_array
+        self.ct_array = ct_array
         self.reset()
         
         self.known_key = None
-        self.ct_array = None
+        # self.ct_array = None
         
         self.correlations = None
         self.leakage_model = leakage_model
@@ -82,7 +84,7 @@ class CPA:
 
     def gen_hyp(self):
         for subkey in range(self.subkeys):
-            self.hyp_array[subkey] = self.leakage_model(self.pt_array[subkey])
+            self.hyp_array[subkey] = self.leakage_model(self.pt_array, self.ct_array, subkey)
     
     def update_state(self, start, stop):
         self.traces_used += stop - start

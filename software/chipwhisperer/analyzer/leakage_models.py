@@ -6,6 +6,10 @@ def generate_hw_table():
         ret.append(bin(i).count('1'))
     return np.array(ret, dtype=np.uint8)
 
+def print_aes_table(ba):
+    for i in range(4):
+        print(ba[i::4])
+
 sbox = np.array([
 # 0    1    2    3    4    5    6    7    8    9    a    b    c    d    e    f 
 0x63,0x7c,0x77,0x7b,0xf2,0x6b,0x6f,0xc5,0x30,0x01,0x67,0x2b,0xfe,0xd7,0xab,0x76, # 0
@@ -43,19 +47,28 @@ inv_sbox = np.array([
 0xa0,0xe0,0x3b,0x4d,0xae,0x2a,0xf5,0xb0,0xc8,0xeb,0xbb,0x3c,0x83,0x53,0x99,0x61,
 0x17,0x2b,0x04,0x7e,0xba,0x77,0xd6,0x26,0xe1,0x69,0x14,0x63,0x55,0x21,0x0c,0x7d], dtype=np.uint8)
 
+invshiftrow_table = np.array([0, 5, 10, 15, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11], dtype=np.uint8) # right shift
+shiftrow_table = np.array([0, 13, 10, 7, 4, 1, 14, 11, 8, 5, 2, 15, 12, 9, 6, 3], dtype=np.uint8) # left shift
+
 hw_table = generate_hw_table()
 
 #############################################
 ## LEAKAGE MODELS ###########################
 #############################################
 
-def sbox_output(pt, ct=None):
-    rtn = np.zeros((len(pt), 255), dtype=np.uint8)
-    for kguess in range(255):
-        rtn[:,kguess] = hw_table[sbox[pt ^ kguess]]
+def sbox_output(pt, ct, subkey):
+    if pt is None:
+        raise ValueError("This leakage model requires plaintext")
+    rtn = np.zeros((len(pt[0]), 256), dtype=np.uint8)
+    for kguess in range(256):
+        rtn[:, kguess] = hw_table[sbox[pt[subkey] ^ kguess]]
     return rtn
 
-def last_round_state_diff(pt, ct=None):
-    rtn = np.zeros((len(ct), 255), dtype=np.uint8)
+# def inv_sbox_output(pt, ct, subkey):
+#     if ct is None:
+#         raise ValueError("This leakage model requires ct")
+#     rtn = np.zeros((len(ct[0]), 256), dtype=np.uint8)
+#     for kguess in range(256):
+#         rtn[:, kguess] = hw_table[inv_sbox[ct[subkey] ^ kguess]]
+#     return rtn
 
-    pass

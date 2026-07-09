@@ -288,6 +288,8 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
         """
         if type(data) is list:
             data = bytearray(data)
+        if type(data) is int:
+            data = bytearray([data])
         if not self.connectStatus:
             raise Warning("Target not connected")
 
