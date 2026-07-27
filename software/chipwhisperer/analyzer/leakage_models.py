@@ -1,4 +1,6 @@
 import numpy as np
+from collections.abc import Callable
+from numpy.typing import NDArray
 
 def generate_hw_table():
     ret = []
@@ -56,10 +58,11 @@ hw_table = generate_hw_table()
 ## LEAKAGE MODELS ###########################
 #############################################
 
-def sbox_output(pt, ct, subkey):
-    if pt is None:
-        raise ValueError("This leakage model requires plaintext")
-    rtn = np.zeros((len(pt[0]), 256), dtype=np.uint8)
+LeakageFunction = Callable[[NDArray | None, NDArray | None, int], NDArray]
+
+def sbox_output(pt: NDArray, ct: NDArray | None , subkey: int):
+    assert pt is not None, "This leakage model requires plaintexts"
+    rtn = np.zeros((len(pt[subkey]), 256), dtype=np.uint8)
     for kguess in range(256):
         rtn[:, kguess] = hw_table[sbox[pt[subkey] ^ kguess]]
     return rtn

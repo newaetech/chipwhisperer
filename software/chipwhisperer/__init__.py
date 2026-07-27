@@ -29,7 +29,7 @@ from .logging import *
 from .common.results.glitch import GlitchController, load_gc_results
 from .common.utils.sad_model import SADModelWrapper
 from .common.utils.sad_explorer import SADExplorer
-from .common.project import Project
+from .common.project import Project, open_zip, open_project
 import sys, subprocess
 
 
@@ -190,45 +190,6 @@ def program_target(scope : scopes.ScopeTypes, prog_type, fw_path : str, **kwargs
             time.sleep(0.05)
         raise
 
-
-
-def open_project(filename : str):
-    """Load an existing project from disk.
-
-    Args:
-       filename (str): Path to project file.
-
-    Returns:
-       A chipwhisperer project object.
-
-    Raises:
-       OSError: filename does not exist.
-    """
-    filename = project.ensure_cwp_extension(filename)
-
-    proj = project.Project()
-    proj.load(filename)
-    return proj
-
-
-def create_project(filename : str, overwrite : bool=False):
-    """Create a new project with the path <filename>.
-
-    If <overwrite> is False, raise an OSError if this path already exists.
-
-    Args:
-       filename (str): File path to create project file at. Must end with .cwp
-       overwrite (bool, optional): Whether or not to overwrite an existing
-           project with <filename>. Raises an OSError if path already exists
-           and this is false. Defaults to false.
-
-    Returns:
-       A chipwhisperer project object.
-
-    Raises:
-       OSError: filename exists and overwrite is False.
-    """
-    pass
 
 def scope(scope_type : Optional[Type[scopes.ScopeTypes]]=None, name : opstr=None, 
     sn : opstr=None, idProduct : Optional[int]=None,
