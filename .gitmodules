@@ -1,9 +1,6 @@
 [submodule "hardware/victims/firmware/crypto/secAES-ATmega8515"]
 	path = firmware/mcu/crypto/secAES-ATmega8515
 	url = https://github.com/jmichelp/secAES-ATmega8515.git
-[submodule "chipwhisperer-jupyter"]
-	path = jupyter
-	url = https://github.com/newaetech/chipwhisperer-jupyter.git
 [submodule "hardware/victims/firmware/crypto/SecAESSTM32"]
 	path = firmware/mcu/crypto/SecAESSTM32
 	url = https://github.com/ANSSI-FR/SecAESSTM32/
