@@ -28,7 +28,8 @@ import time
 import datetime
 import re
 import math
-import pkg_resources # type: ignore
+from importlib import resources
+import importlib.resources
 import chipwhisperer as cw
 from ...common.utils import util
 from ...hardware.naeusb.naeusb import NAEUSB
@@ -81,7 +82,7 @@ class TraceWhisperer(util.DisableNewAttr):
     longsync = [255, 255, 255, 127]
     shortsync = [255, 127]
 
-    def __init__(self, target, scope, husky=False, defines_files=None, bs='', force_bitfile=False, trace_reg_select=None, main_reg_select=None):
+    def __init__(self, target, scope, husky=False, huskyplus=False, defines_files=None, bs='', force_bitfile=False, trace_reg_select=None, main_reg_select=None):
         """
         Args:
             target: SimpleSerial target object
@@ -101,8 +102,14 @@ class TraceWhisperer(util.DisableNewAttr):
         self.expected_verilog_defines = 131
         self.swo_mode = False
         self._scope = scope
+        self._is_husky = False
+        self._is_husky_plus = False
+
+        if huskyplus:
+            self._is_husky_plus = True
 
         if husky:
+            self._is_husky = True
             self.platform = 'Husky'
             self._ss = target
 
@@ -122,13 +129,22 @@ class TraceWhisperer(util.DisableNewAttr):
             self._fpga = FPGA(self._naeusb)
             if not self._fpga.isFPGAProgrammed() or force_bitfile:
                 if not bs:
-                    bs = pkg_resources.resource_filename('chipwhisperer', 'hardware/firmware/tracewhisperer_top.bit')
-                self._fpga.FPGAProgram(open(bs, 'rb'), exceptOnDoneFailure=False)
+                    # Get the resource file path using importlib.resources
+                    import chipwhisperer.hardware.firmware
+                    with resources.as_file(resources.files(chipwhisperer.hardware.firmware).joinpath('tracewhisperer_top.bit')) as bit_file:
+                        self._fpga.FPGAProgram(open(bit_file, 'rb'), exceptOnDoneFailure=False)
+                else:
+                    self._fpga.FPGAProgram(open(bs, 'rb'), exceptOnDoneFailure=False)
 
         else:
             self.platform = 'CW305'
             self._ss = cw.target(scope)
             self._naeusb = target._naeusb
+
+        if husky and not huskyplus:
+            self._num_rules = 2
+        else:
+            self._num_rules = 8
 
         self.slurp_defines(defines_files, trace_reg_select, main_reg_select)
         self.target_registers = ARM_debug_registers(self)
@@ -221,8 +237,13 @@ class TraceWhisperer(util.DisableNewAttr):
         """
         self.verilog_define_matches = 0
         if not defines_files:
-            defines_files = [pkg_resources.resource_filename('chipwhisperer', 'capture/trace/defines/defines_trace.v'),
-                             pkg_resources.resource_filename('chipwhisperer', 'capture/trace/defines/defines_pw.v')]
+            import chipwhisperer.capture.trace.defines
+            defines_pkg = resources.files(chipwhisperer.capture.trace.defines)
+            defines_files = []
+            with resources.as_file(defines_pkg.joinpath('defines_trace.v')) as f1:
+                defines_files.append(str(f1))
+            with resources.as_file(defines_pkg.joinpath('defines_pw.v')) as f2:
+                defines_files.append(str(f2))
         for i,defines_file in enumerate(defines_files):
             defines = open(defines_file, 'r')
             define_regex_base  =   re.compile(r'`define')
@@ -537,24 +558,39 @@ class TraceWhisperer(util.DisableNewAttr):
 
         Args: none
         """
+        # set USERIO_CW_DRIVEN:
+        cw_driven = (1<<self.tms_bit) + (1<<self.tck_bit)
         if self.platform == 'Husky':
-            reg_pwdriven = "USERIO_CW_DRIVEN"
-            reg_data = "USERIO_DRIVE_DATA"
+            pre = self._scope.userio.direction
+            self._scope.userio.direction = cw_driven
         else:
-            reg_pwdriven = self.REG_USERIO_PWDRIVEN
-            reg_data = self.REG_USERIO_DATA
+            pre = self.fpga_read(self.REG_USERIO_PWDRIVEN, 1)
+            self.fpga_write(self.REG_USERIO_PWDRIVEN, [cw_driven])
 
-        self.fpga_write(reg_pwdriven, [(1<<self.tms_bit) + (1<<self.tck_bit)])
-        self.fpga_write(reg_data, [1<<self.tms_bit])
-        self._line_reset(reg_data)
-        self._send_tms_byte(reg_data, 0x9e)
-        self._send_tms_byte(reg_data, 0xe7)
-        self._line_reset(reg_data)
-        self.fpga_write(reg_data, [1<<self.tms_bit])
-        self.fpga_write(reg_pwdriven, [0])
+        # bit-bang:
+        if self.platform == 'Husky':
+            self._scope.userio.drive_data = 1<<self.tms_bit
+        else:
+            self.fpga_write(self.REG_USERIO_DATA, [1<<self.tms_bit])
+
+        self._line_reset()
+        self._send_tms_byte(0x9e)
+        self._send_tms_byte(0xe7)
+        self._line_reset()
+
+        if self.platform == 'Husky':
+            self._scope.userio.drive_data = 1<<self.tms_bit
+        else:
+            self.fpga_write(self.REG_USERIO_DATA, [1<<self.tms_bit])
+
+        # reset USERIO_CW_DRIVEN:
+        if self.platform == 'Husky':
+            self._scope.userio.direction = pre
+        else:
+            self.fpga_write(self.REG_USERIO_PWDRIVEN, pre)
 
 
-    def _send_tms_byte(self, addr, data):
+    def _send_tms_byte(self, data):
         """Bit-bang 8 bits of data on TMS/TCK (LSB first).
 
         Args:
@@ -562,16 +598,22 @@ class TraceWhisperer(util.DisableNewAttr):
         """
         for i in range(8):
             bit = (data & 2**i) >> i
-            self.fpga_write(addr, [bit<<self.tms_bit])
-            self.fpga_write(addr, [(1<<self.tck_bit) + (bit<<self.tms_bit)])
+            if self.platform == 'Husky':
+                self._scope.userio.drive_data = bit<<self.tms_bit
+                self._scope.userio.drive_data = (1<<self.tck_bit) + (bit<<self.tms_bit)
+                pass
+            else:
+                addr = self.REG_USERIO_DATA
+                self.fpga_write(addr, [bit<<self.tms_bit])
+                self.fpga_write(addr, [(1<<self.tck_bit) + (bit<<self.tms_bit)])
 
 
-    def _line_reset(self, addr, num_bytes=8):
+    def _line_reset(self, num_bytes=8):
         """Bit-bang a line reset on TMS/TCK.
 
         Args: none
         """
-        for i in range(num_bytes): self._send_tms_byte(addr, 0xff)
+        for i in range(num_bytes): self._send_tms_byte(0xff)
 
 
 
@@ -609,7 +651,7 @@ class TraceWhisperer(util.DisableNewAttr):
         """Sets pattern match and mask parameters.
 
         Args:
-            index: match index [0-7]
+            index: match rule index [0-7]
             pattern: list of 8-bit integers, pattern match value. Maximum size given by self.pattern_size.
                 If fewer than self.pattern_size bytes are given, the list is expanded to self.pattern_size
                 by *prepending* the required number of zeros (see usage notes below for implications of
@@ -631,8 +673,10 @@ class TraceWhisperer(util.DisableNewAttr):
         """
         # Since this also gets used by generic UART, we can't assume that word size is 8 bits.
         # Translate pattern (and mask, if provided) to bytes:
+        if index >= self._num_rules:
+            raise ValueError('This hardware supports a maximum of %d rules.' % self._num_rules)
         if len(pattern) > self.pattern_size:
-            raise ValueError('pattern and mask cannot be more than 64 bytes.')
+            raise ValueError('pattern and mask cannot be more than %d bytes.' % self.pattern_size)
         pattern_converted = self._words2bytes(pattern)
         if mask:
             if len(pattern) != len(mask):
@@ -1436,6 +1480,9 @@ class clock(util.DisableNewAttr):
         else:
             raise ValueError('Invalid source (target_clock/trace_clock/usb_clock)')
         self.main.fpga_write(self.main.REG_FE_CLOCK_SEL, [val])
+        # wait for clock counters to settle in case user wants to do something with
+        # this clock immediately after calling this method
+        time.sleep(0.2)
 
     @property
     def trace_clock_shift_enable(self):
@@ -1708,13 +1755,16 @@ class capture(util.DisableNewAttr):
             self.main.fpga_write(self.main.REG_PATTERN_TRIG_ENABLE, [0])
         else:
             if type(source) == int:
-                self.main.fpga_write(self.main.REG_SOFT_TRIG_ENABLE, [0])
-                self.main.fpga_write(self.main.REG_SOFT_TRIG_PASSTHRU, [0])
-                self.main.fpga_write(self.main.REG_PATTERN_TRIG_ENABLE, [2**source])
-                self.main.fpga_write(self.main.REG_TRIGGER_ENABLE, [1])
-                # these can be customized but let's start you off with simple default values:
-                self.main.fpga_write(self.main.REG_NUM_TRIGGERS, [1])
-                self.main.fpga_write(self.main.REG_TRIGGER_WIDTH, [16])
+                if 0 <= source < self.main._num_rules:
+                    self.main.fpga_write(self.main.REG_SOFT_TRIG_ENABLE, [0])
+                    self.main.fpga_write(self.main.REG_SOFT_TRIG_PASSTHRU, [0])
+                    self.main.fpga_write(self.main.REG_PATTERN_TRIG_ENABLE, [2**source])
+                    self.main.fpga_write(self.main.REG_TRIGGER_ENABLE, [1])
+                    # these can be customized but let's start you off with simple default values:
+                    self.main.fpga_write(self.main.REG_NUM_TRIGGERS, [1])
+                    self.main.fpga_write(self.main.REG_TRIGGER_WIDTH, [16])
+                else:
+                    raise ValueError('This hardware supports a maximum of %d rules.' % self.main._num_rules)
             else:
                 raise TypeError
 
@@ -1791,6 +1841,8 @@ class capture(util.DisableNewAttr):
     def rules_enabled(self, rules):
         raw = 0
         for rule in rules:
+            if rule >= self.main._num_rules:
+                raise ValueError('This hardware supports a maximum of %d rules.' % self.main._num_rules)
             raw += 2**rule
         self.main.fpga_write(self.main.REG_PATTERN_ENABLE, [raw])
 
@@ -1849,6 +1901,7 @@ class ARM_debug_registers(util.DisableNewAttr):
     def __init__(self, main):
         super().__init__()
         self.main = main
+        self._use_register_cache = True
         self.cached_values = [None] * len(self.regs)
         self.disable_newattr()
 
@@ -1859,6 +1912,7 @@ class ARM_debug_registers(util.DisableNewAttr):
 
         else:
             rtn = OrderedDict()
+            rtn['use_register_cache'] = self.use_register_cache
             rtn['DWT_CTRL']     = self.DWT_CTRL
             rtn['DWT_COMP0']    = self.DWT_COMP0
             rtn['DWT_COMP1']    = self.DWT_COMP1
@@ -1880,6 +1934,34 @@ class ARM_debug_registers(util.DisableNewAttr):
 
     def __str__(self):
         return self.__repr__()
+
+    @property 
+    def use_register_cache(self):
+        """Writing and reading target debug registers this class's methods is
+        relatively slow because it is done via SimpleSerial exchanges. It can
+        therefore be useful to cache these values. Be cautious if these
+        registers can be changed via other means (e.g. a debugger, or the
+        target firmware itself).
+
+        Args:
+            val (bool): whether register values are cached.
+        """
+
+        return self._use_register_cache
+
+    @use_register_cache.setter
+    def use_register_cache(self, val): 
+        if val in [True, False]:
+            self._use_register_cache = val
+        else:
+            raise ValueError
+
+    def clear_cache(self): 
+        """Clear the cached register values, to force them to be re-read from
+        the target.
+        """
+        self.cached_values = [None] * len(self.regs)
+
 
     @property 
     def DWT_CTRL(self):
@@ -2026,7 +2108,7 @@ class ARM_debug_registers(util.DisableNewAttr):
             tracewhisperer_logger.error("Target must be connected for this to work (e.g. scope.trace.target = target)")
             return None
         elif reg in self.regs:
-            if self.cached_values[self.regs[reg]]:
+            if self.cached_values[self.regs[reg]] and self.use_register_cache:
                 val = self.cached_values[self.regs[reg]]
             else:
                 data = '%02x' % self.regs[reg] + '00000000'
@@ -2061,10 +2143,10 @@ class UARTTrigger(TraceWhisperer):
     '''
     _name = 'UART Trigger Module'
 
-    def __init__(self, scope, trace_reg_select, main_reg_select):
+    def __init__(self, scope, huskyplus, trace_reg_select, main_reg_select):
         self._baud = 0
         self._baud_margin = 0.005
-        super().__init__(husky=True, target=None, scope=scope, trace_reg_select=trace_reg_select, main_reg_select=main_reg_select)
+        super().__init__(husky=True, huskyplus=huskyplus, target=None, scope=scope, trace_reg_select=trace_reg_select, main_reg_select=main_reg_select)
         self.disable_newattr()
         self.trigger_source = 0
 
@@ -2155,7 +2237,7 @@ class UARTTrigger(TraceWhisperer):
         if found:
             self.clock.swo_clock_freq = sample_freq
             if not self.clock.swo_clock_locked:
-                tracewhisperer_logger.error("SWO clock not locked!")
+                tracewhisperer_logger.error("SWO clock not locked! Ensure clock source is correct and alive.")
             self.swo_div = div
             self._baud = actual_baud
             tracewhisperer_logger.info("Setting baudrate to %d (freq_mul=%d)" % (actual_baud, freq_mul))
@@ -2246,13 +2328,13 @@ class UARTTrigger(TraceWhisperer):
 
     @trigger_source.setter
     def trigger_source(self, rule):
-        if 0 <= rule < 8:
+        if 0 <= rule < self._num_rules:
             self.fpga_write(self.REG_SOFT_TRIG_ENABLE, [0])
             self.fpga_write(self.REG_SOFT_TRIG_PASSTHRU, [0])
             self.fpga_write(self.REG_PATTERN_TRIG_ENABLE, [2**rule])
             self.fpga_write(self.REG_TRIGGER_ENABLE, [1])
         else:
-            raise ValueError
+            raise ValueError('This hardware supports a maximum of %d rules.' % self.main._num_rules)
 
     def set_pattern_match(self, index, pattern, mask=None, enable_rule=True):
         """Sets pattern match and mask parameters.  The pattern may be
