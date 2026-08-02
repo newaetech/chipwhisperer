@@ -18,6 +18,8 @@ dependencies = [
         "tqdm",
         "libusb1",
         "zarr>=3.0.0",
+        "crc",
+        "pycryptodome"
 ]
 license = {file = "LICENSE.txt"}
 readme = "README.md"
