@@ -213,9 +213,9 @@ class Project:
                 self._group.attrs[name]['exists'] = 1 # type: ignore
                 self._group.attrs[name]['len'] = field_len # type: ignore
                 if hasattr(fields[cont_name], 'dtype'):
-                    self._group.attrs[name]['dtype'] = fields[cont_name].dtype # type: ignore
+                    self._group.attrs[name]['dtype'] = str(fields[cont_name].dtype) # type: ignore
                 else:
-                    self._group.attrs[name]['dtype'] = self._dtypes[name] # type: ignore
+                    self._group.attrs[name]['dtype'] = str(self._dtypes[name]) # type: ignore
         
         self._initialized = True
         analyzer_logger.info("Project initialized")
