@@ -1,9 +1,9 @@
 
 .. _capture-api:
 
-***********
-Capture API
-***********
+***********************
+Capture and Project API
+***********************
 
 This page documents the included helper functions and classes
 for capturing, storing, and plotting traces.
@@ -13,28 +13,21 @@ for capturing, storing, and plotting traces.
 Project
 =======
 
-The project is a way of storing a traces, and other project data together
-using a bag-of-files. These projects can be exported and imported to a
-new session.
+The ChipWhisperer project is a simple way of storing your traces and related data. It's a fairly thin
+wrapper over a Zarr group and so behaves a lot like one. To create a new Project::
 
-A project can be accessed a few different ways. It can either be loaded from storage,
-created new, or imported. Importing currently only supports zip files.
+    import chipwhisperer as cw
+    proj = cw.Project()
+    proj.save("/path/to/proj") # end with .zip for zip file
 
-.. autofunction:: chipwhisperer.open_project
+You can also open an existing project::
 
-.. autofunction:: chipwhisperer.create_project
+    proj = cw.open_project("/path/to/project")
 
-.. autofunction:: chipwhisperer.import_project
 
-The :func:`open_project <chipwhisperer.open_project>` and the
-:func:`create_project <chipwhisperer.create_project>` return a
-:class:`Project <chipwhisperer.common.api.ProjectFormat.Project>` instance.
+.. autoclass:: chipwhisperer.common.project.Project
+    :members:
 
-.. autoclass:: chipwhisperer.common.api.ProjectFormat.Project
-    :members: location, traces, waves, textins, textouts, keys, get_filename, trace_manager, export, save, close
-
-.. autoclass:: chipwhisperer.common.api.ProjectFormat.Traces
-    :members: append, extend
 
 .. _api-capture-helpers:
 
@@ -55,36 +48,29 @@ Once you completed these steps you can use the
 capture of one trace. There are some helper classes that generate types of
 :ref:`key text patterns <api-capture-ktp>` for input to the
 :func:`capture_trace <chipwhisperer.capture_trace>` function. The function
-will return a :ref:`Trace <api-capture-trace>`.
+will return a :ref:`TraceContainer <api-capture-trace>`.
 
 
 .. autofunction:: chipwhisperer.capture_trace
 
-
 .. _api-capture-trace:
 
-Trace
-=====
+TraceContainer
+==============
 
-This class is used throughout the ChipWhisperer software to package together
-the relevant data for each captured power trace. After a capture is complete the
-:func:`capture_trace <chipwhisperer.capture_trace>` function will return
-a :class:`Trace <chipwhisperer.common.traces.Trace>`. This trace is *namedtuple* of four
-pieces of data (wave, textin, textout, key), where *wave* is the actually
-numpy array of the power trace captured during the target's operation. The
-individual pieces of data can be accessed as a one would with a tuple or
-by using the provided attributes. Example::
+This class is a simple way of grouping a power trace and related data. It's the preferred
+way of passing single traces around in ChipWhisperer and is returned by 
+:func:`capture_trace <chipwhisperer.capture_trace>`.
 
-    import chipwhisperer as cw
-    trace = cw.Trace(wave, textin, textout, key)
+You can easily construct a TraceContainer by passing the relevant fields::
 
-This trace groups together the power trace (wave), and the process information
-that resulted in that trace such as textin, textout, and key.
+    cont = cw.TraceContinaer(trace, plaintext, ciphertext, key)
 
-.. autoclass:: chipwhisperer.common.traces.Trace
+
+.. autoclass:: chipwhisperer.common.project.TraceContainer
     :members:
 
-.. versionadded:: 5.1
+.. versionadded:: 7.0
     Added Trace class.
 
 
@@ -93,11 +79,9 @@ that resulted in that trace such as textin, textout, and key.
 Key Text Patterns
 =================
 
-There are a few different types of classes for generating key text patterns
-for your capture:
+Currently ChipWhisperer supports a single class for generating key text pairs:
 
 * :class:`chipwhisperer.capture.acq_patterns.basic.AcqKeyTextPattern_Basic`
-* :class:`chipwhisperer.capture.acq_patterns.tvlattest.AcqKeyTextPattern_TVLATTest`
 
 .. _api-capture-ktp-basic:
 
@@ -107,10 +91,8 @@ Basic
 .. autoclass:: chipwhisperer.capture.acq_patterns.basic.AcqKeyTextPattern_Basic
     :members:
 
-.. _api-capture-ktp-tvla_ttest:
+This class is also available as a simple iterator::
 
-TVLA TTest
-----------
-
-.. autoclass:: chipwhisperer.capture.acq_patterns.tvlattest.AcqKeyTextPattern_TVLATTest
-    :members:
+    N = 100
+    for key, text, n in cw.ktp.BasicIt(N):
+        pass

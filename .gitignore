@@ -84,3 +84,4 @@ software/chipwhisperer/logs/*
 .venv/**
 .vscode/**
 **.ipynb_checkpoints/**
+**/_build/**

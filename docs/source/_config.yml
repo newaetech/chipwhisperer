@@ -40,7 +40,7 @@ html:
 sphinx:
   config:
     autodoc_warningiserror: false
-    nitpicky: true
+    nitpicky: false
     napoleon_google_docstring: true
     napoleon_numpy_docstring: true
     napoleon_include_init_with_doc: false

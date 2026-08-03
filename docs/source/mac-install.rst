@@ -61,10 +61,6 @@ The compilers are also available on Mac OSx. You can install by running:
     # install arm-gcc
     brew install --cask gcc-arm-embedded
 
-    # install avr-gcc
-    brew tap osx-cross/avr
-    brew install avr-gcc
-
 
 This brew install does not work for some older versions of Mac OS X. You will
 have to find a different way to install the compilers.
@@ -86,4 +82,11 @@ See https://github.com/newaetech/chipwhisperer/issues/381 for more information.
 Installing ChipWhisperer
 ========================
 
-See the :ref:`Linux install instructions. <linux-install-chipwhisperer>`
+You'll now need to clone and install ChipWhipserer using pip:
+
+.. code:: bash
+
+    cd ~/
+    git clone https://github.com/newaetech/chipwhisperer -b power101
+    cd chipwhisperer
+    git submodule update --init jupyter # grab Jupyter notebook tutorials

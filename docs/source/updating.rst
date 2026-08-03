@@ -4,18 +4,5 @@
 Updating ChipWhisperer
 ######################
 
-Updating your ChipWhisperer software installation is easy!
-
-Navigate to where you installed ChipWhisperer update it with the usual git
-commands. Don't forget to update any submodules (e.g. Jupyter) as well.
-
-.. tip::
-    Unsure where ChipWhisperer is installed? Run::
-
-        import chipwhisperer as cw; print(cw.__file__)`
-
-
-If you installed ChipWhisperer with our :doc:`Windows installer <windows-install>`,
-you can run the "ChipWhisperer Update" program.
-
-
+Updating your ChipWhisperer power101 installation generally shouldn't be necessary. If there is a
+new update, follow the instructions in the release for that update.

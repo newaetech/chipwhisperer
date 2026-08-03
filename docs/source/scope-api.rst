@@ -14,12 +14,7 @@ which will connect to a ChipWhisperer device and return a scope object of the co
     import chipwhisperer as cw
     scope = cw.scope()
 
-There are currently two types of scopes:
-
-* :ref:`api-scope-openadc` (Lite, Pro, Husky)
-* :ref:`api-scope-cwnano` (Nano)
-
-These scope objects also inherit common methods from :ref:`api-scope-common`.
+Your scope objects inherits common methods from :ref:`api-scope-common`.
 
 .. autodata:: chipwhisperer.scope
     :annotation: chipwhisperer.scope()
@@ -36,16 +31,11 @@ OpenADC Scope
 
 Supported scopes:
 
-* :doc:`Capture/ChipWhisperer-Lite`
-* :doc:`Capture/ChipWhisperer-Pro`
 * :doc:`Capture/ChipWhisperer-Husky`
 
 Usage examples:
 
 * `Power Analysis <https://github.com/newaetech/chipwhisperer-jupyter/tree/master/courses/sca101>`_
-* `Glitch <https://github.com/newaetech/chipwhisperer-jupyter/tree/master/courses/fault101>`_
-* `Pro features <https://github.com/newaetech/chipwhisperer-jupyter/blob/master/demos/CW-Pro%20Using%20SAD%20(Analog%20Pattern)%20Trigger%20-%20Attacking%20AES.ipynb>`_
-* `Husky glitching <https://github.com/newaetech/chipwhisperer-jupyter/blob/master/demos/husky/03%20-%20Husky%20Glitching.ipynb>`_
 
 .. autoclass:: chipwhisperer.scopes.OpenADC
     :members:
@@ -94,19 +84,6 @@ The following :code:`scope.adc` members are only available on ChipWhisperer-Husk
 scope.clock
 -----------
 
-scope.clock **(Lite/Pro Only)**
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. warning:: ChipWhisperer-Lite/Pro only. See 
-            :attr:`scope.clock (Husky) <chipwhisperer.capture.scopes.cwhardware.ChipWhispererHuskyClock.ChipWhispererHuskyClock>` for Husky clock documentation.
-
-Class to control target/ADC clocks. A block diagram of the clock module is shown below:
-
-.. thumbnail:: figures/cwlitepro_clock.png
-
-.. autoclass:: chipwhisperer.capture.scopes._OpenADCInterface.ClockSettings
-    :members:
-
 scope.clock **(Husky Only)**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -127,12 +104,6 @@ scope.trigger
 Basic trigger control module.
 
 .. autoclass:: chipwhisperer.capture.scopes.cwhardware.ChipWhispererExtra.TriggerSettings
-    :members:
-
-scope.trigger **(Pro Only)**
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. autoclass:: chipwhisperer.capture.scopes.cwhardware.ChipWhispererExtra.ProTrigger
     :members:
 
 scope.trigger **(Husky Only)**
@@ -179,22 +150,6 @@ The following attributes are only available on, or differ substantially on the C
 
 .. autoattribute:: chipwhisperer.capture.scopes.cwhardware.ChipWhispererGlitch.GlitchSettings.num_glitches
         
-Pro Only Features
------------------------
-
-scope.SAD
-^^^^^^^^^^^^^^
-
-.. autoclass:: chipwhisperer.capture.scopes.cwhardware.ChipWhispererSAD.ChipWhispererSAD
-    :members:
-
-scope.decode_IO
-^^^^^^^^^^^^^^^
-
-.. autoclass:: chipwhisperer.capture.scopes.cwhardware.ChipWhispererDecodeTrigger.ChipWhispererDecodeTrigger
-    :members:
-
-
 .. _api-scope-husky:
 
 Husky Only Features
@@ -259,36 +214,6 @@ scope.XADC
 ^^^^^^^^^^
 
 .. autoclass:: chipwhisperer.capture.scopes.cwhardware.ChipWhispererHuskyMisc.XADCSettings
-    :members:
-
-.. _api-scope-cwnano:
-
-ChipWhisperer Nano Scope
-========================
-
-Supported scopes:
-
-* :doc:`Capture/ChipWhisperer-Nano`
-
-.. autoclass:: chipwhisperer.scopes.CWNano
-    :members:
-    :exclude-members: enable_MPSSE, upgrade_firmware
-
-scope.adc
----------
-.. autoclass:: chipwhisperer.capture.scopes.cwnano.ADCSettings
-    :members:
-
-scope.io
----------
-
-.. autoclass:: chipwhisperer.capture.scopes.cwnano.GPIOSettings
-    :members:
-
-scope.glitch
-------------
-
-.. autoclass:: chipwhisperer.capture.scopes.cwnano.GlitchSettings
     :members:
 
 .. _api-scope-common:

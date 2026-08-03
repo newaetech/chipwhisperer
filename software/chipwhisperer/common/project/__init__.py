@@ -378,27 +378,45 @@ class Project:
 
     @property
     def trace_len(self) -> int:
+        """Get the length (in samples) of the traces in this project
+        """
         return self._group['traces'].shape[1] # type: ignore
 
 
     @property
     def num_traces(self) -> int:
+        """Get the number of traces in this project
+        """
         return self._group.attrs['len'] # type: ignore
 
     @property
     def size(self) -> int:
+        """Get the number of traces that can be held in this project without resizing
+
+        Note that resizing is automatic and isn't typically an issue for most users
+        """
         return self._group.attrs['size'] # type: ignore
 
     @property
     def traces(self) -> np.typing.NDArray:
+        """Get all the traces in this project as a numpy array
+
+        If you want to access these as a zarr array, access via project._group
+        """
         return self._group['traces'][:self.num_traces] # type: ignore
 
     @property
     def has_plaintexts(self) -> bool:
+        """True if this project has plaintexts, false if not
+        """
         return self._group.attrs['plaintexts']['exists'] == 1 # type: ignore
 
     @property
     def plaintexts(self) -> np.typing.NDArray | None:
+        """Get all the plaintexts in this project as a numpy array, or None if there aren't any
+
+        If you want to access these as a zarr array, access via project._group
+        """
         if self.has_plaintexts:
             return self._group['plaintexts'][:self.num_traces] # type: ignore
         else:
@@ -406,6 +424,8 @@ class Project:
 
     @property
     def plaintext_len(self) -> int | None:
+        """Get the length of the plaintexts, or None if there aren't any
+        """
         if self.has_plaintexts:
             return self._group['plaintexts'].shape[1] # type: ignore
         else:
@@ -413,10 +433,16 @@ class Project:
 
     @property
     def has_ciphertexts(self) -> bool:
+        """True if this project has ciphertexts, false if not
+        """
         return self._group.attrs['ciphertexts']['exists'] == 1 # type: ignore
 
     @property
     def ciphertexts(self) -> np.typing.NDArray | None:
+        """Get all the ciphertexts in this project as a numpy array, or None if there aren't any
+
+        If you want to access these as a zarr array, access via project._group
+        """
         if self.has_ciphertexts:
             return self._group['ciphertexts'][:self.num_traces] # type: ignore
         else:
@@ -424,6 +450,8 @@ class Project:
 
     @property
     def ciphertext_len(self) -> int | None:
+        """Get the length of the ciphertexts, or None if there aren't any
+        """
         if self.has_ciphertexts:
             return self._group['ciphertexts'].shape[1] # type: ignore
         else:
@@ -431,10 +459,14 @@ class Project:
 
     @property
     def has_keys(self) -> bool:
+        """True if this project has keys, false if not
+        """
         return self._group.attrs['keys']['exists'] == 1 # type: ignore
 
     @property
     def keys_len(self) -> int | None:
+        """Get the length of the keys, or None if there aren't any
+        """
         if self.has_keys:
             return self._group['keys'].shape[1] # type: ignore
         else:
@@ -442,6 +474,10 @@ class Project:
 
     @property
     def keys(self) -> np.typing.NDArray | None:
+        """Get all the keys in this project as a numpy array, or None if there aren't any
+
+        If you want to access these as a zarr array, access via project._group
+        """
         if self.has_keys:
             return self._group['keys'][:self.num_traces] # type: ignore
         else:

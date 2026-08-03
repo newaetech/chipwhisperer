@@ -27,12 +27,12 @@ for Windows Subsystem for Linux (WSL). If you don't already have this enabled:
 3. Open a command prompt or powershell windows and run :code:`wsl --install -d ubuntu`
 4. Restart your computer again
 
-Our Windows installer will install some compilers for building target firmware. This step requires an
+Our Windows installer will install simple prerequisites for building target firmware. This step requires an
 internet connection, so if you want to complete this step ahead of time, or if this step fails during
 installation, please see :ref:`Installing_Compilers_In_WSL`.
 
 ============================
-Installing Compilers In WSL:
+Setting Up WSL:
 ============================
 
 Our Windows installer will attempt to install compilers for building target firmware in WSL. This is both
@@ -46,7 +46,7 @@ running the following commands:
 
 1. Run WSL
 2. Run :code:`sudo apt update`.
-3. Run :code:`sudo apt install -y build-essential gcc-arm-none-eabi gcc-avr avr-libc`
+3. Run :code:`sudo apt install -y build-essential`
 
 .. image:: _images/win-installer-3.png
     :width: 800
@@ -57,30 +57,28 @@ running the following commands:
 Running the Installer
 ************************
 
-If you want to run a native Windows installation of ChipWhisperer, your best 
-bet is to run the Windows installer, which takes care of getting the 
-prerequisites for you. The steps for using the installer are as follows:
+Our recommended way of installing on Windows is to use our Windows installer, which automates most
+of the process.
 
 1. Navigate to the `ChipWhisperer release page <https://github.com/newaetech/chipwhisperer/releases>`_ on Github.
 
 .. image:: _images/win-installer-1.png
   :width: 800
 
-2. Find the latest ChipWhisperer Windows install executable (currently :code:`Chipwhisperer.v6.0.0.exe`)
-
+2. Find the Power Analysis 101 ChipWhisperer Windows install executable (currently :code:`Chipwhisperer.v6.0.0.exe`)
 
 3. Run the installer. A summary of the installation is given on the second page.
 
 .. image:: _images/win-installer-2.png
   :width: 800
 
-4. Run the executable and choose the path you want to install ChipWhisperer at. You must have read/write permissions for the location you install to, so avoid installing in a location like :code:`C:\\Program Files` or the like. The default install location (the user's home directory) will work for most users.
+4. Run the executable and choose the path you want to install ChipWhisperer at and a name for your installation. You must have read/write permissions for the location you install to, so avoid installing in a location like :code:`C:\\Program Files` or the like. The default install location (the user's home directory) will work for most users.
 
 5. Choose whether or not you want to create a desktop shortcut for running ChipWhisperer.
 
 6. Wait for the installation to finish. Additional windows will pop up during the installation to setup Python and install WSL compilers.
 
-7. Some additional checks are run after the installation has completed. If any issues arise, you will be notified via a message box.
+7. Some additional checks are run after the installation has completed. If any issues arise, you will be notified via a message box. Additionally, log files will be created in the install directory and in :code:`%TEMP%`
 
 .. _Installing_Compilers_In_WSL:
 
@@ -103,19 +101,7 @@ in your browser:
 
 .. image:: _images/Jupyter\ ChipWhisperer.png
 
-Once you see this open, we recommend clicking on :code:`jupyter`, then running through :code:`0 - Introduction to Jupyter Notebooks.ipynb`
-to verify that everything installed correctly. If you run into any issues, please ask on our `forums`_ for help.
-
-======================
-Chipwhisperer Updater
-======================
-
-Installers for ChipWhisperer are only built every time we do a stable release. As the time between releases can be
-quite lengthy, you may want to update ChipWhisperer before the next release. The easiest way to do this is to use the
-:code:`ChipWhisperer-Updater` application, which automates the process.
-
-.. warning:: During this process, we try to save changes made to the ChipWhisperer and ChipWhisperer-Jupyter repoisitores. If this
-  process fails, the user will be notified and asked if they wish to continue. If they do, changes may be lost.
+Once you see this open, we recommend clicking on :code:`jupyter`, then beginning the first lab. If you run into any issues, please ask on our `forums`_ for help.
 
 =======================
 CW Compiler Environment
@@ -135,26 +121,19 @@ Common Issues
 *************
 
 =======================================================
-Updater Fails Due to Dubious Ownership/Unsafe Directory
+Widgets not Working in Jupyter
 =======================================================
 
-The most common cause of this error is not rebooting after installing your WSL distro,
-as all files will be owned by root until this is done. The easiest way to fix this
-is to simply reboot your computer, but you can also run the following command in
-the chipwhisperer and jupyter folders via the CW Compiler Environment:
+The most common cause of this error is not having long paths enabled when running the installer. You can either
+enable long paths and reenable the installer, or reinstall ipywidgets.
 
 .. code:: bash
 
-  git config --global --add safe.directory $(pwd)
-  cd jupyter
-  git config --global --add safe.directory $(pwd)
+    pip uninstall -y ipywidgets
+    pip install ipywidgets
 
 .. _releases: https://github.com/newaetech/chipwhisperer/releases
 
 .. _forums: https://forum.newae.com/
 
 .. _arm-none-eabi-gcc: https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
-.. _avr-gcc: https://blog.zakkemble.net/avr-gcc-builds/
-.. _git-bash: https://git-scm.com/downloads
-.. _WinPython: https://sourceforge.net/projects/winpython/files/
-.. _nbstripout: https://github.com/kynan/nbstripout

@@ -13,7 +13,6 @@ parts:
       - file: drivers
       - file: linux-install
       - file: mac-install
-      - file: virtual-box-inst
   - file: starting
   - file: updating
   - file: support
@@ -24,97 +23,15 @@ parts:
   - file: capture-api
   - file: analyzer-api
   - file: firmware
-- caption: Additional Features
-  chapters:
-  - file: debugging
   - file: logging
-  - file: custom-firmware
-  - file: Serial Ports
-- caption: Hardware
+  - file: simpleserial
+- caption: Power Analysis 101 Hardware
   chapters:
-  - file: Capture/index
-    sections:
-      - file: Capture/overview
-      - file: Capture/ChipWhisperer-Husky
-      - file: Capture/ChipWhisperer-Lite
-      - file: Capture/ChipWhisperer-Nano
-      - file: Capture/ChipWhisperer-Pro
-  - file: ChipSHOUTER/ChipSHOUTER
-    sections:
-      - file: ChipSHOUTER/Ballistic Gel
-      - file: ChipSHOUTER/Simple EMFI Target
-  - file: Starter Kits/index
-    sections:
-      - file: Starter Kits/ChipWhisperer-Husky
-      - file: Starter Kits/ChipWhisperer-Lite
-      - file: Starter Kits/ChipWhisperer-Nano
-      - file: Starter Kits/ChipWhisperer-Pro
-      - file: Starter Kits/SCAPACK-L1
-      - file: Starter Kits/SCAPACK-L2
-      - file: Starter Kits/ChipSHOUTER
-  - file: Targets/index
-    sections:
-      - file: Targets/CW1101 Target Board
-      - file: Targets/CW303 Arm
-      - file: Targets/CW303 XMEGA
-      - file: Targets/CW304 Notduino Target
-      - file: Targets/CW305 Artix FPGA
-      - file: Targets/CW308 UFO
-      - file: Targets/CW308_CW312_adapter
-      - file: Targets/CW310 Bergen Board
-      - file: Targets/CW313
-      - file: Targets/CW340 Luna Board
-      - file: Targets/CW340 OT Quickstart
-      - file: Targets/UFO Targets
-        sections:
-            - file: chipwhisperer-target-cw308t/CW308T_87C51/README
-            - file: chipwhisperer-target-cw308t/CW308T_ADuCM3029/README
-            - file: chipwhisperer-target-cw308t/CW308T_ATMega1284RFR2/README
-            - file: chipwhisperer-target-cw308t/CW308T_ATSAM4L/README
-            - file: chipwhisperer-target-cw308t/CW308T_ATSAML11/README
-            - file: chipwhisperer-target-cw308t/CW308T_ATSAMR21/README
-            - file: chipwhisperer-target-cw308t/CW308T_AURIX/README
-            - file: chipwhisperer-target-cw308t/CW308T_AVR/README
-            - file: chipwhisperer-target-cw308t/CW308T_CC2538/README
-            - file: chipwhisperer-target-cw308t/CW308T_CEC1702/README
-            - file: chipwhisperer-target-cw308t/CW308T_D2000/README
-            - file: chipwhisperer-target-cw308t/CW308T_EFM32GG11/README
-            - file: chipwhisperer-target-cw308t/CW308T_EFM32TG11/README
-            - file: chipwhisperer-target-cw308t/CW308T_EFR32MG21/README
-            - file: chipwhisperer-target-cw308t/CW308T_EFR32MG21_SOCKET/README
-            - file: chipwhisperer-target-cw308t/CW308T_ESP32/README
-            - file: chipwhisperer-target-cw308t/CW308T_FE310-G002/README
-            - file: chipwhisperer-target-cw308t/CW308T_GENERIC/README
-            - file: chipwhisperer-target-cw308t/CW308T_K24F/README
-            - file: chipwhisperer-target-cw308t/CW308T_K82/README
-            - file: chipwhisperer-target-cw308t/CW308T_LPC1343F/README
-            - file: chipwhisperer-target-cw308t/CW308T_LPC55S69/README
-            - file: chipwhisperer-target-cw308t/CW308T_MPC57/README
-            - file: chipwhisperer-target-cw308t/CW308T_MPC5Y/README
-            - file: chipwhisperer-target-cw308t/CW308T_MSP430/README
-            - file: chipwhisperer-target-cw308t/CW308T_PSoC62/README
-            - file: chipwhisperer-target-cw308t/CW308T_S6LX9/README
-            - file: chipwhisperer-target-cw308t/CW308T_STM32F/README
-            - file: chipwhisperer-target-cw308t/CW308T_STM32F_SOCKET/README
-            - file: chipwhisperer-target-cw308t/CW308T_XMEGA/README
-            - file: chipwhisperer-target-cw308t/CW312T_ICE40UP/README
-            - file: chipwhisperer-target-cw308t/CW312T_RP2350/README
-            - file: chipwhisperer-target-cw308t/CW312T_ATSAM4S/README
-            - file: chipwhisperer-target-cw308t/CW312T_XC7A35T/README
-      - file: Targets/Target Defines
-  - file: Tools/index
-    sections:
-      - file: Tools/CANoodler
-      - file: Tools/CW501 Differential Probe
-      - file: Tools/CW502 Low Noise Amplifier
-      - file: Tools/CW503 Probe Power Supply
-      - file: Tools/CW505 Planar H-Field Probe
-      - file: Tools/CW506 Advanced Breakout Board
-      - file: Tools/CW508 SMA Analog Filters
-      - file: Tools/PhyWhisperer
-  - file: Capture/interfaces
-    sections:
-      - file: Capture/20-pin-connector
+    - file: Capture/ChipWhisperer-Husky
+    - file: Targets/CW313
+    - file: chipwhisperer-target-cw308t/CW312T_ATSAM4S/README
+    - file: Capture/20-pin-connector
+    - file: Starter Kits/ChipWhisperer-Husky
 - caption: Tips and Tricks
   chapters:
   - file: cw_tips_tricks/intro
@@ -127,7 +44,6 @@ parts:
         - file: cw_tips_tricks/basics/baud
         - file: cw_tips_tricks/basics/external_clock
         - file: cw_tips_tricks/basics/glitch_hp_vs_lp
-        - file: cw_tips_tricks/basics/cw305_standalone
   - file: cw_tips_tricks/advanced_usage/intro
     sections:
         - file: cw_tips_tricks/advanced_usage/regulators
@@ -146,17 +62,70 @@ parts:
     sections:
         - file: cw_tips_tricks/common_questions/finding_instructions
         - file: cw_tips_tricks/common_questions/power_measurement_units
-        - file: cw_tips_tricks/common_questions/synchronous_sampling
         - file: cw_tips_tricks/common_questions/em_probe
         - file: cw_tips_tricks/common_questions/where_is_the_gui
-- caption: Protocols
-  chapters:
-  - file: simpleserial
-  - file: USB-Protocol
 - caption: Other
   chapters:
-  - file: Tutorials
-  - file: changes
-  - file: contributing
-  - file: colophon
-
+    - file: Capture/index
+      sections:
+      - file: Capture/overview
+      - file: Capture/ChipWhisperer-Lite
+      - file: Capture/ChipWhisperer-Nano
+      - file: Capture/ChipWhisperer-Pro
+      - file: Starter Kits/ChipWhisperer-Lite
+      - file: Starter Kits/ChipWhisperer-Nano
+      - file: Starter Kits/ChipWhisperer-Pro
+    - file: Targets/UFO Targets
+      sections:
+      - file: Targets/CW1101 Target Board
+      - file: Targets/CW303 Arm
+      - file: Targets/CW303 XMEGA
+      - file: Targets/CW304 Notduino Target
+      - file: Targets/CW308 UFO
+      - file: Targets/CW308_CW312_adapter
+      - file: chipwhisperer-target-cw308t/CW308T_87C51/README
+      - file: chipwhisperer-target-cw308t/CW308T_ADuCM3029/README
+      - file: chipwhisperer-target-cw308t/CW308T_ATMega1284RFR2/README
+      - file: chipwhisperer-target-cw308t/CW308T_ATSAM4L/README
+      - file: chipwhisperer-target-cw308t/CW308T_ATSAML11/README
+      - file: chipwhisperer-target-cw308t/CW308T_ATSAMR21/README
+      - file: chipwhisperer-target-cw308t/CW308T_AURIX/README
+      - file: chipwhisperer-target-cw308t/CW308T_AVR/README
+      - file: chipwhisperer-target-cw308t/CW308T_CC2538/README
+      - file: chipwhisperer-target-cw308t/CW308T_CEC1702/README
+      - file: chipwhisperer-target-cw308t/CW308T_D2000/README
+      - file: chipwhisperer-target-cw308t/CW308T_EFM32GG11/README
+      - file: chipwhisperer-target-cw308t/CW308T_EFM32TG11/README
+      - file: chipwhisperer-target-cw308t/CW308T_EFR32MG21/README
+      - file: chipwhisperer-target-cw308t/CW308T_EFR32MG21_SOCKET/README
+      - file: chipwhisperer-target-cw308t/CW308T_ESP32/README
+      - file: chipwhisperer-target-cw308t/CW308T_FE310-G002/README
+      - file: chipwhisperer-target-cw308t/CW308T_GENERIC/README
+      - file: chipwhisperer-target-cw308t/CW308T_K24F/README
+      - file: chipwhisperer-target-cw308t/CW308T_K82/README
+      - file: chipwhisperer-target-cw308t/CW308T_LPC1343F/README
+      - file: chipwhisperer-target-cw308t/CW308T_LPC55S69/README
+      - file: chipwhisperer-target-cw308t/CW308T_MPC57/README
+      - file: chipwhisperer-target-cw308t/CW308T_MPC5Y/README
+      - file: chipwhisperer-target-cw308t/CW308T_MSP430/README
+      - file: chipwhisperer-target-cw308t/CW308T_PSoC62/README
+      - file: chipwhisperer-target-cw308t/CW308T_S6LX9/README
+      - file: chipwhisperer-target-cw308t/CW308T_STM32F/README
+      - file: chipwhisperer-target-cw308t/CW308T_STM32F_SOCKET/README
+      - file: chipwhisperer-target-cw308t/CW308T_XMEGA/README
+      - file: chipwhisperer-target-cw308t/CW312T_ICE40UP/README
+      - file: chipwhisperer-target-cw308t/CW312T_RP2350/README
+      - file: chipwhisperer-target-cw308t/CW312T_XC7A35T/README
+    - file: Starter Kits/SCAPACK-L1
+    - file: Starter Kits/SCAPACK-L2
+    - file: Tools/CANoodler
+    - file: Tools/CW501 Differential Probe
+    - file: Tools/CW502 Low Noise Amplifier
+    - file: Tools/CW503 Probe Power Supply
+    - file: Tools/CW505 Planar H-Field Probe
+    - file: Tools/CW506 Advanced Breakout Board
+    - file: Tools/CW508 SMA Analog Filters
+    - file: Tools/PhyWhisperer
+    - file: debugging
+    - file: custom-firmware
+    - file: Serial Ports

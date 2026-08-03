@@ -239,6 +239,12 @@ class CPA:
     
     def run(self, interval=None, callback=None):
         """Run a full CPA attack, updating internal records and callback every interval
+
+        Args:
+            interval (int, None, optional): Update internal statistics and call callback every interval
+                traces processed. Defaults to None, in which case the entire project is processed
+            callback (func, None, optional): Function to call after each interval passes. Takes the CPA
+                object as an argument
         """
         if interval is None:
             interval = self.num_traces
@@ -325,6 +331,8 @@ class CPA:
         return pges
 
     def avg_pge(self):
+        """If the key is known, return the average pge for the subkeys
+        """
         avgs = []
         assert self.known_key is not None, "You must know the get to calculate the average PGE"
         for i in range(len(self.sorted_kguesses_hist)):
@@ -339,23 +347,44 @@ class CPA:
         return np.argwhere(self.sorted_kguesses_hist[index][sub_byte] == kguess)[0][0]
 
     def pge(self):
+        """If the key is known, return the pge for each subkey
+        """
         assert self.known_key is not None, "You must know the get to calculate the average PGE"
         return [self._pge(i, self.known_key[i]) for i in range(len(self.subkeys))]
 
-    def run_with_progress(self, interval, progbar):
-        pass
-
     def key_guess(self):
+        """Get the best guess for the key.
+
+        Returns:
+            A list containing the key guess
+        """
         return np.array(self.sorted_kguesses_hist[-1], dtype=np.uint8)[:,0]
 
     def key_recovered(self):
+        """If the key is known, return whether the attack worked or not
+
+        Returns:
+            True if the attack recovered all key bytes, False otherwise
+        """
         return bool((self.key_guess() == self.known_key).all())
 
     def kguess_corrs(self):
+        """Get the correlations for the key guess
+
+        Returns:
+            A list containing the correlations for the key guess
+        """
         key = self.key_guess()
         return np.array([self.max_correlations_hist[-1][sub_byte][key[sub_byte]] for sub_byte in range(len(self.subkeys))])
 
     def corr_v_traces_plot(self, subkeys=None):
+        """Get a Holoviews plot that shows how correlation changes over the number of traces used in the attack.
+
+        Has one datapoint for each interval of the attack
+
+        Args:
+            subkeys (list, None, optional): Subkeys to plot information for. Defaults to None, in which case all subkeys are plotted
+        """
         import holoviews as hv
         from ..__init__ import plot
         if subkeys is None:
@@ -368,6 +397,11 @@ class CPA:
         return plt.opts(title='Correlation v. Traces', xlabel='Traces used', ylabel='Correlation', legend_position='right', legend_limit=250, bgcolor='lightgray', height=800, width=1000)
 
     def corr_v_time_plot(self, subkeys=None):
+        """Get a Holoviews plot that shows how correlation changes over time
+
+        Args:
+            subkeys (list, None, optional): Subkeys to plot information for. Defaults to None, in which case all subkeys are plotted
+        """
         import holoviews as hv
         from ..__init__ import plot
         if subkeys is None:
@@ -381,6 +415,13 @@ class CPA:
         return plt.opts(title='Correlation vs. Time', xlabel='sample', ylabel='correlation', legend_position='right', legend_limit=250, bgcolor='lightgray', height=800, width=1000)
 
     def pge_v_traces_plot(self, subkeys=None):
+        """Get a Holoviews plot that shows how pge changes over the number of traces used in the attack.
+
+        Has one datapoint for each interval of the attack
+
+        Args:
+            subkeys (list, None, optional): Subkeys to plot information for. Defaults to None, in which case all subkeys are plotted
+        """
         import holoviews as hv
         from ..__init__ import plot
         if subkeys is None:
