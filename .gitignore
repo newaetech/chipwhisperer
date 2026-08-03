@@ -81,3 +81,5 @@ software/chipwhisperer/logs/*
 !**/ChipWhisperer-Lite.bin
 !**/ChipWhisperer-CW305.bin
 !**/ChipWhisperer-Husky.bin
+.venv/**
+.vscode/**
