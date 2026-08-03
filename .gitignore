@@ -83,3 +83,4 @@ software/chipwhisperer/logs/*
 !**/ChipWhisperer-Husky.bin
 .venv/**
 .vscode/**
+**.ipynb_checkpoints/**
