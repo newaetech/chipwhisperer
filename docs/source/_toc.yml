@@ -6,15 +6,12 @@ root: index
 parts:
 - caption: Getting Started
   chapters:
-  - file: getting-started
   - file: installation
     sections:
       - file: windows-install
       - file: drivers
       - file: linux-install
       - file: mac-install
-  - file: starting
-  - file: updating
   - file: support
 - caption: API
   chapters:

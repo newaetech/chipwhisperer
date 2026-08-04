@@ -12,15 +12,6 @@ you need to get your device up and running again!
     meaning it is effectively impossible to "brick" your ChipWhisperer device
     by updating or erasing its firmware.
 
-.. warning:: This page only concerns firmware for ChipWhisperer scopes
-    and FPGA boards like the CW310 or CW305, not for integrated
-    targets or CW308 target boards
-
-.. warning:: This update method for updating firmware only works
-    for ChipWhisperer 5.6 and newer.
-    For ChipWhisperer versions earlier than 5.6, see :ref:`api-scope-update`.
-
-
 *************************
 Checking Firmware Version
 *************************
@@ -54,7 +45,6 @@ connecting to the scope (or target):
     WARNING:root:Your firmware is outdated - latest is 0.12. Suggested to update firmware, as you may experience errors
     See https://chipwhisperer.readthedocs.io/en/latest/firmware.html
 
-
 *********************
 Prerequisites
 *********************
@@ -63,13 +53,7 @@ Prerequisites
 Windows Prerequisites
 =====================
 
-If you are already running ChipWhisperer natively on Windows,
-no steps are required before upgrading or flashing
-new firmware onto your ChipWhisperer.
-
-If you have ChipWhisperer installed and are unable to 
-connect due to not having the correct driver, follow the steps
-shown at :ref:`windows-change-drivers`.
+None required!
 
 =====================
 Linux Prerequisites
@@ -82,24 +66,7 @@ Instructions on how to install the udev rules can be found in the :ref:`linux in
 Mac Prerequisites
 =================
 
-Coming soon!
-
-========================
-VirtualBox Prerequisites
-========================
-
-In addition to the prerequisites for your guest system, you will also need
-to ensure that the serial bootloader is being passed through from your host, like
-with your other ChipWhisperer devices. To add a USB passthrough filter
-for the bootloader, go to the settings for your VM > USB and create a 
-new USB filter with the following settings:
-
-  * Name: ATSAM Bootloader
-  * Vendor ID: 03eb
-  * Product ID: 6124
-
-This should already be done on the ChipWhisperer VM, but may not be present on
-older VMs.
+None required!
 
 .. _upgrade-firmware-python:
 
@@ -151,13 +118,7 @@ to specify the device you are upgrading from the following list:
 For example, to flash new firmware to a CW305::
 
     >>> import chipwhisperer as cw
-    >>> cw.program_sam_firmware(hardware_type='cw305')
-
-*********************
-Old Firmware Upgrade
-*********************
-
-For ChipWhisperer versions earlier than 5.6, see :ref:`api-scope-update`.
+    >>> cw.program_sam_firmware(hardware_type='cwhusky')
 
 ***************
 Troubleshooting
@@ -223,7 +184,6 @@ learn where its erase pins are located.
 
 Instructions for shorting the erase pins can be found
 on the documentation page for your device.
-
 
 =================================
 Linux usbserial module Workaround
