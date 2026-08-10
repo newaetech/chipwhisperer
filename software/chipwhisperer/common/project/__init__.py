@@ -1,8 +1,4 @@
-from trace import Trace
-from unittest.mock import DEFAULT
-
 from chipwhisperer import analyzer
-import param
 import zarr
 import numpy as np
 from ...logging import analyzer_logger
@@ -11,6 +7,7 @@ from numpy.typing import ArrayLike
 from ..utils.util import dict_to_str
 import tempfile, shutil
 from pathlib import Path
+import os
 
 
 class TraceContainer:
@@ -119,6 +116,7 @@ class Project:
             to group. Defaults to 100
         dtypes (list, dict, optional): Datatypes to use for arrays if otherwise unspecified. Defaults to self.DEFAULT_DTYPES
         resize_func (func optional): Function to use when resizing arrays. Defaults to _resize_func (size doubling)
+        overwrite (bool, optional): Whether or not to overwrite a project is you want to create and one already exists at your path
     """
     PROJ_PROPERTIES = PROJ_PROPERTIES
     DATA_NAMES = DATA_NAMES
@@ -127,8 +125,10 @@ class Project:
     DEFAULT_DTYPES = DEFAULT_DTYPES
 
     def __init__(self, group : Optional[zarr.Group | str | Path]=None, init_size=100, dtypes=DEFAULT_DTYPES, \
-                 resize_func=_resize_func):
+                 resize_func=_resize_func, overwrite=False):
         self._initialized = True
+
+        self._overwrite = overwrite
 
         # Three init options: zarr group, str (or path), and nothing
         if not group is None:
@@ -150,7 +150,7 @@ class Project:
             # if group is None, create in memory
             analyzer_logger.info("Creating zarr group in memory")
             self._initialized = False
-            group = zarr.create_group(store={})
+            group = zarr.create_group(store={}, overwrite=self._overwrite)
 
         assert type(group) is zarr.Group # for typechecking
         self._group = group
@@ -250,6 +250,12 @@ class Project:
 
     def archive_export(self, path : Path, exp_type='zip'):
         path = Path(path)
+        if os.path.exists(str(path)):
+            if (self._overwrite is False):
+                raise OSError("File {} already exists!".format(path))
+            else:
+                os.remove(str(path))
+
         with tempfile.TemporaryDirectory() as tmpname:
             tmpproj = Project(tmpname)
             tmpproj.extend(self)

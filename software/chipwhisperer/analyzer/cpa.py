@@ -269,7 +269,7 @@ class CPA:
         if self.known_key is None:
             key = self.key_guess()
         else:
-            key = self.known_key
+            key = self.known_key[self.subkeys]
         return self._corr_v_time(sub_byte, key[sub_byte])
 
     def _corr_v_traces(self, sub_byte, kguess):
@@ -283,7 +283,7 @@ class CPA:
         if self.known_key is None:
             key = self.key_guess()
         else:
-            key = self.known_key
+            key = self.known_key[self.subkeys]
         for corr in self.max_correlations_hist:
             if abval:
                 maxes.append(np.abs(corr[sub_byte, key[sub_byte]]))
@@ -320,14 +320,18 @@ class CPA:
 
     def pge_v_traces(self, sub_byte):
         pges = []
+
         if self.known_key is None:
-            key = self.key_guess()
-            analyzer_logger.warning("Key not specified, using recovered key")
+            raise ValueError("Known key is required for pge plots")
         else:
-            key = self.known_key
+            key = self.known_key[self.subkeys]
+
         assert self.known_key is not None
         for i in range(len(self.sorted_kguesses_hist)):
-            pges.append(self._pge(sub_byte, self.known_key[sub_byte], i))
+            pges.append(self._pge(sub_byte, key[sub_byte], i))
+        return pges
+        for i in range(len(subkeys)):
+            pges.append(self._pge(i, key[i], i))
         return pges
 
     def avg_pge(self):
@@ -388,10 +392,17 @@ class CPA:
         import holoviews as hv
         from ..__init__ import plot
         if subkeys is None:
-            subkeys = list(range(16))
+            subkeys = self.subkeys
+        elif isinstance(subkeys, int):
+            subkeys = [subkeys]
+
+        if self.known_key is None:
+            key = self.key_guess()
+        else:
+            key = self.known_key[self.subkeys]
         plt = plot()
-        for i in subkeys:
-            plt *= plot((self.traces_used_hist, self.highest_corr_v_traces(i, self.known_key[i]))).opts(color='black')
+        for i in range(len(subkeys)):
+            plt *= plot((self.traces_used_hist, self.highest_corr_v_traces(i, key[i]))).opts(color='black')
             plt *= plot((self.traces_used_hist, self.corr_v_traces(i)), label='Subkey {}'.format(i)).opts(color=hv.Palette('Spectral'))
             
         return plt.opts(title='Correlation v. Traces', xlabel='Traces used', ylabel='Correlation', legend_position='right', legend_limit=250, bgcolor='lightgray', height=800, width=1000)
@@ -405,11 +416,19 @@ class CPA:
         import holoviews as hv
         from ..__init__ import plot
         if subkeys is None:
-            subkeys = list(range(16))
+            subkeys = self.subkeys
+        elif isinstance(subkeys, int):
+            subkeys = [subkeys]
+
+        if self.known_key is None:
+            key = self.key_guess()
+        else:
+            key = self.known_key[self.subkeys]
+
         plt = plot()
-        for i in subkeys:
-            plt *= plot(self.lowest_corr_v_time(i, self.known_key[i])).opts(color='black')
-            plt *= plot(self.highest_corr_v_time(i, self.known_key[i])).opts(color='black')
+        for i in range(len(subkeys)):
+            plt *= plot(self.lowest_corr_v_time(i,  key[i])).opts(color='black')
+            plt *= plot(self.highest_corr_v_time(i, key[i])).opts(color='black')
             plt *= plot(self.corr_v_time(i), label='Subkey {}'.format(i)).opts(color=hv.Palette('Spectral'))
             
         return plt.opts(title='Correlation vs. Time', xlabel='sample', ylabel='correlation', legend_position='right', legend_limit=250, bgcolor='lightgray', height=800, width=1000)
@@ -425,9 +444,12 @@ class CPA:
         import holoviews as hv
         from ..__init__ import plot
         if subkeys is None:
-            subkeys = list(range(16))
+            subkeys = self.subkeys
+        elif isinstance(subkeys, int):
+            subkeys = [subkeys]
+
         plt = plot()
-        for i in subkeys:
+        for i in range(len(subkeys)):
             plt *= plot((self.traces_used_hist, self.pge_v_traces(i)), label='Subkey {}'.format(i)).opts(color=hv.Palette('Spectral'))
             
         return plt.opts(title='Partial Guessing Entropy v. Traces', xlabel='traces used', ylabel='PGE', legend_position='right', legend_limit=250, bgcolor='lightgray', height=800, width=1000)
