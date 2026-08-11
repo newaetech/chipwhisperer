@@ -2,14 +2,14 @@
 Introduction
 ************
 
-Welcome for the documentation for ChipWhisperer's power101 branch, made specifically 
-for our Power Analysis 101 course, available at https://learn.chipwhisperer.io. This documentation has been slimmed down
+Welcome for the documentation for ChipWhisperer's sca101 branch, made specifically 
+for our SCA101 course, available at https://learn.chipwhisperer.io/courses/sca101. This documentation has been slimmed down
 for this course, so if you're not doing the course, we recommend that you switch to the develop branch.
 
 Some of the content has moved from where it was before. If you can't find the
-page that you're looking for, use the **Search** feature on the left.
+page that you're looking for, use the **Search** feature on the left. 
 
-If you're new to ChipWhisperer, the Power Analysis 101 course is a great way to get started!
+If you're new to ChipWhisperer, the SCA101 course is a great way to get started!
 
 The :ref:`installation <install>` sections have everything you need to know to
 install ChipWhisperer. We also have installation videos available at https://www.youtube.com/@NewaeTech

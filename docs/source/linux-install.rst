@@ -19,8 +19,7 @@ We now have an automated Linux installer, available on our github page. To use:
 
 There are two steps that require elevated permissions. The first, done if you use the :code:`-p` flag, is to automatically install
 required prerequisites. Note that this only works on Ubuntu. On other platforms, you'll need to manually install these. See the manual
-install section. The second, the :code:`-u` flag is to setup USB permissions. If you want to do this step manually, see the manual install section.
-
+install section. The second, the :code:`-u` flag is to setup USB permissions. If you want to do this step manually, see the manual install section.Labs
 After running the installer, reboot your computer, and the install should be completed. This script gives you two helper scripts in the
 install directory. Running :code:`runcw.sh` will setup your environment and run Jupyter, which will open a tab in your browser:
 
@@ -95,7 +94,7 @@ but the code below will download it to your home directory:
 .. code:: bash
 
     cd ~/
-    git clone https://github.com/newaetech/chipwhisperer -b power101
+    git clone https://github.com/newaetech/chipwhisperer -b sca101
     cd chipwhisperer
     git submodule update --init jupyter # grab Jupyter notebook tutorials
 

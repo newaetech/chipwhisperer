@@ -65,7 +65,7 @@ of the process.
 .. image:: _images/win-installer-1.png
   :width: 800
 
-2. Find the Power Analysis 101 ChipWhisperer Windows install executable (currently :code:`Chipwhisperer.v6.0.0.exe`)
+2. Find the SCA101ChipWhisperer Windows install executable (currently :code:`SCA101_wininst.exe`)
 
 3. Run the installer. A summary of the installation is given on the second page.
 

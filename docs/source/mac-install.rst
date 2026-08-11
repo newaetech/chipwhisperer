@@ -87,6 +87,6 @@ You'll now need to clone and install ChipWhipserer using pip:
 .. code:: bash
 
     cd ~/
-    git clone https://github.com/newaetech/chipwhisperer -b power101
+    git clone https://github.com/newaetech/chipwhisperer -b sca101
     cd chipwhisperer
     git submodule update --init jupyter # grab Jupyter notebook tutorials

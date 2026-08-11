@@ -22,7 +22,7 @@ parts:
   - file: firmware
   - file: logging
   - file: simpleserial
-- caption: Power Analysis 101 Hardware
+- caption: SCA101 Hardware
   chapters:
     - file: Capture/ChipWhisperer-Husky
     - file: Targets/CW313
