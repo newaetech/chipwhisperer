@@ -9,8 +9,6 @@ build:
     pre_build:
       # Generate on-the-fly Sphinx configuration from Jupyter Book's _config.yml
       - "jupyter-book config sphinx docs/source"
-      # markdown source can't be included from outside the doc source tree, so copy it over:
-      - "cp contributing.md docs/source/."
 
 submodules:
   include: [docs/source/chipwhisperer-target-cw308t, docs/source/cw_tips_tricks]
