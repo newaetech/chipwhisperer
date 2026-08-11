@@ -32,7 +32,4 @@ jobs:
             jupyter book config sphinx .
             cp ../../contributing.md ./
             git submodule update --init --force -- chipwhisperer-target-cw308t cw_tips_tricks
-            python conf.py
-            mkdir -p _build/doctrees
-            mkdir -p _build/html
             jb build source

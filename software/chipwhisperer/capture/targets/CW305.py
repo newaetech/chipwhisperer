@@ -861,7 +861,7 @@ class CW305(TargetTemplate, ChipWhispererCommonInterface):
         else:
             bsdata = None
             if self._fpga_id:
-                from chipwhisperer.hardware.firmware.cw305 import getsome
+                from chipwhisperer.hardware.firmware.cw305 import getsome # type: ignore
                 bsdata = getsome(f"SPI_flash_{self._fpga_id}.bit")
             else:
                 bsdata = open(bsfile, "rb")

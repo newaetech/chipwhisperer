@@ -389,8 +389,8 @@ class CPA:
         Args:
             subkeys (list, None, optional): Subkeys to plot information for. Defaults to None, in which case all subkeys are plotted
         """
-        import holoviews as hv
-        from ..__init__ import plot
+        import holoviews as hv # type: ignore
+        from ..__init__ import plot # type: ignore
         if subkeys is None:
             subkeys = self.subkeys
         elif isinstance(subkeys, int):
@@ -413,7 +413,7 @@ class CPA:
         Args:
             subkeys (list, None, optional): Subkeys to plot information for. Defaults to None, in which case all subkeys are plotted
         """
-        import holoviews as hv
+        import holoviews as hv # type: ignore
         from ..__init__ import plot
         if subkeys is None:
             subkeys = self.subkeys
@@ -441,7 +441,7 @@ class CPA:
         Args:
             subkeys (list, None, optional): Subkeys to plot information for. Defaults to None, in which case all subkeys are plotted
         """
-        import holoviews as hv
+        import holoviews as hv # type: ignore
         from ..__init__ import plot
         if subkeys is None:
             subkeys = self.subkeys

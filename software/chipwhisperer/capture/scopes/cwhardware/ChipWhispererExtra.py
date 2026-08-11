@@ -1418,8 +1418,8 @@ class GPIOSettings(util.DisableNewAttr):
         self.cwe.setHuskySoftPowerOnParameters(pwm_cycles, pwm_period, pwm_off_time)
 
 
-    def reset_target(self, initial_state=1, reset_state=0, reset_delay=0.01, postreset_delay=0.01):
-        raise NotImplementedError()
+    # def reset_target(self, initial_state=1, reset_state=0, reset_delay=0.01, postreset_delay=0.01):
+    #     raise NotImplementedError()
 
     # .. todo:: implement SCK/MOSI/MISO/CS?
 

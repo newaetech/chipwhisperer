@@ -43,7 +43,7 @@ jobs:
           python -m pip install pytest
       - name: Run Mypy
         run: >-
-          python -m mypy -p chipwhisperer
+          python -m mypy --no-namespace-packages -p chipwhisperer
       - name: 
         run: >-
           python -m pytest test_api.py

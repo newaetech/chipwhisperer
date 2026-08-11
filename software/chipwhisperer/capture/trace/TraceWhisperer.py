@@ -237,7 +237,7 @@ class TraceWhisperer(util.DisableNewAttr):
         """
         self.verilog_define_matches = 0
         if not defines_files:
-            import chipwhisperer.capture.trace.defines
+            import chipwhisperer.capture.trace.defines # type: ignore
             defines_pkg = resources.files(chipwhisperer.capture.trace.defines)
             defines_files = []
             with resources.as_file(defines_pkg.joinpath('defines_trace.v')) as f1:
