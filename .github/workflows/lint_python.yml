@@ -34,8 +34,11 @@ jobs:
         with:
           python-version: 3.11
       - name: Install ChipWhisperer
-        run: >-
+        run: |
           python -m pip install .
+          python -m pip install pytest
+          cd tests
+          python -m pytest test_api.py
       - name: Install linters
         run: |
           python -m pip install mypy
@@ -44,8 +47,3 @@ jobs:
       - name: Run Mypy
         run: >-
           python -m mypy --no-namespace-packages -p chipwhisperer
-      - name: 
-        run: |
-          cd chipwhisperer/test
-          python -m pytest tests/test_api.py
-          
