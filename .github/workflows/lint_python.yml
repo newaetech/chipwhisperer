@@ -46,6 +46,6 @@ jobs:
           python -m mypy --no-namespace-packages -p chipwhisperer
       - name: 
         run: |
-          cd test
+          cd chipwhisperer/test
           python -m pytest tests/test_api.py
           
