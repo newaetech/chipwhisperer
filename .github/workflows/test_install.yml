@@ -35,4 +35,4 @@ jobs:
             python conf.py
             mkdir -p _build/doctrees
             mkdir -p _build/html
-            python -m sphinx -T -b html -d _build/doctrees -D language=en . _build/html
+            jb build source
