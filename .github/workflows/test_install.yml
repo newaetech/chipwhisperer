@@ -29,7 +29,6 @@ jobs:
             cd docs
             pip install -r requirements.txt
             cd source
-            jupyter book config sphinx .
-            cp ../../contributing.md ./
             git submodule update --init --force -- chipwhisperer-target-cw308t cw_tips_tricks
+            cd ..
             jb build source
