@@ -28,3 +28,6 @@
 [submodule "docs/source/cw_tips_tricks"]
 	path = docs/source/cw_tips_tricks
 	url = https://github.com/newaetech/cw_tips_tricks.git
+[submodule "jupyter"]
+	path = jupyter
+	url = https://github.com/newaetech/chipwhisperer-jupyter
