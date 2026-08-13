@@ -1485,8 +1485,8 @@ class GPIOSettings(util.DisableNewAttr):
         self.cwe.setHuskySoftPowerOnParameters(pwm_cycles, pwm_period, pwm_off_time)
 
 
-    def reset_target(self, initial_state=1, reset_state=0, reset_delay=0.01, postreset_delay=0.01):
-        raise NotImplementedError()
+    # def reset_target(self, initial_state=1, reset_state=0, reset_delay=0.01, postreset_delay=0.01):
+    #     raise NotImplementedError()
 
     # .. todo:: implement SCK/MOSI/MISO/CS?
 
@@ -1501,6 +1501,12 @@ class GPIOSettings(util.DisableNewAttr):
 
     def cs(self):
         raise NotImplementedError()
+
+    def reset_target(self, io_name='nrst', delay=0.25):
+        setattr(self, io_name, 0)
+        time.sleep(delay)
+        setattr(self, io_name, None)
+        time.sleep(delay)
 
 class TriggerSettings(util.DisableNewAttr):
     def __init__(self, cwextra):

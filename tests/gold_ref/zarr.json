@@ -1,0 +1,28 @@
+{
+  "attributes": {
+    "len": 100,
+    "size": 200,
+    "traces": {
+      "exists": 1,
+      "len": 5000,
+      "dtype": "int16"
+    },
+    "plaintexts": {
+      "exists": 1,
+      "len": 16,
+      "dtype": "uint8"
+    },
+    "ciphertexts": {
+      "exists": 1,
+      "len": 16,
+      "dtype": "uint8"
+    },
+    "keys": {
+      "exists": 1,
+      "len": 16,
+      "dtype": "uint8"
+    }
+  },
+  "zarr_format": 3,
+  "node_type": "group"
+}

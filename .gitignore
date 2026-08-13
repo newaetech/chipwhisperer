@@ -82,3 +82,7 @@ software/chipwhisperer/logs/*
 !**/ChipWhisperer-CW305.bin
 !**/ChipWhisperer-Husky.bin
 *Zone.Identifier
+.venv/**
+.vscode/**
+**.ipynb_checkpoints/**
+**/_build/**

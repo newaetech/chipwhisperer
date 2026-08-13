@@ -1,6 +1,0 @@
-{
-    "restructuredtext.confPath": "${workspaceFolder}\\docs",
-    "files.associations": {
-        "usart_driver.h": "c"
-    }
-}

@@ -1,34 +1,35 @@
 # ChipWhisperer
 
-[![Documentation Status](https://readthedocs.org/projects/chipwhisperer/badge/?version=latest)](https://chipwhisperer.readthedocs.io/en/latest/?badge=latest) | [![Notebook Tests](https://github.com/newaetech/ChipWhisperer-Test-Results/blob/main/.github/badges/hardware_tests.svg)](https://github.com/newaetech/ChipWhisperer-Test-Results/blob/main/tutorials/results.yaml) | [![Discord](https://img.shields.io/discord/747196318044258365?logo=discord)](https://discord.gg/chipwhisperer)
+[![Discord](https://img.shields.io/discord/747196318044258365?logo=discord)](https://discord.gg/chipwhisperer)
 
 ## Important Links
 
-[Documentation](https://chipwhisperer.readthedocs.io) | [Tutorials](https://github.com/newaetech/chipwhisperer-jupyter/tree/main) | [Forum](http://forum.newae.com) | [Store](https://store.newae.com) | [NewAE](http://newae.com)
+[Documentation](https://chipwhisperer.readthedocs.io/en/sca101/index.html) | [Labs](https://github.com/newaetech/chipwhisperer-jupyter/tree/sca101) | [Forum](http://forum.newae.com) | [Store](https://store.newae.com) | [NewAE](http://newae.com)
 
-## ChipWhisperer 6.0: Repo Changes and Cleanup
+## SCA101
 
-ChipWhisperer 6.0 is bringing many changes to the ChipWhisperer repository. The biggest one is a cleanup of the git history on both this repo and
-chipwhisperer-jupyter, as well as moving some files out of these repositories. We've done our best to make everything most users will want
-on this repo, as well as to backup everything else to other repos.
+Welcome to the branch used for NewAE's new [SCA101 online course](learn.chipwhisperer.io). This is a rework of our previous online course that focuses on Husky, adds new labs, and improves Projects and Analyzer. You can find the related labs on the sca101 branch of ChipWhisperer-Jupyter.
 
-For more information, please check out our [writeup on this update](https://docs.google.com/document/d/1sAhfBboymKDQyOE_BurCmwsh7hb_Qiw8SW3kCu9ZGrg/edit?usp=sharing).
+The [SCA101 Online course](learn.chipwhisperer.io/courses/sca101) is available at [learn.chipwhisperer.io](learn.chipwhisperer.io).
+
+**If using one of our installers, be sure to use the sca101 version of that installer**
+**If installing manually, be sure to use the sca101 branch of both this repo and jupyter**
 
 ## What is ChipWhisperer?
 
 ChipWhisperer is an open source toolchain dedicated to hardware security research. This toolchain consists of several layers of open source components:
-* __Hardware__: The ChipWhisperer uses a _capture_ board and a _target_ board. Schematics and PCB layouts for the ChipWhisperer-Lite capture board and a number of target boards are freely available.
+* __Hardware__: The ChipWhisperer uses a _capture_ board and a _target_ board. Schematics and PCB layouts for the ChipWhisperer-Husky capture board and a number of target boards are freely available.
 * __Firmware__: Three separate pieces of firmware are used on the ChipWhisperer hardware. The capture board has a USB controller (in C) and an FPGA for high-speed captures (in Verilog) with open-source firmware. Also, the target device has its own firmware; this repository includes many firmware examples for different targets.
 * __Software__: The ChipWhisperer software includes a Python API for talking to ChipWhisperer hardware (ChipWhisperer Capture) and a Python API 
 for processing power traces from ChipWhisperer hardware (ChipWhisperer Analyzer). 
 
-You'll find documentation for all of the above [here](https://chipwhisperer.readthedocs.io).
+You'll find documentation for all of the above [here](https://chipwhisperer.readthedocs.io/en/sca101/index.html).
 
 ## Getting Started
-First time using ChipWhisperer? Go to our new [documentation site](https://chipwhisperer.readthedocs.io) for all you need to know to get started with ChipWhisperer.
+First time using ChipWhisperer? Go to our new [documentation site](https://chipwhisperer.readthedocs.io/en/sca101/index.html) for all you need to know to get started with ChipWhisperer.
 
 ## GIT Source
-Note all development occurs on the [develop](https://github.com/newaetech/chipwhisperer/tree/develop) branch. If you are looking for bleeding edge it's NOT on master - we push each release (and possibly any critical changes) to master. This means that "master" always gives you the latest known-working branch, but there may be new features on the "develop" branch.
+This branch is designed to give a fixed working version compatible with the SCA101 course. As such, it may differ substantially with what is available on the *develop* branch.
 
 ## Help!
 Stuck? If you need a hand, there are a few places you can ask for help:
@@ -38,4 +39,3 @@ Stuck? If you need a hand, there are a few places you can ask for help:
 ---
 
 ChipWhisperer is a trademark of NewAE Technology Inc., registered in the US, Europe, and China.
-
