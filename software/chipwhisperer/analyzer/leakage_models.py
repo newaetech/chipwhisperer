@@ -67,11 +67,21 @@ def sbox_output(pt: NDArray, ct: NDArray | None , subkey: int):
         rtn[:, kguess] = hw_table[sbox[pt[subkey] ^ kguess]]
     return rtn
 
-# def inv_sbox_output(pt, ct, subkey):
-#     if ct is None:
-#         raise ValueError("This leakage model requires ct")
-#     rtn = np.zeros((len(ct[0]), 256), dtype=np.uint8)
-#     for kguess in range(256):
-#         rtn[:, kguess] = hw_table[inv_sbox[ct[subkey] ^ kguess]]
-#     return rtn
+def inv_sbox_output(pt, ct, subkey):
+    if ct is None:
+        raise ValueError("This leakage model requires ct")
+    rtn = np.zeros((len(ct[0]), 256), dtype=np.uint8)
+    for kguess in range(256):
+        rtn[:, kguess] = hw_table[inv_sbox[ct[subkey] ^ kguess]]
+    return rtn
+
+def last_round_state_diff(pt, ct, subkey):
+    if ct is None:
+        raise ValueError("This leakage model requires ct")
+    rtn = np.zeros((len(ct[0]), 256), dtype=np.uint8)
+    rnd_10 = ct[invshiftrow_table[subkey]]
+    for kguess in range(256):
+        rnd_9 = inv_sbox[ct[subkey] ^ kguess]
+        rtn[:, kguess] = hw_table[rnd_9 ^ rnd_10]
+    return rtn
 
