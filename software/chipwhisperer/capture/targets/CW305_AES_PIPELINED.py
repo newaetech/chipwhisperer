@@ -27,7 +27,7 @@ import time
 import re
 import os.path
 import random
-from ...common.traces import Trace
+from ...common.project import TraceContainer
 from ...common.utils import util
 from .CW305 import CW305, CW305_USB
 from chipwhisperer.logging import *
@@ -152,12 +152,12 @@ class CW305_AES_PIPELINED(CW305):
         if len(wave) >= 1:
             if single_pt:
                 # if we have a single pt, return a "normal" Trace object (which can e.g. be directly fed to analyzer).
-                return Trace(wave, plaintexts[0], ciphertexts[0], key)
+                return TraceContainer(wave, plaintexts[0], ciphertexts[0], key)
             else:
                 # otherwise, return a Trace where textin is a list of all the plaintexts and textout is a list of all
                 # the ciphertexts; you will probably want to chop this up into trace segments that each have a single
                 # associated plaintext and ciphertext
-                return Trace(wave, plaintexts, ciphertexts, key)
+                return TraceContainer(wave, plaintexts, ciphertexts, key)
         else:
             return None
 

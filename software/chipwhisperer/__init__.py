@@ -8,7 +8,7 @@
 
 Main module for ChipWhisperer.
 """
-__version__ = '6.0.0'
+__version__ = '7.0.0'
 
 # try:
 #     import usb1 # type: ignore
@@ -19,7 +19,6 @@ import os, os.path, time
 from .capture import scopes, targets
 from .capture.api import programmers
 from .capture import acq_patterns as key_text_patterns
-from .common.project import TraceContainer
 
 from .common.utils import util
 from .capture.scopes.cwhardware.ChipWhispererSAM3Update import SAMFWLoader, get_at91_ports
@@ -29,7 +28,7 @@ from .logging import *
 from .common.results.glitch import GlitchController, load_gc_results
 from .common.utils.sad_model import SADModelWrapper
 from .common.utils.sad_explorer import SADExplorer
-from .common.project import Project, open_zip, open_project
+from .common.project import Project, open_zip, open_project, TraceContainer
 import sys, subprocess
 
 

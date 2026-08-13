@@ -1,4 +1,3 @@
-from chipwhisperer import analyzer
 import zarr
 import numpy as np
 from ..logging import analyzer_logger
