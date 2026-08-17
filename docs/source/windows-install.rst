@@ -50,7 +50,7 @@ of the process.
 
 2. Find the SCA101ChipWhisperer Windows install executable (currently :code:`SCA101_wininst.exe`)
 
-3. Run the installer. A summary of the installation is given on the second page.
+3. Run the installer. You can change the name of the install on the second page. A summary of the installation is given on the third page.
 
 .. image:: _images/win-installer-2.png
   :width: 800
