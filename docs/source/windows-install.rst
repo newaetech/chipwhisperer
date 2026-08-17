@@ -27,13 +27,6 @@ for Windows Subsystem for Linux (WSL). If you don't already have this enabled:
 3. Open a command prompt or powershell windows and run :code:`wsl --install -d ubuntu`
 4. Restart your computer again
 
-Our Windows installer will install simple prerequisites for building target firmware. This step requires an
-internet connection, so if you want to complete this step ahead of time, or if this step fails during
-installation, please see :ref:`Installing_Compilers_In_WSL`.
-
-.. image:: _images/win-installer-3.png
-    :width: 800
-
 .. _win_run_install:
 
 ************************
@@ -62,9 +55,6 @@ of the process.
 6. Wait for the installation to finish. Additional windows will pop up during the installation to setup Python and install WSL compilers.
 
 7. Some additional checks are run after the installation has completed. If any issues arise, you will be notified via a message box. Additionally, log files will be created in the install directory and in :code:`%TEMP%`
-
-.. _Installing_Compilers_In_WSL:
-
 
 **********************
 Installed Applications
@@ -108,7 +98,7 @@ Widgets not Working in Jupyter
 =======================================================
 
 The most common cause of this error is not having long paths enabled when running the installer. You can either
-enable long paths and reenable the installer, or reinstall ipywidgets.
+enable long paths and rerun the installer, or reinstall ipywidgets.
 
 .. code:: bash
 
