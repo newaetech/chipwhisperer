@@ -6,7 +6,7 @@ Windows Installation
 
 .. warning:: It is recommended that you enable long paths on Windows
             to prevent any files from not being copied during installation.
-            Follow https://www.microfocus.com/documentation/filr/filr-4/filr-desktop/t47bx2ogpfz7.html,
+            Follow https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=registry
             then reboot to enable long paths
 
 .. _win_prereqs:
@@ -30,23 +30,6 @@ for Windows Subsystem for Linux (WSL). If you don't already have this enabled:
 Our Windows installer will install simple prerequisites for building target firmware. This step requires an
 internet connection, so if you want to complete this step ahead of time, or if this step fails during
 installation, please see :ref:`Installing_Compilers_In_WSL`.
-
-============================
-Setting Up WSL:
-============================
-
-Our Windows installer will attempt to install compilers for building target firmware in WSL. This is both
-the only part of the install that requires an internet connection and the only part that requires
-WSL during the install (the updater requires both as well, but doesn't run during the install). 
-It is also completely independent of the rest of the install. As such, you may want to manually
-complete this step before or after running the installer.
-
-Installing the compilers can be easily done, if you have :ref:`WSL installed <win_prereqs>`, by
-running the following commands:
-
-1. Run WSL
-2. Run :code:`sudo apt update`.
-3. Run :code:`sudo apt install -y build-essential`
 
 .. image:: _images/win-installer-3.png
     :width: 800
