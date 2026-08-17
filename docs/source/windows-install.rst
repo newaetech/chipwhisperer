@@ -6,7 +6,7 @@ Windows Installation
 
 .. warning:: It is recommended that you enable long paths on Windows
             to prevent any files from not being copied during installation.
-            Follow https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=registry
+            Follow https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=registry#enable-long-paths-in-windows-10-version-1607-and-later
             then reboot to enable long paths
 
 .. _win_prereqs:
