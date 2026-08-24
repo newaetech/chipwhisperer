@@ -191,7 +191,7 @@ def common_fw_version_check(scope):
     else:
         assert scope.fw_version['major'] == 1
         assert scope.fw_version['minor'] == 7
-        assert scope.sam_build_date == '09:22:43 May 26 2026'
+        assert scope.sam_build_date == '12:15:02 Aug 18 2026'
 
 def common_xadc_check(scope, verbose=False, error_msg=''):
     failed = False
