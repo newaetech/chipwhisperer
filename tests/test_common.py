@@ -187,7 +187,7 @@ def common_fw_version_check(scope):
     if scope._is_husky_plus:
         assert scope.fw_version['major'] == 1
         assert scope.fw_version['minor'] == 2
-        assert scope.sam_build_date == '09:22:46 May 26 2026'
+        assert scope.sam_build_date == '14:32:22 Aug 18 2026'
     else:
         assert scope.fw_version['major'] == 1
         assert scope.fw_version['minor'] == 7
