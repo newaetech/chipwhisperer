@@ -137,7 +137,7 @@ class Project:
             if type(group) is str:
                 analyzer_logger.info("Creating new zarr group at {}".format(group))
                 self._initialized = False
-                group = zarr.create_group(store=group)
+                group = zarr.create_group(store=group, overwrite=overwrite)
             # otherwise, assume already initialized group
             elif type(group) is zarr.Group:
                 analyzer_logger.info("Converting group to project")
@@ -149,7 +149,7 @@ class Project:
             # if group is None, create in memory
             analyzer_logger.info("Creating zarr group in memory")
             self._initialized = False
-            group = zarr.create_group(store={}, overwrite=self._overwrite)
+            group = zarr.create_group(store={}, overwrite=overwrite)
 
         assert type(group) is zarr.Group # for typechecking
         self._group = group
@@ -219,7 +219,7 @@ class Project:
         self._initialized = True
         analyzer_logger.info("Project initialized")
 
-    def save(self, path, ftype=None):
+    def save(self, path, ftype=None, overwrite=False):
         """Save this project to a zip file or zarr directory
 
         If ftype is not specified (default), tries to determine save type via extension.
@@ -241,16 +241,16 @@ class Project:
 
         if ftype == 'zarr':
             analyzer_logger.info("Saving zarr array to {}".format(path))
-            return self.export(path)
+            return self.export(path, overwrite=overwrite)
         else:
             analyzer_logger.info("Saving zip file to {}".format(path))
-            self.archive_export(path, ftype)
+            self.archive_export(path, ftype, overwrite=overwrite)
 
 
-    def archive_export(self, path : Path, exp_type='zip'):
+    def archive_export(self, path : Path, exp_type='zip', overwrite=False):
         path = Path(path)
         if os.path.exists(str(path)):
-            if (self._overwrite is False):
+            if (overwrite is False):
                 raise OSError("File {} already exists!".format(path))
             else:
                 os.remove(str(path))
@@ -264,9 +264,9 @@ class Project:
             shutil.make_archive(str(final_path), exp_type, tmpname)
             print('saving to ' + path.stem)
 
-    def export(self, path):
+    def export(self, path, overwrite=False):
         path = str(path)
-        new_proj = Project(path)
+        new_proj = Project(path, overwrite=overwrite)
         new_proj.extend(self)
         return new_proj
 
@@ -334,10 +334,16 @@ class Project:
 
         if self.plaintexts is not None:
             parameters.append(self.plaintexts[n])
+        else:
+            parameters.append(None)
         if self.ciphertexts is not None:
             parameters.append(self.ciphertexts[n])
+        else:
+            parameters.append(None)
         if self.keys is not None:
             parameters.append(self.keys[n])
+        else:
+            parameters.append(None)
         
         if type(n) is slice:
             rtn = []
