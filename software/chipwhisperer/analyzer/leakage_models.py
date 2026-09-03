@@ -1,6 +1,7 @@
 import numpy as np
 from collections.abc import Callable
 from numpy.typing import NDArray
+from ..common.utils.aes_tables import t_table_hw, t_table_hw_dec
 
 def generate_hw_table():
     ret = []
@@ -60,14 +61,14 @@ hw_table = generate_hw_table()
 
 LeakageFunction = Callable[[NDArray | None, NDArray | None, int], NDArray]
 
-def sbox_output(pt: NDArray, ct: NDArray | None , subkey: int):
+def sbox_output(pt: NDArray, ct: NDArray | None, subkey: int):
     assert pt is not None, "This leakage model requires plaintexts"
     rtn = np.zeros((len(pt[subkey]), 256), dtype=np.uint8)
     for kguess in range(256):
         rtn[:, kguess] = hw_table[sbox[pt[subkey] ^ kguess]]
     return rtn
 
-def inv_sbox_output(pt, ct, subkey):
+def inv_sbox_output(pt: NDArray | None, ct: NDArray, subkey: int):
     if ct is None:
         raise ValueError("This leakage model requires ct")
     rtn = np.zeros((len(ct[0]), 256), dtype=np.uint8)
@@ -75,7 +76,7 @@ def inv_sbox_output(pt, ct, subkey):
         rtn[:, kguess] = hw_table[inv_sbox[ct[subkey] ^ kguess]]
     return rtn
 
-def last_round_state_diff(pt, ct, subkey):
+def last_round_state_diff(pt: NDArray | None, ct: NDArray, subkey: int):
     if ct is None:
         raise ValueError("This leakage model requires ct")
     rtn = np.zeros((len(ct[0]), 256), dtype=np.uint8)
@@ -85,3 +86,9 @@ def last_round_state_diff(pt, ct, subkey):
         rtn[:, kguess] = hw_table[rnd_9 ^ rnd_10]
     return rtn
 
+def ttable_output(pt: NDArray, ct: NDArray | None, subkey: int):
+    assert pt is not None, "This leakage model requires plaintexts"
+    rtn = np.zeros((len(pt[subkey]), 256), dtype=np.uint8)
+    for kguess in range(256):
+        rtn[:, kguess] = t_table_hw[pt[subkey] ^ kguess]
+    return rtn

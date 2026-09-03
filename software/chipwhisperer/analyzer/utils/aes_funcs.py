@@ -31,7 +31,7 @@
 #
 # Currently only support AES-128 and AES-256
 #
-from chipwhisperer.common.utils.util import camel_case_deprecated
+from ...common.utils.util import CWByteArray, camel_case_deprecated
 
 
 def sbox(inp):
@@ -231,7 +231,7 @@ def key_schedule_rounds(input_key, input_round, desired_round):
             state = state[0:16]
 
     #Return answer
-    return state
+    return CWByteArray(state)
 
 keyScheduleRounds = camel_case_deprecated(key_schedule_rounds)
 

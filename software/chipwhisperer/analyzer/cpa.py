@@ -6,6 +6,8 @@ from numba import njit
 from ..common.project import Project
 from .leakage_models import LeakageFunction
 from ..logging import analyzer_logger
+import zarr
+from pathlib import Path
 # from ..__init__ import plot
 
 def generate_hw_table():
@@ -45,221 +47,46 @@ def mult_tsum_hsum(tsum, hsum):
         ret[i] = tsum[i] * hsum
     return ret
 
-# unit test ideas
-# test correlation
-# ensure state the same no matter if broken into smaller chunks
+def open_zip(path, ftype='zip'):
+    pass
 
-"""Works via online correlation calculation
 
-For traces t and hypothetical leakages h and for a single location in traces and key guess,
-the following internal state can be calculated and easily updated:
+def open_results(path):
+    path = Path(path)
+    if path.suffix == '.zip':
+        raise NotImplementedError("Zip not supported yet")
+        return open_zip(path)
+    group = zarr.open_group(path, mode='r+')
+    return AttackResults.from_zarr(group)
 
-tb = mean(t)
-hb = mean(h)
-th = dot(t, h)
-t2 = mean(t^2) = dot(t, t)
-h2 = mean(h^2) = dot(h, h)
-N = number of traces
+RESULT_FIELDS = ['correlations', 'subkeys', 'sorted_kguesses_hist', 'traces_used_hist', 'traces_used', 
+                 'max_correlations_hist', 'known_key']
 
-Then, the correlation can be calculated by:
+class AttackResults:
+    def __init__(self, correlations, subkeys, sorted_kguesses_hist, traces_used_hist, \
+                 traces_used, max_correlations_hist, known_key = None):
+        params = locals()
+        for p in RESULT_FIELDS:
+            setattr(self, p, params[p])
+        self.subkeys = [int(x) for x in subkeys]
 
-                  N * th - hb * tb
-corr = ---------------------------------------
-       sqrt((h2 - N * hb^2) - (t2 - N * tb^2))
+    @classmethod
+    def from_zarr(cls, group):
+        params = {}
+        for p in RESULT_FIELDS:
+            params[p] = group[p]
+        return cls(**params)
 
-These calculations need to be repeated for each key guess and location in the trace.
-"""
-class CPA:
-    """Class for doing correlation power analysis attacks.
+    @classmethod
+    def from_cpa(cls, cpa):
+        params = {}
+        for p in RESULT_FIELDS:
+            params[p] = getattr(cpa, p)
+        return cls(**params)
 
-    After creating the CPA object::
-
-        from chipwhisperer.analyzer import CPA, models
-        cpa = CPA(project, models.sbox_output, list(range(16)))
-    
-    You can run an attack::
-
-        # optional callback to display results table in jupyter
-        from chipwhisperer.analyzer import get_jupyter_cb
-        cb = get_jupyter_cb()
-        cpa.run(interval=10, callback=cb) # update the table every 10 traces
-
-    After the attack finishes, you can get its results and related plots::
-
-        key_guess = cpa.key_guess()
-        print(cpa.correlations[0]) # print correlations for subkey 0
-        cpa.corr_v_time_plot() # or pge_v_traces_plot() or corr_v_traces_plot()
-
-    Args:
-        project (cw.Project): Project that contains trace and plaintext/ciphertext
-            data. 
-        leakage_model (function): Model to calculate leakage guesses from plaintext/ciphertext
-        subkeys (list): List of subkeys to attack
-    """
-    def __init__(self, project: Project, leakage_model: LeakageFunction, subkeys: Sequence | int):
-
-        self.project = project
-        self.trace_len = project.traces.shape[1]
-        self.kguesses = 256
-        self.traces_used = 0
-        pt_array = None
-        ct_array = None
-
-        if type(subkeys) is int:
-            subkeys = list(range(subkeys))
-
-        assert isinstance(subkeys, Sequence)
-        self.subkeys: Sequence = subkeys
-        self.num_traces = project.num_traces
-
-        if project.plaintexts is not None:
-            pt_array = np.swapaxes(project.plaintexts, 0, 1)
-            assert pt_array.shape[1] == project.num_traces
-        if project.ciphertexts is not None:
-            ct_array = np.swapaxes(project.ciphertexts, 0, 1)
-            assert ct_array.shape[1] == project.num_traces
-
-        self.trace_array = project.traces
-        
-        self.pt_array = pt_array
-        self.ct_array = ct_array
-        self.reset()
-        
-        self.known_key = None
-        # self.ct_array = None
-        
-        self.correlations = None
-        self.leakage_model = leakage_model
-        self.gen_hyp()
-
-        if project.keys is not None:
-            self.known_key = project.keys[0]
-
-    def reset(self):
-        """Reset internal results to 0
-        """
-        self.th_sum = np.zeros((len(self.subkeys), self.project.trace_len, self.kguesses), dtype=np.int64)
-        self.tsum = np.zeros((self.project.trace_len), dtype=np.int64)
-        self.hsum = np.zeros((len(self.subkeys), self.kguesses), dtype=np.int64)
-        
-        self.t2_sum = np.zeros((self.project.trace_len), dtype=np.int64)
-        self.h2_sum = np.zeros((len(self.subkeys), self.kguesses), dtype=np.int64)
-        self.hyp_array = np.zeros((len(self.subkeys), self.project.num_traces, self.kguesses), dtype=np.uint8)
-        self.sorted_kguesses_hist = []
-        self.traces_used_hist = []
-        self.max_correlations_hist = []
+    def set_known_key(self, key):
+        self.known_key = np.array(key)
         pass
-
-    def set_leakage_model(self, leakage_model: LeakageFunction):
-        """Set the leakage model and regenerate hypotheticals.
-
-        Args:
-            leakage_model (func): Leakage model to use
-        """
-        self.leakage_model = leakage_model
-        self.gen_hyp()
-
-    def gen_hyp(self):
-        """Generate hypothetical leakages from leakage_model
-        """
-        for i in range(len(self.subkeys)):
-            self.hyp_array[i] = self.leakage_model(self.pt_array, self.ct_array, self.subkeys[i])
-    
-    def update_state(self, start, stop):
-        """Update the internal state tsum, t2_sum, th_sum, h_sum and h2_sum using traces between start and stop
-        """
-        # update the traces we used for corr/pge_v_traces plots
-        self.traces_used += stop - start
-        self.traces_used_hist.append(self.traces_used)
-        
-        # calculate sum of t
-        self.tsum += sum_t_or_h(self.trace_array[start:stop])
-        
-        # calculate sum of t^2
-        self.t2_sum += np.sum(np.square(self.trace_array[start:stop], dtype=np.int64), axis=0)
-        
-        for i in range(len(self.subkeys)):
-            # calculate sum of h*t
-            self.th_sum[i] += calc_th_array(self.trace_array[start:stop], self.hyp_array[i][start:stop])
-            
-            # calculate sum of h
-            self.hsum[i] += sum_t_or_h(self.hyp_array[i][start:stop])
-
-            # calculate sum of h^2
-            self.h2_sum[i] += np.sum(np.square(self.hyp_array[i][start:stop], dtype=np.int64), axis=0)
-
-    
-    def calculate_correlation(self):
-        """Calculate correlations using internal state
-        """
-        # important: only record the max correlation for each kguess, otherwise memory blows up
-        corr = np.zeros((len(self.subkeys), self.project.trace_len, self.kguesses), dtype=np.float32)
-
-        # calculate (sum of t) ^ 2
-        t_sum2 = np.square(self.tsum, dtype=np.int64)
-
-        # calculate trace sqrt for denominator
-        sqrt_t = np.sqrt(-(t_sum2 - self.traces_used * self.t2_sum))
-        
-        for i in range(len(self.subkeys)):
-            # calculate numerator
-            num = self.traces_used * self.th_sum[i] - mult_tsum_hsum(self.tsum, self.hsum[i])
-
-            # calculate (sum of h) ^ 2
-            h_sum2 = np.square(self.hsum[i], dtype=np.int64)
-            dem = mult_tsum_hsum(\
-                np.sqrt(-(h_sum2 - self.traces_used * self.h2_sum[i])),\
-                sqrt_t\
-            )
-            with np.errstate(divide='ignore', invalid='ignore'):
-                corr[i] = num / dem.transpose()
-        np.nan_to_num(corr, copy=False)
-        self.correlations = corr
-
-    def _calc_sort_and_rank(self, index=-1):
-        """Sort and rank kguesses based on correlation
-        """
-        sorted_kguesses = []
-        self.best_corrs = np.zeros((len(self.subkeys), self.kguesses), dtype=np.float32)
-        for i in range(len(self.subkeys)):
-            assert self.correlations is not None
-            abscor = np.abs(self.correlations[i])
-            self.max_corr_loc = np.argmax(abscor, axis=0) # arguments of abscor sorted by max: arg_along_trace[-1] has the location in correlation of largest corr
-
-            self.best_corrs[i] = abscor[self.max_corr_loc].diagonal()
-
-            sorted_kguesses.append(np.flip(np.argsort(self.best_corrs[i])))
-        self.max_correlations_hist.append(self.best_corrs)
-        return sorted_kguesses
-
-    def sort_and_rank(self):
-        """Sort and rank kguesses based on correlation
-        """
-        self.sorted_kguesses_hist.append(self._calc_sort_and_rank())
-    
-    def run(self, interval=None, callback=None):
-        """Run a full CPA attack, updating internal records and callback every interval
-
-        Args:
-            interval (int, None, optional): Update internal statistics and call callback every interval
-                traces processed. Defaults to None, in which case the entire project is processed
-            callback (func, None, optional): Function to call after each interval passes. Takes the CPA
-                object as an argument
-        """
-        if interval is None:
-            interval = self.num_traces
-        for i in range(0, self.num_traces, interval):
-            analyzer_logger.info("Updating traces between {} and {}".format(i, min(i+interval, self.num_traces)))
-            self.update_state(i, min(i + interval, self.num_traces))
-
-            analyzer_logger.debug("Calculating correlation")
-            self.calculate_correlation()
-
-            analyzer_logger.debug("Sorting and ranking guesses")
-            self.sort_and_rank()
-            if callback:
-                analyzer_logger.info("Calling callback function")
-                callback(self)
 
     def _corr_v_time(self, sub_byte, kguess):
         assert self.correlations is not None
@@ -398,6 +225,7 @@ class CPA:
 
         if self.known_key is None:
             key = self.key_guess()
+            analyzer_logger.info("Using guessed key {} as known_key".format(key))
         else:
             key = self.known_key[self.subkeys]
         plt = plot()
@@ -454,6 +282,12 @@ class CPA:
             
         return plt.opts(title='Partial Guessing Entropy v. Traces', xlabel='traces used', ylabel='PGE', legend_position='right', legend_limit=250, bgcolor='lightgray', height=800, width=1000)
 
+    def save_results(self, path, overwrite=False):
+        # TODO
+        group = zarr.create_group(store=path, overwrite=overwrite)
+        for p in RESULT_FIELDS:
+            group.create_array(p, data=np.array(getattr(self, p)))
+
     def __str__(self):
         rtn = {}
         rtn['leakage_function']
@@ -461,6 +295,248 @@ class CPA:
         rtn['num_traces']
         return str(rtn)
 
+# unit test ideas
+# test correlation
+# ensure state the same no matter if broken into smaller chunks
+
+"""Works via online correlation calculation
+
+For traces t and hypothetical leakages h and for a single location in traces and key guess,
+the following internal state can be calculated and easily updated:
+
+tb = mean(t)
+hb = mean(h)
+th = dot(t, h)
+t2 = mean(t^2) = dot(t, t)
+h2 = mean(h^2) = dot(h, h)
+N = number of traces
+
+Then, the correlation can be calculated by:
+
+                  N * th - hb * tb
+corr = ---------------------------------------
+       sqrt((h2 - N * hb^2) - (t2 - N * tb^2))
+
+These calculations need to be repeated for each key guess and location in the trace.
+"""
+class CPA(AttackResults):
+    """Class for doing correlation power analysis attacks.
+
+    After creating the CPA object::
+
+        from chipwhisperer.analyzer import CPA, models
+        cpa = CPA(project, models.sbox_output, list(range(16)))
+    
+    You can run an attack::
+
+        # optional callback to display results table in jupyter
+        from chipwhisperer.analyzer import get_jupyter_cb
+        cb = get_jupyter_cb()
+        cpa.run(interval=10, callback=cb) # update the table every 10 traces
+
+    After the attack finishes, you can get its results and related plots::
+
+        key_guess = cpa.key_guess()
+        print(cpa.correlations[0]) # print correlations for subkey 0
+        cpa.corr_v_time_plot() # or pge_v_traces_plot() or corr_v_traces_plot()
+
+    Args:
+        project (cw.Project): Project that contains trace and plaintext/ciphertext
+            data. 
+        leakage_model (function): Model to calculate leakage guesses from plaintext/ciphertext
+        subkeys (list): List of subkeys to attack
+    """
+    def __init__(self, project: Project, leakage_model: LeakageFunction, subkeys: Sequence | int):
+
+        self.project = project
+        self.trace_len = project.traces.shape[1]
+        self.kguesses = 256
+        self.traces_used = 0
+        pt_array = None
+        ct_array = None
+
+        if type(subkeys) is int:
+            subkeys = list(range(subkeys))
+
+        assert isinstance(subkeys, Sequence)
+        self.subkeys: Sequence = subkeys
+        self.num_traces = project.num_traces
+
+        if project.plaintexts is not None:
+            pt_array = np.swapaxes(project.plaintexts, 0, 1)
+            assert pt_array.shape[1] == project.num_traces
+        if project.ciphertexts is not None:
+            ct_array = np.swapaxes(project.ciphertexts, 0, 1)
+            assert ct_array.shape[1] == project.num_traces
+
+        self.trace_array = project.traces
+        
+        self.pt_array = pt_array
+        self.ct_array = ct_array
+        self._sample_range = slice(0, project.trace_len)
+        
+        self.known_key = None
+        # self.ct_array = None
+        
+        self.correlations = None
+        self.leakage_model = leakage_model
+
+        if project.keys is not None:
+            self.known_key = project.keys[0]
+
+        self.reset()
+        self.gen_hyp()
+
+
+    def reset(self):
+        """Reset internal results to 0
+        """
+        trace_len = self._sample_range.stop - self._sample_range.start
+        self.th_sum = np.zeros((len(self.subkeys), trace_len, self.kguesses), dtype=np.int64)
+        self.tsum = np.zeros((trace_len), dtype=np.int64)
+        self.hsum = np.zeros((len(self.subkeys), self.kguesses), dtype=np.int64)
+        
+        self.t2_sum = np.zeros((trace_len), dtype=np.int64)
+        self.h2_sum = np.zeros((len(self.subkeys), self.kguesses), dtype=np.int64)
+        self.hyp_array = np.zeros((len(self.subkeys), self.project.num_traces, self.kguesses), dtype=np.uint8)
+        self.sorted_kguesses_hist = []
+        self.traces_used_hist = []
+        self.max_correlations_hist = []
+        self.correlations = None
+        self.traces_used = 0
+        pass
+
+    def set_sample_range(self, start, stop):
+        assert start >= 0
+        assert stop <= self.project.trace_len
+        self._sample_range = slice(start, stop)
+        self.reset()
+        self.gen_hyp()
+
+    def set_known_key(self, key):
+        self.known_key = np.array(key)
+        pass
+
+    def set_leakage_model(self, leakage_model: LeakageFunction):
+        """Set the leakage model and regenerate hypotheticals.
+
+        Args:
+            leakage_model (func): Leakage model to use
+        """
+        self.leakage_model = leakage_model
+        self.gen_hyp()
+
+    def gen_hyp(self):
+        """Generate hypothetical leakages from leakage_model
+        """
+        for i in range(len(self.subkeys)):
+            self.hyp_array[i] = self.leakage_model(self.pt_array, self.ct_array, self.subkeys[i])
+    
+    def update_state(self, start, stop):
+        """Update the internal state tsum, t2_sum, th_sum, h_sum and h2_sum using traces between start and stop
+        """
+        # update the traces we used for corr/pge_v_traces plots
+        self.traces_used += stop - start
+        self.traces_used_hist.append(self.traces_used)
+        
+        # calculate sum of t
+        self.tsum += sum_t_or_h(self.trace_array[start:stop,self._sample_range])
+        
+        # calculate sum of t^2
+        self.t2_sum += np.sum(np.square(self.trace_array[start:stop,self._sample_range], dtype=np.int64), axis=0)
+        
+        for i in range(len(self.subkeys)):
+            # calculate sum of h*t
+            self.th_sum[i] += calc_th_array(self.trace_array[start:stop,self._sample_range], self.hyp_array[i][start:stop])
+            
+            # calculate sum of h
+            self.hsum[i] += sum_t_or_h(self.hyp_array[i][start:stop])
+
+            # calculate sum of h^2
+            self.h2_sum[i] += np.sum(np.square(self.hyp_array[i][start:stop], dtype=np.int64), axis=0)
+
+    
+    def calculate_correlation(self):
+        """Calculate correlations using internal state
+        """
+        # important: only record the max correlation for each kguess, otherwise memory blows up
+        trace_len = self._sample_range.stop - self._sample_range.start
+        corr = np.zeros((len(self.subkeys), trace_len, self.kguesses), dtype=np.float32)
+
+        # calculate (sum of t) ^ 2
+        t_sum2 = np.square(self.tsum, dtype=np.int64)
+
+        # calculate trace sqrt for denominator
+        sqrt_t = np.sqrt(-(t_sum2 - self.traces_used * self.t2_sum))
+        
+        for i in range(len(self.subkeys)):
+            # calculate numerator
+            num = self.traces_used * self.th_sum[i] - mult_tsum_hsum(self.tsum, self.hsum[i])
+
+            # calculate (sum of h) ^ 2
+            h_sum2 = np.square(self.hsum[i], dtype=np.int64)
+            dem = mult_tsum_hsum(\
+                np.sqrt(-(h_sum2 - self.traces_used * self.h2_sum[i])),\
+                sqrt_t\
+            )
+            with np.errstate(divide='ignore', invalid='ignore'):
+                corr[i] = num / dem.transpose()
+        np.nan_to_num(corr, copy=False)
+        self.correlations = corr
+
+    def _calc_sort_and_rank(self, index=-1):
+        """Sort and rank kguesses based on correlation
+        """
+        sorted_kguesses = []
+        self.best_corrs = np.zeros((len(self.subkeys), self.kguesses), dtype=np.float32)
+        for i in range(len(self.subkeys)):
+            assert self.correlations is not None
+            abscor = np.abs(self.correlations[i])
+            self.max_corr_loc = np.argmax(abscor, axis=0) # arguments of abscor sorted by max: arg_along_trace[-1] has the location in correlation of largest corr
+
+            self.best_corrs[i] = abscor[self.max_corr_loc].diagonal()
+
+            sorted_kguesses.append(np.flip(np.argsort(self.best_corrs[i])))
+        self.max_correlations_hist.append(self.best_corrs)
+        return sorted_kguesses
+
+    def sort_and_rank(self):
+        """Sort and rank kguesses based on correlation
+        """
+        self.sorted_kguesses_hist.append(self._calc_sort_and_rank())
+    
+    def run(self, interval=None, callback=None):
+        """Run a full CPA attack, updating internal records and callback every interval
+
+        Args:
+            interval (int, None, optional): Update internal statistics and call callback every interval
+                traces processed. Defaults to None, in which case the entire project is processed
+            callback (func, None, optional): Function to call after each interval passes. Takes the CPA
+                object as an argument
+        """
+        self.reset()
+        self.gen_hyp()
+        if interval is None:
+            interval = self.num_traces
+        for i in range(0, self.num_traces, interval):
+            analyzer_logger.info("Updating traces between {} and {}".format(i, min(i+interval, self.num_traces)))
+            self.update_state(i, min(i + interval, self.num_traces))
+
+            analyzer_logger.debug("Calculating correlation")
+            self.calculate_correlation()
+
+            analyzer_logger.debug("Sorting and ranking guesses")
+            self.sort_and_rank()
+            if callback:
+                analyzer_logger.info("Calling callback function")
+                callback(self)
+
+    def __str__(self):
+        rtn = {}
+        rtn['leakage_model'] = self.leakage_model
+        rtn['project'] = self.project
+        rtn['num_traces'] = self.project.num_traces
+        return str(rtn)
 
 def _default_jupyter_callback(cpa, head = 6, fmt = "{:02X}<br>{:.3f}"):
     import pandas as pd # type: ignore
