@@ -9,6 +9,7 @@ build:
     pre_build:
       # Generate on-the-fly Sphinx configuration from Jupyter Book's _config.yml
       - "jupyter-book config sphinx docs/source"
+      - "cp contributing.md docs/source/."
 
 submodules:
   include: [docs/source/chipwhisperer-target-cw308t, docs/source/cw_tips_tricks]
