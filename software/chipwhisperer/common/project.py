@@ -40,7 +40,8 @@ class TraceContainer:
 def _resize_func(arr):
     # default function to resize length of array when we're at the end of the current storage
     # by default doubles each time
-    new_size = (arr.shape[0] * 2, arr.shape[1])
+    new_size = [arr.shape[0] * 2]
+    new_size.extend(arr.shape[1:])
     arr.resize(new_size)
 
 def open_project(path):
@@ -206,15 +207,27 @@ class Project:
                 self._dtypes[name] = None
             else:
                 analyzer_logger.info("Has " + name)
-                field_len = len(fields[cont_name]) # type: ignore
-                storage.create_array(name=name, shape=(tarr_len, field_len), \
-                                    chunks=(tarr_len, field_len), dtype=self._dtypes[name], compressors=None)
-                self._group.attrs[name]['exists'] = 1 # type: ignore
-                self._group.attrs[name]['len'] = field_len # type: ignore
+                field = fields[cont_name]
+
+                # figure out what type to make array
+                # pull from array first
                 if hasattr(fields[cont_name], 'dtype'):
-                    self._group.attrs[name]['dtype'] = str(fields[cont_name].dtype) # type: ignore
+                    self._group.attrs[name]['dtype'] = str(field.dtype) # type: ignore
                 else:
                     self._group.attrs[name]['dtype'] = str(self._dtypes[name]) # type: ignore
+
+                # if field isn't np array, convert
+                if not isinstance(field, np.ndarray):
+                    field = np.array(field, dtype=self._group.attrs[name]['dtype'])
+
+                shape = [tarr_len]
+                shape.extend(field.shape)
+                shape = tuple(shape) # grrrr
+
+                storage.create_array(name=name, shape=shape, \
+                                    chunks=shape, dtype=field.dtype, compressors=None)
+                self._group.attrs[name]['exists'] = 1 # type: ignore
+                self._group.attrs[name]['len'] = field.shape # type: ignore
         
         self._initialized = True
         analyzer_logger.info("Project initialized")
@@ -381,7 +394,11 @@ class Project:
             else:
                 # if it doesn't make sure it doesn't exist in other project as well
                 assert not project._group.attrs[name]['exists']
-        self._group.attrs['len'] += project.num_traces
+        
+        tmplen = self._group.attrs['len']
+        assert type(tmplen) is int
+        tmplen += project.num_traces
+        self._group.attrs['len'] = tmplen
 
     #########################
     ###### PROPERTIES #######
@@ -517,21 +534,21 @@ class Project:
         assert type(group) is zarr.Group
         for name in self.DATA_NAMES:
             # assert group has all data fields
-            assert name in group
+            assert name in group, f"{name} missing from {str(group)}"
 
             # assert metadata exists for all possible data fields
-            assert (name in group.attrs) and (type(group.attrs[name]) is dict) 
+            assert (name in group.attrs) and (type(group.attrs[name]) is dict), f"{name} is missing group attrs {group.attrs}"
 
             # and that it has the exists field
             name_data = group.attrs[name]
-            assert (type(name_data) is dict) and (prop in name_data for prop in self.DATA_PROPERTIES)
+            assert (type(name_data) is dict) and (prop in name_data for prop in self.DATA_PROPERTIES), f"{name} missing exists field"
 
             if name_data['exists']:
                 # if the field 'exists', it shouldn't be none
                 a = group[name]
-                assert isinstance(a, zarr.Array)
-                assert a.dtype == name_data['dtype']
-                assert a.shape[1] == name_data['len']
+                assert isinstance(a, zarr.Array), f"a not zarr array, is {type(a)}"
+                assert a.dtype == name_data['dtype'], f"{a.dtype} != {name_data['dtype']}"
+                assert a.shape[1:] == tuple(name_data['len']), f"{a.shape[1:]} != {name_data['len']}"
             pass
             
         # make sure the other properties exist

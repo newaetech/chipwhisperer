@@ -86,6 +86,32 @@ def last_round_state_diff(pt: NDArray | None, ct: NDArray, subkey: int):
         rtn[:, kguess] = hw_table[rnd_9 ^ rnd_10]
     return rtn
 
+def pipeline_diff(pt: NDArray | None, ct: NDArray, subkey: int):
+    if ct is None:
+        raise ValueError("This leakage model requires ct")
+
+    rtn = np.zeros((len(ct[0]), 256), dtype=np.uint8)
+    prev_ct = np.roll(ct[subkey], 1)
+    prev_ct[0] = 0
+    for kguess in range(256):
+        curr = inv_sbox[ct[subkey] ^ kguess]
+        prev = inv_sbox[prev_ct ^ kguess]
+        rtn[:, kguess] = hw_table[curr ^ prev]
+    return rtn
+
+def half_pipeline_diff(pt: NDArray | None, ct: NDArray, subkey: int):
+    if ct is None:
+        raise ValueError("This leakage model requires ct")
+
+    rtn = np.zeros((len(ct[0]), 256), dtype=np.uint8)
+    prev_ct = np.roll(ct[invshiftrow_table[subkey]], 1)
+    prev_ct[0] = 0
+    for kguess in range(256):
+        curr = inv_sbox[ct[subkey] ^ kguess]
+        prev = prev_ct[:]
+        rtn[:, kguess] = hw_table[curr ^ prev]
+    return rtn
+
 def ttable_output(pt: NDArray, ct: NDArray | None, subkey: int):
     assert pt is not None, "This leakage model requires plaintexts"
     rtn = np.zeros((len(pt[subkey]), 256), dtype=np.uint8)

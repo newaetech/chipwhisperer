@@ -374,6 +374,7 @@ class CPA(AttackResults):
         self.pt_array = pt_array
         self.ct_array = ct_array
         self._sample_range = slice(0, project.trace_len)
+        self._trace_range = slice(0, project.num_traces)
         
         self.known_key = None
         # self.ct_array = None
@@ -406,16 +407,36 @@ class CPA(AttackResults):
         self.traces_used = 0
         pass
 
-    def set_sample_range(self, start, stop):
+    def set_sample_range(self, start=None, stop=None):
+        """Change the sample range used in the CPA attack.
+        """
+        if start is None:
+            start = 0
+        if stop is None:
+            stop = self.project.trace_len
         assert start >= 0
         assert stop <= self.project.trace_len
         self._sample_range = slice(start, stop)
         self.reset()
         self.gen_hyp()
 
+    def set_trace_range(self, start=None, stop=None):
+        """Change the range of traces used in the CPA attack
+        """
+        if start is None:
+            start = 0
+        if stop is None:
+            stop = self.project.num_traces
+        assert start >= 0
+        assert stop <= self.project.num_traces
+        self._trace_range = slice(start, stop)
+        self.num_traces = stop - start
+        self.reset()
+        self.gen_hyp()
+        pass
+
     def set_known_key(self, key):
         self.known_key = np.array(key)
-        pass
 
     def set_leakage_model(self, leakage_model: LeakageFunction):
         """Set the leakage model and regenerate hypotheticals.
@@ -518,9 +539,9 @@ class CPA(AttackResults):
         self.gen_hyp()
         if interval is None:
             interval = self.num_traces
-        for i in range(0, self.num_traces, interval):
-            analyzer_logger.info("Updating traces between {} and {}".format(i, min(i+interval, self.num_traces)))
-            self.update_state(i, min(i + interval, self.num_traces))
+        for i in range(self._trace_range.start, self._trace_range.stop, interval):
+            analyzer_logger.info("Updating traces between {} and {}".format(i, min(i+interval, self._trace_range.stop)))
+            self.update_state(i, min(i + interval, self._trace_range.stop))
 
             analyzer_logger.debug("Calculating correlation")
             self.calculate_correlation()
@@ -598,10 +619,12 @@ def _default_jupyter_callback(cpa, head = 6, fmt = "{:02X}<br>{:.3f}"):
         tstart = cpa.traces_used_hist[-2]
     tend = cpa.traces_used_hist[-1]
     clear_output(wait=True)
-    chart = df.head(head).style.format(format_stat).apply(colour_corr_key, axis=1).set_caption("Finished traces {} to {} of {}".format(tstart, tend, cpa.num_traces))
+    chart = df.head(head).style.format(format_stat).apply(colour_corr_key, axis=1).set_caption("Finished traces {} to {} of {}".format(tstart, tend, cpa._trace_range.stop))
     display(chart)
     # return chart
 
 def get_table_cb(head = 6, fmt="{:02X}<br>{:.3f}"):
     """Get callback for use in Jupyter"""
     return lambda x : _default_jupyter_callback(x, head, fmt)
+
+table_cb = get_table_cb()
