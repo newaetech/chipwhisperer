@@ -13,7 +13,6 @@ parts:
       - file: drivers
       - file: linux-install
       - file: mac-install
-      - file: virtual-box-inst
   - file: starting
   - file: updating
   - file: support
