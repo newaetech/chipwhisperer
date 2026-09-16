@@ -698,12 +698,298 @@ class SWDHelper(util.DisableNewAttr):
 
 
 
+class I2CHelper(util.DisableNewAttr):
+    ''' Helper functions for bit-banging an I2C interface.
+    Does not support clock stretching. Uses 7-bit addressing.
+    This class contains various read and write methods that correspond to
+    the read and write commands documented in the Microchip 24CS32 datasheet.
+    If this class doesn't do exactly what you need, extend it!
+    '''
+    _name = 'I2C helper functions'
+
+    def __init__(self, bb):
+        super().__init__()
+        self.bb = bb
+        self._device_address = None
+        self.disable_newattr()
+
+
+    def set_defaults(self):
+        """ Sets normally useful defaults for I2C bit-banging:
+
+        * :class:`BitBanger.drive_edge` = 'rising'
+        * :class:`BitBanger.check_edge` = 'rising'
+        * :class:`BitBanger.inactive_clock` = 1
+        * :class:`BitBanger.inactive_data` = 1
+        * :class:`BitBanger.inactive_state` = 'driven'
+
+        """
+        self.bb.drive_edge = 'rising'
+        self.bb.check_edge = 'rising'
+        self.bb.inactive_clock = 1
+        self.bb.inactive_data = 1
+        self.bb.inactive_state = 'driven'
+
+
+    @property 
+    def device_address(self):
+        """ 7-bit device address to use for read and write commands.
+        """
+        return self._device_address
+
+    @device_address.setter
+    def device_address(self, addr):
+        if addr not in range(0, 2**7-1):
+            raise ValueError()
+        self._device_address = addr
+
+    @property 
+    def _dev_addr_list(self):
+        """ Returns 7-bit device address in list format.
+        """
+        if self.device_address is None:
+            scope_logger.error('Must set scope.bitbanger.i2c.device_address first.')
+        return self._D2bits(self.device_address)[1:]
+
+
+    def rread(self, address, check_match=True, trigger_bit=None):
+        """ "Random Read" command. Reads one data byte from the specified memory address.
+
+        Args:
+            address (int): 16-bit memory address.
+            check_match (bool): if True, checks whether the host responded as expected (i.e. ACKs).
+            trigger_bit (int): bitbanger bit on which to trigger is issued (set to None for no trigger)
+
+        Returns:
+            If successful, read data byte.
+        """
+        abits = self._A2bits(address)
+        #              start dev addr       W  ACK  address byte 1..ACK..byte 2           ACK   START  dev addr       R  ACK  read data       NAK  STOP
+        pattern_data = [0,0, 0,0,0,0,0,0,0, 0, 0,   0,0,0,0,0,0,0,0, 0, 0,0,0,0,0,0,0,0,  0,    1,0,   1,0,1,0,0,0,0, 1,  0,  0,0,0,0,0,0,0,0, 1,  0,1]
+        hiz          = [0,0, 0,0,0,0,0,0,0, 0, 1,   0,0,0,0,0,0,0,0, 1, 0,0,0,0,0,0,0,0,  1,    0,0,   0,0,0,0,0,0,0, 0,  1,  1,1,1,1,1,1,1,1, 0,  0,0]
+        clk_en       = [0,0, 1,1,1,1,1,1,1, 1, 1,   1,1,1,1,1,1,1,1, 1, 1,1,1,1,1,1,1,1,  1,    1,0,   1,1,1,1,1,1,1, 1,  1,  1,1,1,1,1,1,1,1, 1,  1,0]
+        
+        pattern_data[2:9] = self._dev_addr_list
+        pattern_data[11:11+len(abits)] = abits
+        pattern_en   = [1]*len(pattern_data)
+        trigger_en   = [0]*len(pattern_data)
+        record_en    = [0]*len(pattern_data)
+        record_en[40:48] = [1]*8
+        pattern_en[40:48] = [0]*8
+
+        if trigger_bit != None:
+            trigger_en[trigger_bit] = 1
+
+        packet = BitBangerPacket(pattern_data, hiz, pattern_en, record_en, trigger_en, clk_en)
+        self.bb.sendpacket(packet)
+        if check_match: assert self.bb.matched, 'did not match'
+        return self.bb.recorded_data(nbytes=1, swap=False)
+
+    def read(self, check_match=True, trigger_bit=None):
+        """ "Current Address Read" command. Reads one data byte from the current memory address.
+
+        Args:
+            check_match (bool): if True, checks whether the host responded as expected (i.e. ACKs).
+            trigger_bit (int): bitbanger bit on which to trigger is issued (set to None for no trigger)
+
+        Returns:
+            If successful, read data byte.
+        """
+
+        #              start dev addr       R  ACK  read data       NAK  STOP
+        pattern_data = [0,0, 0,0,0,0,0,0,0, 1, 0,   0,0,0,0,0,0,0,0, 1,  0,1]
+        hiz          = [0,0, 0,0,0,0,0,0,0, 0, 1,   1,1,1,1,1,1,1,1, 0,  0,0]
+        clk_en       = [0,0, 1,1,1,1,1,1,1, 1, 1,   1,1,1,1,1,1,1,1, 1,  1,0]
+        pattern_data[2:9] = self._dev_addr_list
+        pattern_en   = [1]*len(pattern_data)
+        trigger_en   = [0]*len(pattern_data)
+        record_en    = [0]*len(pattern_data)
+        record_en[11:19] = [1]*8
+        pattern_en[11:19] = [0]*8
+
+        if trigger_bit != None:
+            trigger_en[trigger_bit] = 1
+        
+        packet = BitBangerPacket(pattern_data, hiz, pattern_en, record_en, trigger_en, clk_en)
+        self.bb.sendpacket(packet)
+        if check_match: assert self.bb.matched, 'did not match'
+        return self.bb.recorded_data(nbytes=1, swap=False)
+
+
+    def sread(self, address, nbytes, check_match=True, trigger_bit=None):
+        """ "Sequential Read" command. Reads several data bytes from the specified memory address.
+
+        Args:
+            address (int): 16-bit memory address.
+            nbytes (int): number of bytes to read. The maximum number of bytes that can be read
+                is limited by :class:`BitBanger.max_record`.
+            check_match (bool): if True, checks whether the host responded as expected (i.e. ACKs).
+            trigger_bit (int): bitbanger bit on which to trigger is issued (set to None for no trigger)
+
+        Returns:
+            If successful, list of read data bytes.
+        """
+
+        # note: protocol/target may allow reading more data, but scope.bitbanger doesn't have the capacity for it
+        max_reads = self.bb.max_record//8
+        if nbytes not in range (2, max_reads+1):
+            raise ValueError('Max number of bytes that can be read is %d' % max_reads)
+        abits = self._A2bits(address)
+        #              start dev addr       W  ACK  address byte 1..ACK..byte 2           ACK   START  dev addr       R
+        pattern_data = [0,0, 0,0,0,0,0,0,0, 0, 0,   0,0,0,0,0,0,0,0, 0, 0,0,0,0,0,0,0,0,  0,    1,0,   1,0,1,0,0,0,0, 1]
+        hiz          = [0,0, 0,0,0,0,0,0,0, 0, 1,   0,0,0,0,0,0,0,0, 1, 0,0,0,0,0,0,0,0,  1,    0,0,   0,0,0,0,0,0,0, 0]
+        clk_en       = [0,0, 1,1,1,1,1,1,1, 1, 1,   1,1,1,1,1,1,1,1, 1, 1,1,1,1,1,1,1,1,  1,    1,0,   1,1,1,1,1,1,1, 1]
+        pattern_data[2:9] = self._dev_addr_list
+        pattern_data[11:11+len(abits)] = abits
+        pattern_en   = [1]*len(pattern_data)
+        trigger_en   = [0]*len(pattern_data)
+        record_en    = [0]*len(pattern_data)
+
+        for i in range(nbytes):
+            # note that each byte includes the preceding byte's ACK
+            pattern_data.extend([0]*9)
+            hiz.append(0)
+            hiz.extend([1]*8)
+            clk_en.extend([1]*9)
+            record_en.append(0)
+            record_en.extend([1]*8)
+            pattern_en.append(1)
+            pattern_en.extend([0]*8)
+            trigger_en.extend([0]*9)
+
+        # finish with NAK and STOP:
+        pattern_data.extend([1,0,1])
+        hiz.extend([0,0,0])
+        clk_en.extend([1,1,0])
+        record_en.extend([0,0,0])
+        pattern_en.extend([1,1,1])
+        trigger_en.extend([0,0,0])
+
+        if trigger_bit != None:
+            trigger_en[trigger_bit] = 1
+            
+        packet = BitBangerPacket(pattern_data, hiz, pattern_en, record_en, trigger_en, clk_en)
+        self.bb.sendpacket(packet)
+        if check_match: assert self.bb.matched, 'did not match'
+        return self.bb.recorded_data(nbytes=nbytes, return_word=False, swap=False)
+
+
+    def bwrite(self, address, wdata, check_match=True, trigger_bit=None):
+        """ "Byte Write" command. Writes a single data byte to the specified memory address.
+
+        Args:
+            address (int): 16-bit memory address.
+            wdata (int): 8-bit data to write.
+            check_match (bool): if True, checks whether the host responded as expected (i.e. ACKs).
+            trigger_bit (int): bitbanger bit on which to trigger is issued (set to None for no trigger)
+
+        """
+        abits = self._A2bits(address)
+        #              start dev addr       W  ACK  address byte 1..ACK..byte 2           ACK   write data      ACK  STOP
+        pattern_data = [0,0, 0,0,0,0,0,0,0, 0, 0,   0,0,0,0,0,0,0,0, 0, 0,0,0,0,0,0,0,0,  0,    0,0,0,0,0,0,0,0, 0,  0,1]
+        hiz          = [0,0, 0,0,0,0,0,0,0, 0, 1,   0,0,0,0,0,0,0,0, 1, 0,0,0,0,0,0,0,0,  1,    0,0,0,0,0,0,0,0, 1,  0,0]
+        clk_en       = [0,0, 1,1,1,1,1,1,1, 1, 1,   1,1,1,1,1,1,1,1, 1, 1,1,1,1,1,1,1,1,  1,    1,1,1,1,1,1,1,1, 1,  1,0]
+        pattern_data[2:9] = self._dev_addr_list
+        pattern_data[11:11+len(abits)] = abits
+        pattern_data[29:37] = self._D2bits(wdata)
+        pattern_en   = [1]*len(pattern_data)
+        trigger_en   = [0]*len(pattern_data)
+        record_en    = [0]*len(pattern_data)
+
+        if trigger_bit != None:
+            trigger_en[trigger_bit] = 1
+        
+        packet = BitBangerPacket(pattern_data, hiz, pattern_en, record_en, trigger_en, clk_en)
+        self.bb.sendpacket(packet)
+        if check_match: assert self.bb.matched, 'did not match'
+
+
+    def pwrite(self, address, wdata, check_match=True, trigger_bit=None):
+        """ "Page Write" command. Writes multiple data byte to the specified memory address.
+
+        Args:
+            address (int): 16-bit memory address.
+            wdata (list[int]): list of 8-bit data bytes to write.
+            check_match (bool): if True, checks whether the host responded as expected (i.e. ACKs).
+            trigger_bit (int): bitbanger bit on which to trigger is issued (set to None for no trigger)
+
+        """
+
+        abits = self._A2bits(address)
+        #              start dev addr       W  ACK  address byte 1..ACK..byte 2           ACK
+        pattern_data = [0,0, 0,0,0,0,0,0,0, 0, 0,   0,0,0,0,0,0,0,0, 0, 0,0,0,0,0,0,0,0,  0]
+        hiz          = [0,0, 0,0,0,0,0,0,0, 0, 1,   0,0,0,0,0,0,0,0, 1, 0,0,0,0,0,0,0,0,  1]
+        clk_en       = [0,0, 1,1,1,1,1,1,1, 1, 1,   1,1,1,1,1,1,1,1, 1, 1,1,1,1,1,1,1,1,  1]
+        pattern_data[2:9] = self._dev_addr_list
+        pattern_data[11:11+len(abits)] = abits
+        pattern_en   = [1]*len(pattern_data)
+        trigger_en   = [0]*len(pattern_data)
+        record_en    = [0]*len(pattern_data)
+
+        for bdata in wdata:
+            # data byte + ACK
+            pattern_data.extend(self._D2bits(bdata))
+            pattern_data.append(0)
+            hiz.extend([0,0,0,0,0,0,0,0,1])
+            pattern_en.extend([1]*9)
+            trigger_en.extend([0]*9)
+            record_en.extend([0]*9)
+            clk_en.extend([1]*9)
+                                
+        # add stop bit:
+        pattern_data.extend([0,1])
+        hiz.extend([0,0])
+        clk_en.extend([1,0])
+        pattern_en.extend([1,1])
+        trigger_en.extend([0,0])
+        record_en.extend([0,0])
+
+        if len(pattern_data) > self.bb.max_length:
+            raise ValueError('Length of bit-banged data (%d) exceeds maximum supported by hardware (%d)' % (len(pattern_data), self.bb.max_length))
+        
+        if trigger_bit != None:
+            trigger_en[trigger_bit] = 1
+        packet = BitBangerPacket(pattern_data, hiz, pattern_en, record_en, trigger_en, clk_en)
+        self.bb.sendpacket(packet)
+        if check_match: assert self.bb.matched, 'did not match'
+
+
+    @staticmethod
+    def _A2bits(address):
+        x = []
+        for i in range(16):
+            bitpos = 15-i
+            if address & 2**bitpos:
+                x.append(1)
+            else:
+                x.append(0)
+        # insert space for ACK bit:
+        x.insert(8,0)
+        return x
+
+    @staticmethod
+    def _D2bits(data):
+        x = []
+        for i in range(8):
+            bitpos = 7-i
+            if data & 2**bitpos:
+                x.append(1)
+            else:
+                x.append(0)
+        return x
+
+
+
+
+############################################################################
+
 class BitBanger (util.DisableNewAttr):
     ''' Husky bit-banger settings. Drives and receives data on a bidirectional
     data line, drives a clock, and triggers at a user-defined time. The data,
     clock, and trigger times are precisely controlled by hardware. This is the
     lowest-level access class, allowing easy control of exactly what you what
     sent on the wire. 
+    TODO: update example
 
     Example::
 
@@ -741,6 +1027,7 @@ class BitBanger (util.DisableNewAttr):
 
     Other classes build protocols on top of this class; see for example:
 
+    * :class:`I2CHelper`
     * :class:`SWDHelper`
     * :class:`OneWireHelper`
 
@@ -771,6 +1058,7 @@ class BitBanger (util.DisableNewAttr):
         self.oa = oaiface
         self._trigger_en = 0
         self._continuous_clk = 0
+        self._inactive_clock = 0
         self._inactive_data = 0
         self._inactive_state = 'high_z'
         self._trigger_when_matched = 0
@@ -787,11 +1075,13 @@ class BitBanger (util.DisableNewAttr):
         self._pattern_hiz = [0]*self.max_length
         self._record_en = [0]*self.max_length
         self._trig_bits = [0]*self.max_length
+        self._clk_en = [1]*self.max_length
         self.splitting_warning = True
         self.last_packet_sent = None
         self.verbose = False
         self.onewire = OneWireHelper(self)
         self.swd = SWDHelper(self)
+        self.i2c = I2CHelper(self)
         self.disable_newattr()
 
     def _dict_repr(self):
@@ -803,6 +1093,7 @@ class BitBanger (util.DisableNewAttr):
         rtn['clk_div'] = self.clk_div
         rtn['drive_edge'] = self.drive_edge
         rtn['check_edge'] = self.check_edge
+        rtn['inactive_clock'] = self.inactive_clock
         rtn['inactive_state'] = self.inactive_state
         rtn['inactive_data'] = self.inactive_data
         rtn['continuous_clk'] = self.continuous_clk
@@ -830,6 +1121,7 @@ class BitBanger (util.DisableNewAttr):
         * :class:`pattern_hiz`
         * :class:`trig_bits`
         * :class:`record_en`
+        * :class:`clk_en`
         """
         return self._max_length
 
@@ -852,6 +1144,10 @@ class BitBanger (util.DisableNewAttr):
         * TIO[1-4]
         * target_pwr
         * nrst
+
+        (These pins cannot be used on Husky for a purely technical reason: the
+        Husky FPGA’s utilization is so high that it can’t handle the additional
+        routing that would be required to provide these additional options.)
 
         Note that bit-banging behaviour is different when 'target_pwr' or 'nrst' is chosen
         as the data pin:
@@ -902,6 +1198,10 @@ class BitBanger (util.DisableNewAttr):
         On Husky Plus, the following pins on the 20-pin target header can also be used:
 
         * TIO[1-4]
+
+        (These pins cannot be used on Husky for a purely technical reason: the
+        Husky FPGA’s utilization is so high that it can’t handle the additional
+        routing that would be required to provide these additional options.)
 
         The pin chosen via this method overrides assignments to that pin from other modules (i.e.
         :class:`scope.userio <chipwhisperer.capture.scopes.cwhardware.ChipWhispererHuskyMisc.USERIOSettings>`, 
@@ -1001,6 +1301,7 @@ class BitBanger (util.DisableNewAttr):
         raw[1] = (self.continuous_clk << 7) + \
                  (self.inactive_data << 6) + \
                  (inactive_state << 5) + \
+                 (self.inactive_clock << 4) + \
                  (self.trigger_when_matched << 3) + \
                  (self._glitch_enabled << 2) + \
                  (drive << 1) + \
@@ -1015,11 +1316,11 @@ class BitBanger (util.DisableNewAttr):
 
     def _push_pattern_data(self):
         bb_data = []
-        if not (len(self.pattern_data) == len(self.pattern_hiz) == len(self.pattern_en) == len(self.record_en) == len(self.trig_bits)):
+        if not (len(self.pattern_data) == len(self.pattern_hiz) == len(self.pattern_en) == len(self.record_en) == len(self.trig_bits) == len(self.clk_en)):
             scope_logger.warning('Unequal lengths.')
 
-        for a,b,c,d,e in zip(self.pattern_data, self.pattern_hiz, self.pattern_en, self.trig_bits, self.record_en):
-            bb_data.append(a + (b<<1) + (c<<2) + (d<<3) + (e<<4))
+        for a,b,c,d,e,f in zip(self.pattern_data, self.pattern_hiz, self.pattern_en, self.trig_bits, self.record_en, self.clk_en):
+            bb_data.append(a + (b<<1) + (c<<2) + (d<<3) + (e<<4) + (f<<5))
         #self.oa.sendMessage(CODE_WRITE, "BB_TRIG_DATA", bb_data)
         # Note: writing a 512-element bb_data fails! So break it up into 256-element chunks:
         chunk_size = 256
@@ -1036,13 +1337,10 @@ class BitBanger (util.DisableNewAttr):
         raw = self.oa.sendMessage(CODE_READ, "BB_TRIG_CTRL_STAT", maxResp=1)[0]
         if raw & 2**5:
             scope_logger.error('Internal BB FIFO error (likely underflow)')
-            self.harness.inc_error()
         if raw & 2**6:
             scope_logger.error('Internal BB FIFO underflow error')
-            self.harness.inc_error()
         if raw & 2**7:
             scope_logger.error('Internal BB FIFO overflow error')
-            self.harness.inc_error()
 
 
     def sendpacket(self, packet, trigger_en=True, timeout=1):
@@ -1062,6 +1360,7 @@ class BitBanger (util.DisableNewAttr):
             self.pattern_en = packet.pattern_en
             self.record_en = packet.record_en
             self.trig_bits = packet.trig_bits
+            self.clk_en = packet.clk_en
             self.num_bits = len(self.pattern_data)
             self.trigger_en = trigger_en
 
@@ -1122,6 +1421,10 @@ class BitBanger (util.DisableNewAttr):
     def continuous_clk(self):
         """ Specify whether the clock should run continuously.
         If False, the clock is generated only while the bitbanger is active.
+        What this means exactly depends on the :class:`drive_edge` and
+        :class:`check_edge` settings. If there are more or fewer clocks than
+        you'd like, extend the bit-bang pattern or use :class:`clk_en` to
+        achieve what you're looking for.
         """
         return self._continuous_clk
     @continuous_clk.setter
@@ -1162,6 +1465,34 @@ class BitBanger (util.DisableNewAttr):
             raise ValueError
         self._inactive_state = val
         self._maybe_go(False)
+
+
+    @property 
+    def inactive_clock(self):
+        """ Specify the state of the clock line when this module is inactive
+        and when the clock is disabled via :class:`clk_en`.
+
+        Be careful when setting this to 1 when :class:`continuous_clk` is 0 as
+        the resulting behaviour may not be what you expect. In particular:
+
+        * the first rising clock edge won't be seen; it's effectively masked because the clock was already high;
+        * there will be an "extra" rising clock edge at the end of the bit-bang pattern as the clock returns to its inactive state.
+
+        Moreover, behaviour when this is set to 1 and :class:`clk_en` is disabled
+        for clock cycle x results in holding the clock high for clock cycle x-1 (so
+        that there is no rising clock edge on clock cycle x). TODO: check for accuracy
+
+        If this is not what you want, simply adjust other bit-bang parameters as needed.
+
+        Args:
+            val (int): 0 or 1.
+        """
+        return self._inactive_clock
+    @inactive_clock.setter
+    def inactive_clock(self, val):
+        self._inactive_clock = val
+        self._maybe_go(False)
+
 
     @property 
     def trigger_when_matched(self):
@@ -1213,6 +1544,7 @@ class BitBanger (util.DisableNewAttr):
     @property 
     def drive_edge(self):
         """ Selects which clock edge of the generated clock is used to drive out data.
+        TODO: update
 
         Args:
             edge (str): 'rising' or 'falling'.
@@ -1247,18 +1579,19 @@ class BitBanger (util.DisableNewAttr):
 
     @property 
     def clk_div(self):
-        """ Specify the clock divider for the generated clock and for defining the length of
-        the time slots for :class:`pattern_data` and its associated properties. Must be even.
+        """ Specify the clock divider for the generated clock and for defining
+        the length of the time slots for :class:`pattern_data` and its
+        associated properties. Must be at least 8, less than 2**16, and a multiple of 4.
         The source clock is the ADC sampling clock.
 
         Args:
-            val (int): clock divider. Must be even and < 2**16.
+            val (int): clock divider.
 
         """
         return self._clk_div
     @clk_div.setter
     def clk_div(self, val):
-        if val not in range(2, 2**16, 2):
+        if val not in range(8, 2**16, 4):
             raise ValueError
         self._clk_div = val
         self._maybe_go(False)
@@ -1313,6 +1646,27 @@ class BitBanger (util.DisableNewAttr):
     def pattern_en(self, val):
         self._check_length(val)
         self._pattern_en = val
+
+
+    @property
+    def clk_en(self):
+        """ Bit-bang pattern clock enable.
+        Allows the clock to be disabled on select clock cycles. When the clock
+        is disabled, it is driven to :class:`inactive_clock`. While this seems
+        simple, there can be unexpected aspects; see :class:`inactive_clock`.
+        TODO: anything else to add?
+        Maximum length: :class:`max_length`.
+
+        Args:
+            val (list): list of binary values.
+
+        """
+        return self._clk_en
+    @clk_en.setter
+    def clk_en(self, val):
+        self._check_length(val)
+        self._clk_en = val
+
 
     @property
     def pattern_hiz(self):
@@ -1377,28 +1731,32 @@ class BitBanger (util.DisableNewAttr):
 
 
 
-    def recorded_data(self, nbytes=8, return_word=True):
+    def recorded_data(self, nbytes=8, return_word=True, swap=True):
         """ Returns the data recorded by the last :class:`go()` event. The most significant bit is the last bit recorded.
 
         Args:
             nbytes (int): number of bytes to return
             return_word (bool): whether to return the result as a list of 8-bit values or a single larger integer.
+            swap (bool): fixes bit ordering for SWD and 1-wire
 
         """
         if nbytes > self.max_record*8:
             scope_logger.error('Max number of recorded bytes is %d' % self.max_record*8)
-        raw = self.oa.sendMessage(CODE_READ, "BB_TRIG_DATA", maxResp=nbytes)
-        final = []
-        for b in raw:
-            # swap nibbles *and* bit order:
-            fixed = 0
-            for bit in range(8):
-                if b & 2**bit:
-                    fixed += 2**(7-bit)
-            lo = fixed & 0x0F
-            hi = fixed & 0xF0
-            bswap = (hi >> 4) + (lo << 4)
-            final.append(fixed)
+        raw = list(self.oa.sendMessage(CODE_READ, "BB_TRIG_DATA", maxResp=nbytes))
+        if swap:
+            final = []
+            for b in raw:
+                # swap nibbles *and* bit order:
+                fixed = 0
+                for bit in range(8):
+                    if b & 2**bit:
+                        fixed += 2**(7-bit)
+                lo = fixed & 0x0F
+                hi = fixed & 0xF0
+                bswap = (hi >> 4) + (lo << 4)
+                final.append(fixed)
+        else:
+            final = raw
         if return_word:
             return int.from_bytes(final, byteorder='big')
         else:
@@ -1413,14 +1771,23 @@ class BitBangerPacket (util.DisableNewAttr):
     '''
     _name = 'Husky Bit-Banger Packet'
 
-    def __init__(self, pattern_data=[], pattern_hiz=[], pattern_en=[], record_en=[], trig_bits=[]):
+    def __init__(self, pattern_data=[], pattern_hiz=[], pattern_en=[], record_en=[], trig_bits=[], clk_en=[]):
         self.pattern_data = pattern_data
         self.pattern_hiz = pattern_hiz
         self.pattern_en = pattern_en
         self.record_en = record_en
         self.trig_bits = trig_bits
-        if not (len(pattern_data) == len(pattern_hiz) == len(pattern_en) == len(record_en) == len(trig_bits)):
+        if clk_en == []:
+            clk_en = [1]*len(pattern_data)
+        self.clk_en = clk_en
+        if not (len(pattern_data) == len(pattern_hiz) == len(pattern_en) == len(record_en) == len(trig_bits) == len(clk_en)):
             scope_logger.warning('Unequal lengths.')
+            scope_logger.warning('pattern_data: %d' % len(pattern_data))
+            scope_logger.warning('pattern_hiz:  %d' % len(pattern_hiz))
+            scope_logger.warning('pattern_en:   %d' % len(pattern_en))
+            scope_logger.warning('record_en:    %d' % len(record_en))
+            scope_logger.warning('trig_bits:    %d' % len(trig_bits))
+            scope_logger.warning('clk_en:       %d' % len(clk_en))
         self.disable_newattr()
 
     def _dict_repr(self):
@@ -1431,6 +1798,7 @@ class BitBangerPacket (util.DisableNewAttr):
         rtn['pattern_en'] = self.pattern_en
         rtn['record_en'] = self.record_en
         rtn['trig_bits'] = self.trig_bits
+        rtn['clk_en'] = self.clk_en
         return rtn
 
     def __repr__(self):
@@ -1453,5 +1821,6 @@ class BitBangerPacket (util.DisableNewAttr):
         self.pattern_en.extend(packet.pattern_en)
         self.record_en.extend(packet.record_en)
         self.trig_bits.extend(packet.trig_bits)
+        self.clk_en.extend(packet.clk_en)
 
 
