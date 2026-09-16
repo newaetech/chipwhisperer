@@ -117,7 +117,11 @@ The USB control power can be toggled on and off with switch SW7, near the USB-C 
 
 The power good outputs are monitored by the microcontroller. If they cycle several times (indicating the device is struggling to maintain power), the device goes into fail-safe mode which shuts off the target power. This will often occur if your source power supply is insufficient, but could also indicate a short (such as an accessory board is shorting out). The failure will be indicated by the "Surge" LED coming on:
 
-![](Images/cw310-restart-power.png){width=300}
+```{image} Images/cw310-restart-power.png
+:alt: 
+:width: 300px
+:align: center
+```
 
 If this happens, double-check the setting of the 5V source switch - be sure you are using the on-board 5V regulator instead of just taking power from the control USB-C port. You can restart the regulators with the "Restart Power" button once you have rectified any latent faults.
 
@@ -164,15 +168,15 @@ Due to the access required to the FPGA top-side when performing certain security
 
 The cross-flow fan is part number `BFB03505HHA-A`, the heatsink mounted fan is part number `MR3010H05B1-RSR`. The cross-flow fan is shown mounted on the board below:
 
-![cross-flow fan](Images/cw310-fan_crossflow.jpeg "Cross-flow fan allows probing of the die backside exposed with FBG package."){width=75%}
-
-The fan PWM speed is automatically controlled, and can cycle on/off which you may find annoying. If you prefer to have a constant fan speed, you can specify a "minimum pwm" speed using this python command:
-
-```python
-TODO
+```{image} Images/cw310-fan_crossflow.jpeg
+:alt: Cross-flow fan allows probing of the die backside exposed with FBG package.
+:width: 75%
+:align: center
 ```
 
-Note the same PWM is sent to both the cross-flow and heatsink fan. The heatsink mounted fan responds differently than the cross-flow fan, so you may find it necessary to change the minimum speed value depending on the fan you have mounted. If you want to add a different fan
+The fan PWM speed is automatically controlled, and can cycle on/off.
+
+If you want to add a different fan:
 
 * Housing: GHR-04V-S
 * Contacts: SSHL-002T-P0.2
@@ -195,7 +199,11 @@ Some fans will have a PWM input as well - in which case you can connect the PWM 
 
 The board is designed to work with `960-29-18-D-AB-0` to which a 9mil thick piece of thermal pad is added to reduce risk of damage on the chip. For this heatsink, fan part number `MR3010H05B1-RSR` can be mounted on it using M3 bolts. You can even choose to mount both fans at once, for example from the topside:
 
-![dual fans](Images/cw310-dualfan.jpeg "All that's missing is RGB leds to make those case modders jealous."){width=75%}
+```{image} Images/cw310-dualfan.jpeg
+:alt: All that's missing is RGB leds to make those case modders jealous.
+:width: 75%
+:align: center
+```
 
 However one of the most effective uses of the dual fan setup is when the cross-flow fan is mounted on the front-side, and the heatsink fan is mounted on the backside of the PCB. This allows access to the die with the most amount of cooling still possible.
 
@@ -207,11 +215,19 @@ The two LEDs indicate the thermal status:
 2. Red solid = temperature is 55C to 65C.
 3. Red blinking = temperature is above 65C and FPGA power was shut off.
 
-![Hot or Not](Images/cw310-hot-not.png "LEDs indicate the thermal state"){width=50%}
+```{image} Images/cw310-hot-not.png 
+:alt: LEDs indicate the thermal state.
+:width: 50%
+:align: center
+```
 
 Once the temperature is above 65C the power is immediately cut to the target device. The die temperature is still reflected in the LED state, but you will need to press the `Restart Power` button to bring the target power back (also can be done via a API call). If the target device temperature is above 55C, the power will not be turned onto the device.
 
-![](Images/cw310-restart-power.png){width=350}
+```{image} Images/cw310-restart-power.png
+:alt: 
+:width: 350px
+:align: center
+```
 
 You can read the FPGA temperature from the Python API as well.
 
@@ -417,7 +433,11 @@ See the DDR3 setup details for more information.
 
 Two expansion headers are provided, which use standard 0.05" (1.27mm) pitch headers. These allow mating of either daughter boards or cables as required. These headers are shown here:
 
-![header photo](Images/cw310-userheaders.jpeg "CW310 USER-IO Headers on lower right of board."){width=300}
+```{image} Images/cw310-userheaders.jpeg 
+:alt: CW310 USER-IO Headers on lower right of board.
+:width: 300px
+:align: center
+```
 
 Each header can be set to a separate I/O level, as each header routes to a different FPGA bank.
 

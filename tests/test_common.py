@@ -174,21 +174,24 @@ def armed(scope):
 # these are essentially test_X functions common to multiple test scripts:
 #########################################################################
 
-def common_fpga_version_check(scope):
+def correct_fpga_version(scope):
     if scope._is_husky_plus:
-        assert scope.fpga_buildtime == '2/3/2026, 18:06'
+        return scope.fpga_buildtime == '8/19/2026, 10:42'
     else:
-        assert scope.fpga_buildtime == '2/2/2026, 15:14'
+        return scope.fpga_buildtime == '8/19/2026, 12:55'
+
+def common_fpga_version_check(scope):
+    assert correct_fpga_version(scope)
 
 def common_fw_version_check(scope):
     if scope._is_husky_plus:
         assert scope.fw_version['major'] == 1
-        assert scope.fw_version['minor'] == 0
-        assert scope.sam_build_date == '12:22:29 Sep 16 2024'
+        assert scope.fw_version['minor'] == 2
+        assert scope.sam_build_date == '09:22:46 May 26 2026'
     else:
         assert scope.fw_version['major'] == 1
-        assert scope.fw_version['minor'] == 5
-        assert scope.sam_build_date == '22:39:17 Nov 14 2024'
+        assert scope.fw_version['minor'] == 7
+        assert scope.sam_build_date == '09:22:43 May 26 2026'
 
 def common_xadc_check(scope, verbose=False, error_msg=''):
     failed = False

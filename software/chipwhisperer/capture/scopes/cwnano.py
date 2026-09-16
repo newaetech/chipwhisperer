@@ -576,6 +576,8 @@ class CWNano(util.DisableNewAttr, ChipWhispererCommonInterface):
 
         self.connectStatus = False
         self._lasttrace_int = None
+        self._is_husky = None
+        self._is_husky_plus = None
         self.disable_newattr()
 
     def _getFWPy(self):

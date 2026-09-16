@@ -46,6 +46,7 @@ parts:
   - file: Starter Kits/index
     sections:
       - file: Starter Kits/ChipWhisperer-Husky
+      - file: Starter Kits/ChipWhisperer-Husky-Plus
       - file: Starter Kits/ChipWhisperer-Lite
       - file: Starter Kits/ChipWhisperer-Nano
       - file: Starter Kits/ChipWhisperer-Pro

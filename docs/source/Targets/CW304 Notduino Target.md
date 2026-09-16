@@ -5,7 +5,7 @@ This includes interfacing to the CW-Lite (CW1173) and related platforms.
 
 ![](Images/Notduino.jpg)
 
-[Datasheet](http://media.newae.com/datasheets/NAE-CWLITE-NDKIT_datasheet.pdf)
+[Datasheet](https://media.newae.com/datasheets/NAE-CWLITE-NDKIT_datasheet.pdf)
 
 ---
 
@@ -18,10 +18,8 @@ This includes interfacing to the CW-Lite (CW1173) and related platforms.
 | Programming | ISP |
 | Hardware Crypto | No |
 | Availability | PCB + Components (Unsoldered) |
-| Status | Released |
+| Status | Discontinued |
 | Shunt | 51Ω |
-
-Available from [Mouser](https://www.mouser.com/ProductDetail/NewAE/NAE-CWLITE-NDKIT-01?qs=PzGy0jfpSMtlYfju9VNOXw%3D%3D) and the [NewAE Store](https://store.newae.com/notduino-kit/)
 
 ### Feature Set
 
@@ -244,7 +242,7 @@ instructions for the assembly process:
 
 #### **Assembly Video**
 
-You can see a [Video](http://www.youtube.com/watch?v=zCmWzpyEYe8&hd=1)
+You can see a [Video](https://www.youtube.com/watch?v=zCmWzpyEYe8&hd=1)
 of the assembly process of YouTube:
 
 ![Cw304asm.png](Images/Cw304asm.png "Cw304asm.png")

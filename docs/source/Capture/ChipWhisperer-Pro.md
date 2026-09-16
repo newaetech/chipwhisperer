@@ -7,9 +7,10 @@ including a larger sample buffer, streaming-mode captures, additional
 trigger methods, and a touchscreen interface. These features make it a
 high-end device suitable for laboratory use.
 
-![CWP.png](Images/CWP.png "ChipWhisperer-Pro")
+**The CW1200 is discontinued**; consider the [ChipWhisperer-Husky](ChipWhisperer-Husky.md) instead.
+Read about the differences between Husky and the CW1200 [here](overview.md#chipwhisperer-husky-plus-features-over-chipwhisperer-pro).
 
-Available in the [ChipWhisperer-Pro Starter Kit](../Starter%20Kits/ChipWhisperer-Pro.md)
+![CWP.png](Images/CWP.png "ChipWhisperer-Pro")
 
 [Datasheet](https://media.newae.com/datasheets/NAE-CW1200_datasheet.pdf)
 

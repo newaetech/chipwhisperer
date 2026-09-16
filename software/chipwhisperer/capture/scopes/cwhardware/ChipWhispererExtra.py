@@ -106,26 +106,26 @@ class CWExtraSettings:
             TIO_MODE_HIGHZ,
             TIO_MODE_STX,
             TIO_MODE_SRX,
-            TIO_MODE_USIO,
-            TIO_MODE_USII,
+            #TIO_MODE_USIO,
+            #TIO_MODE_USII,
             TIO_MODE_GPIO_LOW,
             TIO_MODE_GPIO_HIGH,
         ), ( # GPIO_PIN_TIO2
             TIO_MODE_HIGHZ,
             TIO_MODE_STX,
             TIO_MODE_SRX,
-            TIO_MODE_USIO,
-            TIO_MODE_USII,
+            #TIO_MODE_USIO,
+            #TIO_MODE_USII,
             TIO_MODE_GPIO_LOW,
             TIO_MODE_GPIO_HIGH,
         ), ( # GPIO_PIN_TIO3
             TIO_MODE_HIGHZ,
             TIO_MODE_STX,
             TIO_MODE_SRX,
-            TIO_MODE_STXRX,
-            TIO_MODE_USIO,
-            TIO_MODE_USII,
-            TIO_MODE_USINOUT,
+            #TIO_MODE_STXRX,
+            #TIO_MODE_USIO,
+            #TIO_MODE_USII,
+            #TIO_MODE_USINOUT,
             TIO_MODE_GPIO_LOW,
             TIO_MODE_GPIO_HIGH,
         ), ( # GPIO_PIN_TIO4
@@ -905,7 +905,6 @@ class GPIOSettings(util.DisableNewAttr):
 
         * "serial_rx": UART input
         * "serial_tx": UART output
-        * "serial_tx_rx": UART 1-wire I/O (for smartcards)
         * "high_z" / None: High impedance input
         * "gpio_low" / False: Driven output: logic 0
         * "gpio_high" / True: Driven output: logic 1
@@ -2239,16 +2238,16 @@ class HuskyTrigger(TriggerSettings):
         the threshold do not each generate a trigger; cannot be used in
         conjunction with segmented capture).
         """
-        offset = self.cwe.oa.offset
+        fp_offset = self.cwe.oa.fp_offset
         raw = int.from_bytes(self.cwe.oa.sendMessage(CODE_READ, "ADC_TRIGGER_LEVEL", Validate=False, maxResp=2), byteorder='little')
-        return raw / 2**12 - offset
+        return raw / 2**12 - fp_offset
 
     @level.setter
     def level(self, val):
         if not (-0.5 <= val <= 0.5):
             raise ValueError("Out of range: [-0.5, 0.5]")
-        offset = self.cwe.oa.offset
-        val = int((val + offset) * 2**12)
+        fp_offset = self.cwe.oa.fp_offset
+        val = int((val + fp_offset) * 2**12)
         self.cwe.oa.sendMessage(CODE_WRITE, "ADC_TRIGGER_LEVEL", list(int.to_bytes(val, length=2, byteorder='little')))
 
     @property
@@ -2258,9 +2257,9 @@ class HuskyTrigger(TriggerSettings):
         Sets the number of rising+falling edges on :code:`scope.trigger.triggers` that
         need to be seen for a trigger to be issued.
 
-        Edges are sampled by the ADC sampling clock (:code:`scope.clock.adc_freq`), so
-        ensure that scope.trigger.triggers does not change faster than what can
-        be seen by that clock.
+        Edges are sampled by the ADC sampling clock (:code:`scope.clock.adc_freq`);
+        consecutive edges must be at least 1/:code:`scope.clock.adc_freq` seconds apart in order to
+        be "seen" (and to be safe, twice that).
 
         Args:
             val (int): number of edges, non-zero 16-bit integer.

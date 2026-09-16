@@ -702,6 +702,18 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             self.sc._setReset(True)
             self.sc._setReset(False)
 
+        if not self.scopetype.ser.fw_up2date:
+            # Improvements to the reliability of the SAM3U - FPGA communication involved updates
+            # to both the SAM3U firmware and the FPGA bitfile. The proper bitfile is always used
+            # without any intervention required from the user, but the SAM3U FW requires the user
+            # to manually perform an update.
+            # In the past, a warning was issued prompting the user to update. Now we take a more
+            # forceful approach and prevent the user from using the scope object until the upgrade
+            # is done.
+            scope_logger.error('Your firmware is out of date and incompatible with this version of ChipWhisperer. ' +
+                               'Run scope.upgrade_firmware(); scope.dis(), and then re-connect.')
+            return True
+
         self.adc = TriggerSettings(self.sc)
         self.gain = GainSettings(self.sc, self.adc)
 
@@ -747,8 +759,8 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
                     self.UARTTrigger = UARTTrigger(scope=self, huskyplus=self._is_husky_plus, trace_reg_select=3, main_reg_select=2)
                 except Exception as e:
                     scope_logger.warning("TraceWhisperer unavailable " + str(e))
-            self.userio = USERIOSettings(self.sc, self.trace)
             self.bitbanger = BitBanger(self.sc)
+            self.userio = USERIOSettings(self.sc, self.trace, self.bitbanger)
             self.SAD = ChipWhispererSAD.HuskySAD(self.sc)
             self.errors = HuskyErrors(self.sc, self.XADC, self.adc, self.clock, self.trace)
             self._is_husky = True
@@ -839,10 +851,9 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
                 scope_logger.error('Chosen trigger module is disabled due to XADC errors (%s); clear them before proceeding.' % self.XADC.status)
         # with DelayedKeyboardInterrupt():
         try:
+            self.sc.arm(False)
             self.advancedSettings.armPreScope()
-
-            self.sc.arm()
-
+            self.sc.arm(True)
             self.advancedSettings.armPostScope()
 
             # For Husky, scope.adc parameters must be cached before startCaptureThread turns on fast read mode,
@@ -893,17 +904,14 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             Added poll_done parameter for Husky
 
         """
-        if self._is_husky and self.adc.segments > 1 and self.adc.presamples and self.adc.samples % 3:
-            raise ValueError('When using segments with presamples, the number of samples per segment (scope.adc.samples) must be a multiple of 3.')
+        if self._is_husky and (self.adc.decimate > 1) and (self.adc.presamples):
+            raise ValueError('When decimate (%d) is used, presamples cannot be used (think about it: multiple captures would not line up well).' % self.adc.decimate)
 
-        if self._is_husky and (self.adc.decimate > 1) and (self.adc.presamples or self.adc.segments > 1):
-            raise ValueError('When decimate (%d) is used, presamples or segments cannot be used.' % self.adc.decimate)
+        if self._is_husky and (self.adc.segments > 1) and (self.adc.oa._bytes_to_read > self.adc.oa.hwTotalSegmentBytes) and (not self.adc.stream_mode):
+            raise ValueError('scope.adc parameters require more bytes (%d) than there is space for (%d) (note these values depend on scope.adc settings). Reduce scope.adc properties or use stream mode.' % (self.adc.oa._bytes_to_read, self.adc.oa.hwTotalSegmentBytes))
 
-        if self._is_husky and (self.adc.segments > 1) and (self.adc.samples * self.adc.segments > self.adc.oa.hwMaxSegmentSamples) and (not self.adc.stream_mode):
-            raise ValueError('When using segments and stream mode is disabled, the maximum total number of samples is %d.' % self.adc.oa.hwMaxSegmentSamples)
-
-        if self._is_husky and (self.adc.samples - self.adc.presamples < 2):
-            raise ValueError('The number of samples (%d) must be at least 2 more than the number of presamples (%d).' % (self.adc.samples, self.adc.presamples))
+        if self.adc.samples < self.adc.presamples:
+            raise ValueError('The number of presamples (%d) cannot be greater than the number of samples (%d).' % (self.adc.presamples, self.adc.samples))
 
         if self.adc.stream_mode and (not self._is_husky):
             a = self.sc.capture(None)
@@ -981,9 +989,13 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             return timeout or timeout2
 
     def get_last_trace_segmented(self):
-        """Return last trace assuming it was captued with segmented mode.
+        """Return last trace assuming it was captured with segmented mode.
 
-        NOTE: The length of each returned trace is 1 less sample than requested.
+        For CW-Lite/Pro (fifo_fill_mode="segment"), the trigger occupies one
+        sample slot per segment, so each returned segment is 1 sample shorter
+        than the requested sample count.
+
+        For CW-Husky, segments use the full requested sample count.
 
         Returns:
             2-D numpy array of the last captured traces.
@@ -992,7 +1004,10 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             Added segmented capture (requires custom bitstream)
         """
 
-        seg_len = self.adc.samples-1
+        if self._is_husky:
+            seg_len = self.adc.samples
+        else:
+            seg_len = self.adc.samples - 1
         num_seg = int(len(self.data_points) / seg_len)
 
         return np.reshape(self.data_points[:num_seg*seg_len], (num_seg, seg_len))
@@ -1076,6 +1091,13 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
 
         """
         return self.sc.sendMessage(CODE_WRITE, addr, listofbytes)
+
+    def _write_stats(self):
+        raw = self.fpga_reg_read('REG_SAM3U_WR_DEBUG', 4)
+        last_addr = raw[0]
+        last_wdata = raw[1]
+        count = raw[2] + (raw[3] << 8)
+        return {'last_addr':last_addr, 'last_wdata':last_wdata, 'count':count}
 
     def __enter__(self):
         return self

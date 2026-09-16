@@ -7,16 +7,17 @@ oscilloscope) or with ChipWhisperer-Capture hardware.
 
 ![](Images/CW308T_Wiki.jpg)
 
-[Datasheet](http://media.newae.com/datasheets/NAE-CW308-datasheet.pdf)
+[Datasheet](https://media.newae.com/datasheets/NAE-CW308-datasheet.pdf)
 
 ## Specifications
 
 Varies by target board. See `UFO Targets` for target documentation
 
-Available in the [Level 1 Starter Kit](../Starter%20Kits/SCAPACK-L1.md), the [Level 2 Starter Kit](../Starter%20Kits/SCAPACK-L2.md), and the [ChipWhisperer-Pro Starter Kit](../Starter%20Kits/SCAPACK-L2.md).
+Available in the [Level 1 Starter Kit](../Starter%20Kits/SCAPACK-L1.md) and the [Level 2 Starter Kit](../Starter%20Kits/SCAPACK-L2.md). (Was also
+included in the now-discontinued [Level 3 Pro Starter Kit](../Starter%20Kits/ChipWhisperer-Pro.md).)
 
 Also available standalone with a [CW308T-STM32F3](../chipwhisperer-target-cw308t/CW308T_STM32F/README.md) target and
-a [CW308T-XMEGA](../chipwhisperer-target-cw308t/CW308T_XMEGA/README.md) target from the [NewAE Store](https://store.newae.com/cw308-ufo-board/)
+a [CW308T-XMEGA](../chipwhisperer-target-cw308t/CW308T_XMEGA/README.md) target from the [NewAE Store](https://www.newae.com/product-page/cw308-ufo-board).
 
 ## Supported Targets
 
@@ -351,8 +352,7 @@ drop in the shunt and/or filter.
 
 The CW308 can be used stand-alone. This is accomplished by providing an
 external DC power supply, and using a SMA-BNC to connect the voltage
-measurement to an oscilloscope. For more details, see TODO (old wiki link:
-[](https://wiki.newae.com/CW308T:_Stand-Alone_Simple_Serial_Example_(AVR_or_XMEGA)))
+measurement to an oscilloscope.
 
 If using a simple-serial target (such as the XMEGA or AVR), you can
 connect a USB-Serial device to provide communication.

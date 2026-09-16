@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2025, NewAE Technology Inc
+# Copyright (c) 2025-2026, NewAE Technology Inc
 # All rights reserved.
 #
 # Find this and more at newae.com - this file is part of the chipwhisperer
@@ -27,6 +27,7 @@ import pytest
 def pytest_addoption(parser):
     parser.addoption("--reps", action="store", default=1, help="Number of times to run some of the tests.")
     parser.addoption("--fulltest", action="store_true", default=False, help="Run all tests (slow)")
+    parser.addoption("--deep_reg_test", action="store_true", default=False, help="Run extra suite of register R/W tests (and use -k reg to run only those tests).")
     parser.addoption("--stress", action="store_true", default=False, help="Run more iterations of temp/voltage stress.")
     parser.addoption("--swo_trace", action="store_true", default=False, help="Enable trace tests.")
     parser.addoption("--xadc", action="store_true", default=False, help="Report XADC temp and status after each test")
@@ -37,6 +38,10 @@ def pytest_addoption(parser):
 @pytest.fixture
 def fulltest(request):
     return request.config.getoption("--fulltest")
+
+@pytest.fixture
+def deep_reg_test(request):
+    return request.config.getoption("--deep_reg_test")
 
 @pytest.fixture
 def stress(request):

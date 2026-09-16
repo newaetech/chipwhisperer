@@ -725,6 +725,7 @@ class NAEUSB:
         self.usbtx = NAEUSB_Backend()
         self.usbserializer = self.usbtx
         self._fw_ver = None
+        self.fw_up2date = True
         self.streamModeCaptureStream = None
 
     def get_possible_devices(self, idProduct : List[int]) -> usb1.USBDevice:
@@ -823,8 +824,9 @@ class NAEUSB:
 
         latest = fwver >= fw_latest
         if not latest:
-            naeusb_logger.warning('Your firmware ({}) is outdated - latest is {}'.format(fwver, fw_latest) +
-                             ' See https://chipwhisperer.readthedocs.io/en/latest/firmware.html for more information')
+            self.fw_up2date = False
+            naeusb_logger.error('Your firmware ({}) is outdated - latest is {}'.format(fwver, fw_latest) +
+                                ' See https://chipwhisperer.readthedocs.io/en/latest/firmware.html for more information')
 
         return self.usbtx.pid
 

@@ -550,10 +550,9 @@ Users who wish to add, remove, or change this capacitor do so at their own risk 
 Due to variances in production runs and parts, we have found that a small
 adjustment to the A/D converter clock alignment is required for proper sampling
 at very high clock frequencies (above 200 MHz) on the **Husky Plus**. If you are
-using an up-to-date "develop" branch of ChipWhisperer software, you are all
-set.
+on the "develop" branch of ChipWhisperer software, we recommend using [this commit](https://github.com/newaetech/chipwhisperer/commit/7b3206b0da308bee8ab603ddd8e58bf2725dd85b).
 
-However, if you are using the 6.0 release, you will need to apply a small manual update:
+Alternatively, if you prefer to use the 6.0 release, you will need to apply a small manual update:
 1. Download [the patch file](v6.0.0b_ADC_sampling_fix.patch) and save it to the root of your ChipWhisperer software installation.
 2. Run `git apply v6.0.0b_ADC_sampling_fix.patch`.
 
@@ -577,4 +576,7 @@ Available at: [https://raw.githubusercontent.com/newaetech/chipwhisperer-husky/m
 Firmware for the Husky can be found at [https://github.com/newaetech/chipwhisperer-husky](https://github.com/newaetech/chipwhisperer-husky). The ChipWhisperer-Husky SAM3U firmware is in the `ChipWhisperer-Husky`,
 while the FPGA firmware is in the `chipwhisperer-husky-fpga` submodule.
 
+## FPGA Documentation
+
+For documentation specific to the FPGA source code, go to <https://chipwhisperer-husky-fpga.readthedocs.io>
 

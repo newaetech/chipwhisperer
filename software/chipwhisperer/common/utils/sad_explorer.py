@@ -53,6 +53,7 @@ import itertools
 from chipwhisperer.common.utils import util
 from chipwhisperer.logging import *
 import chipwhisperer as cw
+import importlib.util
 
 
 class SADExplorer(util.DisableNewAttr):
@@ -68,8 +69,12 @@ class SADExplorer(util.DisableNewAttr):
 
     def __init__(self, scope, target, reftrace, refstart, max_segments=1, width=2000, height=600, plot_tools='pan, box_zoom, hover, reset, save', capture_function=None):
         super().__init__()
+        # We don't directly call anything from jupyter_bokeh, but the interactive plotting
+        # that we do here will silently fail if this package is not installed:
+        if importlib.util.find_spec('jupyter_bokeh') is None:
+            raise ImportError("The jupyter_bokeh package is required for TraceWhispererExplorer. Try installing chipwhisperer-jupyter's requirements.txt.")
         if inferno is None:
-            raise ImportError("Bokeh and ipywidgets are required for the SADExplorer. Try installing chipwhisperer-jupyter's requirements.txt.")
+            raise ImportError("The bokeh and ipywidgets packages are required for SADExplorer. Try installing chipwhisperer-jupyter's requirements.txt.")
         if type(reftrace) != np.ndarray or reftrace.dtype != np.uint8:
             raise ValueError("wave must be a numpy.ndarray of uint8's; e.g. as obtained from cw.capture_trace(as_int=True) with scope.adc.bits_per_sample=8")
         if scope.adc.bits_per_sample != 8:

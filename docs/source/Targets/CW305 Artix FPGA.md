@@ -12,7 +12,7 @@ and features the standard ChipWhisperer 20-pin/SMA interface.
 
 ![](Images/Artix_Board.jpg)
 
-[Datasheet](http://media.newae.com/datasheets/NAE-CW305_datasheet.pdf)
+[Datasheet](https://media.newae.com/datasheets/NAE-CW305_datasheet.pdf)
 
 ---
 
@@ -43,10 +43,6 @@ USB Control
 * CW305-A35: Available from [Mouser](https://www.mouser.com/ProductDetail/NewAE/NAE-CW305-04-7A35-010-X?qs=r5DSvlrkXmJbAO4dWtDdOA%3D%3D)
 * CW305-A100: Available from [Mouser](https://www.mouser.com/ProductDetail/NewAE/NAE-CW305-04-7A100-010-X?qs=r5DSvlrkXmLRAqM1gSUr%252BQ%3D%3D)
 * CW305-SOCKET: Available from [Mouser](https://www.mouser.com/ProductDetail/NewAE/NAE-CW305-04-SOCKET-010-X?qs=r5DSvlrkXmK5JLCe6RwvZw%3D%3D)
-
-Also available in various configurations from the [NewAE Store](https://store.newae.com/cw305-artix-fpga-target-board/) . The NewAE Store is
-normally updated with available stock, so not all models will be present via the store. The Mouser system will allow backorders so always
-has all items.
 
 ---
 

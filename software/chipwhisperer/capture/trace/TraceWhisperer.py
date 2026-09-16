@@ -104,6 +104,7 @@ class TraceWhisperer(util.DisableNewAttr):
         self._scope = scope
         self._is_husky = False
         self._is_husky_plus = False
+        self._enabled = None
 
         if huskyplus:
             self._is_husky_plus = True
@@ -313,8 +314,11 @@ class TraceWhisperer(util.DisableNewAttr):
         Args:
             enable (bool)
         """
-        raw = self.fpga_read(self.REG_TRACE_EN, 1)[0]
-        if raw == 1:
+        # scope.userio reads this a lot, to the point where it can make things like scope.default_setup()
+        # VERY slow, so we use a cached value instead of reading the register:
+        if self._enabled is None:
+            self._enabled = self.fpga_read(self.REG_TRACE_EN, 1)[0]
+        if self._enabled:
             return True
         else:
             return False
@@ -333,6 +337,7 @@ class TraceWhisperer(util.DisableNewAttr):
 
     def _set_enabled(self, enable):
         self.fpga_write(self.REG_TRACE_EN, [enable])
+        self._enabled = enable
 
     @property 
     def target(self):
@@ -1480,6 +1485,9 @@ class clock(util.DisableNewAttr):
         else:
             raise ValueError('Invalid source (target_clock/trace_clock/usb_clock)')
         self.main.fpga_write(self.main.REG_FE_CLOCK_SEL, [val])
+        # wait for clock counters to settle in case user wants to do something with
+        # this clock immediately after calling this method
+        time.sleep(0.2)
 
     @property
     def trace_clock_shift_enable(self):
@@ -2234,7 +2242,7 @@ class UARTTrigger(TraceWhisperer):
         if found:
             self.clock.swo_clock_freq = sample_freq
             if not self.clock.swo_clock_locked:
-                tracewhisperer_logger.error("SWO clock not locked!")
+                tracewhisperer_logger.error("SWO clock not locked! Ensure clock source is correct and alive.")
             self.swo_div = div
             self._baud = actual_baud
             tracewhisperer_logger.info("Setting baudrate to %d (freq_mul=%d)" % (actual_baud, freq_mul))

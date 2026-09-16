@@ -176,24 +176,49 @@ class SimpleSerial2(TargetTemplate):
 
         Can currently get into an infinite loop, don't know why
         """
+        orig = bytearray(buf)
         if len(buf) == 0:
-            return 0x00
+            return 0x00 #if there's no buffer, return
+
+        if buf[0] == 0x00:
+            target_logger.error("Cannot unstuff buffer beginning with 0x00! buf = {}".format(buf))
+            return
+
+        # find first zero
+        # n is total position in loop
         n = buf[0]
         buf[0] = 0
+
+        # get length of buffer minus delim byte to make sure we don't go past buffer
         l = len(buf) - 1
         sentinel = 0
         while n < l:
             target_logger.debug("Unstuff position {}".format(n))
+
+            # tmp is location of next byte
             tmp = buf[n]
+
+            # set byte we got length from back to 0
             buf[n] = SS_V2_FRAME_BYTE
+
+            # add next pointer and n together to get next 0 location
             n += tmp
+
+            if tmp == 0x00 and n < l:
+                target_logger.error(f"Next unstuff is cur_pos, but haven't reached end of buffer. Likely corruption!\
+                                    orig_buf = {orig}, buf = {buf}, pos = {n}, len = {l}")
+                return
+
+            # if n and tmp are both zero, it means we're at the beginning of the data and there is no next byte
             if (n == 0) and (tmp == 0):
                 target_logger.error("Infinite loop in unstuff data")
                 target_logger.error(buf)
                 return
+            
             sentinel += 1
             if sentinel > len(buf):
-                target_logger.error(f"{buf}, {n}, {tmp}")
+                target_logger.error(f"Attempted number of unstuffs is larger than buffer, likely buffer is corrupted! \
+                                    orig_buf = {orig}, buf = {buf}, pos = {n}, next = {tmp + n}")
                 return
         if n > l:
             return n

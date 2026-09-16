@@ -7,11 +7,11 @@ including a larger sample buffer, streaming-mode captures, additional
 trigger methods, and a touchscreen interface. These features make it a
 high-end device suitable for laboratory use.
 
+**The CW1200 is discontinued**; consider the [ChipWhisperer-Husky starter kit](ChipWhisperer-Husky.md) instead.
+
 ![lvl3-starter.jpg](Images/lvl3-starter.jpg)
 
 ![CWP.png](Images/CWP.png "ChipWhisperer-Pro")
-
-Available from [Mouser](https://www.mouser.com/ProductDetail/NewAE/NAE-CW1200-KIT?qs=r5DSvlrkXmLyU5eeg845BA%3D%3D)
 
 [Datasheet](https://media.newae.com/datasheets/NAE-CW1200_datasheet.pdf)
 
