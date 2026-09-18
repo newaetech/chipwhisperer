@@ -765,11 +765,12 @@ class I2CHelper(util.DisableNewAttr):
         """
         abits = self._A2bits(address)
         #              start dev addr       W  ACK  address byte 1..ACK..byte 2           ACK   START  dev addr       R  ACK  read data       NAK  STOP
-        pattern_data = [0,0, 0,0,0,0,0,0,0, 0, 0,   0,0,0,0,0,0,0,0, 0, 0,0,0,0,0,0,0,0,  0,    1,0,   1,0,1,0,0,0,0, 1,  0,  0,0,0,0,0,0,0,0, 1,  0,1]
+        pattern_data = [0,0, 0,0,0,0,0,0,0, 0, 0,   0,0,0,0,0,0,0,0, 0, 0,0,0,0,0,0,0,0,  0,    1,0,   0,0,0,0,0,0,0, 1,  0,  0,0,0,0,0,0,0,0, 1,  0,1]
         hiz          = [0,0, 0,0,0,0,0,0,0, 0, 1,   0,0,0,0,0,0,0,0, 1, 0,0,0,0,0,0,0,0,  1,    0,0,   0,0,0,0,0,0,0, 0,  1,  1,1,1,1,1,1,1,1, 0,  0,0]
         clk_en       = [0,0, 1,1,1,1,1,1,1, 1, 1,   1,1,1,1,1,1,1,1, 1, 1,1,1,1,1,1,1,1,  1,    1,0,   1,1,1,1,1,1,1, 1,  1,  1,1,1,1,1,1,1,1, 1,  1,0]
         
         pattern_data[2:9] = self._dev_addr_list
+        pattern_data[31:38] = self._dev_addr_list
         pattern_data[11:11+len(abits)] = abits
         pattern_en   = [1]*len(pattern_data)
         trigger_en   = [0]*len(pattern_data)
@@ -836,10 +837,11 @@ class I2CHelper(util.DisableNewAttr):
             raise ValueError('Max number of bytes that can be read is %d' % max_reads)
         abits = self._A2bits(address)
         #              start dev addr       W  ACK  address byte 1..ACK..byte 2           ACK   START  dev addr       R
-        pattern_data = [0,0, 0,0,0,0,0,0,0, 0, 0,   0,0,0,0,0,0,0,0, 0, 0,0,0,0,0,0,0,0,  0,    1,0,   1,0,1,0,0,0,0, 1]
+        pattern_data = [0,0, 0,0,0,0,0,0,0, 0, 0,   0,0,0,0,0,0,0,0, 0, 0,0,0,0,0,0,0,0,  0,    1,0,   0,0,0,0,0,0,0, 1]
         hiz          = [0,0, 0,0,0,0,0,0,0, 0, 1,   0,0,0,0,0,0,0,0, 1, 0,0,0,0,0,0,0,0,  1,    0,0,   0,0,0,0,0,0,0, 0]
         clk_en       = [0,0, 1,1,1,1,1,1,1, 1, 1,   1,1,1,1,1,1,1,1, 1, 1,1,1,1,1,1,1,1,  1,    1,0,   1,1,1,1,1,1,1, 1]
         pattern_data[2:9] = self._dev_addr_list
+        pattern_data[31:38] = self._dev_addr_list
         pattern_data[11:11+len(abits)] = abits
         pattern_en   = [1]*len(pattern_data)
         trigger_en   = [0]*len(pattern_data)
