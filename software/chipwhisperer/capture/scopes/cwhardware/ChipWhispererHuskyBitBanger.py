@@ -991,7 +991,6 @@ class BitBanger (util.DisableNewAttr):
     clock, and trigger times are precisely controlled by hardware. This is the
     lowest-level access class, allowing easy control of exactly what you what
     sent on the wire. 
-    TODO: update example
 
     Example::
 
@@ -1007,6 +1006,7 @@ class BitBanger (util.DisableNewAttr):
         scope.bitbanger.num_bits = 5
 
         scope.bitbanger.pattern_data = [0, 1, 0, 1, 0]
+        scope.bitbanger.clk_en       = [1, 0, 1, 1, 1]
         scope.bitbanger.trig_bits    = [0, 0, 0, 1, 0]
 
         scope.bitbanger.go()
@@ -1017,10 +1017,10 @@ class BitBanger (util.DisableNewAttr):
         ADC clock: ┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─┛ └─
                    ____╱              ╲╱              ╲╱              ╲╱              ╲╱              ╲____
         bit count:     ╲    bit 0     ╱╲    bit 1     ╱╲    bit 2     ╱╲    bit 3     ╱╲    bit 4     ╱    
-                       ┌───────┐       ┌───────┐       ┌───────┐       ┌───────┐       ┌───────┐           
-        clock out: ────┘       └───────┘       └───────┘       └───────┘       └───────┘       └───────────
-                   ____┐               ┌───────────────┐               ┌───────────────┐               ____
-        data out :     └───────────────┘               └───────────────┘               └───────────────    
+                       ┌───────┐                       ┌───────┐       ┌───────┐       ┌───────┐           
+        clock out: ────┘       └───────────────────────┘       └───────┘       └───────┘       └───────────
+                   ___┐               ┌───────────────┐               ┌───────────────┐               _____
+        data out :    └───────────────┘               └───────────────┘               └───────────────    
                                                                                ┌───────────────┐           
         trigger  : ────────────────────────────────────────────────────────────┘               └───────────
 
@@ -1440,9 +1440,16 @@ class BitBanger (util.DisableNewAttr):
         """ Specify whether the clock should run continuously.
         If False, the clock is generated only while the bitbanger is active.
         What this means exactly depends on the :class:`drive_edge` and
-        :class:`check_edge` settings. If there are more or fewer clocks than
-        you'd like, extend the bit-bang pattern or use :class:`clk_en` to
-        achieve what you're looking for.
+        :class:`check_edge` settings. 
+
+        When False and :class:`inactive_clock` is equal :class:`drive_edge`
+        (i.e. inactive clock is high and data is driven on the rising edge, or
+        inactive clock is low and data is driven on the falling edge), there is
+        no driving clock edge for the first data bit.
+
+        If this is not what you'd like (and in general if there are more or
+        fewer clocks than you'd like), extend the bit-bang pattern or use
+        :class:`clk_en` to achieve what you're looking for.
         """
         return self._continuous_clk
     @continuous_clk.setter
@@ -1488,19 +1495,7 @@ class BitBanger (util.DisableNewAttr):
     @property 
     def inactive_clock(self):
         """ Specify the state of the clock line when this module is inactive
-        and when the clock is disabled via :class:`clk_en`.
-
-        Be careful when setting this to 1 when :class:`continuous_clk` is 0 as
-        the resulting behaviour may not be what you expect. In particular:
-
-        * the first rising clock edge won't be seen; it's effectively masked because the clock was already high;
-        * there will be an "extra" rising clock edge at the end of the bit-bang pattern as the clock returns to its inactive state.
-
-        Moreover, behaviour when this is set to 1 and :class:`clk_en` is disabled
-        for clock cycle x results in holding the clock high for clock cycle x-1 (so
-        that there is no rising clock edge on clock cycle x). TODO: check for accuracy
-
-        If this is not what you want, simply adjust other bit-bang parameters as needed.
+        or when the clock is disabled via :class:`clk_en`.
 
         Args:
             val (int): 0 or 1.
@@ -1562,7 +1557,7 @@ class BitBanger (util.DisableNewAttr):
     @property 
     def drive_edge(self):
         """ Selects which clock edge of the generated clock is used to drive out data.
-        TODO: update
+        Data is driven a quarter of a clock edge ahead of the active clock edge.
 
         Args:
             edge (str): 'rising' or 'falling'.
@@ -1672,7 +1667,8 @@ class BitBanger (util.DisableNewAttr):
         Allows the clock to be disabled on select clock cycles. When the clock
         is disabled, it is driven to :class:`inactive_clock`. While this seems
         simple, there can be unexpected aspects; see :class:`inactive_clock`.
-        TODO: anything else to add?
+        If the clock is disabled on the last timeslot, the clock will remain
+        disabled even if :class:`continuous_clk` is set.
         Maximum length: :class:`max_length`.
 
         Args:
@@ -1706,8 +1702,9 @@ class BitBanger (util.DisableNewAttr):
     @property
     def record_en(self):
         """ Record enable.
-        Controls which bits bi-directional data line are recorded. The maximum number of bits that can
-        be recorded is :class:`max_record`.
+        Controls which bits bi-directional data line are recorded. The maximum
+        number of bits that can be recorded is :class:`max_record`. Bits are
+        recorded on the clock edge specified by :class:`check_edge`.
 
         Args:
             val (list): list of binary values.
@@ -1730,6 +1727,7 @@ class BitBanger (util.DisableNewAttr):
     def trig_bits(self):
         """ Pattern bits on which to (potentially) issue a trigger.
         Whether or not triggers are issued depends on :class:`trigger_when_matched`.
+        Triggers are issued on the clock edge specified by :class:`check_edge`.
         Maximum length: :class:`max_length`.
 
         Args:
@@ -1746,7 +1744,6 @@ class BitBanger (util.DisableNewAttr):
     def _check_length(self, val):
         if len(val) > self.max_length:
             scope_logger.error('Pattern exceeds maximum supported (%d).' % self.max_length)
-
 
 
     def recorded_data(self, nbytes=8, return_word=True, swap=True):
