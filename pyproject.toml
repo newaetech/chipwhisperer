@@ -24,6 +24,15 @@ readme = "README.md"
 
 [project.optional-dependencies]
 trace = ["software"]
+studio = [
+        "fastapi>=0.110",
+        "uvicorn[standard]>=0.27",
+        "python-multipart>=0.0.9",
+        "websockets>=12",
+]
+
+[project.scripts]
+cw-studio = "cwstudio.cli:main"
 
 [project.urls]
 Homepage = "https://www.chipwhisperer.com"
@@ -32,6 +41,9 @@ Repository = "https://github.com/newaetech/chipwhisperer"
 
 [tool.setuptools]
 include-package-data = true
+
+[tool.setuptools.package-data]
+cwstudio = ["static/*", "static/**/*", "resources/*"]
 
 [tool.setuptools.packages.find]
 where = ["software"]

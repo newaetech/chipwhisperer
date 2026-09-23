@@ -26,6 +26,7 @@ parts:
   - file: firmware
 - caption: Additional Features
   chapters:
+  - file: studio
   - file: debugging
   - file: logging
   - file: custom-firmware

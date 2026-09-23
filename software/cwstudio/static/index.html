@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChipWhisperer Studio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2312161c'/%3E%3Cpolyline points='3,16 8,16 11,6 15,26 19,10 22,20 25,16 29,16' fill='none' stroke='%2336c9a5' stroke-width='2.5' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/static/vendor/uPlot.min.css">
+<link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" width="26" height="26"><rect width="32" height="32" rx="6" fill="#1b2129"/><polyline points="3,16 8,16 11,6 15,26 19,10 22,20 25,16 29,16" fill="none" stroke="#36c9a5" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      <span>ChipWhisperer <b>Studio</b></span>
+    </div>
+    <div class="chips">
+      <div class="chip" id="chip-scope" title="Scope"><span class="dot"></span><span class="txt">No scope</span></div>
+      <div class="chip" id="chip-target" title="Target"><span class="dot"></span><span class="txt">No target</span></div>
+      <div class="chip" id="chip-job"><span class="dot"></span><span class="txt">Idle</span></div>
+    </div>
+    <div class="quick">
+      <button id="btn-single" class="btn" title="Capture one trace (S)">Single</button>
+      <button id="btn-run" class="btn primary" title="Run capture (R)">Run</button>
+      <button id="btn-stop" class="btn danger" title="Stop (Esc)" disabled>Stop</button>
+    </div>
+    <div class="right">
+      <span id="trace-count" class="muted">0 traces</span>
+      <span id="ws-state" class="ws off" title="WebSocket connection">●</span>
+    </div>
+  </header>
+
+  <nav id="tabs">
+    <button data-tab="connect" class="tab active"><span class="ico">⚡</span>Connect</button>
+    <button data-tab="scope" class="tab"><span class="ico">🎛</span>Scope</button>
+    <button data-tab="target" class="tab"><span class="ico">🎯</span>Target</button>
+    <button data-tab="capture" class="tab"><span class="ico">⏺</span>Capture</button>
+    <button data-tab="analysis" class="tab"><span class="ico">🔑</span>Analysis</button>
+    <button data-tab="glitch" class="tab"><span class="ico">⚡︎</span>Glitch</button>
+    <div class="spacer"></div>
+    <button data-tab="help" class="tab"><span class="ico">?</span>Help</button>
+  </nav>
+
+  <aside id="sidebar">
+    <section id="panel-connect" class="panel active"></section>
+    <section id="panel-scope" class="panel"></section>
+    <section id="panel-target" class="panel"></section>
+    <section id="panel-capture" class="panel"></section>
+    <section id="panel-analysis" class="panel"></section>
+    <section id="panel-glitch" class="panel"></section>
+    <section id="panel-help" class="panel"></section>
+  </aside>
+
+  <main id="main">
+    <div id="wave-toolbar" class="toolbar"></div>
+    <div id="wave-plot"></div>
+    <div id="wave-footer"></div>
+  </main>
+
+  <footer id="bottom">
+    <div class="bottom-head">
+      <button id="log-toggle" class="link">▾ Log</button>
+      <span id="log-count" class="muted"></span>
+      <div class="spacer"></div>
+      <input id="log-filter" placeholder="filter" class="small">
+      <button id="log-clear" class="link">clear</button>
+    </div>
+    <div id="log-body"></div>
+  </footer>
+  <div id="toasts"></div>
+</div>
+<script src="/static/vendor/uPlot.iife.min.js"></script>
+<script type="module" src="/static/js/app.js"></script>
+</body>
+</html>

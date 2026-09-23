@@ -1,0 +1,67 @@
+name: ChipWhisperer Studio
+
+on:
+  push:
+    branches: [develop, main, master]
+    paths: ["software/cwstudio/**", "packaging/cwstudio/**", ".github/workflows/cwstudio.yml", "pyproject.toml"]
+  pull_request:
+    paths: ["software/cwstudio/**", "packaging/cwstudio/**", ".github/workflows/cwstudio.yml", "pyproject.toml"]
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[studio]" pytest httpx
+      - run: python -m pytest software/cwstudio/tests -q
+
+  build:
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-latest, macos-14]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build dependencies
+        run: pip install -e ".[studio]" "pyinstaller>=6.0" libusb-package
+      - name: Build bundle
+        run: python packaging/cwstudio/build.py --no-venv
+        shell: bash
+      - name: Smoke test bundle (simulator)
+        shell: bash
+        run: |
+          set -e
+          if [ "${{ runner.os }}" = "Windows" ]; then EXE=dist/ChipWhispererStudio/ChipWhispererStudio.exe; else EXE=dist/ChipWhispererStudio/ChipWhispererStudio; fi
+          "$EXE" --no-browser --simulate --port 8799 &
+          PID=$!
+          for i in $(seq 1 60); do
+            if curl -sf http://127.0.0.1:8799/api/status >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -sf http://127.0.0.1:8799/api/meta | head -c 300; echo
+          curl -sf -X POST -H 'Content-Type: application/json' -d '{"kind":"sim"}' http://127.0.0.1:8799/api/scope/connect
+          curl -sf -X POST -H 'Content-Type: application/json' -d '{"kind":"sim"}' http://127.0.0.1:8799/api/target/connect
+          curl -sf -X POST -H 'Content-Type: application/json' -d '{"count":20}' http://127.0.0.1:8799/api/capture/start
+          sleep 3
+          curl -sf http://127.0.0.1:8799/api/traces
+          kill $PID || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ChipWhispererStudio-${{ matrix.os }}
+          path: dist/*.zip
+      - name: Attach to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
