@@ -191,13 +191,16 @@ class TpiuDecoder:
                     else:
                         self.current_stream = b
                 else:
-                    # data byte
-                    data.append(TpiuByte(stream=self.current_stream, byte=b | (low_bits & 1)))
+                    # data byte (stream 0 is TPIU null/idle padding)
+                    assert self.current_stream >= 0, f"ERROR: byte not associated with a stream {i=}, 0x{b:02X}"
+                    if self.current_stream > 0:
+                        data.append(TpiuByte(stream=self.current_stream, byte=b | (low_bits & 1)))
                 low_bits >>= 1
             else:
-                # Data byte as-is
-                assert self.current_stream > 0, f"ERROR: byte not associated with a stream {i=}, 0x{b:02X}"
-                data.append(TpiuByte(stream=self.current_stream, byte=b))
+                # Data byte as-is (stream 0 is TPIU null/idle padding)
+                assert self.current_stream >= 0, f"ERROR: byte not associated with a stream {i=}, 0x{b:02X}"
+                if self.current_stream > 0:
+                    data.append(TpiuByte(stream=self.current_stream, byte=b))
                 # Handle delayed channel change
                 if delayed_change >= 0:
                     self.current_stream = delayed_change
@@ -252,32 +255,32 @@ def print_itm_messages(packets: list[ctypes.Structure]):
             case pyorb.Empty:
                 pass
             case pyorb.swMsg:
-                print(f"\tsrcAddr: 0x{p.srcAddr:02x}")
-                print(f"\tlen    : 0x{p.len:02x}")
-                print(f"\tvalue  : 0x{p.value:08x}")
+                print(f"\tsrcAddr: 0x{p.srcAddr & 0xff:02x}")
+                print(f"\tlen    : 0x{p.len & 0xff:02x}")
+                print(f"\tvalue  : 0x{p.value & 0xffffffff:08x}")
             case pyorb.nisyncMsg:
-                print(f"\ttype : 0x{p.type:02x}")
-                print(f"\taddr : 0x{p.addr:08x}")
+                print(f"\ttype : 0x{p.type & 0xff:02x}")
+                print(f"\taddr : 0x{p.addr & 0xffffffff:08x}")
             case pyorb.oswMsg:
-                print(f"\tcomp   : 0x{p.comp:02x}")
-                print(f"\toffset : 0x{p.offset:08x}")
+                print(f"\tcomp   : 0x{p.comp & 0xff:02x}")
+                print(f"\toffset : 0x{p.offset & 0xffffffff:08x}")
             case pyorb.watchMsg:
-                print(f"\tcomp: 0x{p.comp:02x}")
-                print(f"\tdata: 0x{p.data:08x}")
+                print(f"\tcomp: 0x{p.comp & 0xff:02x}")
+                print(f"\tdata: 0x{p.data & 0xffffffff:08x}")
             case pyorb.wptMsg:
-                print(f"\tcomp : 0x{p.comp:02x}")
-                print(f"\tdata : 0x{p.data:08x}")
+                print(f"\tcomp : 0x{p.comp & 0xff:02x}")
+                print(f"\tdata : 0x{p.data & 0xffffffff:08x}")
             case pyorb.pcSampleMsg:
                 print(f"\tsleep: {p.sleep}")
-                print(f"\tPC   : 0x{p.pc:08x}")
+                print(f"\tPC   : 0x{p.pc & 0xffffffff:08x}")
             case pyorb.dwtMsg:
-                print(f"\tevent: 0x{p.event:02x}")
+                print(f"\tevent: 0x{p.event & 0xff:02x}")
             case pyorb.excMsg:
-                print(f"\texceptionNumber: 0x{p.exceptionNumber:08x}")
-                print(f"\teventType      : 0x{p.eventType:02x}")
+                print(f"\texceptionNumber: 0x{p.exceptionNumber & 0xffffffff:08x}")
+                print(f"\teventType      : 0x{p.eventType & 0xff:02x}")
             case pyorb.TSMsg:
-                print(f"\ttimeStatus: 0x{p.timeStatus:02x}")
-                print(f"\ttimeInc   : 0x{p.timeInc:08x}")
+                print(f"\ttimeStatus: 0x{p.timeStatus & 0xff:02x}")
+                print(f"\ttimeInc   : 0x{p.timeInc & 0xffffffff:08x}")
             case x:
                 print(f"<Unhandled packet {x}>")
 
