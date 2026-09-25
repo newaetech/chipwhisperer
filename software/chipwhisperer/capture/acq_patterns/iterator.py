@@ -17,14 +17,14 @@ def gen_iterator(ktp):
     Returns:
         Function
     """
-    return lambda N, key_once=True: KTPIterator(ktp, N, key_once)
+    return lambda N, key_once=True, *args, **kwargs: KTPIterator(ktp, N, key_once, *args, **kwargs)
 
 class KTPIterator:
     """
     """
-    def __init__(self, ktp, N, key_once=True):
+    def __init__(self, ktp, N, key_once=True, *args, **kwargs):
         self._ktp_class = ktp
-        self._ktp = ktp()
+        self._ktp = ktp(*args, **kwargs)
         self._N = N
         self._count = 0
         self.is_first = False

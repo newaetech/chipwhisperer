@@ -433,7 +433,6 @@ class CPA(AttackResults):
         self.num_traces = stop - start
         self.reset()
         self.gen_hyp()
-        pass
 
     def set_known_key(self, key):
         self.known_key = np.array(key)
@@ -521,10 +520,10 @@ class CPA(AttackResults):
         self.max_correlations_hist.append(self.best_corrs)
         return sorted_kguesses
 
-    def sort_and_rank(self):
+    def sort_and_rank(self, *args, **kwargs):
         """Sort and rank kguesses based on correlation
         """
-        self.sorted_kguesses_hist.append(self._calc_sort_and_rank())
+        self.sorted_kguesses_hist.append(self._calc_sort_and_rank(*args, **kwargs))
     
     def run(self, interval=None, callback=None):
         """Run a full CPA attack, updating internal records and callback every interval
