@@ -66,6 +66,7 @@ def open_zip(path, ftype='zip'):
         new_proj = Project()
         new_proj.extend(tmp_proj)
         return new_proj
+
         
 PROJ_PROPERTIES = ['len', 'size']
 DATA_PROPERTIES = ['exists', 'len', 'dtype']
@@ -194,6 +195,8 @@ class Project:
         fields = tracecontainer
         
         tarr_len = self._init_size
+        analyzer_logger.info("Setting initial size to {}".format(tarr_len))
+        self._group.attrs['size'] = tarr_len
         for i in range(len(DATA_NAMES)):
             name = DATA_NAMES[i]
             cont_name = CONTAINER_NAMES[i]
@@ -269,7 +272,7 @@ class Project:
                 os.remove(str(path))
 
         with tempfile.TemporaryDirectory() as tmpname:
-            tmpproj = Project(tmpname)
+            tmpproj = Project(tmpname, init_size=self.size)
             tmpproj.extend(self)
 
             final_path = path.parent / path.stem
@@ -279,7 +282,7 @@ class Project:
 
     def export(self, path, overwrite=False):
         path = str(path)
-        new_proj = Project(path, overwrite=overwrite)
+        new_proj = Project(path, overwrite=overwrite, init_size=self.size)
         new_proj.extend(self)
         return new_proj
 
@@ -366,18 +369,40 @@ class Project:
         else:
             return TraceContainer(*parameters)
 
-    def extend(self, project):
-        """Extends this project with another project
+    def _extend_via_tuple(self, project):
+        # initialize self
+        initial = []
+        if not self._initialized:
+            for element in project:
+                if element is not None:
+                    initial.append(element[0])
+                else:
+                    initial.append(None)
+            cont = TraceContainer(*initial)
+            self._init_storage(cont)
+        num_traces = project[0].shape[0]
 
-        Automatically resizes internal arrays if not enough space is available
+        while self.size < (self.num_traces + num_traces):
+            analyzer_logger.info(f"Resizing from {self.size} to fit {self.num_traces + num_traces}")
+            self._resize_all()
 
-        The fields of project must match the existing fields of this Project,
-        meaning if this project has plaintexts, project must contain plaintexts
-        and vice versa.
+        # then copy over new data
+        for i in range(len(DATA_NAMES)):
+            name = DATA_NAMES[i]
+            # check that field exists
+            if self._group.attrs[name]['exists']: # type: ignore
+                # if it does, copy to end of new data
+                self._group[name][self.num_traces:(self.num_traces + num_traces)] = project[i][:num_traces] # type: ignore
+            else:
+                # if it doesn't make sure it doesn't exist in other project as well
+                assert project[i] is not None
 
-        Args:
-            project (Project): Project to extend this project with.
-        """
+        tmplen = self._group.attrs['len']
+        assert type(tmplen) is int
+        tmplen += num_traces
+        self._group.attrs['len'] = tmplen
+
+    def _extend_via_project(self, project):
         if not self._initialized:
             self._init_storage(project[0])
             pass
@@ -399,6 +424,24 @@ class Project:
         assert type(tmplen) is int
         tmplen += project.num_traces
         self._group.attrs['len'] = tmplen
+        
+
+    def extend(self, project):
+        """Extends this project with another project
+
+        Automatically resizes internal arrays if not enough space is available
+
+        The fields of project must match the existing fields of this Project,
+        meaning if this project has plaintexts, project must contain plaintexts
+        and vice versa.
+
+        Args:
+            project (Project): Project to extend this project with.
+        """
+        if isinstance(project, Project):
+            self._extend_via_project(project)
+        else:
+            self._extend_via_tuple(project)
 
     #########################
     ###### PROPERTIES #######
@@ -515,6 +558,26 @@ class Project:
     def metadata(self) -> dict:
         return dict(self._group.attrs)
 
+    def reduce(self, sample_range=None, trace_range=None):
+        if sample_range is None:
+            sample_range = [0, self.trace_len]
+        if trace_range is None:
+            trace_range = [0, self.num_traces]
+        new_proj = Project(init_size=(trace_range[1] - trace_range[0]))
+
+        traces = self.traces[trace_range[0]:trace_range[1], sample_range[0]:sample_range[1]]
+        fin_tuple = [traces]
+        if self.plaintexts is not None:
+            fin_tuple.append(self.plaintexts[trace_range[0]:trace_range[1]])
+        if self.ciphertexts is not None:
+            fin_tuple.append(self.ciphertexts[trace_range[0]:trace_range[1]])
+        if self.keys is not None:
+            fin_tuple.append(self.keys[trace_range[0]:trace_range[1]])
+
+        fin_tuple = tuple(fin_tuple)
+        new_proj.extend(fin_tuple)
+        return new_proj
+
 
     # iterator
     def containers(self):
@@ -548,7 +611,11 @@ class Project:
                 a = group[name]
                 assert isinstance(a, zarr.Array), f"a not zarr array, is {type(a)}"
                 assert a.dtype == name_data['dtype'], f"{a.dtype} != {name_data['dtype']}"
-                assert a.shape[1:] == tuple(name_data['len']), f"{a.shape[1:]} != {name_data['len']}"
+                if isinstance(name_data['len'], int):
+                    analyzer_logger.info(f"name_data is integer instead of list, should be okay")
+                    assert a.shape[1] == name_data['len'], f"{a.shape[1]} != {name_data['len']}"
+                else:
+                    assert a.shape[1:] == tuple(name_data['len']), f"{a.shape[1:]} != {name_data['len']}"
             pass
             
         # make sure the other properties exist

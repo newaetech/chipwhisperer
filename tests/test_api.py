@@ -14,14 +14,16 @@ sys.path.insert(1, cw_dir)
 import chipwhisperer as cw
 import chipwhisperer.common.utils.util as util
 import chipwhisperer.analyzer as cwa
-from chipwhisperer.analyzer import CPA, get_table_cb, leakage_models
+from chipwhisperer.analyzer import CPA, get_table_cb, leakage_models, key_schedule_rounds
+from chipwhisperer.analyzer.mixcolumns_monobit import MixColumnsAttack, mixcolumns_cb
 
 N = 50
 M = 5
+T_LEN = 5000
 
 def gen_proj(N, *args, **kwargs):
     proj = cw.Project(*args, **kwargs)
-    traces = np.random.randint(0, 4096, (N, 5000), dtype=np.int16)
+    traces = np.random.randint(0, 4096, (N, T_LEN), dtype=np.int16)
     plaintexts = np.random.randint(0, 256, (N, 16), dtype=np.uint8)
     ciphertexts = np.random.randint(0, 256, (N, 16), dtype=np.uint8)
     keys = np.random.randint(0, 256, (N, 16), dtype=np.uint8)
@@ -39,15 +41,32 @@ class TestProject(unittest.TestCase):
         self.assertTrue((proj.ciphertexts == ciphertexts).all())
         self.assertTrue((proj.keys == keys).all())
 
+    def test_extend_tuple(self):
+        proj, traces, plaintexts, ciphertexts, keys = gen_proj(N)
+        proj2, traces, plaintexts, ciphertexts, keys = gen_proj(N)
+
+        proj.extend((traces, plaintexts, ciphertexts, keys))
+        self.proj_equal(proj, proj2, slice(N, None))
+
+    def test_reduce(self):
+        proj, traces, plaintexts, ciphertexts, keys = gen_proj(N)
+        red_proj = proj.reduce(None, (0, N // 2))
+        self.proj_equal(proj, red_proj, slice(0, N//2))
+        ref_proj2 = proj.reduce((0, T_LEN // 2))
+        self.assertTrue(ref_proj2.trace_len == T_LEN//2)
+        self.assertTrue((ref_proj2.traces[:] == proj.traces[:,:T_LEN//2]).all())
+
+
+
     def proj_equal(self, proj1, proj2, n1=None, n2=None):
         if n1 is None:
             n1 = slice(proj1.num_traces)
         if n2 is None:
             n2 = slice(proj2.num_traces)
-        self.assertTrue((proj1.traces[n1] == proj2.traces[n2]).all())
-        self.assertTrue((proj1.plaintexts[n1] == proj2.plaintexts[n2]).all())
-        self.assertTrue((proj1.ciphertexts[n1] == proj2.ciphertexts[n2]).all())
-        self.assertTrue((proj1.keys[n1] == proj2.keys[n2]).all())
+        self.assertTrue((proj1.traces[n1] == proj2.traces[n2]).all(), f"{proj1.traces[n1]} != {proj2.traces[n2]}")
+        self.assertTrue((proj1.plaintexts[n1] == proj2.plaintexts[n2]).all(), f"{proj1.plaintexts[n1]} != {proj2.plaintexts[n2]}")
+        self.assertTrue((proj1.ciphertexts[n1] == proj2.ciphertexts[n2]).all(), f"{proj1.ciphertexts[n1]} != {proj2.ciphertexts[n2]}")
+        self.assertTrue((proj1.keys[n1] == proj2.keys[n2]).all(), f"{proj1.keys[n1]} != {proj2.keys[n2]}")
 
     def test_extend(self, N=10, M=5):
         proj_arr = []
@@ -299,12 +318,34 @@ class TestUtils(unittest.TestCase):
 
 class TestCPA(unittest.TestCase):
     def test_attack(self):
-        proj = cw.open_project('./gold_ref')
+        proj = cw.open_project('./gold_ref.zip')
         cpa = CPA(proj, leakage_models.sbox_output, 16)
         cpa.run()
+        print(cw.bytearray(cpa.key_guess()))
         print(cpa.kguess_corrs())
         self.assertTrue(cpa.key_recovered())
         self.assertTrue((cpa.kguess_corrs() > 0.8).all())
+
+    def test_last_round_state_diff(self):
+        proj = cw.open_project('f4_reduced.zip')
+        cpa = CPA(proj, leakage_models.last_round_state_diff, 16)
+        cpa.set_known_key(key_schedule_rounds(proj.keys[0], 0, 10))
+        cpa.run()
+        print(cw.bytearray(cpa.key_guess()))
+        print(cpa.kguess_corrs())
+        self.assertTrue(cpa.key_recovered())
+
+    def test_mixcolumns(self):
+        projects = []
+        for i in range(4):
+            project = cw.open_project(f"Var_Vec_red_{i}.zip")
+            projects.append(project)
+        cpa = MixColumnsAttack(projects)
+        cpa.run()
+        print(cw.bytearray(cpa.key_guess()))
+        self.assertTrue(cpa.key_recovered())
+
+
 
 if __name__ == '__main__':
     unittest.main()

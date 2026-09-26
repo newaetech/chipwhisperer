@@ -1,4 +1,4 @@
-from .cpa import CPA
+from .cpa import CPA, AttackResults
 from .leakage_models import sbox
 import numpy as np
 import copy
@@ -220,8 +220,8 @@ class MixColumnsAttack:
                     [2, 6, 10, 14],
                     [3, 7, 11, 15]]
         self.attacks = [MultiLeakageMonoBitCPA(projects[i], (leak_0, leak_1, leak_2, leak_3), self.subkeysarr4[i]) for i in range(4)]
-        for attack in self.attacks:
-            attack.set_trace_range(0, 1000)
+        # for attack in self.attacks:
+        #     attack.set_trace_range(0, 1000)
         self.projects = projects
         self.known_key = projects[0].keys[0]
 
@@ -253,11 +253,25 @@ class MixColumnsAttack:
                 self._trace_range = slice(0, self.projects[0].num_traces)
                 self.corr_sum = self.correlations
                 self.additions = attack.additions
+                self.max_corr_loc = np.argmax(self.correlations, axis=1)
                 if callback:
                     callback(self)
 
     def _pge(self, sub_byte, kguess):
         return np.argwhere(self.sorted_kguesses_hist[-1][sub_byte] == kguess)[0][0]
+
+    def key_guess(self):
+        return np.array(self.sorted_kguesses_hist[-1])[:,0].tolist()
+
+    def key_recovered(self):
+        return (self.key_guess() == self.projects[0].keys[0]).all()
+
+    def kguess_corrs(self):
+        import numpy as np
+        key = self.key_guess()
+        np.array( [self.correlations[sub_byte, self.max_corr_loc[sub_byte, key[sub_byte]],key[sub_byte]] 
+                   / self.additions for sub_byte in range(16)] )
+        pass
 
 def mixcolumns_cb(cpa, head = 6, fmt = "{:02X}<br>{:.4f}", use_additions=True):
     import pandas as pd # type: ignore
