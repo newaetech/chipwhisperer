@@ -22,7 +22,7 @@ from .capture import acq_patterns as key_text_patterns
 
 from .common.utils import util
 from .capture.scopes.cwhardware.ChipWhispererSAM3Update import SAMFWLoader, get_at91_ports
-import logging
+#import logging
 from .logging import *
 
 from .common.results.glitch import GlitchController, load_gc_results

@@ -40,7 +40,9 @@ jobs:
         run: |
           python -m pip install mypy
           python -m pip install types-tqdm
+          python -m pip install pytest
       - name: Run Mypy
-        run: >-
+        run: |
           python -m mypy -p chipwhisperer
+          pytest tests/chipwhisperer
           

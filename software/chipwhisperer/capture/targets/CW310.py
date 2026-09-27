@@ -119,8 +119,8 @@ class CW310(CW305):
         return self.__repr__()
 
     def _getFWPy(self):
-        from ...hardware.firmware.cwbergen import fwver
-        return fwver
+        from ...hardware.firmware.open_fw import fwver
+        return fwver('cwbergen')
         
     def _get_usart(self, num=0):
         if num == 0:

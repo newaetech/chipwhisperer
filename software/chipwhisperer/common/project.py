@@ -221,11 +221,11 @@ class Project:
 
                 # if field isn't np array, convert
                 if not isinstance(field, np.ndarray):
-                    field = np.array(field, dtype=self._group.attrs[name]['dtype'])
+                    field = np.array(field, dtype=self._group.attrs[name]['dtype']) # type: ignore
 
                 shape = [tarr_len]
                 shape.extend(field.shape)
-                shape = tuple(shape) # grrrr
+                shape = tuple(shape) # type: ignore
 
                 storage.create_array(name=name, shape=shape, \
                                     chunks=shape, dtype=field.dtype, compressors=None)

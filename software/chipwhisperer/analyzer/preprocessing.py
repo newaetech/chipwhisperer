@@ -142,8 +142,8 @@ class ResyncSAD:
     def metadata(self) -> dict:
         return self._proj.metadata
 
-    def _make_container(self, n) -> TraceContainer | List:
-        pass
+    # def _make_container(self, n) -> TraceContainer | List:
+    #     pass
 
     # iterator
     def containers(self):
