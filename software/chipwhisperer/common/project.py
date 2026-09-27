@@ -228,7 +228,7 @@ class Project:
                 shape = tuple(shape) # type: ignore
 
                 storage.create_array(name=name, shape=shape, \
-                                    chunks=shape, dtype=field.dtype, compressors=None)
+                                    chunks=shape, dtype=field.dtype, compressors=None) # type: ignore
                 self._group.attrs[name]['exists'] = 1 # type: ignore
                 self._group.attrs[name]['len'] = field.shape # type: ignore
         
