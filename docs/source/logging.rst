@@ -16,6 +16,7 @@ loggers for different parts of ChipWhisperer software (from
     naeusb_logger = logging.getLogger("ChipWhisperer NAEUSB")
     tracewhisperer_logger = logging.getLogger("ChipWhisperer TraceWhisperer")
     glitch_logger = logging.getLogger("ChipWhisperer Glitch")
+    analyzer_logger = logging.getLogger("ChipWhisperer Glitch")
 
 These loggers are all in the top level ChipWhisperer :code:`__init__.py`,
 so you can do::
@@ -29,12 +30,12 @@ with the target, you might set the target_logger to debug::
 
     import chipwhisperer as cw
     import logging
-    cw.target_logger.setLevel(logging.DEBUG)
+    cw.target_logger.handlers[0].setLevel(logging.DEBUG)
 
 Or if you're doing glitching and find the warnings about double glitches 
 and width/offset of 0 annoying::
 
-    cw.glitch_logger.setLevel(logging.ERROR)
+    cw.glitch_logger.handlers[0].setLevel(logging.ERROR)
 
 There's also a convenience function for setting the logging level
 of all the ChipWhisperer levels::
