@@ -725,15 +725,13 @@ is in an error state, or is being used by another tool.") from e
                 if i > 20:
                     scope_logger.warning("Couldn't read trace data back from Nano")
                     return True
-            self._lasttrace_int = np.array(self._lasttrace)
+            self._lasttrace_int = np.array(self._lasttrace, dtype=np.int16)
             self._lasttrace = np.array(self._lasttrace) / 256.0 - 0.5
-
-            #self.newDataReceived(0, self._lasttrace, 0, self.adc.clk_freq)
 
             return False
 
 
-    def get_last_trace(self, as_int=False):
+    def get_last_trace(self, as_int=True):
         """Return the last trace captured with this scope.
 
         Can return traces as floating point values (:code:`as_int=False`)

@@ -346,7 +346,7 @@ class CPA(AttackResults):
         leakage_model (function): Model to calculate leakage guesses from plaintext/ciphertext
         subkeys (list): List of subkeys to attack
     """
-    def __init__(self, project: Project, leakage_model: LeakageFunction, subkeys: Sequence | int):
+    def __init__(self, project: Project, leakage_model: LeakageFunction, subkeys: Sequence | int | None):
 
         self.project = project
         self.trace_len = project.traces.shape[1]
@@ -357,6 +357,8 @@ class CPA(AttackResults):
 
         if type(subkeys) is int:
             subkeys = list(range(subkeys))
+        if subkeys is None:
+            subkeys = range(16) # TODO: make this better
 
         assert isinstance(subkeys, Sequence)
         self.subkeys: Sequence = subkeys
