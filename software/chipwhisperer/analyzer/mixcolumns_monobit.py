@@ -88,35 +88,51 @@ for i in range(3):
     lut_mix_column_row.append(tmp2)
 
 # let's do attack against byte 0
-def leak_0(pt, ct, subkey, bit, campaign=0):
+def leak_0(pt, ct, subkey, bit, campaign=0, hd=True):
     lut = lut_mix_column_row[0].flatten('C')
     rtn = np.zeros((len(pt[0]), 256), dtype=np.uint8)
+    if hd:
+        diff = pt[lut[subkey]]
+    else:
+        diff = np.zeros(pt[lut[subkey]].shape)
     for kguess in range(256):
-        rtn[:, kguess] = ((gal2[sbox[pt[subkey] ^ kguess]] ^ pt[lut[subkey]]) >> bit) & 0x01
+        rtn[:, kguess] = ((gal2[sbox[pt[subkey] ^ kguess]] ^ diff) >> bit) & 0x01
     return rtn
 
 # let's do attack against byte 0
-def leak_1(pt, ct, subkey, bit, campaign=0):
+def leak_1(pt, ct, subkey, bit, campaign=0, hd=True):
     lut = lut_mix_column_row[1].flatten('C')
     rtn = np.zeros((len(pt[0]), 256), dtype=np.uint8)
+    if hd:
+        diff = pt[lut[subkey]]
+    else:
+        diff = np.zeros(pt[lut[subkey]].shape)
     for kguess in range(256):
-        rtn[:, kguess] = ((sbox[pt[subkey] ^ kguess] ^ pt[lut[subkey]]) >> bit) & 0x01
+        rtn[:, kguess] = ((sbox[pt[subkey] ^ kguess] ^ diff) >> bit) & 0x01
     return rtn
 
 # let's do attack against byte 0
-def leak_2(pt, ct, subkey, bit, campaign=0):
+def leak_2(pt, ct, subkey, bit, campaign=0, hd=True):
     lut = lut_mix_column_row[2].flatten('C')
     rtn = np.zeros((len(pt[0]), 256), dtype=np.uint8)
+    if hd:
+        diff = pt[lut[subkey]]
+    else:
+        diff = np.zeros(pt[lut[subkey]].shape)
     for kguess in range(256):
-        rtn[:, kguess] = ((sbox[pt[subkey] ^ kguess] ^ pt[lut[subkey]]) >> bit) & 0x01
+        rtn[:, kguess] = ((sbox[pt[subkey] ^ kguess] ^ diff) >> bit) & 0x01
     return rtn
 
 # let's do attack against byte 0
-def leak_3(pt, ct, subkey, bit, campaign=0):
+def leak_3(pt, ct, subkey, bit, campaign=0, hd=True):
     lut = lut_mix_column_row[3].flatten('C')
     rtn = np.zeros((len(pt[0]), 256), dtype=np.uint8)
+    if hd:
+        diff = pt[lut[subkey]]
+    else:
+        diff = np.zeros(pt[lut[subkey]].shape)
     for kguess in range(256):
-        rtn[:, kguess] = ((gal3[sbox[pt[subkey] ^ kguess]] ^ pt[lut[subkey]]) >> bit) & 0x01
+        rtn[:, kguess] = ((gal3[sbox[pt[subkey] ^ kguess]] ^ diff) >> bit) & 0x01
     return rtn
 
 class MultiLeakageMonoBitCPA(CPA):
