@@ -44,5 +44,6 @@ jobs:
       - name: Run Mypy
         run: |
           python -m mypy -p chipwhisperer
-          pytest tests/test_api.py
+          cd tests
+          pytest test_api.py
           
