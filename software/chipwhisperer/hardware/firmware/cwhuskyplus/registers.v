@@ -277,7 +277,6 @@ Note: some register bitfields are defined in reg_clockglitch.v and reg_chipwhisp
 `define FIFO_STAT               44
 `define NO_CLIP_ERRORS          45
 `define DEBUG_FIFO_READS        46
-`define DEBUG_FIFO_READS_FREEZE 47
 `define CLKGEN_POWERDOWN        48
 
 `define CLOCKGLITCH_POWERDOWN   49
@@ -336,7 +335,6 @@ Note: some register bitfields are defined in reg_clockglitch.v and reg_chipwhisp
 `define SEGMENT_CYCLE_COUNTER_EN 92
 
 `define MAX_SAMPLES_ADDR        93
-`define MAX_SEGMENT_SAMPLES_ADDR 94
 
 `define EXTERNAL_CLOCK          95
 `define COMPONENTS_EXIST        96
@@ -386,9 +384,11 @@ Note: some register bitfields are defined in reg_clockglitch.v and reg_chipwhisp
 
 // list of holes in the register address space (to be used for new features):
 //`define UNUSED_ADDRESS 28
+//`define UNUSED_ADDRESS 47
 //`define UNUSED_ADDRESS 70
 //`define UNUSED_ADDRESS 85
 //`define UNUSED_ADDRESS 106
+//`define UNUSED_ADDRESS 94
 //`define UNUSED_ADDRESS 97
 //`define UNUSED_ADDRESS 86
 //`define UNUSED_ADDRESS 87

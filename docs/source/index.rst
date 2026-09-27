@@ -4,7 +4,7 @@ Introduction
 
 Welcome to the **new and improved** home of the documentation for the ChipWhisperer
 software, Previously, documentation was spread across different sites; now
-everything is right here on one site. We hope this will make our documentation
+everything is right here on one site [#]_. We hope this will make our documentation
 easier to navigate, and answers to your questions easier to find.
 
 Some of the content has moved from where it was before. If you can't find the
@@ -50,4 +50,7 @@ Need help? Check out the :doc:`support page <support>`.
 
 Explore the other sections in the left-side index to learn everything you can
 do with ChipWhisperer.
+
+.. [#] One exception: since the Husky FPGA code lives in a `separate repository
+   <https://github.com/newaetech/chipwhisperer-husky-fpga>`_, its documentation is at https://chipwhisperer-husky-fpga.readthedocs.io.
 

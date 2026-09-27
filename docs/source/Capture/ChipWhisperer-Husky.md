@@ -576,4 +576,7 @@ Available at: [https://raw.githubusercontent.com/newaetech/chipwhisperer-husky/m
 Firmware for the Husky can be found at [https://github.com/newaetech/chipwhisperer-husky](https://github.com/newaetech/chipwhisperer-husky). The ChipWhisperer-Husky SAM3U firmware is in the `ChipWhisperer-Husky`,
 while the FPGA firmware is in the `chipwhisperer-husky-fpga` submodule.
 
+## FPGA Documentation
+
+For documentation specific to the FPGA source code, go to <https://chipwhisperer-husky-fpga.readthedocs.io>
 

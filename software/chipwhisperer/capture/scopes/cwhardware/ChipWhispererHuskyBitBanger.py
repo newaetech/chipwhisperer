@@ -787,6 +787,7 @@ class BitBanger (util.DisableNewAttr):
         self._pattern_hiz = [0]*self.max_length
         self._record_en = [0]*self.max_length
         self._trig_bits = [0]*self.max_length
+        self._bb_trig_select_cached = None
         self.splitting_warning = True
         self.last_packet_sent = None
         self.verbose = False
@@ -840,6 +841,21 @@ class BitBanger (util.DisableNewAttr):
         return self._max_record
 
     @property 
+    def _bb_trig_select(self):
+        """This register is accessed a lot (to the point where it noticeably slows down scope.default()),
+        so we cache it.
+        """
+        if self._bb_trig_select_cached is None:
+            self._bb_trig_select_cached = self.oa.sendMessage(CODE_READ, "BB_TRIG_SELECT", maxResp=1)[0]
+        return self._bb_trig_select_cached
+
+    @_bb_trig_select.setter 
+    def _bb_trig_select(self, value):
+        self.oa.sendMessage(CODE_WRITE, "BB_TRIG_SELECT", [value])
+        self._bb_trig_select_cached = value
+
+
+    @property 
     def data_pin(self):
         """ Pin to use for data. Cannot be the same as :class:`clock_pin`. Allowed values:
 
@@ -865,7 +881,7 @@ class BitBanger (util.DisableNewAttr):
         To prevent this module from clobbering those settings, set this pin to "disabled".
 
         """
-        raw = self.oa.sendMessage(CODE_READ, "BB_TRIG_SELECT", maxResp=1)[0] & 0x0f
+        raw = self._bb_trig_select & 0x0f
         for key,value in self.PINS.items():
             if value == raw:
                 module = key
@@ -887,9 +903,9 @@ class BitBanger (util.DisableNewAttr):
             raise ValueError(msg)
         if pin == self.clock_pin and pin != 'disabled':
             raise ValueError('Pin %s is already used as a clock; it cannot also be used as data.' % pin)
-        raw = self.oa.sendMessage(CODE_READ, "BB_TRIG_SELECT", maxResp=1)[0]
+        raw = self._bb_trig_select
         raw = (raw & 0xf0) | value
-        self.oa.sendMessage(CODE_WRITE, "BB_TRIG_SELECT", [raw])
+        self._bb_trig_select = raw
 
     @property 
     def clock_pin(self):
@@ -910,7 +926,7 @@ class BitBanger (util.DisableNewAttr):
 
         """
 
-        raw = self.oa.sendMessage(CODE_READ, "BB_TRIG_SELECT", maxResp=1)[0] >> 4
+        raw = self._bb_trig_select >> 4
         for key,value in self.PINS.items():
             if value == raw:
                 module = key
@@ -932,9 +948,9 @@ class BitBanger (util.DisableNewAttr):
             raise ValueError(msg)
         if pin == self.data_pin and pin != 'disabled':
             raise ValueError('Pin %s is already used for data; it cannot also be used as a clock.' % pin)
-        raw = self.oa.sendMessage(CODE_READ, "BB_TRIG_SELECT", maxResp=1)[0]
+        raw = self._bb_trig_select
         raw = (raw & 0x0f) | (value << 4)
-        self.oa.sendMessage(CODE_WRITE, "BB_TRIG_SELECT", [raw])
+        self._bb_trig_select = raw
 
 
 

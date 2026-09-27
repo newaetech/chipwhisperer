@@ -97,14 +97,10 @@ if scope._is_husky_plus:
     MAXCLOCK = 250e6
     OVERCLOCK1 = 255e6
     OVERCLOCK2 = 265e6
-    MAXSAMPLES = 327828
-    MAXSEGMENTSAMPLES = 295056
 else:
     MAXCLOCK = 200e6
     OVERCLOCK1 = 210e6
     OVERCLOCK2 = 250e6
-    MAXSAMPLES = 131124
-    MAXSEGMENTSAMPLES = 98352
 
 reset_setup(scope,target)
 
@@ -172,7 +168,7 @@ testTargetData = [
     # samples   presamples  testmode    clock       fastreads   adcmul  bit stream  threshold   seg_size,   check   segs    segcycs desc
     (200,       0,          'internal', 20e6,       True,       1,      8,  False,  65536,      65536,      True,   1,      0,      'quick'),
     (900000,    0,          'internal', 10e6,       True,       1,      8,  True ,  65536,      65536,      True,   1,      0,      'midstream'),
-    ('max',     0,          'internal', 15e6,       True,       1,      12, False,  65536,      65536,      True,   1,      0,      'maxsamples12')
+    ('max',     0,          'internal', 15e6,       True,       1,      12, False,  65536,      65536,      True,   1,      0,      'maxsamples122')
 ]
 
 
@@ -204,9 +200,9 @@ def test_reg_setup_writes():
     # The register we are reading gives us stats of the FPGA writes. For a specific configuration, these are constant.
     stats = scope._write_stats()
     if target_attached:
-        count = 1034
+        count = 1084
     else:
-        count = 1066
+        count = 1116
     exp_stats = {'last_addr':55, 'last_wdata':0, 'count':count}
     assert stats == exp_stats, 'Unexpected write stats: %s; expected %s (note: only works on a freshly-programmed FPGA)' % (stats, exp_stats)
 
@@ -511,8 +507,9 @@ def test_internal_ramp(stress, samples, presamples, testmode, clock, fastreads, 
     scope.sc._fast_fifo_read_enable = fastreads
     scope.adc.stream_mode = stream
     if samples == 'max':
-        samples = MAXSAMPLES
-    scope.adc.samples = samples
+        scope.adc.samples = scope.adc.max_samples
+    else:
+        scope.adc.samples = samples
     scope.adc.presamples = presamples
     scope.adc.segments = segments
     scope.adc.segment_cycles = segment_cycles
@@ -525,7 +522,7 @@ def test_internal_ramp(stress, samples, presamples, testmode, clock, fastreads, 
         scope.sc.triggerNow()
         assert scope.capture() == False, 'unable to capture (rep %d), highly unusual error' % i
         raw = np.int64(scope.get_last_trace(True))
-        errors, first_error = check_ramp(raw, testmode, bits, samples, segment_cycles)
+        errors, first_error = check_ramp(raw, testmode, bits, scope.adc.samples, segment_cycles)
         assert errors == 0, "%d errors (rep %d); First error: %d; scope.adc.errors: %s" % (errors, i, first_error, scope.adc.errors)
         assert scope.adc.errors == False
     scope.sc._fast_fifo_read_enable = True # return to default
@@ -569,9 +566,11 @@ def test_target_internal_ramp (samples, presamples, testmode, clock, fastreads, 
     scope.io.hs2 = "clkgen"
 
     scope.sc._fast_fifo_read_enable = fastreads
+    scope.adc.bits_per_sample = bits
     if samples == 'max':
-        samples = MAXSAMPLES
-    scope.adc.samples = samples
+        scope.adc.samples = scope.adc.max_samples
+    else:
+        scope.adc.samples = samples
     scope.adc.presamples = presamples
     scope.adc.segments = segments
     scope.adc.segment_cycles = segment_cycles
@@ -579,14 +578,13 @@ def test_target_internal_ramp (samples, presamples, testmode, clock, fastreads, 
     scope.adc.stream_segment_threshold = threshold
     scope.adc.stream_segment_size = seg_size
     scope.adc.segment_cycle_counter_en = True
-    scope.adc.bits_per_sample = bits
     scope.adc.clip_errors_disabled = True
     scope.adc.lo_gain_errors_disabled = True
     scope.userio.mode = 'fpga_debug'
     scope.userio.fpga_mode = 0
-    if samples > 10000000:
+    if scope.adc.samples > 10000000:
         scope.adc.timeout = 5
-    if samples > 20000000:
+    if scope.adc.samples > 20000000:
         scope.adc.timeout = 10
     target.flush()
     ret = cw.capture_trace(scope, target, text, key)
@@ -599,7 +597,7 @@ def test_target_internal_ramp (samples, presamples, testmode, clock, fastreads, 
     else:
         assert scope.adc.errors == False, 'unexpected ADC errors: %s' % scope.adc.errors
     if check: 
-        errors, first_error = check_ramp(raw, testmode, bits, samples, segment_cycles)
+        errors, first_error = check_ramp(raw, testmode, bits, scope.adc.samples, segment_cycles)
         assert errors == 0, "%d errors in ramp pattern; First error: %d" % (errors, first_error)
     scope.sc._fast_fifo_read_enable = True # return to default
 

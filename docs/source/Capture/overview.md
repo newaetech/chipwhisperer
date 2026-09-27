@@ -47,11 +47,13 @@ reliable glitches
   - AC-Coupled, adjustable low-noise gain from -6.5dB to 55dB 
   - AC-Coupled, fixed gain of 20dB
 
-* - Sample Buffer Size
-  - 131 124 samples
-  - **327 828 samples**
-  - 24 573 samples 
-  - 50 000 samples
+* - Maximum Samples (non-streaming)
+  - 12-bit mode: 137 209 <br>
+    8-bit mode: 204 796
+  - 12-bit mode: **346 246** <br>
+    8-bit mode:  **518 344**
+  - 24 573
+  - 50 000
 
 * - Capture Streaming
   - **Yes (>20MS/s max)**
@@ -311,7 +313,7 @@ reliable glitches
 
 * Faster ADC (200 vs 105 MS/s) with greater bit depth (12 vs 10 bits)
 * \>20MS/s streaming mode allowing almost unlimited sample size
-* Much larger sample buffer (131124 vs 24k samples)
+* Much larger sample buffer (up to 204K vs 24k samples)
 * Differential ADC input
 * Additional trigger modules - Analog waveform, Analog Level, UART, Edge count, Arm Trace, Bit-banging
 * MCX connectors for trigger/glitch output, clock input/output
@@ -327,7 +329,7 @@ reliable glitches
 
 * Faster ADC (250 vs 105 MS/s) with greater bit depth (12 vs 10 bits)
 * Higher maximum sampling rate in streaming mode (\>20 vs 10 MS/s)
-* Over 3x larger sample buffer (327828 vs 98119 samples)
+* Over 5x larger sample buffer (518K vs 98K samples)
 * Differential ADC input
 * Additional trigger modules - Edge count, Arm Trace, Bit-banging
 * Deeper SAD triggering (512 vs 128 samples)
@@ -344,9 +346,9 @@ reliable glitches
 ## ChipWhisperer-Husky-Plus features over ChipWhisperer-Husky
 
 * Faster ADC (250 vs 200 MS/s)
-* Larger ADC sample buffer (327828 vs 131124 samples)
-* Larger logic analyzer sample buffer (65552 vs 16376 samples)
-* Larger TraceWhisperer sample buffer (32776 vs 8188 samples)
+* Larger ADC sample buffer (518K vs 204K samples)
+* Larger logic analyzer sample buffer (64K vs 16K samples)
+* Larger TraceWhisperer sample buffer (32K vs 8K samples)
 * Longer trigger sequences (up to 4 sequenced triggers vs 2)
 * More User IO clocks (4 vs 1)
 * More pins can be used by bit-banger module (TIO1-4, nRST, target power, vs only User I/O)

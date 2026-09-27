@@ -13,10 +13,11 @@ import datetime
 from ...common.utils import util
 import array
 import numpy as np
-from collections import OrderedDict
+from collections import OrderedDict, deque
 import copy
 import io
 import re
+import math
 
 from chipwhisperer.logging import *
 
@@ -61,10 +62,14 @@ class OpenADCInterface(util.DisableNewAttr):
         self._registers = registers
         self.registers = {}
         self.hwInfo = None
-        self.offset = 0.5
+        self.fp_offset = 0.5
         self.ddrMode = False
         self.sysFreq = 0
         self._bits_per_sample = 10
+        self._bytes_to_read = 0
+        self._samples_to_collect = 0
+        self._segments = 1
+        self._samples = 1
         self._sbuf = []
         self._support_decimate = True
         self._nosampletimeout = 100
@@ -80,11 +85,16 @@ class OpenADCInterface(util.DisableNewAttr):
         self._fast_fifo_read_enable = True
         self._fast_fifo_read_active = False
         self.hwMaxSamples = 0
-        self.hwMaxSegmentSamples = 0
+        self.hwMaxSamples_8b = 0
+        self.hwMaxSamples_12b = 0
+        self.hwMaxPresamples_8b = 0
+        self.hwMaxPresamples_12b = 0
+        self.hwTotalSegmentBytes = 0
         self._stream_len = 0
         self._total_samples = 0
         self._int_data = None
         self._stream_rx_bytes = 0
+        self._offsets = deque(maxlen=10) # purely for debugging: keep around the 10 last extracted offsets
         self._clear_caches()
 
         self._slurp_registers()
@@ -151,7 +161,10 @@ class OpenADCInterface(util.DisableNewAttr):
 
     def setStreamMode(self, stream):
         self._stream_mode = stream
-        self.updateStreamBuffer()
+        if self._is_husky:
+            self.updateHuskySamplesRegister()
+        else:
+            self.updateStreamBuffer()
 
     def setStreamSegmentSize(self, size):
         self._stream_segment_size = size
@@ -162,6 +175,12 @@ class OpenADCInterface(util.DisableNewAttr):
 
     def setBitsPerSample(self, bits):
         self._bits_per_sample = bits
+        self.updateHuskySamplesRegister()
+
+    def setSegments(self, num):
+        self._segments = num
+        self.sendMessage(CODE_WRITE, "NUM_SEGMENTS", list(int.to_bytes(num, length=2, byteorder='little')))
+        self.updateHuskySamplesRegister()
 
     def setTimeout(self, timeout):
         self._timeout = timeout
@@ -427,7 +446,6 @@ class OpenADCInterface(util.DisableNewAttr):
         """
         if value:
             self.setSettings(self.settings() | SETTINGS_RESET, validate=False)
-            self._setMaxSamples()
         else:
             self.setSettings(self.settings() & ~SETTINGS_RESET)
 
@@ -435,8 +453,16 @@ class OpenADCInterface(util.DisableNewAttr):
         """Note: this is only intended to be called when connecting. If used outside of this, cached register values may be not reflect reality.
         """
         if self._is_husky:
-            self.hwMaxSamples = self.numMaxSamples()
-            self.hwMaxSegmentSamples = self.numMaxSegmentSamples()
+            raw = self.sendMessage(CODE_READ, "MAX_SAMPLES_ADDR", maxResp=3*5)
+            maxes = [0]*5
+            for b in range(5):
+                maxes[b] = int.from_bytes(raw[b*3:(b+1)*3], byteorder='little')
+            self.hwTotalSegmentBytes = maxes[0]
+            self.hwMaxPresamples_12b = maxes[1]
+            self.hwMaxPresamples_8b = maxes[2]
+            self.hwMaxSamples_12b = maxes[3]
+            self.hwMaxSamples_8b = maxes[4]
+            self.hwMaxSamples = maxes[3]
         else:
             #Hack to adjust the hwMaxSamples since the number should be smaller than what is being returned
             self.hwMaxSamples = self.numSamples() - 45
@@ -457,21 +483,84 @@ class OpenADCInterface(util.DisableNewAttr):
         else:
             return None
 
-    def setNumSamples(self, samples, segments=1):
-        self.sendMessage(CODE_WRITE, "SAMPLES_ADDR", list(int.to_bytes(samples, length=4, byteorder='little')))
-        self.updateStreamBuffer(samples*segments)
+    def setNumSamples(self, samples):
+        if self._is_husky:
+            self._samples = samples
+            self.updateHuskySamplesRegister()
+        else:
+            self.sendMessage(CODE_WRITE, "SAMPLES_ADDR", list(int.to_bytes(samples, length=4, byteorder='little')))
+            self.updateStreamBuffer(samples*self._segments)
+
+    def updateHuskySamplesRegister(self):
+        # Husky needs to be told more than just scope.adc.samples;
+        # it also needs to be told:
+        # - the number of samples to collect (different from scope.adc.samples!)
+        # - the total number of streaming bytes to read
+        samples = self._samples
+        presamples = self.presamples_desired
+        segments = self._segments
+        bits_per_sample = self._bits_per_sample
+
+        # This is copied from test_husky_tests.py's _job_setup() (from Husky FPGA repo):
+        # calculate the actual number of samples that will be collected per segment:
+        # 0. too-short fix: for very short captures with presamples, we need to capture more samples
+        if presamples:
+            if bits_per_sample == 12:
+                while samples < 20:
+                    samples += 6
+                    scope_logger.debug('increasing collected samples to %d (short, presamples)' % samples)
+            elif bits_per_sample == 8:
+                while samples < 29:
+                    samples += 9
+                    scope_logger.debug('increasing collected samples to %d (short, presamples)' % samples)
+        # 1. account for worst-case offset:
+        if bits_per_sample == 12:
+            bytes_to_read = samples + 5
+        else:
+            bytes_to_read = samples + 8
+        # 2. turn into bytes:
+        if bits_per_sample == 12:
+            bytes_to_read = math.ceil(bytes_to_read*1.5)
+        else:
+            bytes_to_read = bytes_to_read
+        # 3. round up to a multiple of the word size (48 bits / 6 bytes):
+        mod = bytes_to_read % 9
+        if mod:
+            bytes_to_read += 9 - mod
+        # 4. add offset word
+        bytes_to_read += 9
+
+        # similarly, calculate the actual number of *samples* that need to be collected:
+        if bits_per_sample == 12:
+            samples_to_collect = samples + 5
+            mod_op = 6
+        else:
+            samples_to_collect = samples + 8
+            mod_op = 9
+        mod = samples_to_collect % mod_op
+        if mod:
+            samples_to_collect += mod_op - mod
+
+        # in support of streaming, calculate the total number of bytes that will be read:
+        streaming_words_to_read = math.ceil(bytes_to_read * segments / 9)
+        self._bytes_to_read = bytes_to_read
+        self._samples_to_collect = samples_to_collect
+        samples_combo = (streaming_words_to_read << 64) + (samples << 32) + samples_to_collect
+        scope_logger.debug('Bytes to read: %d' % bytes_to_read)
+        scope_logger.debug('Samples to collect: %d' % samples_to_collect)
+        self.sendMessage(CODE_WRITE, "SAMPLES_ADDR", list(int.to_bytes(samples_combo, length=12, byteorder='little')))
+        self.updateStreamBuffer(streaming_words_to_read)
 
 
     def updateStreamBuffer(self, samples=None):
+        if samples is not None:
+            scope_logger.debug('updateStreamBuffer: %d' % samples)
         # yes this is a bit weird but it is so:
         if samples is not None:
             self._total_samples = samples
         if self._is_husky:
             if self._stream_mode:
-                sbuf_len = int(self._total_samples * self._bits_per_sample / 8)
-                if sbuf_len % 3:
-                    # need to capture a multiple of 3 otherwise processHuskyData may fail
-                    sbuf_len += 3 - sbuf_len % 3
+                sbuf_len = samples * 9 # samples is actually streaming_words_to_read, where a word is 72 bits; whereas sbuf_len is in bytes
                 self._sbuf = array.array('B', [0]) * sbuf_len
                 # For CW-Pro, _stream_len is the number of (10-bit) samples (which was previously set), whereas for Husky, to accomodate 8/12-bit samples, 
                 # it's the total number of bytes, so we need to update _stream_len accordingly:
@@ -550,22 +639,11 @@ class OpenADCInterface(util.DisableNewAttr):
 
     def numSamples(self):
         """Return the number of samples captured in one go. Returns max after resetting the hardware"""
-        temp = self.sendMessage(CODE_READ, "SAMPLES_ADDR", maxResp=4)
-        samples = int.from_bytes(temp, byteorder='little')
+        if self._is_husky:
+            samples = self._samples
+        else:
+            samples = int.from_bytes(self.sendMessage(CODE_READ, "SAMPLES_ADDR", maxResp=4), byteorder='little')
         return samples
-
-    def numMaxSamples(self):
-        """Return the maximum number of samples that can be captured in one go. Husky only."""
-        if not self._is_husky:
-            scope_logger.error("Supported by Husky only.")
-        return int.from_bytes(self.sendMessage(CODE_READ, "MAX_SAMPLES_ADDR", maxResp=4), byteorder='little')
-
-    def numMaxSegmentSamples(self):
-        """Return the maximum number of samples that can be captured in one go when segmenting is used. Husky only."""
-        if not self._is_husky:
-            scope_logger.error("Supported by Husky only.")
-        return int.from_bytes(self.sendMessage(CODE_READ, "MAX_SEGMENT_SAMPLES_ADDR", maxResp=4), byteorder='little')
-
 
     def getBytesInFifo(self):
         if self._is_husky:
@@ -838,14 +916,10 @@ class OpenADCInterface(util.DisableNewAttr):
             for status in range(0, NumberPackages):
                 # Address of DDR is auto-incremented following a read command
                 # so no need to write new address
-
                 # print "Address=%x"%self.getDDRAddress()
-
                 # print "bytes = %d"%self.getBytesInFifo()
-
                 bytesToRead = self.getBytesInFifo()
                 #print(bytesToRead)
-
                 # print bytesToRead
 
                 if bytesToRead == 0:
@@ -855,13 +929,11 @@ class OpenADCInterface(util.DisableNewAttr):
                 #Bytes get packed 3 samples / 4 bytes
                 #Add some extra in case needed
                 hypBytes = (NumberPoints * 4)/3 + 256
-
                 bytesToRead = min(hypBytes, bytesToRead)
 
                 # +1 for sync byte
                 data = self.sendMessage(CODE_READ, "ADCREAD_ADDR", None, False, bytesToRead + 1)  # BytesPerPackage)
                 #print(data)
-
                 # for p in data:
                 #       print "%x "%p,
 
@@ -871,13 +943,11 @@ class OpenADCInterface(util.DisableNewAttr):
 
                 if progressDialog:
                     progressDialog.setValue(status)
-
                     if progressDialog.wasCanceled():
                         break
 
             # for point in datapoints:
             #       print "%3x"%(int((point+0.5)*1024))
-
             if datapoints is None:
                 return []
             if len(datapoints) > NumberPoints:
@@ -893,16 +963,13 @@ class OpenADCInterface(util.DisableNewAttr):
             return datapoints
 
 
-
     def readHuskyData(self, NumberPoints=None):
-        if self._bits_per_sample == 12:
-            bytesToRead = int(np.ceil(NumberPoints*1.5))
-        else:
-            bytesToRead = NumberPoints
-        # Husky hardware always captures a multiple of 3 samples. We want to read all the captured samples.
-        if bytesToRead % 3:
-            bytesToRead += 3  - bytesToRead % 3
-        scope_logger.debug("XXX reading with NumberPoints=%d, bytesToRead=%d" % (NumberPoints, bytesToRead))
+        # NumberPoints is the number of samples to return (i.e. scope.adc.samples * scope.adc.segments);
+        # the number of *bytes* to read was calculated when scope.adc properties were set
+        segments = self._segments
+        bytes_per_segment = self._bytes_to_read
+        bytes_to_read = bytes_per_segment * segments
+        scope_logger.debug("reading with NumberPoints=%d, bytes_to_read=%d" % (NumberPoints, bytes_to_read))
 
         if self._stream_mode:
             data = self._sbuf
@@ -911,32 +978,67 @@ class OpenADCInterface(util.DisableNewAttr):
             if self._fast_fifo_read_enable:
                 # switch FPGA and SAM3U into fast read timing mode
                 self.setFastSMC(1)
-            data = self.sendMessage(CODE_READ, "ADCREAD_ADDR", None, False, bytesToRead)
+            data = self.sendMessage(CODE_READ, "ADCREAD_ADDR", None, False, bytes_to_read)
             # switch FPGA and SAM3U back to regular read timing mode
             if self._fast_fifo_read_enable:
                 scope_logger.debug("DISABLING fast fifo read")
                 self.setFastSMC(0)
 
-        scope_logger.debug("XXX read %d bytes; NumberPoints=%d, bytesToRead=%d" % (len(data), NumberPoints, bytesToRead))
+        scope_logger.debug("read %d bytes; NumberPoints=%d, bytes_to_read=%d" % (len(data), NumberPoints, bytes_to_read))
         if data is not None:
             data = np.array(data)
-            datapoints = self.processHuskyData(NumberPoints, data)
+            datapoints = self.processHuskyData(NumberPoints, segments, bytes_per_segment, data)
         if datapoints is None:
             return []
         return datapoints
 
 
-    def processHuskyData(self, NumberPoints, data):
+    def processHuskyData(self, NumberPoints, segments, bytes_per_segment, data):
+        samples_per_segment = self._samples
         if self._bits_per_sample == 12:
-            data = np.frombuffer(data, dtype=np.uint8)
-            fst_uint8, mid_uint8, lst_uint8 = np.reshape(data, (data.shape[0] // 3, 3)).astype(np.uint16).T
-            fst_uint12 = (fst_uint8 << 4) + (mid_uint8 >> 4)
-            snd_uint12 = ((mid_uint8 % 16) << 8) + lst_uint8
-            data = np.reshape(np.concatenate((fst_uint12[:, None], snd_uint12[:, None]), axis=1), 2 * fst_uint12.shape[0])
+            dtype=np.uint16
+        else:
+            dtype=np.uint8
+        int_data = np.zeros(NumberPoints, dtype=dtype)
+        fp_data = np.zeros(NumberPoints)
+        for s in range(segments):
+            # validate and remove the offset word:
+            start = s*bytes_per_segment
+            stop = (s+1)*bytes_per_segment
+            # Note: with a large number of segments, the offset extraction,
+            # validation, and data reconstruction here could slow things down a
+            # bit; you could alternatively skip the offset word check and
+            # simply do: 
+            # offset = data[stop-9]
+            if list(data[stop-8:stop]) != [0xff, 0x00, 0xee, 0x11, 0xdd, 0x00, 0xcc, 0xff]:
+                scope_logger.warning('Unexpected offset word, segment %d: %s. Capture invalid; check for errors.' % (s, data[stop-8:stop]))
+                self._int_data = None
+                return None
+            else:
+                offset = int(data[stop-9])
+            scope_logger.debug('offset extracted from payload: %d' % offset)
+            self._offsets.append(offset) # for debugging
 
-        self._int_data = data[:NumberPoints]
-        fpData = data / 2**self._bits_per_sample - self.offset
-        return fpData[:NumberPoints]
+            sdata = np.frombuffer(data[start:stop-9], dtype=np.uint8)
+            if self._bits_per_sample == 12:
+                fst_uint8, mid_uint8, lst_uint8 = np.reshape(sdata, (sdata.shape[0] // 3, 3)).astype(np.uint16).T
+                fst_uint12 = (fst_uint8 << 4) + (mid_uint8 >> 4)
+                snd_uint12 = ((mid_uint8 % 16) << 8) + lst_uint8
+                sdata = np.reshape(np.concatenate((fst_uint12[:, None], snd_uint12[:, None]), axis=1), 2 * fst_uint12.shape[0])
+
+            sdata = np.frombuffer(sdata[offset:offset+samples_per_segment], dtype=dtype)
+            int_data[s*samples_per_segment:(s+1)*samples_per_segment] = sdata
+            fp_data[s*samples_per_segment:(s+1)*samples_per_segment] = sdata / 2**self._bits_per_sample - self.fp_offset
+
+            # Careful: this can be useful for debugging but leaving it in will *dramatically* slow down runtimes!
+            #dataread = 'samples (without offset) (%d samples): ' % len(data)
+            #for b in data:
+            #    dataread += '%3x ' % b
+            #dataread += '\n'
+            #scope_logger.debug(dataread)
+
+        self._int_data = int_data
+        return fp_data
 
 
     def processData(self, data, pad=float('NaN'), debug=False):
@@ -985,9 +1087,9 @@ class OpenADCInterface(util.DisableNewAttr):
 
                 # print "%x %x %x"%(intpt1, intpt2, intpt3)
 
-                fpData.append(float(intpt1) / 1024.0 - self.offset)
-                fpData.append(float(intpt2) / 1024.0 - self.offset)
-                fpData.append(float(intpt3) / 1024.0 - self.offset)
+                fpData.append(float(intpt1) / 1024.0 - self.fp_offset)
+                fpData.append(float(intpt2) / 1024.0 - self.fp_offset)
+                fpData.append(float(intpt3) / 1024.0 - self.fp_offset)
                 intData.extend([intpt1, intpt2, intpt3])
                 
         else:
@@ -1011,7 +1113,7 @@ class OpenADCInterface(util.DisableNewAttr):
             fpData = np.reshape(data[:, [0, 1, 2]], (-1))
             trigger = data[:, 3] % 4
             self._int_data = np.array(fpData, dtype='int16')
-            fpData = fpData / 1024.0 - self.offset
+            fpData = fpData / 1024.0 - self.fp_offset
             scope_logger.debug("Trigger_data: {} len={}".format(trigger, len(trigger)))
             scope_logger.debug("Unprocessed data, fpData: {}, int_data: {}".format(len(fpData), len(self._int_data)))
 
@@ -1498,7 +1600,7 @@ class TriggerSettings(util.DisableNewAttr):
         """Only available on CW-Husky. ** Internal parameter which should not
         be tweaked unless you know what you're doing. **
         
-        For streaming, this many samples must be available to be read from the
+        For streaming, this many bytes must be available to be read from the
         FPGA before the SAM3U starts a burst read of <stream_segment_size>
         bytes.  Normally these parameters are both set to 65536. Under some
         conditions it may be possible to obtain higher streaming performance by
@@ -1512,7 +1614,7 @@ class TriggerSettings(util.DisableNewAttr):
     @stream_segment_threshold.setter
     def stream_segment_threshold(self, size):
         if size < 1 or size > 131070 or not type(size) is int:
-            raise ValueError("Number of segments must be in range [1, 131070]")
+            raise ValueError("Must be in range [1, 131070]")
         self._set_stream_segment_threshold(size)
 
 
@@ -1596,13 +1698,55 @@ class TriggerSettings(util.DisableNewAttr):
         self.clip_errors_disabled = disabled
 
     @property
+    def max_samples(self):
+        """The maximum number of ADC :class:`samples` (when not streaming). Depends on :class:`bits_per_sample`.
+        Husky-only.
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        if self.bits_per_sample == 8:
+            return self.oa.hwMaxSamples_8b
+        else:
+            return self.oa.hwMaxSamples_12b
+
+    @property
+    def max_presamples(self):
+        """The maximum number of ADC :class:`presamples`. Depends on :class:`bits_per_sample`.
+        Also cannot exceed :class:`samples`.
+        Husky-only.
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        if self.bits_per_sample == 8:
+            return self.oa.hwMaxPresamples_8b
+        else:
+            return self.oa.hwMaxPresamples_12b
+
+    @property
+    def max_segments(self):
+        """The maximum number of :class:`segments` when not streaming. Depends
+        on several class parameters. To use. first set all other scope.adc
+        properties to their desired values, then use this property to learn the
+        maximum number of segments that you can collect, when not streaming,
+        **for this particular scope.adc configuration**.
+        Husky-only.
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        # Note: once all scope.adc properties are set, scope.adc.oa._bytes_to_read tells us
+        # how many bytes of storage are used *per segment*:
+        return self.oa.hwTotalSegmentBytes // self.oa._bytes_to_read
+
+
+    @property
     def samples(self):
         """The number of ADC samples to record in a single capture.
 
         The maximum number of samples is hardware-dependent:
+
         - cwlite: 24400
-        - cw1200: 96000
-        - cwhusky: 131070
+        - cw1200: 96000 (more if streaming)
+        - cwhusky/plus: non-streaming limit depends on :class:`bits_per_sample`; see :class:`max_samples`
 
         :Getter: Return the current number of total samples (integer)
 
@@ -1623,7 +1767,7 @@ class TriggerSettings(util.DisableNewAttr):
             if diff > 0:
                 scope_logger.warning("Sakura G samples must be divisible by 12, rounding up to {}...".format(samples))
 
-        if self._get_fifo_fill_mode() == "segment":
+        if not self._is_husky and self._get_fifo_fill_mode() == "segment":
             diff = ((3 - (samples - 1)) % 3)
             samples += diff
             if diff > 0:
@@ -1651,8 +1795,21 @@ class TriggerSettings(util.DisableNewAttr):
             return 'SEGMENT_DONE'
         elif state == 5:
             return 'DONE'
+        elif state == 6:
+            return 'SAVE_OFFSET'
         else:
             raise ValueError("Unexpected value: %d" % state)
+
+    def fifo_debug_summary(self):
+        """For debug. Convenience function to gather all relevant statuses from fifo_top_husky.v.
+        """
+        print('Errors:                %s' % self.errors)
+        print('First error:           %s' % self.first_error)
+        print('First error state:     %s' % self.first_error_state)
+        print('First error counts:    %s' % self.first_error_counts)
+        print('Current state:         %s' % self.fifo_state)
+        print('Fast FIFO (USB) empty: %s' % self.fast_fifo_empty)
+        print('Slow FIFO (USB) empty: %s' % self.slow_fifo_empty)
 
 
     @property
@@ -1705,10 +1862,12 @@ class TriggerSettings(util.DisableNewAttr):
         """The number of samples to record from before the trigger event.
 
         This setting must be a positive integer, and it cannot be larger than
-        the number of samples. When streaming mode is enabled, this value is
-        set to 0.
+        the number of samples. 
 
-        :Getter: Return the current number of presamples
+        On the cw1200, presamples must be set to 0 when streaming mode is enabled.
+
+        On Husky and Husky-Plus, the maximum number of presamples depends on 
+        :class:`bits_per_sample`; see :class:`max_presamples`. It also cannot be 1.
 
         :Setter: Set the number of presamples.
 
@@ -1792,7 +1951,7 @@ class TriggerSettings(util.DisableNewAttr):
         Only the 'Normal' mode is well supported, the other modes can
         be used carefully.
 
-        For segmenting on CW-Husky, see 'segments' instead.
+        For segmenting on CW-Husky, use :class:`segments` instead.
 
         There are four possible modes:
          * "normal": Trigger line & logic work as expected.
@@ -1877,9 +2036,18 @@ class TriggerSettings(util.DisableNewAttr):
         .. warning:: Supported by CW-Husky only. For segmenting on CW-lite or
             CW-pro, see 'fifo_fill_mode' instead.
 
-        This setting must be a 16-bit positive integer. 
+        .. warning:: If segments occur "too close" together, a "segmenting
+            error" (see :class:`errors`) will occur. "Too close" depends on too
+            many parameters to be defined (clock rate, number of samples and
+            presamples, and more...); what's important to understand is that
+            insufficient time between segments is what leads to the error.
 
-        In normal operation, segments=1. 
+        :class:`samples` samples are collected for each segment. In normal
+        operation, segments=1. 
+
+        The number of segments must be a 16-bit positive integer, however the
+        maximum may be lower depending on other :class:`TriggerSettings`
+        settings, and will also depend on your hardware (Husky vs Husky-Plus).
 
         Multiple segments are useful in two scenarios:
 
@@ -1893,16 +2061,13 @@ class TriggerSettings(util.DisableNewAttr):
            download trace data between every trigger event. Set
            'segment_cycle_counter_en' to 0 for this segment mode.
 
-        .. warning:: when capturing multiple segments with presamples, the total number of samples 
-            per segment must be a multiple of 3. Incorrect sample data will be obtained if this is not 
-            the case.
+        :Getter: Return the current number of segments
 
-        :Getter: Return the current number of presamples
-
-        :Setter: Set the number of presamples.
+        :Setter: Set the number of segments.
 
         Raises:
            ValueError: if segments is outside of range [1, 2^16-1]
+
         """
 
         if self._cached_segments is None:
@@ -1926,12 +2091,9 @@ class TriggerSettings(util.DisableNewAttr):
         segments = int.from_bytes(cmd, byteorder='little')
         return segments
 
-
     def _set_segments(self, num):
-        self.oa.sendMessage(CODE_WRITE, "NUM_SEGMENTS", list(int.to_bytes(num, length=2, byteorder='little')))
-        # necessary for streaming to work:
-        self.oa.setNumSamples(self.samples, self.segments)
-
+        # Notify capture system:
+        self.oa.setSegments(num)
 
     @property
     def errors(self) -> Union[str, bool, int]:
@@ -1940,6 +2102,8 @@ class TriggerSettings(util.DisableNewAttr):
         .. warning:: Supported by CW-Husky only.
 
         Error types and their causes:
+            * 'trigger too soon error': capture trigger occurs before the
+              scope is armed and ready.
             * 'presample error': capture trigger occurs before the requested
               number of presamples have been collected. Reduce 
               scope.adc.presamples or delay the capture trigger.
@@ -1948,8 +2112,6 @@ class TriggerSettings(util.DisableNewAttr):
             * 'gain too low error': gain is "too low" (4 bits or more of the ADC's
               dynamic range did not get used); increase it (scope.gain) or 
               disable this error (scope.adc.lo_gain_errors_disabled).
-            * 'invalid downsample setting': using downsampling (aka decimating) with
-              presamples and multiple segments is not allowed.
             * 'segmenting error': the condition for starting the capture of the next
               segment came true before the capture of the current segment
               completed. Reduce the segment size and/or increase the time
@@ -2022,8 +2184,24 @@ class TriggerSettings(util.DisableNewAttr):
         elif raw == 3: return "TRIGGERED"
         elif raw == 4: return "SEGMENT_DONE"
         elif raw == 5: return "DONE"
+        elif raw == 6: return "SAVE_OFFSET"
         else:
             raise ValueError(raw)
+
+    @property
+    def first_error_counts(self):
+        """Reports internal counter values taken when the first error occured. For debugging. Read-only.
+
+        .. warning:: Supported by CW-Husky only.
+        """
+        if not self._is_husky:
+            raise ValueError("For CW-Husky only.")
+        raw = self.oa.sendMessage(CODE_READ, "FIFO_FIRST_ERROR", maxResp=12)
+        rtn = {}
+        rtn['samples'] = int.from_bytes(raw[3:7], byteorder='little')
+        rtn['presamples'] = int.from_bytes(raw[9:12], byteorder='little')
+        rtn['segment'] = int.from_bytes(raw[7:9], byteorder='little')
+        return rtn
 
 
     def _get_errors(self, addr):
@@ -2037,7 +2215,7 @@ class TriggerSettings(util.DisableNewAttr):
         if raw[0] & 8:   stat += 'fast FIFO overflow, '
         if raw[0] & 16:  stat += 'presample error, '
         if raw[0] & 32:  stat += 'ADC clipped, '
-        if raw[0] & 64:  stat += 'invalid downsample setting, '
+        if raw[0] & 64:  stat += 'internal error, '
         if raw[0] & 128: stat += 'segmenting error, '
         if raw[1] & 1:   stat += 'gain too low error, '
         if raw[1] & 2:   stat += 'trigger too soon error, '
@@ -2049,6 +2227,27 @@ class TriggerSettings(util.DisableNewAttr):
         if stat == '':
             stat = False
         return stat
+
+
+    @property
+    def fast_fifo_empty(self):
+        if self.oa is None:
+            return 0
+        # check bit 24:
+        if self.oa.sendMessage(CODE_READ, 'FIFO_STAT', maxResp=4)[3] & 1:
+            return True
+        else:
+            return False
+
+    @property
+    def slow_fifo_empty(self):
+        if self.oa is None:
+            return 0
+        # check bit 14:
+        if self.oa.sendMessage(CODE_READ, 'FIFO_STAT', maxResp=2)[1] & 2**6:
+            return True
+        else:
+            return False
 
 
     @property
@@ -2169,7 +2368,7 @@ class TriggerSettings(util.DisableNewAttr):
     def _set_stream_segment_threshold(self, size):
         scope_logger.warning('Changing this parameter can degrade performance and/or cause reads to fail entirely; use at your own risk.')
         #Write to FPGA
-        self.oa.sendMessage(CODE_WRITE, "STREAM_SEGMENT_THRESHOLD", list(int.to_bytes(size, length=3, byteorder='little')))
+        self.oa.sendMessage(CODE_WRITE, "STREAM_SEGMENT_THRESHOLD", list(int.to_bytes(math.ceil(size/9), length=2, byteorder='little')))
 
 
     def _set_stream_segment_size(self, size):
@@ -2239,8 +2438,6 @@ class TriggerSettings(util.DisableNewAttr):
         self.oa.sendMessage(CODE_WRITE, "ADC_LOW_RES", [val])
         # Notify capture system:
         self.oa.setBitsPerSample(bits)
-        # necessary for streaming to work:
-        self.oa.setNumSamples(self.samples, self.segments)
 
     def _get_bits_per_sample(self):
         return self._bits_per_sample
@@ -2249,13 +2446,14 @@ class TriggerSettings(util.DisableNewAttr):
     def bits_per_sample(self) -> int:
         """Bits per ADC sample. Only available on CW-Husky.
 
-        Husky has a 12-bit ADC; optionally, we read back only 8 bits per
-        sample.  This does *not* allow for more samples to be collected; it
-        only allows for a faster sampling rate in streaming mode.
+        Choose either 8 or 12 bits per sample. 8 bits per sample allows for
+        1.5x faster sampling rates when streaming, and (almost) 1.5x more
+        samples when not streaming (see :class:`max_samples`). It also affects
+        the maximum number of presamples (see :class:`max_presamples`).
 
-        :Getter: return the number of bits per sample that will be received.
+        :Getter: return the number of bits per sample.
 
-        :Setter: set the number of bits per sample to receive.
+        :Setter: set the number of bits per sample.
         """
         return self._get_bits_per_sample()
 
@@ -2289,13 +2487,7 @@ class TriggerSettings(util.DisableNewAttr):
     def _set_num_samples(self, samples):
         if samples < 0 or not type(samples) is int:
             raise ValueError("Samples must be a positive integer")
-        if self._is_husky and samples < 7:
-            scope_logger.warning('There may be issues with this few samples on Husky; a minimum of 7 samples is recommended')
-        if self._is_husky:
-            segments = self.segments
-        else:
-            segments = 1
-        self.oa.setNumSamples(samples, segments)
+        self.oa.setNumSamples(samples)
 
     def _get_num_samples(self):
         if self.oa is None:
@@ -2335,53 +2527,49 @@ class TriggerSettings(util.DisableNewAttr):
         offset = int.from_bytes(cmd, byteorder='little')
         return offset
 
-    def _set_presamples(self, samples):
+    def _set_presamples(self, presamples):
         if self._is_husky:
-            min_samples = 8
-            max_samples = min(self.samples-2, 32767)
-            presamp_bytes = 2
+            presamp_bytes = 3
+        else:
+            presamp_bytes = 4
+
+        if presamples > self.samples:
+            raise ValueError("presamples cannot be larger than samples")
+
+        if self._is_husky:
+            if presamples == 1:
+                raise ValueError("presample = 1 not supported on Husky.")
             if self.decimate > 1:
                 raise Warning("Decimating with presamples is not supported on Husky.")
-        else:
-            min_samples = 0
-            max_samples = self.samples
-            presamp_bytes = 4
-        if samples < min_samples and samples != 0:
-            raise ValueError("Number of pre-trigger samples cannot be less than %d" % min_samples)
-        if samples > max_samples:
-            if self._is_husky:
-                raise ValueError("Number of pre-trigger samples cannot be larger than the lesser of [total number of samples, 32767] (%d)." % max_samples)
-            else:
-                raise ValueError("Number of pre-trigger samples cannot be larger than the total number of samples (%d)." % max_samples)
+            if presamples > self.max_presamples:
+                raise ValueError('Maximum presamples is %d' % max_presamples)
 
-        self.presamples_desired = samples
+        self.presamples_desired = presamples
 
         if self._is_pro or self._is_lite or self._is_husky:
             #CW-1200 Hardware / CW-Lite / CW-Husky
-            samplesact = int(samples)
-            self.presamples_actual = samplesact
+            presamplesact = int(presamples)
+            self.presamples_actual = presamplesact
         else:
             #Other Hardware
-            if samples > 0:
+            if presamples > 0:
                 scope_logger.warning('Pre-sample on CW-Lite is unreliable with many FPGA bitstreams. '
                                 'Check data is reliably recorded before using in capture.')
 
             #enforce samples is multiple of 3
-            samplesact = int(samples / 3)
+            presamplesact = int(presamples / 3)
 
             #Old crappy FIFO system that requires the following
-            if samplesact > 0:
-                samplesact = samplesact + self.presampleTempMargin
+            if presamplesact > 0:
+                presamplesact = presamplesact + self.presampleTempMargin
 
-            self.presamples_actual = samplesact * 3
+            self.presamples_actual = presamplesact * 3
 
-        self.oa.sendMessage(CODE_WRITE, "PRESAMPLES_ADDR", list(int.to_bytes(samplesact, length=presamp_bytes, byteorder='little')))
-
-
-        #print "Requested presamples: %d, actual: %d"%(samples, self.presamples_actual)
-
-        self.oa.presamples_desired = samples
-
+        self.oa.sendMessage(CODE_WRITE, "PRESAMPLES_ADDR", list(int.to_bytes(presamplesact, length=presamp_bytes, byteorder='little')))
+        self.oa.presamples_desired = presamples
+        if self._is_husky:
+            # in case short samples + presamples adjustment is required:
+            self.oa.updateHuskySamplesRegister()
         return self.presamples_actual
 
     def _get_presamples(self, cached=False):
@@ -2393,7 +2581,7 @@ class TriggerSettings(util.DisableNewAttr):
             return self.presamples_desired
 
         if self._is_husky:
-            presamp_bytes = 2
+            presamp_bytes = 3
         else:
             presamp_bytes = 4
 

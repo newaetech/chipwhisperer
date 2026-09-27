@@ -759,8 +759,8 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
                     self.UARTTrigger = UARTTrigger(scope=self, huskyplus=self._is_husky_plus, trace_reg_select=3, main_reg_select=2)
                 except Exception as e:
                     scope_logger.warning("TraceWhisperer unavailable " + str(e))
-            self.userio = USERIOSettings(self.sc, self.trace)
             self.bitbanger = BitBanger(self.sc)
+            self.userio = USERIOSettings(self.sc, self.trace, self.bitbanger)
             self.SAD = ChipWhispererSAD.HuskySAD(self.sc)
             self.errors = HuskyErrors(self.sc, self.XADC, self.adc, self.clock, self.trace)
             self._is_husky = True
@@ -904,17 +904,14 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             Added poll_done parameter for Husky
 
         """
-        if self._is_husky and self.adc.segments > 1 and self.adc.presamples and self.adc.samples % 3:
-            raise ValueError('When using segments with presamples, the number of samples per segment (scope.adc.samples) must be a multiple of 3.')
+        if self._is_husky and (self.adc.decimate > 1) and (self.adc.presamples):
+            raise ValueError('When decimate (%d) is used, presamples cannot be used (think about it: multiple captures would not line up well).' % self.adc.decimate)
 
-        if self._is_husky and (self.adc.decimate > 1) and (self.adc.presamples or self.adc.segments > 1):
-            raise ValueError('When decimate (%d) is used, presamples or segments cannot be used.' % self.adc.decimate)
+        if self._is_husky and (self.adc.segments > 1) and (self.adc.oa._bytes_to_read > self.adc.oa.hwTotalSegmentBytes) and (not self.adc.stream_mode):
+            raise ValueError('scope.adc parameters require more bytes (%d) than there is space for (%d) (note these values depend on scope.adc settings). Reduce scope.adc properties or use stream mode.' % (self.adc.oa._bytes_to_read, self.adc.oa.hwTotalSegmentBytes))
 
-        if self._is_husky and (self.adc.segments > 1) and (self.adc.samples * self.adc.segments > self.adc.oa.hwMaxSegmentSamples) and (not self.adc.stream_mode):
-            raise ValueError('When using segments and stream mode is disabled, the maximum total number of samples is %d.' % self.adc.oa.hwMaxSegmentSamples)
-
-        if self._is_husky and (self.adc.samples - self.adc.presamples < 2):
-            raise ValueError('The number of samples (%d) must be at least 2 more than the number of presamples (%d).' % (self.adc.samples, self.adc.presamples))
+        if self.adc.samples < self.adc.presamples:
+            raise ValueError('The number of presamples (%d) cannot be greater than the number of samples (%d).' % (self.adc.presamples, self.adc.samples))
 
         if self.adc.stream_mode and (not self._is_husky):
             a = self.sc.capture(None)
