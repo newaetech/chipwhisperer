@@ -1071,7 +1071,7 @@ class BitBanger (util.DisableNewAttr):
         self._trigger_when_matched = 0
         self._glitch_enabled = 0
         self._glitch_mode_value = 0
-        self._glitch_mode_string = 'drive_low'
+        self._glitch_mode_string = 'disabled'
         self._drive_edge = 'rising'
         self._check_edge = 'falling'
         self._clk_div = 2
@@ -1539,14 +1539,19 @@ class BitBanger (util.DisableNewAttr):
         * 'drive_high': drive data pin upon glitch.
         * 'invert': invert data pin upon glitch.
 
-        When not set to 'disabled', the data pin will be "glitched" low/high/inverted as specified by
+        When not set to 'disabled', :class:`data_pin` will be "glitched" low/high/inverted as specified by
         this setting whenever the output of the 
         :class:`scope.glitch <chipwhisperer.capture.scopes.cwhardware.ChipWhispererGlitch.GlitchSettings>`
         module is active. The timing of the glitch(es) is entirely specified by 
         :class:`scope.glitch <chipwhisperer.capture.scopes.cwhardware.ChipWhispererGlitch.GlitchSettings>`.
 
+
+        Note that :class:`data_pin` gets (potentially) glitched regardless of
+        whether the bitbanger module is active.
+
         """
         return self._glitch_mode_string
+
     @glitch_mode.setter
     def glitch_mode(self, val):
         if val == 'disabled':
@@ -1563,6 +1568,7 @@ class BitBanger (util.DisableNewAttr):
         else:
             raise ValueError
         self._glitch_mode_string = val
+        self._maybe_go(False)
 
 
     @property 
