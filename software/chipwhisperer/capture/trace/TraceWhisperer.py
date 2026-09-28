@@ -331,6 +331,9 @@ class TraceWhisperer(util.DisableNewAttr):
                 scope_logger.warning("Can't enable scope.LA and scope.trace simultaneously; turning off scope.LA.")
                 self._scope.LA.enabled = False
             self._scope.LA.clkgen_enabled = True
+        if self.platform == 'Husky':
+            # un-cache scope.userio.mode!
+            self._scope.userio._last_mode = None
         if not enable:
             self.capture.use_husky_arm = False
         self._set_enabled(enable)
