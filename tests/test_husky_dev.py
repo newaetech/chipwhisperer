@@ -918,6 +918,9 @@ def test_glitch_offset(fulltest, clock, margin, offset, oversamp, desc):
 @pytest.mark.parametrize("width, oversamp, desc", testGlitchWidthData)
 @pytest.mark.skipif(not scope.LA.present, reason='Cannot test glitch without internal logic analyzer. Rebuild FPGA to test.')
 def test_glitch_width(width, oversamp, desc):
+    # Note: this test has been seen to fail by a margin that appears concerning at first,
+    # but running the "03 Husky Glitching" demo notebook shows that the issue is that the internal MMCM2 
+    # clock grabbed by scope.LA is quite delayed WRT what actually goes out.
     reset_setup(scope,target)
 
     scope.clock.clkgen_freq = 10e6
