@@ -143,13 +143,12 @@ class OneWireHelper(util.DisableNewAttr):
         """
 
         self.send_rst_pd(trigger_en=False)
-        self.bb.sendpacket(OneWireHelper._get_read_rom(read_rom_command))
+        self.bb.sendpacket(self._get_read_rom(read_rom_command))
         romcode = OneWireHelper._check_read_rom(self.bb.recorded_data(), expected_family_code, verbose)
         return hex(romcode)
 
 
-    @staticmethod
-    def get_generic_write_read(wbytes, rbytes, w1slot=1, w0slot=6, tslot=7, gap=0):
+    def get_generic_write_read(self, wbytes, rbytes, w1slot=1, w0slot=6, tslot=7, gap=0):
         """Get parameters for sending a desired generic 1-wire write and/or read transaction.
         Use this to build the read/write commands that you'll commonly use.
 
@@ -165,6 +164,9 @@ class OneWireHelper(util.DisableNewAttr):
             BitBangerPacket object that can be fed to :class:`BitBanger.sendpacket`.
         """
 
+        max_reads = self.bb.max_record//8
+        if rbytes > max_reads:
+            raise ValueError('Max number of bytes that can be read is %d' % max_reads)
         cmdbits = []
         hizbits = []
         renbits = []
@@ -206,9 +208,11 @@ class OneWireHelper(util.DisableNewAttr):
         return BitBangerPacket(cmdbits, hizbits, penbits, renbits, trigbits)
 
 
-    @staticmethod
-    def _get_read_rom(read_rom_command, w1slot=1, w0slot=6, tslot=7):
-        return OneWireHelper.get_generic_write_read([read_rom_command], 8, w1slot, w0slot, tslot)
+    def _get_read_rom(self, read_rom_command, w1slot=1, w0slot=6, tslot=7):
+        max_reads = self.bb.max_record//8
+        if max_reads < 8:
+            raise ValueError('This command requires reading 8 bytes; this hardware supports a maximum of %d' % max_reads)
+        return self.get_generic_write_read([read_rom_command], 8, w1slot, w0slot, tslot)
 
 
     @staticmethod
@@ -221,7 +225,6 @@ class OneWireHelper(util.DisableNewAttr):
         romcode = (raw >> 8) & 2**48-1
         if verbose: print('ROM code: 0x%x' % romcode)
         crc = (raw >> 56) & 0xff
-        # TODO: self.crc8 instead?
         calc_crc =  OneWireHelper.crc8(list(int.to_bytes(raw & 2**48-1, length=7, byteorder='little')))
         if calc_crc != crc:
             raise ValueError('Incorrect CRC! Expected 0x%x, got 0x%x' % (calc_crc, crc))
