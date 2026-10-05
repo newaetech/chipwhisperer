@@ -340,10 +340,14 @@ def test_attack():
     proj = cw.open_project('./gold_ref.zip')
     cpa = CPA(proj, leakage_models.sbox_output, 16)
     cpa.run()
+
     print(cw.bytearray(cpa.key_guess()))
     print(cpa.kguess_corrs())
     assert (cpa.key_recovered())
     assert ((cpa.kguess_corrs() > 0.8).all())
+
+    cpa.run(10)
+    cpa.run(range(0, 50, 10))
 
 def test_last_round_state_diff():
     proj = cw.open_project('f4_reduced.zip')
