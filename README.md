@@ -6,9 +6,20 @@
 
 [Documentation](https://chipwhisperer.readthedocs.io/en/sca101/index.html) | [Labs](https://github.com/newaetech/chipwhisperer-jupyter/tree/sca101) | [Forum](http://forum.newae.com) | [Store](https://store.newae.com) | [NewAE](http://newae.com)
 
-## SCA101
+## ChipWhisperer 7.0: Revamped Analyzer, Project, SCA101
 
-Welcome to the branch used for NewAE's new [SCA101 online course](learn.chipwhisperer.io). This is a rework of our previous online course that focuses on Husky, adds new labs, and improves Projects and Analyzer. You can find the related labs on the sca101 branch of ChipWhisperer-Jupyter.
+ChipWhisperer 7.0 is bringing major improvements to projects, analyzer, as well as a new online course, SCA101. These changes include:
+
+* New Zarr based projects with improved functionality over previous projects
+* New CPA attack class with major performance improvements
+* Better results API for CPA attacks
+* Simplification for project/analyzer API
+* Use of integer math throughout the project
+* Removal of unmaintained parts of Analyzer
+* Porting of MixColumns attack to Analyzer
+* Iterators for KTP classes
+
+We also have a more thorough [document of changes](https://docs.google.com/document/d/1KBrlV3X3fyg3PniKdv6pZg0s0MAX2dzbSdZiwbm_nh4/edit?usp=sharing)
 
 The [SCA101 Online course](learn.chipwhisperer.io/courses/sca101) is available at [learn.chipwhisperer.io](learn.chipwhisperer.io).
 
