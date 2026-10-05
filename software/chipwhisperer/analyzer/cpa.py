@@ -375,6 +375,7 @@ class CPA(AttackResults):
         self.subkeys: Sequence = subkeys
         self.num_traces = project.num_traces
 
+        # need to swap axes of PT/CT for internal use
         if project.plaintexts is not None:
             pt_array = np.swapaxes(project.plaintexts, 0, 1)
             assert pt_array.shape[1] == project.num_traces

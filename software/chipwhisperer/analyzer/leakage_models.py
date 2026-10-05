@@ -62,6 +62,8 @@ hw_table = generate_hw_table()
 LeakageFunction = Callable[[NDArray | None, NDArray | None, int], NDArray]
 
 def sbox_output(pt: NDArray, ct: NDArray | None, subkey: int):
+    """Leakage model useful for software AES. hw[sbox[pt ^ key_guess]]
+    """
     assert pt is not None, "This leakage model requires plaintexts"
     rtn = np.zeros((len(pt[subkey]), 256), dtype=np.uint8)
     for kguess in range(256):
@@ -69,6 +71,8 @@ def sbox_output(pt: NDArray, ct: NDArray | None, subkey: int):
     return rtn
 
 def inv_sbox_output(pt: NDArray | None, ct: NDArray, subkey: int):
+    """Leakage model useful for software AES. hw[inv_sbox[ct ^ key_guess]]
+    """
     if ct is None:
         raise ValueError("This leakage model requires ct")
     rtn = np.zeros((len(ct[0]), 256), dtype=np.uint8)
@@ -77,6 +81,10 @@ def inv_sbox_output(pt: NDArray | None, ct: NDArray, subkey: int):
     return rtn
 
 def last_round_state_diff(pt: NDArray | None, ct: NDArray, subkey: int):
+    """Leakage model useful for hardware AES. 
+    
+    The difference between the ciphertext and AES state at the end of the previous round
+    """
     if ct is None:
         raise ValueError("This leakage model requires ct")
     rtn = np.zeros((len(ct[0]), 256), dtype=np.uint8)
@@ -87,6 +95,10 @@ def last_round_state_diff(pt: NDArray | None, ct: NDArray, subkey: int):
     return rtn
 
 def pipeline_diff(pt: NDArray | None, ct: NDArray, subkey: int):
+    """Leakage model useful for fully pipelined AES
+    
+    The difference between the previous and current encryption at the input to the final sbox
+    """
     if ct is None:
         raise ValueError("This leakage model requires ct")
 
@@ -100,6 +112,10 @@ def pipeline_diff(pt: NDArray | None, ct: NDArray, subkey: int):
     return rtn
 
 def half_pipeline_diff(pt: NDArray | None, ct: NDArray, subkey: int):
+    """Leakage model useful for half pipelined AES
+    
+    The difference between the previous ciphertext and the current input to the final sbox
+    """
     if ct is None:
         raise ValueError("This leakage model requires ct")
 
@@ -113,6 +129,8 @@ def half_pipeline_diff(pt: NDArray | None, ct: NDArray, subkey: int):
     return rtn
 
 def ttable_output(pt: NDArray, ct: NDArray | None, subkey: int):
+    """Leakage model useful for software implementations using 32 bit t-tables (e.g. MBEDTLS)
+    """
     assert pt is not None, "This leakage model requires plaintexts"
     rtn = np.zeros((len(pt[subkey]), 256), dtype=np.uint8)
     for kguess in range(256):
