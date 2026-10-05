@@ -4,6 +4,7 @@ from typing import Optional, Type, Union, List, Any
 import numpy as np
 from numba import njit
 
+# TODO: Try out sliding window view for numpy
 @njit
 def find_min_sad(trace, ref, ref_range):    
     st = ref_range[0]
@@ -61,6 +62,13 @@ class SADTraceGetter:
         return self._resync_proj.traces[n]
 
 class ResyncSAD:
+    """Resync traces by minimizing Sum of Absolute Difference between a reference trace subset and other traces
+
+    Args:
+        proj (cw.Project): The project to resynchronize
+        ref_trace (np.NDArray): The reference trace to resync with
+        ref_range (list): 2 position list or tuple containing the start and end of the resync range
+    """
     def __init__(self, proj, ref_trace, ref_range):
         self._proj = proj
         self._ref_trace = ref_trace

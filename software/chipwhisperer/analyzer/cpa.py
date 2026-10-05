@@ -63,6 +63,10 @@ RESULT_FIELDS = ['correlations', 'subkeys', 'sorted_kguesses_hist', 'traces_used
                  'max_correlations_hist', 'known_key']
 
 class AttackResults:
+    """Class for holding CPA Attack Results.
+
+    Made to make it easier to save and load results from disk. Can store results in zarr arrays
+    """
     def __init__(self, correlations, subkeys, sorted_kguesses_hist, traces_used_hist, \
                  traces_used, max_correlations_hist, known_key = None):
         params = locals()
@@ -72,6 +76,8 @@ class AttackResults:
 
     @classmethod
     def from_zarr(cls, group):
+        """Create AttackResults from zarr array
+        """
         params = {}
         for p in RESULT_FIELDS:
             params[p] = group[p]
@@ -79,6 +85,8 @@ class AttackResults:
 
     @classmethod
     def from_cpa(cls, cpa):
+        """Create AttackResults from CPA class
+        """
         params = {}
         for p in RESULT_FIELDS:
             params[p] = getattr(cpa, p)
@@ -288,6 +296,9 @@ class AttackResults:
         for p in RESULT_FIELDS:
             group.create_array(p, data=np.array(getattr(self, p)))
 
+    def save_zip(self, path, overwrite=False):
+        pass
+
     def __str__(self):
         rtn = {}
         rtn['leakage_function']
@@ -409,8 +420,13 @@ class CPA(AttackResults):
         self.traces_used = 0
         pass
 
-    def set_sample_range(self, start=None, stop=None):
-        """Change the sample range used in the CPA attack.
+    def set_sample_range(self, start=None, stop=None, step=None):
+        """Change the sample range used in the CPA attack. Calling this function
+        causes this class to reset and hypotheticals to be recalculated.
+
+        Args:
+            start (None, int): Sample to start attack at
+            stop (None, int): Sample to stop attack at
         """
         if start is None:
             start = 0
@@ -418,12 +434,17 @@ class CPA(AttackResults):
             stop = self.project.trace_len
         assert start >= 0
         assert stop <= self.project.trace_len
-        self._sample_range = slice(start, stop)
+        self._sample_range = slice(start, stop, step)
         self.reset()
         self.gen_hyp()
 
-    def set_trace_range(self, start=None, stop=None):
-        """Change the range of traces used in the CPA attack
+    def set_trace_range(self, start=None, stop=None, step=None):
+        """Change the range of traces used in the CPA attack. Calling this function
+        causes this class to reset and hypotheticals to be recalculated.
+
+        Args:
+            start (None, int): Trace to start attack at
+            stop (None, int): Trace to stop attack at
         """
         if start is None:
             start = 0
@@ -437,7 +458,13 @@ class CPA(AttackResults):
         self.gen_hyp()
 
     def set_known_key(self, key):
+        """Set the key that this class uses for the known key. Examples include PGE and plots
+
+        Args:
+            key (iterable): The key to set the known key to. Must match the shape of the plaintext
+        """
         self.known_key = np.array(key)
+        assert self.known_key.shape == self.pt_array.shape[1]
 
     def set_leakage_model(self, leakage_model: LeakageFunction):
         """Set the leakage model and regenerate hypotheticals.
@@ -527,22 +554,28 @@ class CPA(AttackResults):
         """
         self.sorted_kguesses_hist.append(self._calc_sort_and_rank(*args, **kwargs))
     
-    def run(self, interval=None, callback=None):
+    def run(self, interval=None, callback=None, reset=True):
         """Run a full CPA attack, updating internal records and callback every interval
 
         Args:
-            interval (int, None, optional): Update internal statistics and call callback every interval
-                traces processed. Defaults to None, in which case the entire project is processed
+            interval (int, None, interable, optional): Update internal statistics and call callback every interval
+                traces processed. Defaults to None, in which case the entire project is processed. Can also be an interval, in which
+                case it is used to determine the traces attacked
             callback (func, None, optional): Function to call after each interval passes. Takes the CPA
                 object as an argument
         """
-        self.reset()
+
+        if reset:
+            self.reset()
         self.gen_hyp()
         if interval is None:
             interval = self.num_traces
-        for i in range(self._trace_range.start, self._trace_range.stop, interval):
-            analyzer_logger.info("Updating traces between {} and {}".format(i, min(i+interval, self._trace_range.stop)))
-            self.update_state(i, min(i + interval, self._trace_range.stop))
+        if isinstance(interval, int):
+            interval = range(self._trace_range.start, self._trace_range.stop, interval)
+
+        for i in interval:
+            analyzer_logger.info("Updating traces between {} and {}".format(i, min(i+interval.step, self._trace_range.stop)))
+            self.update_state(i, min(i + interval.step, self._trace_range.stop))
 
             analyzer_logger.debug("Calculating correlation")
             self.calculate_correlation()

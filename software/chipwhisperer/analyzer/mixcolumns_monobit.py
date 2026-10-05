@@ -88,6 +88,7 @@ for i in range(3):
     lut_mix_column_row.append(tmp2)
 
 # let's do attack against byte 0
+# NOTE: For row, 
 def leak_0(pt, ct, subkey, bit, campaign=0, hd=True):
     lut = lut_mix_column_row[0].flatten('C')
     rtn = np.zeros((len(pt[0]), 256), dtype=np.uint8)
@@ -136,6 +137,8 @@ def leak_3(pt, ct, subkey, bit, campaign=0, hd=True):
     return rtn
 
 class MultiLeakageMonoBitCPA(CPA):
+    """CPA attack that attacks a single bit using multiple leakage models
+    """
     def __init__(self, project, leakage_model, subkeys):
         if callable(leakage_model):
             leakage_model = [leakage_model]
@@ -147,12 +150,24 @@ class MultiLeakageMonoBitCPA(CPA):
         self.additions = 0
         self.corr_sum = None
         
-    def gen_hyp(self, model_num=0, bit=0):
+    def gen_hyp(self, model_num=0, bit=0, hd=True):
+        """Generate hypotheticals for a single model and bit.
+
+        Args:
+            model_num (int): Model number to generate hypotheticals for
+            bit (int): Bit to generate hypotheticals for
+            hd (bool): Whether or not to use Hamming distance
+        """
         for i in range(len(self.subkeys)):
-            self.hyp_array[i] = self.leakage_model[model_num](self.pt_array, self.ct_array, self.subkeys[i], bit)
+            self.hyp_array[i] = self.leakage_model[model_num](self.pt_array, self.ct_array, self.subkeys[i], bit, hd=hd)
 
     def set_sample_range(self, start=None, stop=None, reset=True):
-        """Change the sample range used in the CPA attack.
+        """Change the sample range used in the CPA attack. Calling this function
+        causes this class to reset and hypotheticals to be recalculated.
+
+        Args:
+            start (None, int): Sample to start attack at
+            stop (None, int): Sample to stop attack at
         """
         if start is None:
             start = 0
@@ -166,7 +181,12 @@ class MultiLeakageMonoBitCPA(CPA):
             self.gen_hyp()
 
     def set_trace_range(self, start=None, stop=None, reset=True):
-        """Change the range of traces used in the CPA attack
+        """Change the range of traces used in the CPA attack. Calling this function
+        causes this class to reset and hypotheticals to be recalculated.
+
+        Args:
+            start (None, int): Trace to start attack at
+            stop (None, int): Trace to stop attack at
         """
         if start is None:
             start = 0
@@ -182,38 +202,63 @@ class MultiLeakageMonoBitCPA(CPA):
             self.reset()
             self.gen_hyp()
 
-    def run(self, interval=None, callback=None, bit_range=range(8), model_range=range(4), reset=True):
+    def run(self, interval=None, callback=None, bit_range=range(8), model_range=range(4), reset=True, super_reset=True, hd=True):
+        """Run a CPA attack against a range of bits using a range of models.
+
+        NOTE: For monobit, we need to run this attack on each bit in the key 4 times across all the traces. The normal CPA state needs
+        to be reset after each model, but we don't want to lose the correlation sum after each attack, so we only reset that if reset=True. If using
+        a subset of traces, we also need to avoid doing any reset(), which is why the super_reset is there too.
+
+        TODO: This model tries to account for the number of times corr_sum is updated via self.additions. This is a bit wonky with trace intervals
+        and should probably be updated to only recalculate the full sum once super().reset() is called or something like that.
+        """
         if reset:
             self.reset()
 
         if interval is None:
-            interval = min(self.num_traces, self._trace_range.stop - self._trace_range.start)
+            interval = self.num_traces
+        if isinstance(interval, int):
+            interval = range(self._trace_range.start, self._trace_range.stop, interval)
+
+        if bit_range is None:
+            bit_range = range(8)
+
+        if model_range is None:
+            model_range = range(len(self.leakage_model))
+
+        self.interval = interval
         
         for bit in bit_range:
             for model_num in model_range:
-                super().reset() # need to reset internal state values
-                self.gen_hyp(model_num, bit)
-                for i in range(self._trace_range.start, self._trace_range.stop, interval):
+                # need to reset internal state a
+                if super_reset:
+                    super().reset() # need to reset internal state values
+                self.gen_hyp(model_num, bit, hd)
+                for i in range(interval.start, interval.stop, interval.step):
                     self._cur_model = model_num
                     self._cur_bit = bit
-                    self.update_state(i, min(i + interval, self.num_traces))
+                    self.update_state(i, min(i + interval.step, self.num_traces))
                     self.calculate_correlation()
             
                     self.sort_and_rank()
-                    self.additions += 1
+                    self.additions += 1 # number of times corr_sum was updated
                     
                     if callback:
                         callback(self)
                 
 
-    def calculate_correlation(self, div=1):
+    def calculate_correlation(self):
+        """Calculate correlation and update corr_sum with that correlation
+        """
         super().calculate_correlation()
         if self.corr_sum is None:
-            self.corr_sum = np.abs(np.array(self.correlations)) / div
+            self.corr_sum = np.abs(np.array(self.correlations))
         else:
-            self.corr_sum += np.abs(self.correlations) / div
+            self.corr_sum += np.abs(self.correlations)
 
     def _calc_sort_and_rank(self, bit=0):
+        """Sort and rank using corr_sum instead of correlations
+        """
         sorted_kguesses = []
         self.best_corrs = np.zeros((len(self.subkeys), self.kguesses), dtype=np.float64)
         for i in range(len(self.subkeys)):
@@ -228,7 +273,13 @@ class MultiLeakageMonoBitCPA(CPA):
         return sorted_kguesses
 
 class MixColumnsAttack:
-    def __init__(self, projects, vec_type='row'):
+    """Attacks across MixColumns using a row/column of variable plaintext/ciphertext and the rest constant.
+
+    Uses 4 campaigns, each recovering 4 bytes of the key.
+
+    WARNING: Does not currently support column vector attacks yet
+    """
+    def __init__(self, projects, vec_type='row', hd=True):
         if vec_type != 'row':
             raise ValueError("Column vector not yet supported!")
         self.subkeysarr4 = [[0, 4, 8, 12],
@@ -240,6 +291,8 @@ class MixColumnsAttack:
         #     attack.set_trace_range(0, 1000)
         self.projects = projects
         self.known_key = projects[0].keys[0]
+        self.num_traces = self.attacks[0].num_traces
+        self.hd = hd
 
     def set_trace_range(self, start=None, stop=None):
         for attack in self.attacks:
@@ -249,29 +302,43 @@ class MixColumnsAttack:
         for attack in self.attacks:
             attack.set_sample_range(start, stop, False)
             
-    def run(self, interval=None, callback=None):
+    def run(self, interval=None, callback=None, reset=True):
+        """Run a MixColumns attack.
+
+        Supports 
+        """
+        if interval is None:
+            interval = self.attacks[0].num_traces
+        if isinstance(interval, int):
+            interval = range(self.attacks[0]._trace_range.start, self.attacks[0]._trace_range.stop, interval)
+
+        self.interval = interval
         for bit in range(8):
             for model_num in range(4):
-                for attack in self.attacks:
-                    attack.run(bit_range=range(bit, bit+1), model_range=range(model_num, model_num+1), reset=False)
-                self.correlations = np.zeros((attack.corr_sum.shape[0] * 4, attack.corr_sum.shape[1], attack.corr_sum.shape[2]))
-                self.sorted_kguesses_hist = [[]]
-                for i in range(4):
-                    self.correlations[self.subkeysarr4[i]] += self.attacks[i].corr_sum[:]
-                for i in range(16):
-                    self.sorted_kguesses_hist[-1].append(self.attacks[i % 4].sorted_kguesses_hist[-1][i // 4])
-                    
-                #print(correlations)
-                self.subkeys = list(range(16))
-                self.traces_used_hist = attack.traces_used_hist
-                self._cur_model = model_num
-                self._cur_bit = bit
-                self._trace_range = slice(0, self.projects[0].num_traces)
-                self.corr_sum = self.correlations
-                self.additions = attack.additions
-                self.max_corr_loc = np.argmax(self.correlations, axis=1)
-                if callback:
-                    callback(self)
+                for i in interval:
+                    for attack in self.attacks:
+                        attack.run(range(i, i+interval.step, interval.step),
+                                   bit_range=range(bit, bit+1), model_range=range(model_num, model_num+1), reset=reset, 
+                                   super_reset=(i==interval.start), hd=self.hd)
+                    reset = False
+                    self.correlations = np.zeros((attack.corr_sum.shape[0] * 4, attack.corr_sum.shape[1], attack.corr_sum.shape[2]))
+                    self.sorted_kguesses_hist = [[]]
+                    for j in range(4):
+                        self.correlations[self.subkeysarr4[j]] += self.attacks[j].corr_sum[:]
+                    for j in range(16):
+                        self.sorted_kguesses_hist[-1].append(self.attacks[j % 4].sorted_kguesses_hist[-1][j // 4])
+                        
+                    #print(correlations)
+                    self.subkeys = list(range(16))
+                    self.traces_used_hist = attack.traces_used_hist
+                    self._cur_model = model_num
+                    self._cur_bit = bit
+                    self._trace_range = slice(0, self.projects[0].num_traces)
+                    self.corr_sum = self.correlations
+                    self.additions = attack.additions
+                    self.max_corr_loc = np.argmax(self.correlations, axis=1)
+                    if callback:
+                        callback(self)
 
     def _pge(self, sub_byte, kguess):
         return np.argwhere(self.sorted_kguesses_hist[-1][sub_byte] == kguess)[0][0]
@@ -285,9 +352,8 @@ class MixColumnsAttack:
     def kguess_corrs(self):
         import numpy as np
         key = self.key_guess()
-        np.array( [self.correlations[sub_byte, self.max_corr_loc[sub_byte, key[sub_byte]],key[sub_byte]] 
+        return np.array( [self.correlations[sub_byte, self.max_corr_loc[sub_byte, key[sub_byte]],key[sub_byte]] 
                    / self.additions for sub_byte in range(16)] )
-        pass
 
 def mixcolumns_cb(cpa, head = 6, fmt = "{:02X}<br>{:.4f}", use_additions=True):
     import pandas as pd # type: ignore
@@ -356,6 +422,6 @@ def mixcolumns_cb(cpa, head = 6, fmt = "{:02X}<br>{:.4f}", use_additions=True):
         cur_camp = cpa._cur_camp
     else:
         cur_camp = 0
-    chart = df.head(head).style.format(format_stat).apply(colour_corr_key, axis=1).set_caption("Finished traces {} to {} of {}, model {}, bit {}".format(tstart, tend, cpa._trace_range.stop, cpa._cur_model, cpa._cur_bit))
+    chart = df.head(head).style.format(format_stat).apply(colour_corr_key, axis=1).set_caption("Finished traces {} to {} of {}, model {}, bit {}".format(tstart, tend, cpa.interval.stop, cpa._cur_model, cpa._cur_bit))
     display(chart)
     # return chart
