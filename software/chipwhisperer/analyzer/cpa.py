@@ -464,7 +464,7 @@ class CPA(AttackResults):
             key (iterable): The key to set the known key to. Must match the shape of the plaintext
         """
         self.known_key = np.array(key)
-        assert self.known_key.shape == self.pt_array.shape[1]
+        assert self.known_key.shape[0] == self.pt_array.shape[0], f"{self.known_key.shape[0]} != {self.pt_array.shape[0]}"
 
     def set_leakage_model(self, leakage_model: LeakageFunction):
         """Set the leakage model and regenerate hypotheticals.

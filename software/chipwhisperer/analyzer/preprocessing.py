@@ -19,7 +19,6 @@ def find_min_sad(trace, ref, ref_range):
     return np.argmin(final_sads), np.min(final_sads)
 
 def sad_resync(trace, ref, ref_range):
-    pattern = ref[ref_range[0]:ref_range[1]]
     off, diff = find_min_sad(trace, ref, ref_range)
     #print(off)
     actual_offset = ref_range[0] - off

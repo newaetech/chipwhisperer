@@ -28,7 +28,7 @@ from .logging import *
 from .common.results.glitch import GlitchController, load_gc_results
 from .common.utils.sad_model import SADModelWrapper
 from .common.utils.sad_explorer import SADExplorer
-from .common.project import Project, open_zip, open_project, TraceContainer
+from .common.project import Project, open_project, TraceContainer
 import sys, subprocess
 
 
