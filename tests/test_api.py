@@ -16,11 +16,15 @@ import chipwhisperer.common.utils.util as util
 import chipwhisperer.analyzer as cwa
 from chipwhisperer.analyzer import CPA, get_table_cb, leakage_models, key_schedule_rounds
 from chipwhisperer.analyzer.mixcolumns_monobit import MixColumnsAttack, mixcolumns_cb
+from chipwhisperer.analyzer.preprocessing import ResyncSAD
 import itertools
 
 N = 50
 M = 5
 T_LEN = 5000
+
+"""Project tests
+"""
 
 def gen_proj(N, path=None, gen_pt=True, gen_ct=True, gen_key=True, *args, **kwargs):
     proj = cw.Project(path, *args, **kwargs)
@@ -336,13 +340,16 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(self._TEST_BFIELD.ins_field(0x37, 0x28), 0x2B)
         self.assertEqual(self._TEST_BFIELD.ins_value(0x37, 0xA), 0x2B)
 
+"""CPA tests
+"""
+
 def test_attack():
     proj = cw.open_project('./gold_ref.zip')
     cpa = CPA(proj, leakage_models.sbox_output, 16)
     cpa.run()
 
-    print(cw.bytearray(cpa.key_guess()))
-    print(cpa.kguess_corrs())
+    # print(cw.bytearray(cpa.key_guess()))
+    # print(cpa.kguess_corrs())
     assert (cpa.key_recovered())
     assert ((cpa.kguess_corrs() > 0.8).all())
 
@@ -354,7 +361,7 @@ def test_last_round_state_diff():
     cpa = CPA(proj, leakage_models.last_round_state_diff, 16)
     cpa.set_known_key(key_schedule_rounds(proj.keys[0], 0, 10))
     cpa.run()
-    print(cw.bytearray(cpa.key_guess()))
+    # print(cw.bytearray(cpa.key_guess()))
     print(cpa.kguess_corrs())
     assert (cpa.key_recovered())
 
@@ -365,10 +372,17 @@ def test_mixcolumns():
         projects.append(project)
     cpa = MixColumnsAttack(projects)
     cpa.run()
-    print(cw.bytearray(cpa.key_guess()))
+    # print(cw.bytearray(cpa.key_guess()))
     assert (cpa.key_recovered())
 
-
+def test_resync_sad():
+    project = cw.open_project("resync_gold.zip")
+    resync = ResyncSAD(project, project.traces[0], np.array([250, 450]))
+    resync_proj = resync.resync_all()
+    cpa = CPA(resync_proj, leakage_models.sbox_output, 16)
+    cpa.run()
+    assert cpa.key_recovered()
+    pass
 
 if __name__ == '__main__':
     unittest.main()
