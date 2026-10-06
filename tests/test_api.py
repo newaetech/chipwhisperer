@@ -167,12 +167,10 @@ def test_save(gen_pt, gen_ct, gen_key, desc):
         # but not if we change the original (proj2 actually will be the same)
         proj._group['traces'][0,0] = 1 # type: ignore
         proj_equal(proj, proj2, has_pt=gen_pt, has_ct=gen_ct, has_key=gen_key)
-        # try:
-        #     test_eq(proj, proj3)
-        #     # a little weird, raise a different error so that we can tell if above failed
-        #     raise Warning("Dummy error")
-        # except Exception as e:
-        #     assert isinstance(e, AssertionError)
+
+        # these ones shouldn't be equal
+        with pytest.raises(AssertionError):
+            proj_equal(proj, proj3, has_pt=gen_pt, has_ct=gen_ct, has_key=gen_key)
 
         # final test, zip save and open
         #proj.save('test.zip')
@@ -387,21 +385,36 @@ def test_attack():
     cpa = CPA(proj, leakage_models.sbox_output, 16)
     cpa.run()
 
-    # print(cw.bytearray(cpa.key_guess()))
-    # print(cpa.kguess_corrs())
     assert (cpa.key_recovered())
     assert ((cpa.kguess_corrs() > 0.8).all())
+    assert (cpa.max_corr_location() == \
+            [0, 196, 392, 588, 45, 241, 437, 633, 89, 284, 480, 677, 132, 329, 525, 720]).all()
+
+    # print(cpa.max_corr_location())
 
     cpa.run(10)
+    assert (cpa.key_recovered())
     cpa.run(range(0, 50, 10))
+    assert (cpa.key_recovered())
+
+    cpa.set_trace_range(0, proj.num_traces // 2)
+    cpa.run()
+    assert (cpa.key_recovered() == True)
+
+    cpa.set_sample_range(0, 710)
+    cpa.run()
+    assert (cpa.key_recovered() == False)
+
+    cpa.set_trace_range()
+    cpa.set_sample_range()
+    cpa.run()
+    assert (cpa.key_recovered())
 
 def test_last_round_state_diff():
     proj = cw.open_project('f4_reduced.zip')
     cpa = CPA(proj, leakage_models.last_round_state_diff, 16)
     cpa.set_known_key(key_schedule_rounds(proj.keys[0], 0, 10))
     cpa.run()
-    # print(cw.bytearray(cpa.key_guess()))
-    print(cpa.kguess_corrs())
     assert (cpa.key_recovered())
 
 def test_mixcolumns():
@@ -411,7 +424,6 @@ def test_mixcolumns():
         projects.append(project)
     cpa = MixColumnsAttack(projects)
     cpa.run()
-    # print(cw.bytearray(cpa.key_guess()))
     assert (cpa.key_recovered())
 
 def test_resync_sad():

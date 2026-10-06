@@ -278,7 +278,7 @@ class Project:
             final_path = path.parent / path.stem
 
             shutil.make_archive(str(final_path), exp_type, tmpname)
-            print('saving to ' + path.stem)
+            analyzer_logger.info('saving to ' + path.stem)
 
     def export(self, path, overwrite=False):
         path = str(path)

@@ -290,6 +290,26 @@ class AttackResults:
             
         return plt.opts(title='Partial Guessing Entropy v. Traces', xlabel='traces used', ylabel='PGE', legend_position='right', legend_limit=250, bgcolor='lightgray', height=800, width=1000)
 
+    def max_corr_location(self, subkeys=None):
+        if subkeys is None:
+            subkeys = self.subkeys
+
+        if self.known_key is None:
+            key = self.key_guess()
+        else:
+            key = self.known_key[self.subkeys]
+
+        locs = []
+
+        for i in range(len(subkeys)):
+            assert self.correlations is not None
+            abscor = np.abs(self.correlations[i])
+            max_corr_loc = np.argmax(abscor, axis=0)
+            locs.append(max_corr_loc[key[i]])
+
+        return np.array(locs)
+
+
     def save_results(self, path, overwrite=False):
         # TODO
         group = zarr.create_group(store=path, overwrite=overwrite)
