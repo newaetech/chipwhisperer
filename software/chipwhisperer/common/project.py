@@ -371,6 +371,7 @@ class Project:
 
     def _extend_via_tuple(self, project):
         # initialize self
+        assert len(project) == 4, f"Project tuple needs all four fields (can be None) {project}"
         initial = []
         if not self._initialized:
             for element in project:
@@ -381,6 +382,7 @@ class Project:
             cont = TraceContainer(*initial)
             self._init_storage(cont)
         num_traces = project[0].shape[0]
+        analyzer_logger.debug(f"Project shape is {project[0].shape}")
 
         while self.size < (self.num_traces + num_traces):
             analyzer_logger.info(f"Resizing from {self.size} to fit {self.num_traces + num_traces}")
@@ -393,9 +395,10 @@ class Project:
             if self._group.attrs[name]['exists']: # type: ignore
                 # if it does, copy to end of new data
                 self._group[name][self.num_traces:(self.num_traces + num_traces)] = project[i][:num_traces] # type: ignore
+                analyzer_logger.debug(f"Adding {name}, {project[i][:num_traces]}")
             else:
                 # if it doesn't make sure it doesn't exist in other project as well
-                assert project[i] is not None
+                assert project[i] is None, f"{project} should have pos {i} None"
 
         tmplen = self._group.attrs['len']
         assert type(tmplen) is int
@@ -566,13 +569,15 @@ class Project:
         new_proj = Project(init_size=(trace_range[1] - trace_range[0]))
 
         traces = self.traces[trace_range[0]:trace_range[1], sample_range[0]:sample_range[1]]
-        fin_tuple = [traces]
-        if self.plaintexts is not None:
-            fin_tuple.append(self.plaintexts[trace_range[0]:trace_range[1]])
-        if self.ciphertexts is not None:
-            fin_tuple.append(self.ciphertexts[trace_range[0]:trace_range[1]])
-        if self.keys is not None:
-            fin_tuple.append(self.keys[trace_range[0]:trace_range[1]])
+        fin_tuple = [traces, None, None, None]
+
+        analyzer_logger.info(f"Reducing to {slice(trace_range[0], trace_range[1])},{slice(sample_range[0], sample_range[1])}")
+
+        # get all internal fields, reduce if there, None if not
+        for i in range(1, len(DATA_NAMES)):
+            field = getattr(self, DATA_NAMES[i])
+            if field is not None:
+                fin_tuple[i] = field[trace_range[0]:trace_range[1]]
 
         fin_tuple = tuple(fin_tuple)
         new_proj.extend(fin_tuple)
@@ -597,7 +602,9 @@ class Project:
         assert type(group) is zarr.Group
         for name in self.DATA_NAMES:
             # assert group has all data fields
-            assert name in group, f"{name} missing from {str(group)}"
+            # if name not in group:
+            #     analyzer_logger.info(f"{name} missing from {str(group)}")
+            # assert name in group, f"{name} missing from {str(group)}"
 
             # assert metadata exists for all possible data fields
             assert (name in group.attrs) and (type(group.attrs[name]) is dict), f"{name} is missing group attrs {group.attrs}"
@@ -608,6 +615,7 @@ class Project:
 
             if name_data['exists']:
                 # if the field 'exists', it shouldn't be none
+                assert name in group, f"{name} missing from {str(group)}"
                 a = group[name]
                 assert isinstance(a, zarr.Array), f"a not zarr array, is {type(a)}"
                 assert a.dtype == name_data['dtype'], f"{a.dtype} != {name_data['dtype']}"
