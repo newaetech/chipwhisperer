@@ -1,315 +1,185 @@
 import unittest
 import numpy as np
 import os, sys
-import shutil
-import random
-from zipfile import ZipFile
-import pathlib
+from pathlib import Path
+import tempfile
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 cw_dir = os.path.realpath('%s/../software' % script_dir)
 sys.path.insert(1, cw_dir)
 
-from chipwhisperer.common.api.ProjectFormat import ensure_cwp_extension
 import chipwhisperer as cw
 import chipwhisperer.common.utils.util as util
 import chipwhisperer.analyzer as cwa
-
-
-def create_random_traces(num, wave_length):
-    traces = []
-    for i in range(num):
-        wave = np.random.rand(wave_length)
-        textin = [random.randrange(256) for i in range(16)]
-        textout = [random.randrange(256) for i in range(16)]
-        key = [random.randrange(256) for i in range(16)]
-        traces.append(cw.Trace(wave, textin, textout, key))
-    return traces
-
-
-class TestTraces(unittest.TestCase):
-
-    def setUp(self):
-        self.project_name = 'testing'
-        self.project = cw.create_project(self.project_name)
-        self.fake_trace = cw.Trace(np.array([i for i in range(35)]), 'asdf', 'sdaf', 'sdf')
-        self.project.traces.seg_ind_max = 4
-        self.trace_num = 13
-        for i in range(self.trace_num-1):
-            self.project.traces.append(self.fake_trace)
-        self.fake_trace_2 = cw.Trace(np.array([i for i in range(35)]), 'asdf', 'sdaf', 'hello')
-        self.project.traces.append(self.fake_trace_2)
-
-    def tearDown(self):
-        self.project.remove(i_am_sure=True)
-
-    def test_traces_len(self):
-        traces = self.project.traces
-        self.assertEqual(self.trace_num, len(traces))
-
-    def test_number_of_segments(self):
-        self.assertEqual(3, len(self.project.segments))
-
-    def test_get_trace(self):
-        traces = self.project.traces
-
-        # Access outside of traces should raise IndexError
-        self.assertRaises(IndexError, traces.__getitem__, 13)
-
-        # getting item with a non slice or int object is not allowed
-        self.assertRaises(TypeError, traces.__getitem__, object)
-
-        # negative indexing is supported
-        self.assertEqual('hello', traces[-1][3])
-
-        # do not allow step in slices
-        self.assertRaises(TypeError, traces[1:5:2])
-
-        # do allow slice without step
-        self.assertEqual('hello', traces[-2:][-1][3])
-
-    def test_textin_individually(self):
-        textins = self.project.textins
-
-        # Access outside of iterable should raise IndexError
-        self.assertRaises(IndexError, textins.__getitem__, 13)
-
-        # getting item with a non slice or int object is not allowed
-        self.assertRaises(TypeError, textins.__getitem__, object)
-
-        # negative indexing is supported
-        self.assertEqual(self.fake_trace_2[1], textins[-1])
-
-        # allow slicing
-        self.assertEqual(self.fake_trace_2[1], textins[-2:][-1])
-
-class TestProject(unittest.TestCase):
-
-    def setUp(self):
-        self.project_name = 'projects/test_project'
-
-    def tearDown(self):
-        self.project.remove(i_am_sure=True)
-
-
-    def test_short_segments(self):
-        self.project = cw.create_project(self.project_name)
-        self.project.seg_len = 2
-        self.project.seg_ind_max = self.project.traces.seg_len - 1
-        traces = create_random_traces(100, 1000)
-        self.project.traces.extend(traces)
-
-        index = random.randrange(0, len(traces))
-        index_wave = random.randrange(0, len(traces[0]))
-        self.assertEqual(traces[index].wave[index_wave], self.project.traces[index].wave[index_wave])
-
-
-        # Note: I think we can just call assertEqual on the arrays instead of doing it per each value
-        for i in range(16):
-            # check the plaintext matches
-            self.assertEqual(traces[index].textin[i], self.project.traces[index].textin[i])
-
-            # check the textout matches
-            self.assertEqual(traces[index].textout[i], self.project.traces[index].textout[i])
-
-            # check the key matches
-            self.assertEqual(traces[index].key[i], self.project.traces[index].key[i])
-
-    def test_create_and_save_project(self):
-        self.project = cw.create_project(self.project_name)
-        self.assertTrue(os.path.isdir(self.project_name + '_data'))
-
-        trace = cw.Trace(np.array([i for i in range(100)]), 'text in', 'text out', 'key')
-        for i in range(500):
-            self.project.traces.append(trace)
-
-        self.project.save()
-        self.assertTrue(os.path.exists(ensure_cwp_extension(self.project_name)))
-
-        # calling it again should not cause issues.
-        self.project.save()
-
-    def test_remove_project(self):
-        self.project = cw.create_project(self.project_name)
-
-        # must supply i_am_sure argument.
-        self.assertRaises(RuntimeWarning, self.project.remove)
-        self.assertTrue(os.path.exists(self.project.datadirectory))
-
-        self.project.remove(i_am_sure=True)
-        self.assertFalse(os.path.exists(self.project.datadirectory))
-
-    def test_traces_are_retrievable(self):
-        self.project = cw.create_project(self.project_name)
-
-        # make sure textin is still textin and not key, etc.
-        traces = create_random_traces(100, 1000)
-        self.project.traces.extend(traces)
-
-        # retrieve a random trace
-        index = random.randrange(0, len(traces))
-        # retrieve a random part of the power trace
-        index_wave = random.randrange(0, len(traces[0].wave))
-
-        # check that the power trace matches
-        self.assertEqual(traces[index].wave[index_wave], self.project.traces[index].wave[index_wave])
-
-
-        # Note: I think we can just call assertEqual on the arrays instead of doing it per each value
-        for i in range(16):
-            # check the plaintext matches
-            self.assertEqual(traces[index].textin[i], self.project.traces[index].textin[i])
-
-            # check the textout matches
-            self.assertEqual(traces[index].textout[i], self.project.traces[index].textout[i])
-
-            # check the key matches
-            self.assertEqual(traces[index].key[i], self.project.traces[index].key[i])
-
-    def test_individual_iterables(self):
-        self.project = cw.create_project(self.project_name)
-
-        # make sure textin is still textin and not key, etc.
-        traces = create_random_traces(50, 1)
-        self.project.traces.extend(traces)
-
-        index = 0
-        for wave, textin, textout, key in zip(self.project.waves, self.project.textins, self.project.textouts, self.project.keys):
-            self.assertEqual(traces[index].textin, textin)
-            self.assertEqual(traces[index].textout, textout)
-            self.assertEqual(traces[index].key, key)
-            self.assertEqual(traces[index].wave, wave)
-            index += 1
-
-        self.assertEqual(index, len(self.project.textins))
-    
-    def test_numpy_conversion(self):
-        self.project = cw.create_project(self.project_name)
-
-        traces = create_random_traces(100, 1000)
-        self.project.traces.extend(traces)
-
-        np_waves = np.array(self.project.waves)
-        self.assertEqual(np.shape(np_waves), (len(traces), len(traces[0].wave)))
-        self.assertEqual(np_waves.dtype, 'float64')
-        for i in range(len(np_waves)):
-            self.assertEqual((np_waves[i,:] == self.project.waves[i]).all(), True)
-
-
-    def test_project_openable(self):
-        self.project = cw.create_project(self.project_name)
-        traces = create_random_traces(100, 5000)
-        self.project.traces.extend(traces)
-        self.project.save()
-
-        # make sure you can open the project with open_project
-        self.project = cw.open_project(self.project_name)
-
-
-class TestProjectExportImport(unittest.TestCase):
-
-    def setUp(self):
-        self.project_name = 'projects/test_project'
-        self.project = cw.create_project(self.project_name)
-        self.traces = create_random_traces(100, 5000)
-        self.project.traces.extend(self.traces)
-        self.zipfile_path = 'exported_test_project.zip'
-
-        file_paths = list()
-        file_paths.append(os.path.join(ensure_cwp_extension(os.path.split(self.project_name)[1])))
-        dir_containing_project = os.path.abspath(os.path.join(self.project.datadirectory, '..'))
-        for root, dirs, files in os.walk(self.project.datadirectory):
-            for file in files:
-                file_paths.append(os.path.relpath(os.path.join(root, file), dir_containing_project))
-
-        self.file_paths = [pathlib.Path(x).as_posix() for x in file_paths]
-
-    def tearDown(self):
-        self.project.remove(i_am_sure=True)
-        os.remove(self.zipfile_path)
-
-    def test_project_exportable(self):
-        self.project.export(self.zipfile_path, 'zip')
-
-        # check the zipfile was created
-        self.assertTrue(os.path.isfile(self.zipfile_path))
-
-        # check that all paths remain the same
-        with ZipFile(self.zipfile_path, 'r') as zippy:
-            archive_files = zippy.namelist()
-            for file_path in self.file_paths:
-                self.assertIn(file_path, archive_files)
-
-    def test_project_importable(self):
-        self.project.export(self.zipfile_path, 'zip')
-        self.project.remove(i_am_sure=True)
-        self.project = cw.import_project(self.zipfile_path)
-
-        # verify that the data is the same
-        for path in self.file_paths:
-            self.assertTrue(os.path.exists(path))
-
-    def test_import_export_data_integrity(self):
-        self.project.export(self.zipfile_path, 'zip')
-        self.project.remove(i_am_sure=True)
-        self.project = cw.import_project(self.zipfile_path)
-
-        # retrieve a random trace
-        index = random.randrange(0, len(self.traces))
-
-        # retrieve a random part of the power trace
-        index_wave = random.randrange(0, len(self.traces[0].wave))
-
-        # check that the power trace matches
-        self.assertEqual(self.traces[index].wave[index_wave], self.project.traces[index].wave[index_wave])
-
-        for i in range(16):
-            # check the plaintext matches
-            self.assertEqual(self.traces[index].textin[i], self.project.traces[index].textin[i])
-
-            # check the textout matches
-            self.assertEqual(self.traces[index].textout[i], self.project.traces[index].textout[i])
-
-            # check the key matches
-            self.assertEqual(self.traces[index].key[i], self.project.traces[index].key[i])
-
-
-class TestSNR(unittest.TestCase):
-
-    def setUp(self):
-        self.project = cw.create_project('test_project')
-        self.traces = create_random_traces(1000, 5000)
-        for trace in self.traces:
-            self.project.traces.append(trace)
-
-    def tearDown(self):
-        self.project.remove(i_am_sure=True)
-
-    def test_calculate_snr_with_project(self):
-        self.assertRaises(TypeError, cwa.calculate_snr, self.project, cwa.leakage_models.sbox_output)
-
-    def test_calculate_snr_with_traces(self):
-        snr = cwa.calculate_snr(self.traces, cwa.leakage_models.sbox_output)
-        self.assertEqual(len(snr), 5000)
-
-
-class TestPreprocessing(unittest.TestCase):
-
-    def setUp(self):
-        self.project = cw.create_project('test_project')
-        traces = create_random_traces(100, 3000)
-        self.project.traces.extend(traces)
-
-    def tearDown(self):
-        self.project.remove(i_am_sure=True)
-
-    def test_resync(self):
-        resync_traces = cwa.preprocessing.ResyncSAD(self.project)
-        resync_traces.ref_trace = 0
-        resync_traces.target_window = (1000, 1400)
-        resync_traces.max_shift = 1000
-        new_project = resync_traces.preprocess()
-
+from chipwhisperer.analyzer import CPA, get_table_cb, leakage_models, key_schedule_rounds
+from chipwhisperer.analyzer.mixcolumns_monobit import MixColumnsAttack, mixcolumns_cb
+from chipwhisperer.analyzer.preprocessing import ResyncSAD
+import pytest
+
+N = 500
+M = 5
+T_LEN = 5000
+
+"""Project tests
+"""
+
+def gen_proj(N, path=None, gen_pt=True, gen_ct=True, gen_key=True, *args, **kwargs):
+    proj = cw.Project(path, *args, **kwargs)
+    traces = np.random.randint(0, 4096, (N, T_LEN), dtype=np.int16)
+
+    plaintexts = np.random.randint(0, 256, (N, 16), dtype=np.uint8) if gen_pt else None
+    ciphertexts = np.random.randint(0, 256, (N, 16), dtype=np.uint8) if gen_ct else None
+    keys = np.random.randint(0, 256, (N, 16), dtype=np.uint8) if gen_key else None
+    # for i in range(N):
+    proj.extend((traces, plaintexts, ciphertexts, keys))
+
+    return proj, traces, plaintexts, ciphertexts, keys
+
+# TODO: Extend to do all tests with each missing field
+def test_missing_field():
+    l1 = ('gen_pt', 'gen_ct', 'gen_key')
+    l2 = ('plaintext', 'ciphertext', 'key')
+    l3 = ('plaintexts', 'ciphertexts', 'keys')
+    for i in range(len(l1)):
+        kwargs = {l1[i]: False}
+        p = gen_proj(N, **kwargs)[0]
+        assert (getattr(p, l3[i]) is None)
+        assert (getattr(p[0], l2[i]) is None)
+
+PROJECT_TESTDATA = [
+    (True, True, True,  "all"),
+    (False, True, True, "no_pt"),
+    (False, False, True, "no_ptct"),
+    (False, False, False, "no_data"),
+    (True, False, False, "no_ctkey"),
+    (True, True, False, "no_key"),
+    (False, True, False, "no_ptkey"),
+    (True, False, True, "no_ct")
+]
+
+def proj_equal(proj1, proj2, n1=None, n2=None, has_pt=True, has_ct=True, has_key=True):
+    if n1 is None:
+        n1 = slice(proj1.num_traces)
+    if n2 is None:
+        n2 = slice(proj2.num_traces)
+    assert (proj1.traces[n1] == proj2.traces[n2]).all(), f"{proj1.traces[n1]} != {proj2.traces[n2]}"
+    if has_pt is True:
+        assert (proj1.plaintexts[n1] == proj2.plaintexts[n2]).all(), f"{proj1.plaintexts[n1]} != {proj2.plaintexts[n2]}"
+    else:
+        assert proj1.plaintexts is None
+        assert proj2.plaintexts is None
+
+    if has_ct is True:
+        assert (proj1.ciphertexts[n1] == proj2.ciphertexts[n2]).all(), f"{proj1.ciphertexts[n1]} != {proj2.ciphertexts[n2]}"
+    else:
+        assert proj1.ciphertexts is None
+        assert proj2.ciphertexts is None
+
+    if has_key is True:
+        assert (proj1.keys[n1] == proj2.keys[n2]).all(), f"{proj1.keys[n1]} != {proj2.keys[n2]}"
+    else:
+        assert proj1.keys is None
+        assert proj2.keys is None
+        
+PROJECT_PARAMS = "gen_pt,gen_ct,gen_key,desc"
+@pytest.mark.parametrize(PROJECT_PARAMS, PROJECT_TESTDATA)
+def test_append(gen_pt, gen_ct, gen_key, desc):
+    proj, traces, plaintexts, ciphertexts, keys = gen_proj(N, gen_pt=gen_pt, gen_ct=gen_ct, gen_key=gen_key)
+
+    assert((proj.traces == traces).all())
+
+    if gen_pt is True:
+        assert((proj.plaintexts == plaintexts).all())
+    else:
+        assert proj.plaintexts is None
+
+    if gen_ct is True:
+        assert((proj.ciphertexts == ciphertexts).all())
+    else:
+        assert proj.ciphertexts is None
+
+    if gen_key is True:
+        assert((proj.keys == keys).all())
+    else:
+        assert proj.keys is None
+
+@pytest.mark.parametrize(PROJECT_PARAMS, PROJECT_TESTDATA)
+def test_extend_tuple(gen_pt, gen_ct, gen_key, desc):
+    proj, traces, plaintexts, ciphertexts, keys = gen_proj(N, gen_pt=gen_pt, gen_ct=gen_ct, gen_key=gen_key)
+    proj2, traces, plaintexts, ciphertexts, keys = gen_proj(N, gen_pt=gen_pt, gen_ct=gen_ct, gen_key=gen_key)
+
+    proj.extend((traces, plaintexts, ciphertexts, keys))
+    proj_equal(proj, proj2, slice(N, None), has_pt=gen_pt, has_ct=gen_ct, has_key=gen_key)
+
+@pytest.mark.parametrize(PROJECT_PARAMS, PROJECT_TESTDATA)
+def test_reduce(gen_pt, gen_ct, gen_key, desc):
+    proj, traces, plaintexts, ciphertexts, keys = gen_proj(N, gen_pt=gen_pt, gen_ct=gen_ct, gen_key=gen_key)
+    red_proj = proj.reduce(None, (0, N // 2))
+    proj_equal(proj, red_proj, slice(0, N//2), has_pt=gen_pt, has_ct=gen_ct, has_key=gen_key)
+
+    ref_proj2 = proj.reduce((0, T_LEN // 2))
+    assert ref_proj2.trace_len == T_LEN//2, f"{ref_proj2} has incorrect trace_len {ref_proj2.trace_len} instead of {T_LEN//2}"
+    assert((ref_proj2.traces[:] == proj.traces[:,:T_LEN//2]).all())
+
+
+@pytest.mark.parametrize(PROJECT_PARAMS, PROJECT_TESTDATA)
+def test_extend(gen_pt, gen_ct, gen_key, desc):
+    proj_arr = []
+    mproj = cw.Project()
+    for i in range(M):
+        proj = gen_proj(N, gen_pt=gen_pt, gen_ct=gen_ct, gen_key=gen_key)[0]
+        proj_arr.append(proj)
+        mproj.extend(proj)
+        n1 = slice(i*N, (i+1)*N)
+        n2 = slice(N*M)
+        proj_equal(mproj, proj, n1, n2, has_pt=gen_pt, has_ct=gen_ct, has_key=gen_key)
+
+    for i in range(M):
+        n1 = slice(i*N, (i+1)*N)
+        n2 = slice(N*M)
+        #print(mproj)
+        #print(proj)
+        
+        proj_equal(mproj, proj_arr[i], n1, n2, has_pt=gen_pt, has_ct=gen_ct, has_key=gen_key)
+
+@pytest.mark.parametrize(PROJECT_PARAMS, PROJECT_TESTDATA)
+def test_save(gen_pt, gen_ct, gen_key, desc):
+    with tempfile.TemporaryDirectory() as tmpname:
+        # test saving seems to work
+        proj = gen_proj(N, tmpname + "/test1", gen_pt=gen_pt, gen_ct=gen_ct, gen_key=gen_key)[0]
+        try:
+            proj2 = cw.open_project(tmpname + "/test1")
+        except:
+            print(tmpname)
+            print(os.listdir("/tmp"))
+            print(os.listdir(tmpname))
+            print(os.listdir(tmpname + "/test1"))
+            raise
+        proj_equal(proj, proj2, has_pt=gen_pt, has_ct=gen_ct, has_key=gen_key)
+
+        # do an additional save
+        proj.save(tmpname + "/test2")
+
+        # this new project should be the same as the original
+        proj3 = cw.open_project(tmpname + "/test2")
+        proj_equal(proj, proj3, has_pt=gen_pt, has_ct=gen_ct, has_key=gen_key)
+
+        # but not if we change the original (proj2 actually will be the same)
+        proj._group['traces'][0,0] = 1 # type: ignore
+        proj_equal(proj, proj2, has_pt=gen_pt, has_ct=gen_ct, has_key=gen_key)
+
+        # these ones shouldn't be equal
+        with pytest.raises(AssertionError):
+            proj_equal(proj, proj3, has_pt=gen_pt, has_ct=gen_ct, has_key=gen_key)
+
+        # final test, zip save and open
+        #proj.save('test.zip')
+        #proj4 = cw.open_project('test.zip')
+        zpath = Path(tmpname) / 'test.zip'
+        #print(zpath)
+        proj.save(zpath)
+        proj4 = cw.open_project(zpath)
+        proj_equal(proj, proj4, has_pt=gen_pt, has_ct=gen_ct, has_key=gen_key)
 
 class TestUtils(unittest.TestCase):
     _OBJ_HW_DICT = {
@@ -507,58 +377,63 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(self._TEST_BFIELD.ins_field(0x37, 0x28), 0x2B)
         self.assertEqual(self._TEST_BFIELD.ins_value(0x37, 0xA), 0x2B)
 
-class TestSegment(unittest.TestCase):
-    def setUp(self):
-        self.project = cw.create_project('test_seg', overwrite=True)
-        for i in range(0, 10000):
-            arr = bytearray(b'CWUNIQUESTRING1')
-            tr = cw.Trace(np.array([0]), arr, arr, arr)
-            self.project.traces.append(tr)
+"""CPA tests
+"""
 
-        arr = bytearray(b'CWUNIQUESTRING2')
-        tr = cw.Trace(np.array([0]), arr, arr, arr)
-        self.project.traces.append(tr)
-        self.project.save()
-        self.project.close()
+def test_attack():
+    proj = cw.open_project('./gold_ref.zip')
+    cpa = CPA(proj, leakage_models.sbox_output, 16)
+    cpa.run()
 
-    def tearDown(self):
-        self.project.close(save=False)
-        self.project.remove(i_am_sure=True)
+    assert (cpa.key_recovered())
+    assert ((cpa.kguess_corrs() > 0.8).all())
+    assert (cpa.max_corr_location() == \
+            [0, 196, 392, 588, 45, 241, 437, 633, 89, 284, 480, 677, 132, 329, 525, 720]).all()
 
-    def test_trace_beyond_segment(self):
-        self.project = cw.open_project('test_seg')
-        arr = bytearray(b'CWUNIQUESTRING2')
-        for i in range(0, len(arr)):
-            self.assertEqual(self.project.textins[10000][i], arr[i])
+    # print(cpa.max_corr_location())
 
-class TestCPA(unittest.TestCase):
-    def test_CPA(self):
-        project = cw.open_project('projects/Tutorial_B5')
-        leak_model = cwa.leakage_models.sbox_output
-        attack = cwa.cpa(project, leak_model)
-        results = attack.run()
-        keys = results.find_key()
-        for i in range(len(project.keys[0])):
-            self.assertEqual(project.keys[0][i], keys[i])
+    cpa.run(10)
+    assert (cpa.key_recovered())
+    cpa.run(range(0, 50, 10))
+    assert (cpa.key_recovered())
 
-        project.close(save=False)
+    cpa.set_trace_range(0, proj.num_traces // 2)
+    cpa.run()
+    assert (cpa.key_recovered() == True)
 
-    def test_jitter(self):
-        project = cw.open_project('projects/jittertime')
-        resync_traces = cwa.preprocessing.ResyncSAD(project)
-        resync_traces.ref_trace = 0
-        resync_traces.target_window = (700, 1500)
-        resync_traces.max_shift = 700
-        new_proj = resync_traces.preprocess()
-        leak_model = cwa.leakage_models.sbox_output
-        attack = cwa.cpa(new_proj, leak_model)
-        results = attack.run()
-        keys = results.find_key()
-        for i in range(len(project.keys[0])):
-            self.assertEqual(project.keys[0][i], keys[i])
-        project.close(save=False)
+    cpa.set_sample_range(0, 710)
+    cpa.run()
+    assert (cpa.key_recovered() == False)
 
+    cpa.set_trace_range()
+    cpa.set_sample_range()
+    cpa.run()
+    assert (cpa.key_recovered())
 
+def test_last_round_state_diff():
+    proj = cw.open_project('f4_reduced.zip')
+    cpa = CPA(proj, leakage_models.last_round_state_diff, 16)
+    cpa.set_known_key(key_schedule_rounds(proj.keys[0], 0, 10))
+    cpa.run()
+    assert (cpa.key_recovered())
+
+def test_mixcolumns():
+    projects = []
+    for i in range(4):
+        project = cw.open_project(f"Var_Vec_red_{i}.zip")
+        projects.append(project)
+    cpa = MixColumnsAttack(projects)
+    cpa.run()
+    assert (cpa.key_recovered())
+
+def test_resync_sad():
+    project = cw.open_project("resync_gold.zip")
+    resync = ResyncSAD(project, project.traces[0], np.array([250, 450]))
+    resync_proj = resync.resync_all()
+    cpa = CPA(resync_proj, leakage_models.sbox_output, 16)
+    cpa.run()
+    assert cpa.key_recovered()
+    pass
 
 if __name__ == '__main__':
     unittest.main()

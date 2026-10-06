@@ -34,7 +34,7 @@ class Programmer:
     pin_setup : Dict[str, str] = {}
 
     def __init__(self):
-        self.newTextLog = util.Signal()
+        # self.newTextLog = util.Signal()
         self._scope = None
 
     def open(self):
@@ -82,7 +82,6 @@ class Programmer:
     def log(self, text):
         """Logs the text and broadcasts it"""
         target_logger.info(text)
-        self.newTextLog.emit(text)
 
     def autoProgram(self, hexfile, erase, verify, logfunc, waitfunc):
         raise NotImplementedError
@@ -154,7 +153,7 @@ class SAM4SProgrammer(Programmer):
         return self.prog
 
     @save_and_restore_pins
-    def find(self, power_cycle=True):
+    def find(self, power_cycle=True, baud=None):
         if power_cycle:
             # target_logger.info("Power cycling SAM4S")
             # self.scope.io.target_pwr = 0
@@ -180,9 +179,11 @@ class SAM4SProgrammer(Programmer):
         time.sleep(0.5)
 
         self._old_baud = self.scope._get_usart()._baud
+        if not baud:
+            baud = self._old_baud
         prog = self.get_prog()
         target_logger.info("Connecting to SAMBA")
-        prog.con(self.scope)
+        prog.con(self.scope, baud)
         target_logger.info("Done!")
 
     @save_and_restore_pins

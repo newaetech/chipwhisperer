@@ -27,13 +27,15 @@ import time
 import re
 import os.path
 import random
-from ...common.traces import Trace
+from ...common.project import TraceContainer, Project
 from ...common.utils import util
 from .CW305 import CW305, CW305_USB
 from chipwhisperer.logging import *
 from chipwhisperer.analyzer.utils.aes_funcs import key_schedule_rounds
 from chipwhisperer.common.utils.aes_cipher import AESCipher
 from collections import OrderedDict
+from numpy.lib.stride_tricks import sliding_window_view
+import numpy as np
 bytearray = util.CWByteArray # type: ignore
 
 class CW305_AES_PIPELINED(CW305):
@@ -135,7 +137,7 @@ class CW305_AES_PIPELINED(CW305):
 
         fifo_errors = self.fifo_errors()
         if fifo_errors:
-            target_logger.errors("Internal FIFO errors:" % fifo_errors)
+            target_logger.error("Internal FIFO errors:" % fifo_errors)
 
         if ret:
             target_logger.warning("Timeout happened during capture")
@@ -152,12 +154,12 @@ class CW305_AES_PIPELINED(CW305):
         if len(wave) >= 1:
             if single_pt:
                 # if we have a single pt, return a "normal" Trace object (which can e.g. be directly fed to analyzer).
-                return Trace(wave, plaintexts[0], ciphertexts[0], key)
+                return TraceContainer(wave, plaintexts[0], ciphertexts[0], key)
             else:
                 # otherwise, return a Trace where textin is a list of all the plaintexts and textout is a list of all
                 # the ciphertexts; you will probably want to chop this up into trace segments that each have a single
                 # associated plaintext and ciphertext
-                return Trace(wave, plaintexts, ciphertexts, key)
+                return TraceContainer(wave, plaintexts, ciphertexts, key)
         else:
             return None
 
@@ -226,8 +228,7 @@ class CW305_AES_PIPELINED(CW305):
         """
         return self.fpga_read(self.REG_HALF_PIPE, 1)[0]
 
-
-    def split_traces(self, scope, traces, start_offset, stop_offset, initial_discards=10, end_discards=10):
+    def split_traces(self, scope, project, start_offset, stop_offset, initial_discards=10, end_discards=10):
         """Convenience function which takes one or more power traces and splits them up into many smaller
         traces which are returned. The starting index of each subtrace increases by scope.clock.adc_mul for
         fully-pipelined targets, and twice that for half-pipelined targets.
@@ -241,23 +242,50 @@ class CW305_AES_PIPELINED(CW305):
             end_discards (int): number of sub-traces to discard from the end of each element of traces
 
         Returns:
-            List of :class:`Trace <chipwhisperer.common.traces.Trace>`
+            Project containing split traces
 
         """
-        N = len(traces)
-        NPT = len(traces[0].textin) # number of encryptions per trace
+        N = project.num_traces
+        NPT = len(project.plaintexts[0]) # number of encryptions per trace
         samples_per_clock = scope.clock.adc_mul
         if self.half_pipe:
             mx = 2
         else:
             mx = 1
-        new_traces = []
-        for j in range(N):
-            for i in range(initial_discards, NPT-end_discards):
-                short_trace = traces[j].wave[start_offset+i*samples_per_clock*mx:stop_offset+i*samples_per_clock*mx]
-                #short_traces.append(short_trace)
-                trace_object = Trace(short_trace, traces[j].textin[i], traces[j].textout[i], traces[0].key)
-                new_traces.append(trace_object)
+
+        final_num_traces = N*(NPT - end_discards - initial_discards)
+        traces_per_segment = (NPT - end_discards - initial_discards)
+        new_traces = Project(init_size=final_num_traces) # should have enough storage to hold everything
+
+        # need to manually init storage before extending
+        i = initial_discards
+        j = 0
+        short_trace = project.traces[j,start_offset+i*samples_per_clock*mx:stop_offset+i*samples_per_clock*mx]
+        trace_object = TraceContainer(short_trace, project.plaintexts[j, i], project.ciphertexts[j, i], project.keys[0])
+        new_traces._init_storage(trace_object)
+
+        # sliding window split of traces
+        for n in range(N):
+            # trim beginning and end off of trace based on offset and initial/end_discards
+            trimmed = project.traces[n,start_offset+initial_discards*samples_per_clock*mx:stop_offset+(NPT-end_discards-1)*samples_per_clock*mx]
+
+            # create a sliding window out of the trimmed traces with a length of stop-start
+            # take every Xth sliding window, with X being the number of samples per AES round
+            split = sliding_window_view(trimmed, stop_offset-start_offset)[::mx*samples_per_clock]
+
+            # Assign these traces to the new project
+            new_traces._group['traces'][n*traces_per_segment:(n+1)*traces_per_segment, :] = split[:]
+        
+            for name in new_traces.DATA_NAMES:
+                if name == 'traces': continue # traces handled above
+                if name == 'keys': continue # handle keys separately
+                if project._group.attrs[name]['exists']:
+                    tmp_field = project._group[name][n,initial_discards:NPT-end_discards]
+                    new_traces._group[name][n*traces_per_segment:(n+1)*(traces_per_segment),:] = tmp_field[:]
+        # update other internal fields
+        new_traces._group.attrs['len'] = final_num_traces
+        new_traces._group.attrs['size'] = new_traces._group['traces'].shape[0]
+
+        # handle keys
+        new_traces._group['keys'] = np.stack((project.keys[0],)*new_traces.num_traces, axis=0)
         return new_traces
-
-

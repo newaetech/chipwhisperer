@@ -28,12 +28,6 @@ from typing import Optional, Union, List, Tuple, Dict, cast
 from ...common.utils import util
 from ...common.utils.util import CWByteArray # type: ignore
 
-from ..firmware import cwlite as fw_cwlite
-from ..firmware import cw1200 as fw_cw1200
-from ..firmware import cw305  as fw_cw305
-from ..firmware import cwnano  as fw_nano
-from ..firmware import cwhusky as fw_cwhusky
-
 from ..firmware.open_fw import fwver
 
 from ...logging import *

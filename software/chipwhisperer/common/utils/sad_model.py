@@ -20,7 +20,7 @@
 #    limitations under the License.
 
 from chipwhisperer.common.utils import util
-from tqdm.notebook import tnrange
+# from tqdm.notebook import tnrange
 import numpy as np
 
 

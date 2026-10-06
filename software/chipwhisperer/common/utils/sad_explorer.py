@@ -62,7 +62,7 @@ class SADExplorer(util.DisableNewAttr):
 
     Example::
 
-        explorer = cw.SADExplorer(scope, target, reftrace.wave, refstart, max_segments)
+        explorer = cw.SADExplorer(scope, target, reftrace.trace, refstart, max_segments)
     """
 
     _name = 'Husky SAD Explorer Module'
@@ -75,7 +75,7 @@ class SADExplorer(util.DisableNewAttr):
             raise ImportError("The jupyter_bokeh package is required for TraceWhispererExplorer. Try installing chipwhisperer-jupyter's requirements.txt.")
         if inferno is None:
             raise ImportError("The bokeh and ipywidgets packages are required for SADExplorer. Try installing chipwhisperer-jupyter's requirements.txt.")
-        if type(reftrace) != np.ndarray or reftrace.dtype != np.uint8:
+        if type(reftrace) != np.ndarray or not reftrace.dtype in (np.uint8, np.int16, np.uint16):
             raise ValueError("wave must be a numpy.ndarray of uint8's; e.g. as obtained from cw.capture_trace(as_int=True) with scope.adc.bits_per_sample=8")
         if scope.adc.bits_per_sample != 8:
             raise ValueError("scope.adc.bits_per_sample must be set to 8")
@@ -360,7 +360,7 @@ class SADExplorer(util.DisableNewAttr):
                 push_notebook()
                 segments = []
                 for i in range(self.scope.adc.segments):
-                    segments.append(trace.wave[i*self.scope.adc.samples:(i+1)*self.scope.adc.samples])
+                    segments.append(trace.trace[i*self.scope.adc.samples:(i+1)*self.scope.adc.samples])
 
                 for i in range(self.scope.adc.segments):
                     if show_diffs:

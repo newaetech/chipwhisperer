@@ -27,7 +27,7 @@ import time
 import re
 import os.path
 import random
-from ...common.traces import Trace
+from ...common.project import TraceContainer
 from ...common.utils import util
 from .CW305 import CW305, CW305_USB
 from ecpy.curves import Curve, Point # type: ignore
@@ -153,7 +153,7 @@ class CW305_ECC(CW305):
             target_logger.warning ("Operation took %d cycles (%d more than we expect it to)" % (cycles, cycles-self.pmul_cycles))
 
         if len(wave) >= 1:
-            return Trace(wave, textin, textout, None)
+            return TraceContainer(wave, textin, textout, None)
         else:
             return None
 

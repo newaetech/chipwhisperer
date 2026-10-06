@@ -4,6 +4,7 @@ Instantiate AES tables for rcon,sbox,i_sbox,and galois_lookup.
 Copyright (c) 2010,Adam Newman http://www.caller9.com/
 Licensed under the MIT license http://www.opensource.org/licenses/mit-license.php
 """
+import numpy as np
 __author__ = "Adam Newman"
 
 rcon=(
@@ -168,5 +169,5 @@ galNI=gal2,gal3,gal1,gal1
 
 hw = [bin(i).count('1') for i in range(256)]
 
-t_table_hw = [2*hw[sbox[i]] + hw[gal2[sbox[i]]] + hw[gal3[sbox[i]]] for i in range(256)]
-t_table_hw_dec = [hw[gal9[i_sbox[i]]] + hw[gal11[i_sbox[i]]] + hw[gal13[i_sbox[i]]] + hw[gal14[i_sbox[i]]] for i in range(256)]
+t_table_hw = np.array([2*hw[sbox[i]] + hw[gal2[sbox[i]]] + hw[gal3[sbox[i]]] for i in range(256)])
+t_table_hw_dec = np.array([hw[gal9[i_sbox[i]]] + hw[gal11[i_sbox[i]]] + hw[gal13[i_sbox[i]]] + hw[gal14[i_sbox[i]]] for i in range(256)])

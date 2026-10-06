@@ -210,71 +210,6 @@ def _make_id(target):
     return id(target)
 
 
-# all over analyzer stuff
-class Signal(object):
-    class Cleanup(object):
-        def __init__(self, key, d):
-            self.key = key
-            self.d = d
-
-        def __call__(self, wr):
-            del self.d[self.key]
-
-    def __init__(self):
-        self.callbacks = {}  #observing object ID -> weak ref, methodNames
-
-    def connect(self, observer):
-        if not callable(observer):
-            raise TypeError('Expected a method, got %s' % observer.__class__)
-
-        ID = _make_id(observer)
-        if ID in self.callbacks:
-            s = self.callbacks[ID][1]
-        else:
-            try:
-                target = weakref.ref(observer.__self__, Signal.Cleanup(ID, self.callbacks))
-            except AttributeError:
-                target = None
-            s = set()
-            self.callbacks[ID] = (target, s)
-
-        if hasattr(observer, "__func__"):
-            method = observer.__func__
-        else:
-            method = observer
-        s.add(method)
-
-    def disconnect(self, observer):
-        ID = _make_id(observer)
-        if ID in self.callbacks:
-            if hasattr(observer, "__func__"):
-                method = observer.__func__
-            else:
-                method = observer
-            self.callbacks[ID][1].discard(method)
-            if len(self.callbacks[ID][1]) == 0:
-                del self.callbacks[ID]
-        else:
-            pass
-
-    def disconnectAll(self):
-        self.callbacks = {}  # observing object ID -> weak ref, methods
-
-    def emit(self, *args, **kwargs):
-        callbacks = list(self.callbacks.keys())
-        for ID in callbacks:
-            try:
-                target, methods = self.callbacks[ID]
-            except KeyError:
-                continue
-            for method in methods.copy():
-                if target is None:  # Lambda or partial
-                    method(*args, **kwargs)
-                else:
-                    targetObj = target()
-                    if targetObj is not None:
-                        method(targetObj, *args, **kwargs)
-
 
 import signal, logging
 class DelayedKeyboardInterrupt:
@@ -291,29 +226,6 @@ class DelayedKeyboardInterrupt:
         if self.signal_received:
             self.old_handler(*self.signal_received)
 
-# removing breaks projects
-class Observable(Signal):
-    def __init__(self, value):
-        super(Observable, self).__init__()
-        self.data = value
-
-    def setValue(self, value):
-        if value != self.data:
-            self.data = value
-            self.emit()
-
-    def value(self):
-        return self.data
-
-
-_consoleBreakRequested = False
-class ConsoleBreakException(BaseException):
-    """Custom exception class. Raised when pressing ctrl-C in console.
-
-    This inherits from BaseException so that the generic "Save project?" window
-    doesn't catch it.
-    """
-    pass
 
 _uiupdateFunction = None
 

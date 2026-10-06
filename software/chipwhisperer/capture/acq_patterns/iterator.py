@@ -17,15 +17,16 @@ def gen_iterator(ktp):
     Returns:
         Function
     """
-    return lambda N, key_once=True: KTPIterator(ktp, N, key_once)
+    return lambda N, key_once=True, *args, **kwargs: KTPIterator(ktp, N, key_once, *args, **kwargs)
 
 class KTPIterator:
     """
     """
-    def __init__(self, ktp, N, key_once=True):
+    def __init__(self, ktp, N, key_once=True, *args, **kwargs):
         self._ktp_class = ktp
-        self._ktp = ktp()
+        self._ktp = ktp(*args, **kwargs)
         self._N = N
+        self._count = 0
         self.is_first = False
         self.key_once = key_once
 
@@ -37,8 +38,14 @@ class KTPIterator:
         return self
 
     def __next__(self):
+        if self._count >= self._N:
+            raise StopIteration
+        self._count += 1
         key, text = self._ktp.next()
-        self.is_first = True
         if self.key_once is True and self.is_first:
             key = None
-        return key, text
+        self.is_first = True
+        return key, text, self._count
+
+    def __len__(self):
+        return self._N

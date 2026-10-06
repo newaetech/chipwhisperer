@@ -67,7 +67,7 @@ class AcqKeyTextPattern_VarVec(AcqKeyTextPattern_Basic):
     VEC_TYPE_COL = 0x00
     VEC_TYPE_ROW = 0x01
 
-    def __init__(self, vec_type="column"):
+    def __init__(self, vec_type="column", var_vec=0):
         super().__init__()
         if vec_type not in ["column", "row"]:
             raise ValueError(f"Invalid vector type {vec_type}")
@@ -75,7 +75,7 @@ class AcqKeyTextPattern_VarVec(AcqKeyTextPattern_Basic):
             self.vec_type = self.VEC_TYPE_COL
         else:
             self.vec_type = self.VEC_TYPE_ROW
-        self._var_vec = 0x00
+        self._var_vec = var_vec
 
         self.COL_LUT = []
         self.ROW_LUT = []
