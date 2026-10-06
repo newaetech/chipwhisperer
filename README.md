@@ -21,7 +21,7 @@ ChipWhisperer 7.0 is bringing major improvements to projects, analyzer, as well 
 
 We also have a more thorough [document of changes](https://docs.google.com/document/d/1KBrlV3X3fyg3PniKdv6pZg0s0MAX2dzbSdZiwbm_nh4/edit?usp=sharing).
 
-The [SCA101 Online course](learn.chipwhisperer.io/courses/sca101) is available at [learn.chipwhisperer.io](learn.chipwhisperer.io).
+The [SCA101 Online course](https://learn.chipwhisperer.io/courses/sca101) is available at [https://learn.chipwhisperer.io](learn.chipwhisperer.io).
 
 **If you need to use ChipWhisperer with the previous API, the final commit with that is available as tag v6.1.0**
 
