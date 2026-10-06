@@ -19,12 +19,11 @@ ChipWhisperer 7.0 is bringing major improvements to projects, analyzer, as well 
 * Porting of MixColumns attack to Analyzer
 * Iterators for KTP classes
 
-We also have a more thorough [document of changes](https://docs.google.com/document/d/1KBrlV3X3fyg3PniKdv6pZg0s0MAX2dzbSdZiwbm_nh4/edit?usp=sharing)
+We also have a more thorough [document of changes](https://docs.google.com/document/d/1KBrlV3X3fyg3PniKdv6pZg0s0MAX2dzbSdZiwbm_nh4/edit?usp=sharing).
 
 The [SCA101 Online course](learn.chipwhisperer.io/courses/sca101) is available at [learn.chipwhisperer.io](learn.chipwhisperer.io).
 
-**If using one of our installers, be sure to use the sca101 version of that installer**
-**If installing manually, be sure to use the sca101 branch of both this repo and jupyter**
+**If you need to use ChipWhisperer with the previous API, the final commit with that is available as tag v6.1.0**
 
 ## What is ChipWhisperer?
 
@@ -34,10 +33,10 @@ ChipWhisperer is an open source toolchain dedicated to hardware security researc
 * __Software__: The ChipWhisperer software includes a Python API for talking to ChipWhisperer hardware (ChipWhisperer Capture) and a Python API 
 for processing power traces from ChipWhisperer hardware (ChipWhisperer Analyzer). 
 
-You'll find documentation for all of the above [here](https://chipwhisperer.readthedocs.io/en/sca101/index.html).
+You'll find documentation for all of the above [here](https://chipwhisperer.readthedocs.io/en/develop/index.html).
 
 ## Getting Started
-First time using ChipWhisperer? Go to our new [documentation site](https://chipwhisperer.readthedocs.io/en/sca101/index.html) for all you need to know to get started with ChipWhisperer.
+First time using ChipWhisperer? Go to our new [documentation site](https://chipwhisperer.readthedocs.io/en/develop/index.html) for all you need to know to get started with ChipWhisperer.
 
 ## GIT Source
 This branch is designed to give a fixed working version compatible with the SCA101 course. As such, it may differ substantially with what is available on the *develop* branch.
