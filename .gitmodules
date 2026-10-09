@@ -31,3 +31,6 @@
 [submodule "jupyter"]
 	path = jupyter
 	url = https://github.com/newaetech/chipwhisperer-jupyter
+[submodule "firmware/mcu/chipwhisperer-esp32"]
+	path = firmware/mcu/chipwhisperer-esp32
+	url = https://github.com/newaetech/chipwhisperer-esp32
