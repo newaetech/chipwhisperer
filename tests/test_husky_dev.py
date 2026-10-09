@@ -441,12 +441,12 @@ testUARTTriggerData = [
 
 testADCTriggerData = [
     #gain       threshold   bits    reps    desc
-    (1,         0.9,        12,     3,     ''),
-    (10,        0.9,        12,     3,     ''),
-    (5,         0.9,        8,      3,     'SLOW'),
-    (5,         0.5,        8,      3,     ''),
-    (1,         0.5,        12,     3,     'SLOW'),
-    (10,        0.5,        12,     3,     'SLOW'),
+    (1,         int(0.9*4096),        12,     3,     ''),
+    (10,        int(0.9*4096),        12,     3,     ''),
+    (5,         int(0.9*4096),        8,      3,     'SLOW'),
+    (5,         int(0.5*4096),        8,      3,     ''),
+    (1,         int(0.5*4096),        12,     3,     'SLOW'),
+    (10,        int(0.5*4096),        12,     3,     'SLOW'),
 ]
 
 testEdgeTriggerData = [
@@ -1427,7 +1427,7 @@ def test_segment_trace (swo_trace, interface, triggers, desc):
     match_count = trace.capture.matched_pattern_counts[0]
     trace.arm_trace()
     powertrace = cw.capture_trace(scope, target, text, key)
-    assert len(powertrace.wave) == scope.adc.samples * triggers
+    assert len(powertrace.trace) == scope.adc.samples * triggers
     assert trace.capture.triggers_generated == triggers
     assert trace.capture.matched_pattern_data[:6] == '030820'
     trace.enabled = False
@@ -1480,7 +1480,7 @@ def test_sad_trigger (fulltest, clock, adc_mul, bits, emode, threshold, interval
     reftrace = cw.capture_trace(scope, target, bytearray(16), bytearray(16), as_int=True)
     assert scope.adc.errors == False, (scope.adc.errors, scope.gain)
 
-    scope.SAD.reference = reftrace.wave
+    scope.SAD.reference = reftrace.trace
     if scope._is_husky_plus:
         pass # TODO: adjust as needed? e.g. threshold = int(threshold*1.5)
     scope.SAD.threshold = threshold
@@ -1503,7 +1503,7 @@ def test_sad_trigger (fulltest, clock, adc_mul, bits, emode, threshold, interval
         assert scope.adc.errors == False, scope.adc.fifo_debug_summary()
         sad = 0
         samples = 0
-        for r,s,e in zip(reftrace.wave.astype(int), sadtrace.wave.astype(int), scope.SAD.enabled_samples):
+        for r,s,e in zip(reftrace.trace.astype(int), sadtrace.trace.astype(int), scope.SAD.enabled_samples):
             samples += 1
             if bits == 12:
                 s = s >> 4
@@ -1569,7 +1569,7 @@ def test_multiple_sad_trigger (fulltest, clock, adc_mul, bits, emode, threshold,
     reftrace = cw.capture_trace(scope, target, bytearray(16), bytearray(16), as_int=True)
     assert scope.adc.errors == False, (scope.adc.errors, scope.gain)
 
-    scope.SAD.reference = reftrace.wave
+    scope.SAD.reference = reftrace.trace
     scope.SAD.threshold = threshold
     scope.SAD.interval_threshold = interval_threshold
     scope.trigger.module = 'SAD'
@@ -1593,7 +1593,7 @@ def test_multiple_sad_trigger (fulltest, clock, adc_mul, bits, emode, threshold,
         for s in range(scope.adc.segments):
             sad = 0
             samples = 0
-            for ref,strace,e in zip(reftrace.wave.astype(int), sadtrace.wave.astype(int), scope.SAD.enabled_samples):
+            for ref,strace,e in zip(reftrace.trace.astype(int), sadtrace.trace.astype(int), scope.SAD.enabled_samples):
                 samples += 1
                 if bits == 12:
                     strace = strace >> 4
@@ -1829,15 +1829,15 @@ def test_adc_trigger (fulltest, gain, threshold, bits, reps, desc):
         scope.trigger.module = 'basic'
         scope.trigger.triggers = 'tio4'
         reftrace = cw.capture_trace(scope, target, bytearray(16), bytearray(16))
-        #print("Gain:%d, max:%f, min:%f" % (gain, max(reftrace.wave), min(reftrace.wave)))
+        #print("Gain:%d, max:%f, min:%f" % (gain, max(reftrace.trace), min(reftrace.trace)))
         # 1. trigger on positive swing:
         scope.trigger.module = 'ADC'
-        scope.trigger.level = threshold * max(reftrace.wave)
+        scope.trigger.level = threshold * max(reftrace.trace)
         #print(scope.trigger.level)
         powertrace = cw.capture_trace(scope, target, bytearray(16), bytearray(16))
         assert powertrace is not None, 'ADC-triggered capture (max) failed'
         # 1. trigger on positive swing:
-        scope.trigger.level = threshold * min(reftrace.wave)
+        scope.trigger.level = threshold * min(reftrace.trace)
         #print(scope.trigger.level)
         powertrace = cw.capture_trace(scope, target, bytearray(16), bytearray(16))
         assert powertrace is not None, 'ADC-triggered capture (min) failed'

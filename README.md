@@ -38,9 +38,6 @@ You'll find documentation for all of the above [here](https://chipwhisperer.read
 ## Getting Started
 First time using ChipWhisperer? Go to our new [documentation site](https://chipwhisperer.readthedocs.io/en/develop/index.html) for all you need to know to get started with ChipWhisperer.
 
-## GIT Source
-This branch is designed to give a fixed working version compatible with the SCA101 course. As such, it may differ substantially with what is available on the *develop* branch.
-
 ## Help!
 Stuck? If you need a hand, there are a few places you can ask for help:
 * The [NewAE Forum](https://forum.newae.com/) is full of helpful people that can point you in the right direction

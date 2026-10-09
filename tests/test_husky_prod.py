@@ -185,7 +185,7 @@ testRWData = [
 
 testADCTriggerData = [
     #gain       threshold   bits    reps    desc
-    (23,        0.8,        12,     5,      ''),
+    (23,        int(0.8*4096),        12,     5,      ''),
 ]
 
 
@@ -679,16 +679,16 @@ def test_adc_trigger (gain, threshold, bits, reps, desc):
         scope.trigger.module = 'basic'
         scope.trigger.triggers = 'tio4'
         reftrace = cw.capture_trace(scope, target, bytearray(16), bytearray(16))
-        #print("Gain:%d, max:%f, min:%f" % (gain, max(reftrace.wave), min(reftrace.wave)))
+        #print("Gain:%d, max:%f, min:%f" % (gain, max(reftrace\.trace), min(reftrace.trace)))
         # 1. trigger on positive swing:
         scope.trigger.module = 'ADC'
-        #print('Min/Max: %3.2f / %3.2f' % (min(reftrace.wave), max(reftrace.wave)))
-        scope.trigger.level = threshold * max(reftrace.wave)
+        #print('Min/Max: %3.2f / %3.2f' % (min(reftrace.trace), max(reftrace.trace)))
+        scope.trigger.level = threshold * max(reftrace.trace)
         #print(scope.trigger.level)
         powertrace = cw.capture_trace(scope, target, bytearray(16), bytearray(16))
         assert powertrace is not None, 'ADC-triggered capture (max) failed on iteration %d' % i
         # 2. trigger on negative swing:
-        scope.trigger.level = threshold * min(reftrace.wave)
+        scope.trigger.level = threshold * min(reftrace.trace)
         #print(scope.trigger.level)
         powertrace = cw.capture_trace(scope, target, bytearray(16), bytearray(16))
         assert powertrace is not None, 'ADC-triggered capture (min) failed on iteration %d' % i
@@ -737,7 +737,7 @@ def test_sad_trigger (stress, clock, adc_mul, bits, emode, threshold, interval_t
     reftrace = cw.capture_trace(scope, target, bytearray(16), bytearray(16), as_int=True)
     assert scope.adc.errors == False, 'Unexpected capture error on reference trace: %s' % scope.adc.errors
 
-    scope.SAD.reference = reftrace.wave
+    scope.SAD.reference = reftrace.trace
     if scope._is_husky_plus:
         pass # TODO: adjust as needed? e.g. threshold = int(threshold*1.5)
     scope.SAD.threshold = threshold
@@ -760,7 +760,7 @@ def test_sad_trigger (stress, clock, adc_mul, bits, emode, threshold, interval_t
         assert scope.adc.errors == False, 'Unexpected capture error: %s on rep %d' % (scope.adc.errors, rep)
         sad = 0
         samples = 0
-        for r,s,e in zip(reftrace.wave.astype(int), sadtrace.wave.astype(int), scope.SAD.enabled_samples):
+        for r,s,e in zip(reftrace.trace.astype(int), sadtrace.trace.astype(int), scope.SAD.enabled_samples):
             samples += 1
             if bits == 12:
                 s = s >> 4

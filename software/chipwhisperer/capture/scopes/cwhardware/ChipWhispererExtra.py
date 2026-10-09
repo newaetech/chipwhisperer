@@ -2246,14 +2246,14 @@ class HuskyTrigger(TriggerSettings):
         """
         fp_offset = self.cwe.oa.fp_offset
         raw = int.from_bytes(self.cwe.oa.sendMessage(CODE_READ, "ADC_TRIGGER_LEVEL", Validate=False, maxResp=2), byteorder='little')
-        return raw / 2**12 - fp_offset
+        return raw
 
     @level.setter
     def level(self, val):
-        if not (-0.5 <= val <= 0.5):
-            raise ValueError("Out of range: [-0.5, 0.5]")
-        fp_offset = self.cwe.oa.fp_offset
-        val = int((val + fp_offset) * 2**12)
+        if not (0 <= val <= int(2**12)):
+            raise ValueError(f"Out of range: [0, {2**12}]")
+        # fp_offset = self.cwe.oa.fp_offset
+        # val = int((val + fp_offset) * 2**12)
         self.cwe.oa.sendMessage(CODE_WRITE, "ADC_TRIGGER_LEVEL", list(int.to_bytes(val, length=2, byteorder='little')))
 
     @property
