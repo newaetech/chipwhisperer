@@ -307,7 +307,7 @@ def target(scope : Optional[scopes.ScopeTypes],
 
 def capture_trace(scope : scopes.ScopeTypes, target : targets.TargetTypes, plaintext : bytearray,
     key : Optional[bytearray]=None, ack : bool=True, poll_done : bool=False,
-    as_int : bool=True, always_send_key=True) -> Any: # type: ignore
+    as_int : bool=True, always_send_key=False) -> Any: # type: ignore
 
     """Capture a trace, sending plaintext and key
 
