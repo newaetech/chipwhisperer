@@ -39,8 +39,8 @@ offering vastly improved performance over a typical asynchronous oscilloscope se
 * JTAG/SWD debugging lines on CW 20-pin connector, as well as JTAG compatible 20-pin digital header
     * Only works via OpenOCD
 * Streaming mode (>20MS/s 8-bit max) for long captures
-* Trigger Out/Glitch Out SMB Connector
-* Aux In/Out SMB Connector
+* Trigger Out/Glitch Out MCX Connector
+* Aux In/Out MCX Connector
 * TraceWhisperer Arm Trace sniffing/triggering
 * 20-pin User IO header (8 Data Pins), can be used for :
     * JTAG/SWD (20-pin JTAG compatible) 
@@ -86,7 +86,7 @@ offering vastly improved performance over a typical asynchronous oscilloscope se
 | -------   | ----------- |
 | Modules   | Basic, Analog, UART, Edge Count, Arm Trace |
 | Analog Trigger | Sum of Absolute Difference (up to 512 samples), Analog Threshold |
-| Basic Trigger Inputs | TIO 1-4, nRST, SMB, User IO D0-7 |
+| Basic Trigger Inputs | TIO 1-4, nRST, MCX, User IO D0-7 |
 | Basic Trigger Combination | One of OR, AND, NAND | 
 
 ---
@@ -235,15 +235,15 @@ These data pins can also be used as trigger inputs for the ChipWhisperer.
 
 ---
 
-#### **SMB I/O**
+#### **MCX I/O**
 
-The Husky has two additional SMB connectors that can be used for useful inputs/outputs.
+The Husky has two additional MCX connectors that can be used for useful inputs/outputs.
 
 The first is a Trigger/Glitch out, allowing you to use the Husky's 
 many different trigger modules with other devices. Examples of this
 include using the Husky to trigger a ChipSHOUTER or an external oscilloscope.
 
-The other SMB connector can be used as either a trigger/clock input,
+The other MCX connector can be used as either a trigger/clock input,
 or as a clock output.
 
 ---
