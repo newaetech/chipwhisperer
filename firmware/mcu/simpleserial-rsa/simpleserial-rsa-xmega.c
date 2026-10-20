@@ -311,7 +311,8 @@ uint8_t get_pt(uint8_t * pt, uint8_t len)
 	uint8_t flag = 0;
 
     const bigint_t* r = &(priv_key.components[0]);
-    const bigint_t* a = ENCRYPTED;
+    load_bigint_from_os(&cp, ENCRYPTED, sizeof(ENCRYPTED));
+    const bigint_t* a = &cp;
 
 
     bigint_t res, base;
