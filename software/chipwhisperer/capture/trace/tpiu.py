@@ -23,7 +23,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with chipwhisperer.  If not, see <http://www.gnu.org/licenses/>.
 #=================================================
-from collections import deque
+from collections import defaultdict
 import ctypes
 from dataclasses import dataclass
 from datetime import datetime
@@ -41,27 +41,25 @@ class TpiuByte:
 
 class TpiuStreams:
     """ Helper class to queue `TpiuByte` values."""
-    streams: dict[int, bytearray]
+    streams: defaultdict[int, bytearray]
 
     def __init__(self, tpiu_bytes: Sequence[TpiuByte] | None = None):
         """
         Args:
             tpiu_bytes: list of `TpiuByte` to enqueue
         """
-        self.streams = {}
+        self.streams = defaultdict(bytearray)
         if tpiu_bytes:
             self.update(tpiu_bytes)
 
     def update(self, tpiu_bytes: Sequence[TpiuByte]) -> None:
         """ Update the queues with given TpiuByte ojects."""
         for b in tpiu_bytes:
-            if b.stream not in self.streams:
-                self.streams[b.stream] = bytearray()
             self.streams[b.stream].append(b.byte)
 
     def clear(self) -> None:
         """ Removes all the streams"""
-        self.streams = {}
+        self.streams.clear()
 
     def get_stream(self, stream: int) -> bytes | None:
         """ Get the `bytes` for the given stream ID.
@@ -99,14 +97,15 @@ class TpiuDecoder:
     ...         pc_values.append(msg.pc)
     >>> 
     """
-    LONG_SYNC = bytes.fromhex("ffffff7f")
+    LONG_SYNC = 0xffffff7f
     TPIU_FRAME_LEN: Final[int] = 16
 
-    fifo: deque[int]
-    syncwatch: deque[int]
+    syncwatch: int
+    fifo: list[int]
     packets: TpiuStreams
     need_sync: bool
     current_stream: int
+    __cached_itm_messages: list[ctypes.Structure] | None
 
     def __init__(self, assume_synced: bool = True):
         """
@@ -115,72 +114,78 @@ class TpiuDecoder:
             a full sync indicator before starting to queue bytes. Defaults to `True`
             meaning we consider a full sync indicator has already been seen.
         """
-        self.fifo = deque([], maxlen=self.TPIU_FRAME_LEN)
+        self.fifo = []
         self.packets = TpiuStreams()
         self.reset(assume_synced)
 
     def reset(self, synced: bool) -> None:
         """ Resets the decoder, clearing all queued bytes.
-        
+
         Args:
             synced: indicates if the decoder starts in sync'd on unsync'd mode.
         """
+        self._cached_itm_messages = None
         self.current_stream = 0
         self.packets.clear()
         if synced:
             self.need_sync = False
-            self.syncwatch = deque(self.LONG_SYNC, maxlen=4)
+            self.syncwatch = self.LONG_SYNC
         else:
             self.need_sync = True
-            self.syncwatch = deque([0, 0, 0, 0], maxlen=4)
-
-    def accumulate(self, block: bytes) -> None:
-        """ Add all the bytes in the queue."""
-        for b in block:
-            self.accumulate_byte(b)
+            self.syncwatch = 0
 
     def accumulate_byte(self, byte: int) -> None:
         """ Add a single byte value in the queue."""
         assert 0 <= byte <= 255
+        self.accumulate(bytes([byte]))
 
-        # Continuously look for long sync packets
-        self.syncwatch.append(byte)
-        if bytes(self.syncwatch) == self.LONG_SYNC:
-            self.need_sync = False
-            tracewhisperer_logger.debug("SYNC packet. Clearing fifo")
-            self.fifo.clear()
-            return
+    def accumulate(self, block: bytes) -> None:
+        """ Add all the bytes in the queue."""
+        self._cached_itm_messages = None
 
-        if self.need_sync:
-            tracewhisperer_logger.debug("Dropped byte (out of sync): 0x%02x", byte)
-        else:
-            tracewhisperer_logger.debug("Queueing byte %02X. Fifo = %r", byte, self.fifo)
+        for b in block:
+            self.syncwatch = ((self.syncwatch << 8) | b) & 0xffff_ffff
+            if self.syncwatch == self.LONG_SYNC:
+                self.need_sync = False
+                # tracewhisperer_logger.debug("SYNC packet. Clearing fifo")
+                self.fifo.clear()
+                continue
+
+            if self.need_sync:
+                # tracewhisperer_logger.debug("Dropped byte (out of sync): 0x%02x", b)
+                continue
+
+            # tracewhisperer_logger.debug("Queueing byte %02X. Fifo = %r", b, self.fifo)
             # We take 16 bits at a time, so we always queue odd index bytes
             if len(self.fifo) & 1 == 0:
-                self.fifo.append(byte)
-                return
+                self.fifo.append(b)
+                continue
 
             # Check if we have an half-sync packet and discard it
-            if self.fifo[-1] == 0xff and byte == 0x7f:
+            if self.fifo[-1] == 0xff and b == 0x7f:
                 self.fifo.pop()
-                tracewhisperer_logger.debug("Short SYNC. Poping out of the queue")
-            else:
-                self.fifo.append(byte)
+                # tracewhisperer_logger.debug("Short SYNC. Poping out of the queue")
+                continue
+
+            self.fifo.append(b)
 
             # Do we have a full packet to decode?
-            if len(self.fifo) == self.fifo.maxlen:
+            if len(self.fifo) == self.TPIU_FRAME_LEN:
                 self._decode_frame()
 
     def _decode_frame(self):
         """ Internal method called as soon as a complete frame has been pushed
         to the queue.
         """
-        assert len(self.fifo) == self.fifo.maxlen
-        low_bits = self.fifo.pop()
-        data: list[TpiuByte] = []
+        assert len(self.fifo) == self.TPIU_FRAME_LEN
+        low_bits = self.fifo[-1]
         delayed_change = -1
 
-        for i, b in enumerate(self.fifo):
+        cur_stream = self.current_stream
+        streams = self.packets.streams
+
+        for i in range(self.TPIU_FRAME_LEN - 1):
+            b = self.fifo[i]
             if i & 1 == 0:
                 # Byte could be an ID or a data byte
                 if b & 1 == 1:
@@ -189,24 +194,24 @@ class TpiuDecoder:
                     if low_bits & 1 == 1:
                         delayed_change = b
                     else:
-                        self.current_stream = b
+                        cur_stream = b
                 else:
                     # data byte (stream 0 is TPIU null/idle padding)
-                    assert self.current_stream >= 0, f"ERROR: byte not associated with a stream {i=}, 0x{b:02X}"
-                    if self.current_stream > 0:
-                        data.append(TpiuByte(stream=self.current_stream, byte=b | (low_bits & 1)))
+                    assert cur_stream >= 0, f"ERROR: byte not associated with a stream {i=}, 0x{b:02X}"
+                    if cur_stream > 0:
+                        streams[cur_stream].append(b | (low_bits & 1))
                 low_bits >>= 1
             else:
                 # Data byte as-is (stream 0 is TPIU null/idle padding)
-                assert self.current_stream >= 0, f"ERROR: byte not associated with a stream {i=}, 0x{b:02X}"
-                if self.current_stream > 0:
-                    data.append(TpiuByte(stream=self.current_stream, byte=b))
+                assert cur_stream >= 0, f"ERROR: byte not associated with a stream {i=}, 0x{b:02X}"
+                if cur_stream > 0:
+                    streams[cur_stream].append(b)
                 # Handle delayed channel change
                 if delayed_change >= 0:
-                    self.current_stream = delayed_change
+                    cur_stream = delayed_change
                     delayed_change = -1
         self.fifo.clear()
-        self.packets.update(data)
+        self.current_stream = cur_stream
 
     def get_itm_messages(self) -> list[ctypes.Structure]:
         """ Get all the ITM messages that have been successfully parsed.
@@ -216,21 +221,24 @@ class TpiuDecoder:
         This replaces writing a file on the disk and calling
         orbuculum tools on it to parse the file which since v2.2.0 requires the
         files to be using their OFLOW format."""
+        if self._cached_itm_messages is not None:
+            return self._cached_itm_messages
+
+        data = self.packets.get_stream(1)
+        if not data:
+            self._cached_itm_messages = []
+            return self._cached_itm_messages
+
         try:
             import pyorb # type: ignore
         except ImportError:
             warn("Can't import pyorb. Try `pip install python-orbuculum`")
             return []
 
-        packets = []
+        packets: list[ctypes.Structure] = []
         itm = pyorb.orb.ITMDecoderCreate()
         pyorb.orb.ITMDecoderInit(itm, True)
-        data = self.packets.get_stream(1)
-        if not data:
-            return []
-        buffer = deque(data)
-        while buffer:
-            c = buffer.popleft()
+        for c in data:
             if pyorb.orb.ITM_EV_PACKET_RXED == pyorb.orb.ITMPump(itm, c):
                 p = pyorb.msg()
                 pyorb.orb.ITMGetDecodedPacket(itm, pyorb.byref(p))
@@ -238,6 +246,7 @@ class TpiuDecoder:
                     packets.append(getattr(p.m, p.m._fields_[p.msgtype][0]))
                 except IndexError:
                     packets.append(pyorb.Empty)
+        self._cached_itm_messages = packets
         return packets
 
 
