@@ -1,4 +1,4 @@
-personal_ws-1.1 en 963 
+personal_ws-1.1 en 966 
 ACK
 ADC's
 ADCCLK
@@ -122,6 +122,7 @@ Digikey
 Digilent
 Docstrings
 Docutils
+DonPiekarz
 ECB
 ECC
 EE
@@ -196,6 +197,7 @@ HWC
 HexASCII
 HighTec's
 Hinterwalder
+HuskyPlus
 Hx
 HyperRam
 IC
@@ -567,6 +569,7 @@ basename
 basenames
 bashrc
 baudrate
+bitbanging
 bitfile
 bitfiles
 bitshifts

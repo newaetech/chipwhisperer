@@ -140,6 +140,7 @@ parts:
         - file: cw_tips_tricks/advanced_usage/get_trigger_times
         - file: cw_tips_tricks/advanced_usage/target_powerup_xadc
         - file: cw_tips_tricks/advanced_usage/uart_triggering
+        - file: cw_tips_tricks/advanced_usage/hwbb
   - file: cw_tips_tricks/common_errors/intro
     sections:
         - file: cw_tips_tricks/common_errors/target_errors
