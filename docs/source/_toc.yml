@@ -129,6 +129,7 @@ parts:
         - file: cw_tips_tricks/basics/glitch_hp_vs_lp
         - file: cw_tips_tricks/basics/cw305_standalone
         - file: cw_tips_tricks/basics/soft_cores
+        - file: cw_tips_tricks/basics/nano_glitch_time
   - file: cw_tips_tricks/advanced_usage/intro
     sections:
         - file: cw_tips_tricks/advanced_usage/regulators
