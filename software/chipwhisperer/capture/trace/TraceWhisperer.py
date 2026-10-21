@@ -1911,6 +1911,7 @@ class ARM_debug_registers(util.DisableNewAttr):
         self.main = main
         self._use_register_cache = True
         self.cached_values = [None] * len(self.regs)
+        self.target_responding = True
         self.disable_newattr()
 
     def _dict_repr(self):
@@ -1919,6 +1920,7 @@ class ARM_debug_registers(util.DisableNewAttr):
             return OrderedDict()
 
         else:
+            self.target_responding = True
             rtn = OrderedDict()
             rtn['use_register_cache'] = self.use_register_cache
             rtn['DWT_CTRL']     = self.DWT_CTRL
@@ -2115,6 +2117,9 @@ class ARM_debug_registers(util.DisableNewAttr):
         if self.main._ss is None:
             tracewhisperer_logger.error("Target must be connected for this to work (e.g. scope.trace.target = target)")
             return None
+        elif not self.target_responding:
+            tracewhisperer_logger.info('Target appears to not be responding.')
+            return 'no response'
         elif reg in self.regs:
             if self.cached_values[self.regs[reg]] and self.use_register_cache:
                 val = self.cached_values[self.regs[reg]]
@@ -2128,6 +2133,8 @@ class ARM_debug_registers(util.DisableNewAttr):
                 except Exception as e:
                     scope_logger.error("Can't read trace register. Perhaps target firmware doesn't support it? See simpleserial-trace for an example of what's required. " + str(e))
                     val = 0
+                    self.target_responding = False # prevent repeating the same error over and over
+                    return 'no response'
             return '%08x' % val
         else:
             tracewhisperer_logger.error('Register %s does not exist.', reg)
