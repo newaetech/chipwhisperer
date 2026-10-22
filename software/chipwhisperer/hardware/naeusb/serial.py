@@ -45,6 +45,7 @@ class USART(object):
     USART_CMD_NUMWAIT = 0x0014
     USART_CMD_NUMWAIT_TX = 0x0018
     USART_CMD_XONXOFF = 0x0020
+    USART_CMD_BUFSZ = 0x0021
 
     def __init__(self, usb, timeout=200, usart_num=0):
         """
@@ -250,6 +251,13 @@ class USART(object):
         else:
             return resp[:pos]
 
+    def tx_buf_sz(self):
+        data = self._usartRxCmd(self.USART_CMD_BUFSZ, 4)[2:]
+        return (data[0] | data[1] << 8)
+
+    def rx_buf_sz(self):
+        data = self._usartRxCmd(self.USART_CMD_BUFSZ, 4)[:2]
+        return (data[0] | data[1] << 8)
 
     def _usartTxCmd(self, cmd, data=[]):
         """
@@ -265,6 +273,7 @@ class USART(object):
         """
         # windex selects interface, set to 0
         return self._usb.readCtrl(self.CMD_USART0_CONFIG, cmd | (self._usart_num << 8), dlen)
+
 
     def close(self):
         pass # does nothing, for normal serial compatability

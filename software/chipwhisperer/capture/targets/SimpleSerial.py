@@ -646,3 +646,7 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
     @property
     def currently_xoff(self):
         return self.ser.currently_xoff
+
+    @property
+    def rx_buf_size(self):
+        return self.ser._buf_size

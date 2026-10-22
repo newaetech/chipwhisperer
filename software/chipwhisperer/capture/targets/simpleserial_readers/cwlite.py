@@ -88,15 +88,18 @@ class SimpleSerial_ChipWhispererLite(SimpleSerialTemplate):
             self.cwlite_usart = scope._get_usart()
             self.cwlite_usart.init(baud=self._baud, stopbits=self._stopbits, parity=self._parity)
             self._buf_size = 128
-            if self.cwlite_usart._usb.check_feature("SERIAL_200_BUFFER"):
-                self._buf_size = 256
+            if self.cwlite_usart._usb.check_feature("SERIAL_BUF_CMD"):
+                self._buf_size = self.cwlite_usart.rx_buf_sz()
+            else:
+                if self.cwlite_usart._usb.check_feature("SERIAL_200_BUFFER"):
+                    self._buf_size = 200
 
 
     def hardware_inWaiting(self):
         bwait = self.cwlite_usart.inWaiting()
         if bwait >= (self._buf_size - 1):
             logging.warning('SAM3U Serial buffers OVERRUN - data loss has occurred.')
-        return bwait & 0xFFF
+        return bwait & (0xFFFFFFFF ^ (1 << 31))
 
     def hardware_inWaitingTX(self):
         bwait = self.cwlite_usart.in_waiting_tx()

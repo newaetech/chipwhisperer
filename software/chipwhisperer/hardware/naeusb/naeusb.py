@@ -53,8 +53,7 @@ SAM_FW_FEATURES = [
     "NANO_CLOCK_RESET", #17
     "SAM_ERR_LED", #18
     "XON_XOFF", #19
-    "CTRL_BUF_256", #20
-    "DMA_SER", #21
+    "SERIAL_BUF_CMD", #20
 ]
 
 class CWFirmwareError(Exception):
@@ -124,7 +123,6 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[15]: '1.3.0',
         SAM_FW_FEATURES[16]: '1.4.0',
         SAM_FW_FEATURES[18]: '1.5.0',
-        SAM_FW_FEATURES[19]: '1.8.0',
         SAM_FW_FEATURES[20]: '1.8.0',
     },
 
@@ -462,6 +460,9 @@ class NAEUSB_Backend:
         self.sn = self.handle.getSerialNumber()
         self.pid = self.device.getProductID()
         naeusb_logger.debug('Found %s, Serial Number = %s' % (self.handle.getProduct(), self.sn))
+        # if self.check_feature("DMA_SERIAL"):
+        #     pass
+
 
         # Husky has different endpoints for faster transfer
         if (self.device.getProductID() == 0xace5) or (self.device.getProductID() == 0xace6):
@@ -826,6 +827,8 @@ class NAEUSB:
             self.fw_up2date = False
             naeusb_logger.error('Your firmware ({}) is outdated - latest is {}'.format(fwver, fw_latest) +
                                 ' See https://chipwhisperer.readthedocs.io/en/latest/firmware.html for more information')
+
+        
 
         return self.usbtx.pid
 

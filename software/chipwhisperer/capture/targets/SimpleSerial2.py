@@ -748,6 +748,10 @@ class SimpleSerial2(TargetTemplate):
         else:
             raise AttributeError("Can't access baud rate")
 
+    @property
+    def rx_buf_size(self):
+        return self.ser._buf_size
+
 
     def set_key(self, key, ack=True, timeout=250, always_send=False):
         """Checks if key is different than the last one sent. If so, send it.
