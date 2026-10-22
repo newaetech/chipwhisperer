@@ -381,6 +381,7 @@ class NAEUSB_Backend:
         self._timeout = 500
         self.device = None
         self.handle = None
+        self._ctrl_buf_sz = NAEUSB_CTRL_IO_MAX
 
         try:
             self.usb_ctx = usb1.USBContext()
@@ -544,10 +545,10 @@ class NAEUSB_Backend:
         naeusb_logger.debug("WRITE_CTRL: bmRequestType: {:02X}, \
                     bRequest: {:02X}, wValue: {:04X}, wIndex: {:04X}, data: {}".format(0x41, cmd, \
                         value, 0, data))
-        if len(data) > NAEUSB_CTRL_IO_MAX:
-            naeusb_logger.error("The naeusb fw ctrl buffer is 128 bytes, but len(data) > 128. If you get a pipe error, this is why.")
+        if len(data) > self._ctrl_buf_sz:
+            naeusb_logger.error(f"The naeusb fw ctrl buffer is {self._ctrl_buf_sz} bytes, but {len(data)} > {self._ctrl_buf_sz}. \
+                                If you get a pipe error, this is why.")
         self.handle.controlWrite(0x41, cmd, value, 0, data, timeout=self._timeout)
-        #return self.usbdev().ctrl_transfer(0x41, cmd, value, 0, data, timeout=self._timeout)
 
     def readCtrl(self, cmd : int, value : int=0, dlen : int=0) -> bytearray:
         """
