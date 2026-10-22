@@ -29,7 +29,7 @@ from ...logging import *
 from ...common.utils import util
 from .naeusb import NAEUSB, NAEUSB_CTRL_IO_MAX
 
-SERIAL_MAX_WRITE = 58
+SERIAL_MAX_WRITE = 128
 
 class USART(object):
     """
@@ -194,7 +194,7 @@ class USART(object):
         # print "Checking Waiting..."
         data = self._usartRxCmd(self.USART_CMD_NUMWAIT, dlen=4)
         # print data
-        return data[0]
+        return data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24)
 
     # @fw_ver_required(0, 20)
     def in_waiting_tx(self):
