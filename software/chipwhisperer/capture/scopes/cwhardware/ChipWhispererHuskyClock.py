@@ -391,6 +391,8 @@ class CDCI6214(util.DisableNewAttr):
         """Perform a calibration. Typically unneeded.
         """
         self.update_reg(0x0, 1 << 4, 0x00, msg='recal', update_cache_only=False)
+        # as with reset(), the clocks are disturbed for a while after this
+        time.sleep(self._reset_time)
 
     def set_pll_input(self, xtal=True):
         """Set input to PLL and set input to 4MHz
@@ -1267,6 +1269,18 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         else:
             self.adc.low_speed = False
 
+    def _relock_glitch(self):
+        """Reset the glitch MMCMs after a PLL change, if they are clocked by the PLL.
+
+        Changes to the PLL disturb the target clock, which leaves PLL-sourced glitch
+        MMCMs in a broken state (often while still reporting locked) until they're
+        reset. The current glitch offset and width are kept. clkgen_freq and clkgen_src
+        don't need this, since they reprogram the MMCMs via update_fpga_vco().
+        """
+        glitch = self.pll._glitch # None until the scope connects the glitch module
+        if glitch is not None and glitch.enabled and glitch.clk_src == 'pll':
+            glitch.resetDCMs()
+
     @property
     def clkgen_freq(self):
         """The target clock frequency in Hz.
@@ -1355,6 +1369,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
             self.pll._reset_if_needed()
             self.pll.sync_clocks()
             self._update_adc_speed_mode(mul, self.clkgen_freq)
+            self._relock_glitch()
         except Exception as e:
             if not self._quiet:
                 scope_logger.error('Failed to update adc_mul: %s' % e)
@@ -1466,6 +1481,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         else:
             self.pll.target_delay = phase_steps
             self.pll.adc_delay = 0
+        self._relock_glitch()
 
 
     @property
@@ -1505,6 +1521,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         else:
             self.pll.target_delay = adj_phase
             self.pll.adc_delay = 0
+        self._relock_glitch()
 
 
     @property
@@ -1519,6 +1536,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         """Reset the lock on the Husky's PLL.
         """
         self.pll.reset()
+        self._relock_glitch()
 
     @property
     def extclk_monitor_enabled(self):
@@ -1679,12 +1697,14 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
         """
         self._cached_adc_freq = None
         self.pll.reset()
+        self._relock_glitch()
 
     @clear_adc_unlock # type: ignore
     def recal_pll(self):
-        """Convenience function.
+        """Convenience function. Recalibrates the PLL and waits for its clocks to settle.
         """
         self.pll.recal()
+        self._relock_glitch()
 
 
     @property
