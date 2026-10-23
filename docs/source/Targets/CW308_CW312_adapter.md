@@ -7,6 +7,8 @@ sockets (not included) to make a general- purpose adapter. Suggested to use
 part number Preci-Dip 801-87-020-10-001101 for this purpose (this is same
 header used on the CW308).
 
+![](Images/308to312.jpg)
+
 ## Datasheet and Schematic
 
 [CW308 to CW312 Adapter datasheet](https://media.newae.com/datasheets/NAE-CW312TADPT_datasheet.pdf)

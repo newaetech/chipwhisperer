@@ -1,9 +1,9 @@
 # CW308 UFO
 
 The CW308 UFO Board is a convenient main-board for attacking all sorts
-of embedded targets. Released in 2016, it forms the basis for most of
-our upcoming target boards. It can be used stand-alone (with an
-oscilloscope) or with ChipWhisperer-Capture hardware.
+of embedded targets. Released in 2016, it forms the basis for a large number
+of our target boards. It can be used stand-alone (with an oscilloscope) or
+with ChipWhisperer-Capture hardware.
 
 ![](Images/CW308T_Wiki.jpg)
 

@@ -59,12 +59,14 @@ parts:
       - file: Targets/CW303 XMEGA
       - file: Targets/CW304 Notduino Target
       - file: Targets/CW305 Artix FPGA
-      - file: Targets/CW308 UFO
-      - file: Targets/CW308_CW312_adapter
       - file: Targets/CW310 Bergen Board
-      - file: Targets/CW313
       - file: Targets/CW340 Luna Board
       - file: Targets/CW340 OT Quickstart
+      - file: Targets/Target Adapter Boards
+        sections:
+            - file: Targets/CW308 UFO
+            - file: Targets/CW308_CW312_adapter
+            - file: Targets/CW313
       - file: Targets/UFO Targets
         sections:
             - file: chipwhisperer-target-cw308t/CW308T_87C51/README
@@ -152,6 +154,7 @@ parts:
         - file: cw_tips_tricks/common_questions/synchronous_sampling
         - file: cw_tips_tricks/common_questions/em_probe
         - file: cw_tips_tricks/common_questions/where_is_the_gui
+        - file: cw_tips_tricks/common_questions/glitch_viz
 - caption: Protocols
   chapters:
   - file: simpleserial
