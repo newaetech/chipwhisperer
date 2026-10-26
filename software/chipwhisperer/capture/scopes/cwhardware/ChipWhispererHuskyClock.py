@@ -1509,7 +1509,7 @@ class ChipWhispererHuskyClock(util.DisableNewAttr):
 
     @property
     def adc_phase_step_size(self) -> float:
-        """ adc_phase_raw step size, in picoseconds.
+        """ adc_phase_raw step size, in nanoseconds.
         """
         return 1 / self.pll.f_vco * self.pll.get_prescale() * 1e9
 
