@@ -24,9 +24,68 @@ TX_SERIAL_TEST_DATA = list(product(BAUDS,  PARITY.keys(), STOP_BITS.keys(), TX_M
 
 SERIAL_PARAMS="baud,parity,stop_bits,msg_len"
 
+@pytest.mark.parametrize(SERIAL_PARAMS, RX_SERIAL_TEST_DATA)
+def test_cdc_rx(baud, parity, stop_bits, msg_len):
+    scope.io.cdc_settings = 1
+    dev = list(list_ports.grep("TG1001D4A"))[0].device
+    scope_dev = scope.get_serial_ports()[0]['port']
+
+    rng = np.random.default_rng()
+
+    with serial.Serial(dev, baud, parity=PARITY[parity], stopbits=STOP_BITS[stop_bits], timeout=2) as ser:
+        with serial.Serial(scope_dev, baud, parity=PARITY[parity], stopbits=STOP_BITS[stop_bits], timeout=2) as cw_ser:
+            time.sleep(0.25)
+            msg = b""
+            rtn = b""
+            msg = bytearray(rng.integers(256, size=msg_len, dtype=np.uint8))
+
+            ser.write(msg)
+            # while target.in_waiting_tx() > 0: pass
+
+            rtn = cw_ser.read(len(msg))
+
+            num_attempt = 0
+            while ser.in_waiting > 0:
+                rtn += cw_ser.read(ser.in_waiting)
+                time.sleep(0.1)
+                assert num_attempt < 10
+                num_attempt += 1
+
+            assert rtn == msg
+        pass
+
+@pytest.mark.parametrize(SERIAL_PARAMS, TX_SERIAL_TEST_DATA)
+def test_cdc_tx(baud, parity, stop_bits, msg_len):
+    scope.io.cdc_settings = 1
+    dev = list(list_ports.grep("TG1001D4A"))[0].device
+    scope_dev = scope.get_serial_ports()[0]['port']
+
+    rng = np.random.default_rng()
+
+    with serial.Serial(dev, baud, parity=PARITY[parity], stopbits=STOP_BITS[stop_bits], timeout=2) as ser:
+        with serial.Serial(scope_dev, baud, parity=PARITY[parity], stopbits=STOP_BITS[stop_bits], timeout=2) as cw_ser:
+            msg = b""
+            rtn = b""
+            msg = bytearray(rng.integers(256, size=msg_len, dtype=np.uint8))
+
+            cw_ser.write(msg)
+            # while target.in_waiting_tx() > 0: pass
+
+            rtn = ser.read(len(msg))
+
+            num_attempt = 0
+            while ser.in_waiting > 0:
+                rtn += ser.read(ser.in_waiting)
+                time.sleep(0.1)
+                assert num_attempt < 10
+                num_attempt += 1
+
+            assert rtn == msg
+        pass
 
 @pytest.mark.parametrize(SERIAL_PARAMS, RX_SERIAL_TEST_DATA)
 def test_sam_rx(baud, parity, stop_bits, msg_len):
+    scope.io.cdc_settings = 0
     target.baud = baud
     target.parity = parity
     target.stop_bits = stop_bits
@@ -61,6 +120,7 @@ def test_sam_rx(baud, parity, stop_bits, msg_len):
 
 @pytest.mark.parametrize(SERIAL_PARAMS, TX_SERIAL_TEST_DATA)
 def test_sam_tx(baud, parity, stop_bits, msg_len):
+    scope.io.cdc_settings = 0
     target.baud = baud
     target.parity = parity
     target.stop_bits = stop_bits
@@ -86,4 +146,3 @@ def test_sam_tx(baud, parity, stop_bits, msg_len):
             num_attempt += 1
 
         assert rtn == msg
-
