@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: testpypi
-      url: https://test.pypi.org/p/chipwhisperer
+      url: https://test.pypi.org/p/chipwhisperer-test
     permissions:
       id-token: write
       contents: read
