@@ -2,7 +2,7 @@ name: TestPyPI Continuous Deployment & Validation
 
 on:
   push:
-    branches: [ main ]
+    branches: [ serial_changes ]
   workflow_dispatch:
 
 jobs:
