@@ -1,0 +1,95 @@
+name: TestPyPI Continuous Deployment & Validation
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-publish-verify:
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/chipwhisperer
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Check out repository with full Git history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install build tooling
+        run: |
+          python -m pip install --upgrade pip build setuptools-scm packaging
+
+      - name: Compute unique TestPyPI version
+        id: scm_step
+        run: |
+          python -c "
+          import os
+          import setuptools_scm
+          from packaging.version import Version
+
+          # Resolve standard base version (e.g., '0.2.0.dev3+g1a2b3c')
+          raw_ver = setuptools_scm.get_version()
+          v = Version(raw_ver.split('+')[0])
+
+          # Combine run_number and run_attempt so re-runs remain unique
+          run_id = '${{ github.run_number }}${{ github.run_attempt }}'
+          unique_ver = f'{v.major}.{v.minor}.{v.micro}.dev{run_id}'
+
+          # Export for subsequent steps
+          with open(os.environ['GITHUB_ENV'], 'a') as f:
+              f.write(f'SETUPTOOLS_SCM_PRETEND_VERSION={unique_ver}\n')
+
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'version={unique_ver}\n')
+
+          print(f'Active TestPyPI Version: {unique_ver}')
+          "
+
+      - name: Build sdist and wheel
+        run: |
+          # python -m build automatically respects SETUPTOOLS_SCM_PRETEND_VERSION
+          python -m build
+
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+      - name: Validate installed package from TestPyPI
+        run: |
+          PKG_NAME="chipwhisperer-test"
+          TARGET_VERSION="${{ steps.scm_step.outputs.version }}"
+
+          # Switch to an isolated directory so local files are not imported
+          cd "$(mktemp -d)"
+
+          echo "Polling TestPyPI for ${PKG_NAME}==${TARGET_VERSION}..."
+          for i in {1..12}; do
+            if python -m pip install \
+                --index-url https://test.pypi.org/simple/ \
+                --extra-index-url https://pypi.org/simple/ \
+                "${PKG_NAME}==${TARGET_VERSION}"; then
+              break
+            fi
+            echo "Waiting for indexing... retrying in 5s (attempt $i/12)..."
+            sleep 5
+          done
+
+          # Assert import works and inspect version
+          python -c "
+          import ${PKG_NAME}
+          print('Loaded module:', ${PKG_NAME}.__name__)
+          if hasattr(${PKG_NAME}, '__version__'):
+              print('Runtime version:', ${PKG_NAME}.__version__)
+          "
