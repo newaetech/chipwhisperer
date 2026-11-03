@@ -11,7 +11,7 @@ Open your bash terminal and paste this into the prompt:
 
 .. code:: bash
 
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 This snippet is taken directly from `brew's website`_. The script will guide
 you through the installation.
