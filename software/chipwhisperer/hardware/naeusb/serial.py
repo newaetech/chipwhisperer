@@ -71,7 +71,7 @@ class USART(object):
         """
         Open the serial port, set baud rate, parity, etc.
         """
-
+        current_xon = self.xonxoff
         self._baud = baud
         self._stopbits = stopbits
         self._parity = parity
@@ -120,6 +120,8 @@ class USART(object):
         self._usartTxCmd(self.USART_CMD_INIT, cmdbuf)
         self._usartTxCmd(self.USART_CMD_ENABLE)
         target_logger.info("Serial baud rate = {}".format(baud))
+
+        self.xonxoff = current_xon
 
         try:
             self.tx_buf_in_wait = self._usb.check_feature("TX_IN_WAITING")

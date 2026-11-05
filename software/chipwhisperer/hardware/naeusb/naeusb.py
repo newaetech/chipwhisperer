@@ -123,6 +123,7 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[15]: '1.3.0',
         SAM_FW_FEATURES[16]: '1.4.0',
         SAM_FW_FEATURES[18]: '1.5.0',
+        SAM_FW_FEATURES[19]: '1.8.0',
         SAM_FW_FEATURES[20]: '1.8.0',
     },
 
