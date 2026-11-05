@@ -636,6 +636,9 @@ class TraceWhisperer(util.DisableNewAttr):
             if printresult:
                 time.sleep(wait)
                 print(self._ss.read().split('\n')[0])
+            else:
+                self._ss.simpleserial_wait_ack()
+            self._ss.flush()
 
     def _words2bytes(self, words):
         """Converts a list of self.data_bits-sized words into a list of bytes, for programming
@@ -899,7 +902,9 @@ class TraceWhisperer(util.DisableNewAttr):
         else:
             self._ss.simpleserial_write('i', b'')
             time.sleep(0.1)
-            return self._ss.read().split('\n')[0]
+            res = self._ss.read().split('\n')[0]
+            self._ss.flush()
+            return res
 
 
     def phywhisperer_name(self):
@@ -925,9 +930,10 @@ class TraceWhisperer(util.DisableNewAttr):
             self._ss.simpleserial_write('t', bytearray([port]))
             time.sleep(0.1)
             print(self._ss.read().split('\n')[0])
+            self._ss.flush()
 
 
-    def read_capture_data(self):
+    def read_capture_data(self, chunk_words=1024):
         """Read captured trace data.
 
         Returns: List of captured entries. Each list element is itself a 3-element list,
@@ -945,6 +951,19 @@ class TraceWhisperer(util.DisableNewAttr):
         # then check that no underflows or overflows occurred during capture:
         if  self.errors:
             tracewhisperer_logger.warning("FIFO errors occured: %s" % self.errors)
+
+        if self.platform == 'Husky':
+            chunk_bytes = chunk_words * 4
+            underflow_bit = 2**self.FE_FIFO_STAT_UNDERFLOW
+            while not self.fifo_empty():
+                raw_bytes = self.fpga_read(self.REG_SNIFF_FIFO_RD, chunk_bytes)
+                n_entries = len(raw_bytes) // 4
+                for i in range(n_entries):
+                    entry = raw_bytes[i*4 : (i+1)*4]
+                    if entry[3] & underflow_bit:
+                        return data
+                    data.append([entry[1], entry[2], entry[3]])
+            return data
 
         while not self.fifo_empty():
             data.append(self.fpga_read(self.REG_SNIFF_FIFO_RD, 4)[1:4])
@@ -1039,6 +1058,7 @@ class TraceWhisperer(util.DisableNewAttr):
         pseudoframe = []
         timecounter = 0
         lasttime = 0
+        starttime = 0
         for raw in rawdata:
             command = raw[2] & 0x3
             if command == self.FE_FIFO_CMD_STAT:
@@ -1062,7 +1082,7 @@ class TraceWhisperer(util.DisableNewAttr):
                 else:
                     sync_removed = False
 
-                if sync_removed and len(pseudoframe):
+                if sync_removed and len(pseudoframe) > 0:
                     pseudoframes.append([starttime, pseudoframe])
                     if verbose:
                         print("Pseudoframe: ", end='')
@@ -1081,7 +1101,7 @@ class TraceWhisperer(util.DisableNewAttr):
             elif command == self.FE_FIFO_CMD_STRM:
                 pass
 
-        if not removesyncs:
+        if len(pseudoframe) > 0:
             pseudoframes.append([starttime, pseudoframe])
 
         return pseudoframes
@@ -2104,6 +2124,9 @@ class ARM_debug_registers(util.DisableNewAttr):
             time.sleep(0.1)
             if printresult:
                 print(self.main._ss.read().split('\n')[0])
+            else:
+                self.main._ss.simpleserial_wait_ack()
+            self.main._ss.flush()
         else:
             tracewhisperer_logger.error('Register %s does not exist.', reg)
 
@@ -2128,7 +2151,7 @@ class ARM_debug_registers(util.DisableNewAttr):
                 self.main._ss.simpleserial_write('g', util.hexStrToByteArray(data))
                 time.sleep(0.1)
                 try:
-                    val = int(self.main._ss.read().split('\n')[0][1:], 16)
+                    val = int(self.main._ss.simpleserial_read('r', 4).hex(), 16)
                     self.cached_values[self.regs[reg]] = val
                 except Exception as e:
                     scope_logger.error("Can't read trace register. Perhaps target firmware doesn't support it? See simpleserial-trace for an example of what's required. " + str(e))

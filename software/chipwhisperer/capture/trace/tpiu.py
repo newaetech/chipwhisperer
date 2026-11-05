@@ -25,37 +25,16 @@
 #=================================================
 from collections import defaultdict
 import ctypes
-from dataclasses import dataclass
-from datetime import datetime
-from typing import Final, Sequence
+from typing import Final
 from warnings import warn
-
-from chipwhisperer.logging import *
-
-
-@dataclass(kw_only=True, frozen=True)
-class TpiuByte:
-    stream: int
-    byte: int
 
 
 class TpiuStreams:
     """ Helper class to queue `TpiuByte` values."""
     streams: defaultdict[int, bytearray]
 
-    def __init__(self, tpiu_bytes: Sequence[TpiuByte] | None = None):
-        """
-        Args:
-            tpiu_bytes: list of `TpiuByte` to enqueue
-        """
+    def __init__(self):
         self.streams = defaultdict(bytearray)
-        if tpiu_bytes:
-            self.update(tpiu_bytes)
-
-    def update(self, tpiu_bytes: Sequence[TpiuByte]) -> None:
-        """ Update the queues with given TpiuByte ojects."""
-        for b in tpiu_bytes:
-            self.streams[b.stream].append(b.byte)
 
     def clear(self) -> None:
         """ Removes all the streams"""
@@ -601,4 +580,3 @@ def test_decoder():
 
 if __name__ == "__main__":
     test_decoder()
-
