@@ -3415,9 +3415,7 @@ class ClockSettings(util.DisableNewAttr):
     def adc_mul(self) -> int:
         """ Sets a new ADC clock frequency by multiplying this value by clkgen_freq
 
-        On Husky, must be a positive integer, or 0. If 0, turns the ADC clock off.
-
-        On Lite/Pro, must be either 1 or 4
+        Must be either 1 or 4.
 
         adc_freq = adc_mul * clkgen_freq
 
@@ -3442,11 +3440,17 @@ class ClockSettings(util.DisableNewAttr):
 
     @adc_mul.setter
     def adc_mul(self, mul : int):
-        x4 = ["clkgen_x4", "extclk_x4"]
-        x1 = ["clkgen_x1", "extclk_x1", "extclk_dir"]
-        if self.adc_src in x4:
-            return 4
-        elif self.adc_src in x1:
-            return 1
+        if mul not in [1, 4]:
+            raise ValueError('Only 1 or 4 are supported.')
+        src = self.adc_src
+        if src == 'extclk_dir':
+            raise ValueError('Cannot change adc_mul when using external clock directly.')
+        elif 'clkgen' in src:
+            root = 'clkgen_x'
+        elif 'extclk' in src:
+            root = 'extclk_x'
         else:
-            raise ValueError("Unknown adc_src {}".format(self.adc_src))
+            raise ValueError
+        self.adc_src = root + str(mul)
+
+

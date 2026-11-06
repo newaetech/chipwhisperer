@@ -327,6 +327,8 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             self.clock.adc_mul = self.DEFAULT_ADC_MUL
         else:
             self.clock.clkgen_freq = self.DEFAULT_CLOCKGEN_FREQ
+            if not self.try_wait_clkgen_locked(5, 0.05):
+                raise OSError("Could not lock DCM. Try rerunning this function or calling scope.clock.reset_dcms(): {}".format(self))
             self.clock.adc_src = 'clkgen_x4'
 
     def default_setup(self, verbose=True, sleep=0.2):
