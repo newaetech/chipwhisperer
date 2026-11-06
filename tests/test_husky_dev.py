@@ -310,6 +310,16 @@ testGlitchWidthData = [
     (1600,      40,         ''),
 ]
 
+testGlitchAfterPLLChangeData = [
+    # op                desc
+    ('adc_mul',         ''),
+    ('adc_phase',       ''),
+    ('adc_phase_raw',   ''),
+    ('reset_dcms',      ''),
+    ('reset_adc',       ''),
+    ('recal_pll',       ''),
+]
+
 testGlitchOutputWidthSweepData = [
     # clock     offset    oversamp    steps_per_point desc
     (10e6,      0,         40,         2,              ''),
@@ -947,6 +957,55 @@ def test_glitch_width(width, oversamp, desc):
     assert (ratio > offset_percent - margin) and (ratio < offset_percent + margin), "Ratio out of bounds (%f)" % ratio
     scope.glitch.enabled = False
     scope.LA.enabled = False
+
+@pytest.mark.parametrize("op, desc", testGlitchAfterPLLChangeData)
+@pytest.mark.skipif(not scope.LA.present, reason='Cannot test glitch without internal logic analyzer. Rebuild FPGA to test.')
+def test_glitch_after_pll_change(op, desc):
+    # Changing the PLL disturbs the target clock. This used to leave glitch MMCMs sourced by the PLL
+    # in a broken state, with mmcm_locked still returning True. Calling scope.glitch.resetDCMs() fixed it.
+    # The behaviour depends on the clock frequency. 5 MHz reproduced it for every op.
+    reset_setup(scope,target)
+    scope.clock.clkgen_freq = 5e6
+    scope.clock.adc_mul = 1
+    scope.clock.adc_phase = 0
+    time.sleep(0.1)
+    assert scope.clock.pll.pll_locked == True
+
+    # non-zero offset so that we also check that it's kept (phase_shift_steps is 6720 here):
+    setup_glitch(scope, 1680, 3360, 40)
+    width_margin = 2
+    offset_margin = 0.05
+
+    def capture_glitch():
+        # returns the glitch width and, as in test_glitch_offset, the fraction of samples where
+        # the MMCM1 output differs from the source clock (the glitch output doesn't show the offset)
+        scope.LA.arm()
+        scope.glitch.manual_trigger()
+        raw = scope.LA.read_capture_data()
+        glitch    = scope.LA.extract(raw, 0)
+        source    = scope.LA.extract(raw, 1)
+        mmcm1out  = scope.LA.extract(raw, 2)
+        return len(np.where(glitch > 0)[0]), np.mean(source != mmcm1out)
+
+    width_before, offset_before = capture_glitch()
+    assert width_before, "No glitch before changing the PLL"
+
+    if op == 'adc_mul':
+        scope.clock.adc_mul = 2
+    elif op == 'adc_phase':
+        scope.clock.adc_phase = 10
+    elif op == 'adc_phase_raw':
+        scope.clock.adc_phase_raw = 5
+    else:
+        getattr(scope.clock, op)()
+
+    width_after, offset_after = capture_glitch()
+    assert width_after, "No glitch after %s" % op
+    assert abs(width_after - width_before) <= width_margin, "Glitch width changed after %s (expected %d, measured %d)" % (op, width_before, width_after)
+    assert abs(offset_after - offset_before) <= offset_margin, "Glitch offset changed after %s (expected ratio %f, measured %f)" % (op, offset_before, offset_after)
+    scope.glitch.enabled = False
+    scope.LA.enabled = False
+    scope.clock.adc_phase = 0
 
 @pytest.mark.parametrize("clock, offset, oversamp, steps_per_point, desc", testGlitchOutputWidthSweepData)
 @pytest.mark.skipif(not scope.LA.present, reason='Cannot test glitch without internal logic analyzer. Rebuild FPGA to test.')
