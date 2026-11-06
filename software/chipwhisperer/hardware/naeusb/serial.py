@@ -46,6 +46,7 @@ class USART(object):
     USART_CMD_NUMWAIT_TX = 0x0018
     USART_CMD_XONXOFF = 0x0020
     USART_CMD_BUFSZ = 0x0021
+    USART_CMD_USART_STATUS = 0x0022
 
     def __init__(self, usb, timeout=200, usart_num=0):
         """
@@ -260,6 +261,23 @@ class USART(object):
     def rx_buf_sz(self):
         data = self._usartRxCmd(self.USART_CMD_BUFSZ, 4)[:2]
         return (data[0] | data[1] << 8)
+
+    def usart_status_reg(self):
+        data = self._usartRxCmd(self.USART_CMD_USART_STATUS, 5)
+        reg = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24)
+
+        return reg
+
+    def usart_is_tx_low(self):
+        data = self._usartRxCmd(self.USART_CMD_USART_STATUS, 5)
+
+        return (data[5] & 0x02) > 0
+
+    def usart_is_rx_low(self):
+        data = self._usartRxCmd(self.USART_CMD_USART_STATUS, 5)
+
+        return (data[5] & 0x01) > 0
+
 
     def _usartTxCmd(self, cmd, data=[]):
         """
