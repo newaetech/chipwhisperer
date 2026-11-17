@@ -54,6 +54,7 @@ SAM_FW_FEATURES = [
     "SAM_ERR_LED", #18
     "XON_XOFF", #19
     "SERIAL_BUF_CMD", #20
+    "USART_STATUS_CMD", #21
 ]
 
 class CWFirmwareError(Exception):
@@ -72,6 +73,8 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[15]: '0.62.0',
         SAM_FW_FEATURES[17]: '0.64.0',
         SAM_FW_FEATURES[18]: '0.66.0',
+        SAM_FW_FEATURES[20]: '0.67.0',
+        SAM_FW_FEATURES[21]: '0.67.0',
     },
 
     0xACE2: {
@@ -89,6 +92,8 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[14]: '0.60.0',
         SAM_FW_FEATURES[15]: '0.62.0',
         SAM_FW_FEATURES[18]: '0.65.0',
+        SAM_FW_FEATURES[20]: '0.67.0',
+        SAM_FW_FEATURES[21]: '0.67.0',
     },
 
     0xACE3: {
@@ -125,6 +130,7 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[18]: '1.5.0',
         SAM_FW_FEATURES[19]: '1.8.0',
         SAM_FW_FEATURES[20]: '1.8.0',
+        SAM_FW_FEATURES[21]: '1.8.0',
     },
 
     0xACE6: {
@@ -143,6 +149,9 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[15]: '1.0.0',
         SAM_FW_FEATURES[16]: '1.0.0',
         SAM_FW_FEATURES[18]: '1.0.0',
+        SAM_FW_FEATURES[19]: '1.4.0',
+        SAM_FW_FEATURES[20]: '1.4.0',
+        SAM_FW_FEATURES[21]: '1.4.0',
     },
 
     0xC305: {
@@ -171,6 +180,8 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[12]: '1.1.0',
         SAM_FW_FEATURES[13]: '1.2.0',
         SAM_FW_FEATURES[19]: '1.4.0',
+        SAM_FW_FEATURES[20]: '1.7.0',
+        SAM_FW_FEATURES[21]: '1.7.0',
     },
     
     0xC340: {
@@ -185,6 +196,9 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[8]: '0.1.0',
         SAM_FW_FEATURES[10]: '0.1.0',
         SAM_FW_FEATURES[12]: '0.1.0',
+        SAM_FW_FEATURES[19]: '1.3.0',
+        SAM_FW_FEATURES[20]: '1.3.0',
+        SAM_FW_FEATURES[21]: '1.3.0',
     }
 }
 
@@ -798,7 +812,7 @@ class NAEUSB:
             for port in serial.tools.list_ports.comports():
                 if port.serial_number == self.usbtx._usbdev.getSerialNumber().upper():
                     devices.append({"port": port.device, "interface": int(port.location.split('.')[-1])})
-            return devices
+            return sorted(devices, key=lambda x: x['interface'])
         return None
 
     def con(self, idProduct : Tuple[int]=(0xACE2,), connect_to_first : bool=False, 

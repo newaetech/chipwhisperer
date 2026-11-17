@@ -255,28 +255,41 @@ class USART(object):
             return resp[:pos]
 
     def tx_buf_sz(self):
-        data = self._usartRxCmd(self.USART_CMD_BUFSZ, 4)[2:]
-        return (data[0] | data[1] << 8)
+        if self._usb.check_feature("SERIAL_BUF_CMD"):
+            data = self._usartRxCmd(self.USART_CMD_BUFSZ, 4)[2:]
+            return (data[0] | data[1] << 8)
+        if self._usb.check_feature("SERIAL_200_BUFFER"):
+            return 200
+        return 128
 
     def rx_buf_sz(self):
-        data = self._usartRxCmd(self.USART_CMD_BUFSZ, 4)[:2]
-        return (data[0] | data[1] << 8)
+        if self._usb.check_feature("SERIAL_BUF_CMD"):
+            data = self._usartRxCmd(self.USART_CMD_BUFSZ, 4)[:2]
+            return (data[0] | data[1] << 8)
+        if self._usb.check_feature("SERIAL_200_BUFFER"):
+            return 200
+        return 128
 
     def usart_status_reg(self):
-        data = self._usartRxCmd(self.USART_CMD_USART_STATUS, 5)
-        reg = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24)
+        if self._usb.check_feature("USART_STATUS_CMD", True):
+            data = self._usartRxCmd(self.USART_CMD_USART_STATUS, 5)
+            reg = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24)
+            return reg
+        return 0
 
-        return reg
+    def is_tx_low(self):
+        if self._usb.check_feature("USART_STATUS_CMD", True):
+            data = self._usartRxCmd(self.USART_CMD_USART_STATUS, 5)
 
-    def usart_is_tx_low(self):
-        data = self._usartRxCmd(self.USART_CMD_USART_STATUS, 5)
+            return (data[4] & 0x02) > 0
+        return 1
 
-        return (data[5] & 0x02) > 0
+    def is_rx_low(self):
+        if self._usb.check_feature("USART_STATUS_CMD", True):
+            data = self._usartRxCmd(self.USART_CMD_USART_STATUS, 5)
 
-    def usart_is_rx_low(self):
-        data = self._usartRxCmd(self.USART_CMD_USART_STATUS, 5)
-
-        return (data[5] & 0x01) > 0
+            return (data[4] & 0x01) > 0
+        return 1
 
 
     def _usartTxCmd(self, cmd, data=[]):
