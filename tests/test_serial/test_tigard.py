@@ -9,8 +9,9 @@ import pytest
 from common import *
 
 dev = list(list_ports.grep("TG1001D4A"))#[0].device
-pytestmark = pytest.mark.skipif(len(dev) < 1, reason="Tigard not detected")
-
+if len(dev) < 1:
+    pytestmark = pytest.mark.skip_silent(reason="Tigard not detected")
+    print("Could not detect Tigard, skipping tests")
 
 @pytest.fixture(autouse=True)
 def reset_usart_settings():
