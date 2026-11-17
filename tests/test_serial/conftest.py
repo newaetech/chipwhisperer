@@ -10,3 +10,14 @@ def lowbaud(request):
 @pytest.fixture
 def highbaud(request):
     return request.config.getoption("--highbaud")
+
+def pytest_collection_modifyitems(config, items):
+    remaining = []
+    deselected = []
+    for item in items:
+        if item.get_closest_marker("skip_silent"):
+            deselected.append(item)
+        else:
+            remaining.append(item)
+    config.hook.pytest_deselected(items=deselected)
+    items[:] = remaining
