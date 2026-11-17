@@ -219,7 +219,8 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
     def _con(self, scope = None, **kwargs):
         if not scope or not hasattr(scope, "qtadc"): Warning("You need a scope with OpenADC connected to use this Target")
 
-        self.ser.con(scope)
+        n = kwargs.get('usart_num', 0)
+        self.ser.con(scope, n)
 
         # Check to see if the caller wants to be responsible for flushing the
         # UART on connect. For real world targets, we may just want to quietly

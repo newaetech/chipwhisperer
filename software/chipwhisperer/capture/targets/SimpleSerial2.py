@@ -225,7 +225,8 @@ class SimpleSerial2(TargetTemplate):
         return 0x00
 
     def con(self, scope=None, flush_on_err=True, **kwargs):
-        self.ser.con(scope)
+        n = kwargs.get('usart_num', 0)
+        self.ser.con(scope, n)
         self._flush_on_err = flush_on_err
         self.reset_comms()
         #self.baud = 230400

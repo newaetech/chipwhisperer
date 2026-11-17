@@ -218,7 +218,9 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             self.io.cwe.setAVRISPMode(1)
             self.dis()
 
-    def _get_usart(self) -> USART:
+    def _get_usart(self, n=0) -> USART:
+        if n != 0:
+            raise ValueError("OpenADC devices only have one USART!")
         return self.scopetype.usart
     
     def finish_mpsse_setup(self, set_defaults=True):
