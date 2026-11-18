@@ -164,5 +164,6 @@ parts:
   - file: Tutorials
   - file: changes
   - file: contributing
+  - file: external
   - file: colophon
 
