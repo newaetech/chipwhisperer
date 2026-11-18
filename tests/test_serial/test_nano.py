@@ -9,7 +9,7 @@ from common import *
 
 LOOPBACK_FW = "nano_test_fw/serial-config-CWNANO.hex"
 
-NANO_MAX_BAUD = int(2E6)
+NANO_MAX_BAUD = int(1E6)
 
 # Default boot baud rate of serial_config-CWNANO.hex (230400 for SS_VER_2_1 HAL, 38400 if unpatched)
 DEFAULT_SS2_BAUD = 230400 * 30 // 7.5
