@@ -307,10 +307,11 @@ A few useful resources:
 
 ## Testing
 
-ChipWhisperer software is currently tested in two ways:
+ChipWhisperer software is currently tested in three ways:
 
 * Using Jupyter Notebooks
-* Unit Tests
+* API Unit Tests
+* On-Target Tests
 
 ### Jupyter Notebooks
 
@@ -410,7 +411,7 @@ notebook you have made changes for.
  1. Finally select the block containing the notebook you want to test from the
     code cells following.
 
-### Unit Tests
+### API Unit Tests
 
 There are also a few unit tests that have been created to test small parts of
 the API. The unit tests are mostly used in places where we can test without
@@ -439,4 +440,39 @@ auto discover script yet so just run:
     python test_api.py
 
 ```
+
+### On-Target Tests
+
+For Husky (and Husky Plus) only, there is an automated test script which
+performs extensive on-target testing.
+
+These tests were originally developed specifically to verify the FPGA
+implementation of new Husky features; however since all the tests are
+carried out via the standard Python API, they also implicitly cover the API.
+
+There is no single setup that allows all of the tests to be run:
+* Some tests don't require a target to be connected.
+* Some tests require a SAM4S target running a
+[specific pre-compiled version of the simpleserial-trace firmware](https://github.com/newaetech/chipwhisperer/blob/develop/firmware/mcu/simpleserial-trace/simpleserial-trace-CW308_SAM4S.hex). 
+* Some tests require an STM32F3 running a
+[specific pre-compiled version of the simpleserial-trace firmware](https://github.com/newaetech/chipwhisperer/blob/develop/firmware/mcu/simpleserial-trace/simpleserial-trace-CW308_STM32F3.hex),
+and jumper cables from Husky's USERIO D0/1/2 to the target's TMS/TCK/TDO
+pins.
+* Some tests require a CW305 target.
+
+If you don't have `pytest`, install it first (`pip install pytest`).
+
+To run the full suite of tests:
+
+```bash
+
+    cd chipwhisperer/tests
+
+    pytest test_husky_dev.py
+
+```
+
+To specify the target, set the `HUSKY_TARGET_PLATFORM` environment variable
+to `sam4s` (default), `stm32f3`, or `cw305`.
+
 
