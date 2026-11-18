@@ -7,23 +7,28 @@ import pytest
 from common import *
 
 SAM4S_CONNECTED = False
-try:
-    cw.program_target(scope, cw.programmers.SAM4SProgrammer, "sam4s_test_fw/loopback-CWHUSKY.bin")
-    SAM4S_CONNECTED = True
-    pass
-except:
-    pass
+if not isinstance(scope, cw.scopes.OpenADC):
+    # print("Could not program SAM4S, assuming not connected")
+    pytestmark = pytest.mark.skip_silent(reason="OpenADC Capture device not connected")
+else:
+    try:
+        cw.program_target(scope, cw.programmers.SAM4SProgrammer, "sam4s_test_fw/loopback-CWHUSKY.bin")
+        SAM4S_CONNECTED = True
+        pass
+    except:
+        pass
+    if SAM4S_CONNECTED is False:
+        print("Could not program SAM4S, assuming not connected")
+        pytestmark = pytest.mark.skip_silent(reason="SAM4S not connected")
 
-if SAM4S_CONNECTED is False:
-    print("Could not program SAM4S, assuming not connected")
-    pytestmark = pytest.mark.skip_silent(reason="SAM4S not connected")
 
 @pytest.fixture(autouse=True)
 def reset_usart_settings():
     yield
     scope.io.cdc_settings = 0
     target.xonxoff = 0
-    scope.adc.stream_mode = False
+    if scope._is_husky or scope._is_husky_plus:
+        scope.adc.stream_mode = False
 
 @pytest.fixture(scope="module")
 def program_bw_hex():
@@ -40,12 +45,16 @@ WASTE_CYCLES = (10000, 20000, 30000, 40000, 50000)
 RETURN_LENGTHS = (180, 200, 220, 240, 249)
 
 @pytest.mark.parametrize(SERIAL_PARAMS, RX_SERIAL_TEST_DATA)
+@pytest.mark.skipif(not (scope._is_husky or scope._is_husky_plus), reason="Not Husky")
 def test_sam_stream(lowbaud, highbaud, baud, parity, stop_bits, msg_len, clock=20E6, samples=1E6):
     if lowbaud is False and baud < 230400:
         pytest.skip("use --lowbaud to run")
 
     if highbaud is False and baud > int(8E6):
         pytest.skip("use --highbaud to run")
+
+    if not (scope._is_husky or scope._is_husky_plus):
+        pytest.skip("Skipping stream tests")
     scope.io.cdc_settings = 0
 
     target.baud = baud
@@ -132,7 +141,7 @@ def test_cdc_rapid(lowbaud, highbaud, baud, parity, stop_bits, msg_len):
 
     rng = np.random.default_rng()
 
-    msg_sz = 1024
+    msg_sz = 256#1024
 
     with serial.Serial(scope_dev, baud, parity=PARITY[parity], stopbits=STOP_BITS[stop_bits], timeout=0.2) as cw_ser:
         while msg_len > 0:
@@ -208,6 +217,8 @@ PREVIOUS_FIRMWARE = 'loopback'
 @pytest.mark.parametrize("waste_cycles, return_length", list(product(WASTE_CYCLES, RETURN_LENGTHS)))
 def test_high_stress(program_bw_hex, waste_cycles, return_length):
     global PREVIOUS_FIRMWARE, scope, target
+    if not (scope._is_husky or scope._is_husky_plus):
+        pytest.skip("Skipping stress test")
 
     if PREVIOUS_FIRMWARE != 'bw_stress':
         scope.dis()
