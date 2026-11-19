@@ -73,6 +73,7 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[15]: '0.62.0',
         SAM_FW_FEATURES[17]: '0.64.0',
         SAM_FW_FEATURES[18]: '0.66.0',
+        SAM_FW_FEATURES[19]: '0.67.0',
         SAM_FW_FEATURES[20]: '0.67.0',
         SAM_FW_FEATURES[21]: '0.67.0',
     },
@@ -92,8 +93,8 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[14]: '0.60.0',
         SAM_FW_FEATURES[15]: '0.62.0',
         SAM_FW_FEATURES[18]: '0.65.0',
-        SAM_FW_FEATURES[20]: '0.67.0',
-        SAM_FW_FEATURES[21]: '0.67.0',
+        SAM_FW_FEATURES[20]: '0.66.0',
+        SAM_FW_FEATURES[21]: '0.66.0',
     },
 
     0xACE3: {

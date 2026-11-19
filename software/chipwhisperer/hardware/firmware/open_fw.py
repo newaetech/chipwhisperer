@@ -26,14 +26,31 @@ def mcufw(dev_name, filelike=True):
         return data
     pass
 
-def fwver(dev_name):
+def fwver(dev_name) -> str:
+    """Extract firmware version as 'MAJOR.MINOR.DEBUG'."""
     with open(res_file_path(dev_name, "version.txt"), "r") as f:
-        lines = f.readlines()
-        major = lines[0].split(" ")[-1].strip()
-        minor = lines[1].split(" ")[-1].strip()
-        debug = lines[2].split(" ")[-1].strip()
-        return "{}.{}.{}".format(major, minor, debug)
-    pass
+        text = f.read()
+    values: dict[str, str] = {}
+    for raw_line in text.splitlines():
+        parts = raw_line.strip().split(None, 1)
+        if len(parts) == 2:
+            values[parts[0]] = parts[1]
+    return f"{values['FW_VER_MAJOR']}.{values['FW_VER_MINOR']}.{values['FW_VER_DEBUG']}"
+
+
+def fwdatetime(dev_name) -> str:
+    """Extract firmware build datetime string."""
+    with open(res_file_path(dev_name, "version.txt"), "r") as f:
+        text = f.read()
+    lines = text.splitlines()
+    for i, raw_line in enumerate(lines):
+        parts = raw_line.strip().split(None, 1)
+        if parts and parts[0] == "FW_DATETIME":
+            if len(parts) == 2:
+                return parts[1]
+            if i + 1 < len(lines):
+                return lines[i + 1].strip()
+    return "UNKNOWN"
 
 def registers(dev_name, filelike=True):
     with open(res_file_path(dev_name, "registers.v"), "rb") as f:
