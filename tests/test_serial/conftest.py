@@ -1,33 +1,19 @@
-# import pytest
-# def pytest_addoption(parser):
-#     parser.addoption("--lowbaud", action="store", default=False, help="Run < 230400bps tests. Slow")
-#     parser.addoption("--highbaud", action="store", default=False, help="Run > 1.5Mbps (CDC) and > 4Mbps (target) tests. Likely to fail")
-
-# @pytest.fixture
-# def lowbaud(request):
-#     return request.config.getoption("--lowbaud")
-
-# @pytest.fixture
-# def highbaud(request):
-#     return request.config.getoption("--highbaud")
-
-# def pytest_collection_modifyitems(config, items):
-#     remaining = []
-#     deselected = []
-#     for item in items:
-#         if item.get_closest_marker("skip_silent"):
-#             deselected.append(item)
-#         else:
-#             remaining.append(item)
-#     config.hook.pytest_deselected(items=deselected)
-#     items[:] = remaining
-
-
 import pytest
+import os
 
 def pytest_addoption(parser):
     parser.addoption("--lowbaud", action="store", default=False, help="Run < 230400bps tests. Slow")
     parser.addoption("--highbaud", action="store", default=False, help="Run > 1.5Mbps (CDC) and > 4Mbps (target) tests. Likely to fail")
+    parser.addoption(
+        "--upgrade-fw",
+        action="store_true",
+        default=False,
+        help="Reprogram device firmware using upgrade_firmware() before checking versions",
+    )
+
+@pytest.fixture
+def upgrade_fw(request):
+    return request.config.getoption("--upgrade-fw")
 
 @pytest.fixture
 def lowbaud(request):
@@ -41,6 +27,10 @@ def pytest_collection_modifyitems(config, items):
     remaining = []
     deselected = []
     silently_skipped = {}
+    first_file = "test_fw_version.py"
+    first = [item for item in items if os.path.basename(item.location[0]) == first_file]
+    rest = [item for item in items if os.path.basename(item.location[0]) != first_file]
+    items[:] = first + rest
 
     for item in items:
         marker = item.get_closest_marker("skip_silent")

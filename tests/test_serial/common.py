@@ -13,7 +13,7 @@ try:
     target = cw.target(scope, cw.targets.SimpleSerial2)
     SER_RX_BUF_SZ = target.rx_buf_size #1024*6
 except Exception as e:
-    print("Could not connect to chipwhisperer capture device, skipping tests")
+    # print("Could not connect to chipwhisperer capture device, skipping tests: " + str(e))
     pytestmark = pytest.mark.skip_silent(reason="ChipWhisperer not connected:  " + str(e))
 RX_MSG_LENS = (SER_RX_BUF_SZ // 2, SER_RX_BUF_SZ, SER_RX_BUF_SZ * 2)
 TX_MSG_LENS = (64, 256, 512, 1024)

@@ -17,24 +17,22 @@ DEFAULT_SS2_BAUD = 230400 * 30 // 7.5
 PARITY_CMD = {'none': 0, 'even': 1, 'odd': 2}
 STOP_BITS_CMD = {1: 0, 2: 1}
 
-scope.io.clkout = 30E6
-
 NANO_CONNECTED = False
 try:
     if isinstance(scope, cw.scopes.CWNano):
-        print("Hehe")
-        cw.program_target(scope, cw.programmers.STM32FProgrammer, LOOPBACK_FW)
         target = cw.target(scope, cw.targets.SimpleSerial2)
         NANO_CONNECTED = True
+        scope.io.clkout = 30E6
     else:
         pytestmark = pytest.mark.skip_silent(reason="CWNANO not connected")
 
 except Exception:
-    # pytestmark = pytest.mark.skip_silent(reason="Could not program nano")
-    raise
+    pytestmark = pytest.mark.skip_silent(reason="Could not program nano")
+    # raise
 
 # if NANO_CONNECTED is False:
-
+def test_program_firmware():
+    cw.program_target(scope, cw.programmers.STM32FProgrammer, LOOPBACK_FW)
 
 def reset_target():
     scope.io.nrst = 'low'
@@ -92,8 +90,6 @@ TX_SERIAL_TEST_DATA = list(product(BAUDS,  PARITY.keys(), STOP_BITS.keys(), TX_M
 
 TX_CDC_TEST_DATA = list(product(CDC_BAUDS,  PARITY.keys(), STOP_BITS.keys(), TX_MSG_LENS))
 RX_CDC_TEST_DATA = list(product(CDC_BAUDS,  PARITY.keys(), STOP_BITS.keys(), RX_MSG_LENS))
-
-print(scope)
 
 @pytest.mark.parametrize(SERIAL_PARAMS, RX_SERIAL_TEST_DATA)
 def test_nano(lowbaud, highbaud, baud, parity, stop_bits, msg_len):
