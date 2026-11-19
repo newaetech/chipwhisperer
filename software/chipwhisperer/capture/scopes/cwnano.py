@@ -584,7 +584,7 @@ class CWNano(util.DisableNewAttr, ChipWhispererCommonInterface):
         from ...hardware.firmware.open_fw import fwver
         return fwver("cwnano")
 
-    def default_setup(self):
+    def default_setup(self, verbose=True):
         """ Sets up sane capture defaults for this scope
 
         * 7.5MHz ADC clock
