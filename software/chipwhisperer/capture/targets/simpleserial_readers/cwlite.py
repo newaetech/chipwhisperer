@@ -38,6 +38,7 @@ class SimpleSerial_ChipWhispererLite(SimpleSerialTemplate):
         self._stopbits = 1
         self.cwlite_usart = None
         self._buf_size = None
+        self._tx_buf_size = None
 
     def close(self):
         pass
@@ -90,6 +91,7 @@ class SimpleSerial_ChipWhispererLite(SimpleSerialTemplate):
                 self.cwlite_usart = scope._get_usart()
             self.cwlite_usart.init(baud=self._baud, stopbits=self._stopbits, parity=self._parity)
             self._buf_size = self.cwlite_usart.rx_buf_sz()
+            self._tx_buf_size = self.cwlite_usart.tx_buf_sz()
 
     def hardware_inWaiting(self):
         bwait = self.cwlite_usart.inWaiting()
