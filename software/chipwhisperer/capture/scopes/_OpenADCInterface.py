@@ -162,6 +162,7 @@ class OpenADCInterface(util.DisableNewAttr):
     def setStreamMode(self, stream):
         self._stream_mode = stream
         if self._is_husky:
+            # TODO: Check CDC settings
             self.updateHuskySamplesRegister()
         else:
             self.updateStreamBuffer()
@@ -2354,6 +2355,8 @@ class TriggerSettings(util.DisableNewAttr):
         base = self.oa.sendMessage(CODE_READ, "SETTINGS_ADDR")[0]
         if enabled:
             val = base | (1<<4)
+            if any(self.oa.serial.get_cdc_settings()):
+                scope_logger.error("Use of CDC mode and stream mode together is not recommended. You may lose serial and ADC data!")
         else:
             val = base & ~(1<<4)
         self.oa.sendMessage(CODE_WRITE, "SETTINGS_ADDR", [val])

@@ -29,7 +29,7 @@ from ...logging import *
 from ...common.utils import util
 from .naeusb import NAEUSB, NAEUSB_CTRL_IO_MAX
 
-SERIAL_MAX_WRITE = 58
+SERIAL_MAX_WRITE = 128
 
 class USART(object):
     """
@@ -45,6 +45,8 @@ class USART(object):
     USART_CMD_NUMWAIT = 0x0014
     USART_CMD_NUMWAIT_TX = 0x0018
     USART_CMD_XONXOFF = 0x0020
+    USART_CMD_BUFSZ = 0x0021
+    USART_CMD_USART_STATUS = 0x0022
 
     def __init__(self, usb, timeout=200, usart_num=0):
         """
@@ -70,7 +72,7 @@ class USART(object):
         """
         Open the serial port, set baud rate, parity, etc.
         """
-
+        current_xon = self.xonxoff
         self._baud = baud
         self._stopbits = stopbits
         self._parity = parity
@@ -119,6 +121,8 @@ class USART(object):
         self._usartTxCmd(self.USART_CMD_INIT, cmdbuf)
         self._usartTxCmd(self.USART_CMD_ENABLE)
         target_logger.info("Serial baud rate = {}".format(baud))
+
+        self.xonxoff = current_xon
 
         try:
             self.tx_buf_in_wait = self._usb.check_feature("TX_IN_WAITING")
@@ -194,7 +198,7 @@ class USART(object):
         # print "Checking Waiting..."
         data = self._usartRxCmd(self.USART_CMD_NUMWAIT, dlen=4)
         # print data
-        return data[0]
+        return data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24)
 
     # @fw_ver_required(0, 20)
     def in_waiting_tx(self):
@@ -250,6 +254,43 @@ class USART(object):
         else:
             return resp[:pos]
 
+    def tx_buf_sz(self):
+        if self._usb.check_feature("SERIAL_BUF_CMD"):
+            data = self._usartRxCmd(self.USART_CMD_BUFSZ, 4)[2:]
+            return (data[0] | data[1] << 8)
+        if self._usb.check_feature("SERIAL_200_BUFFER"):
+            return 200
+        return 128
+
+    def rx_buf_sz(self):
+        if self._usb.check_feature("SERIAL_BUF_CMD"):
+            data = self._usartRxCmd(self.USART_CMD_BUFSZ, 4)[:2]
+            return (data[0] | data[1] << 8)
+        if self._usb.check_feature("SERIAL_200_BUFFER"):
+            return 200
+        return 128
+
+    def usart_status_reg(self):
+        if self._usb.check_feature("USART_STATUS_CMD", True):
+            data = self._usartRxCmd(self.USART_CMD_USART_STATUS, 5)
+            reg = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24)
+            return reg
+        return 0
+
+    def is_tx_low(self):
+        if self._usb.check_feature("USART_STATUS_CMD", True):
+            data = self._usartRxCmd(self.USART_CMD_USART_STATUS, 5)
+
+            return (data[4] & 0x02) > 0
+        return 1
+
+    def is_rx_low(self):
+        if self._usb.check_feature("USART_STATUS_CMD", True):
+            data = self._usartRxCmd(self.USART_CMD_USART_STATUS, 5)
+
+            return (data[4] & 0x01) > 0
+        return 1
+
 
     def _usartTxCmd(self, cmd, data=[]):
         """
@@ -265,6 +306,7 @@ class USART(object):
         """
         # windex selects interface, set to 0
         return self._usb.readCtrl(self.CMD_USART0_CONFIG, cmd | (self._usart_num << 8), dlen)
+
 
     def close(self):
         pass # does nothing, for normal serial compatability

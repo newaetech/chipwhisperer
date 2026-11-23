@@ -38,6 +38,7 @@ class SimpleSerial_ChipWhispererLite(SimpleSerialTemplate):
         self._stopbits = 1
         self.cwlite_usart = None
         self._buf_size = None
+        self._tx_buf_size = None
 
     def close(self):
         pass
@@ -81,22 +82,22 @@ class SimpleSerial_ChipWhispererLite(SimpleSerialTemplate):
 
     def stopBits(self):
         return self._stopbits
-        
 
-    def con(self, scope): # remove typing here to avoid pulling in OpenADC/CWNano
+    def con(self, scope, n=0): # remove typing here to avoid pulling in OpenADC/CWNano
         if not scope is None:
-            self.cwlite_usart = scope._get_usart()
+            if n>0:
+                self.cwlite_usart = scope._get_usart(n)
+            else:
+                self.cwlite_usart = scope._get_usart()
             self.cwlite_usart.init(baud=self._baud, stopbits=self._stopbits, parity=self._parity)
-            self._buf_size = 128
-            if self.cwlite_usart._usb.check_feature("SERIAL_200_BUFFER"):
-                self._buf_size = 200
-
+            self._buf_size = self.cwlite_usart.rx_buf_sz()
+            self._tx_buf_size = self.cwlite_usart.tx_buf_sz()
 
     def hardware_inWaiting(self):
         bwait = self.cwlite_usart.inWaiting()
         if bwait >= (self._buf_size - 1):
             logging.warning('SAM3U Serial buffers OVERRUN - data loss has occurred.')
-        return bwait
+        return bwait & (0xFFFFFFFF ^ (1 << 31))
 
     def hardware_inWaitingTX(self):
         bwait = self.cwlite_usart.in_waiting_tx()

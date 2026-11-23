@@ -104,13 +104,7 @@ class SimpleSerial2(TargetTemplate):
     """
     _frame_byte = 0x00
     def __init__(self):
-        TargetTemplate.__init__(self)
-        self.ser = SimpleSerial_ChipWhispererLite()
-        self.ser._baud = 230400
-        self._protver = 'auto'
-        self.protformat = 'hex'
-        self.last_key = bytearray(16)
-        self._output_len = 16
+        pass
 
     def close(self):
         self.ser.close()
@@ -225,7 +219,15 @@ class SimpleSerial2(TargetTemplate):
         return 0x00
 
     def con(self, scope=None, flush_on_err=True, **kwargs):
-        self.ser.con(scope)
+        TargetTemplate.__init__(self)
+        self.ser = SimpleSerial_ChipWhispererLite()
+        self.ser._baud = 230400
+        self._protver = 'auto'
+        self.protformat = 'hex'
+        self.last_key = bytearray(16)
+        self._output_len = 16
+        n = kwargs.get('usart_num', 0)
+        self.ser.con(scope, n)
         self._flush_on_err = flush_on_err
         self.reset_comms()
         #self.baud = 230400
@@ -747,6 +749,14 @@ class SimpleSerial2(TargetTemplate):
             self.ser.setBaud(new_baud)
         else:
             raise AttributeError("Can't access baud rate")
+
+    @property
+    def rx_buf_size(self):
+        return self.ser._buf_size
+
+    @property
+    def tx_buf_size(self):
+        return self.ser._tx_buf_size
 
 
     def set_key(self, key, ack=True, timeout=250, always_send=False):

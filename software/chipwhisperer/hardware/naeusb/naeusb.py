@@ -53,6 +53,8 @@ SAM_FW_FEATURES = [
     "NANO_CLOCK_RESET", #17
     "SAM_ERR_LED", #18
     "XON_XOFF", #19
+    "SERIAL_BUF_CMD", #20
+    "USART_STATUS_CMD", #21
 ]
 
 class CWFirmwareError(Exception):
@@ -71,6 +73,9 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[15]: '0.62.0',
         SAM_FW_FEATURES[17]: '0.64.0',
         SAM_FW_FEATURES[18]: '0.66.0',
+        SAM_FW_FEATURES[19]: '0.67.0',
+        SAM_FW_FEATURES[20]: '0.67.0',
+        SAM_FW_FEATURES[21]: '0.67.0',
     },
 
     0xACE2: {
@@ -88,6 +93,9 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[14]: '0.60.0',
         SAM_FW_FEATURES[15]: '0.62.0',
         SAM_FW_FEATURES[18]: '0.65.0',
+        SAM_FW_FEATURES[19]: '0.65.0',
+        SAM_FW_FEATURES[20]: '0.66.0',
+        SAM_FW_FEATURES[21]: '0.66.0',
     },
 
     0xACE3: {
@@ -104,6 +112,10 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[13]: '1.60.0',
         SAM_FW_FEATURES[14]: '1.60.0',
         SAM_FW_FEATURES[15]: '1.62.0',
+        SAM_FW_FEATURES[18]: '1.63.0',
+        SAM_FW_FEATURES[19]: '1.63.0',
+        SAM_FW_FEATURES[20]: '1.63.0',
+        SAM_FW_FEATURES[21]: '1.63.0',
     },
 
     0xACE5: {
@@ -122,6 +134,9 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[15]: '1.3.0',
         SAM_FW_FEATURES[16]: '1.4.0',
         SAM_FW_FEATURES[18]: '1.5.0',
+        SAM_FW_FEATURES[19]: '1.8.0',
+        SAM_FW_FEATURES[20]: '1.8.0',
+        SAM_FW_FEATURES[21]: '1.8.0',
     },
 
     0xACE6: {
@@ -140,6 +155,9 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[15]: '1.0.0',
         SAM_FW_FEATURES[16]: '1.0.0',
         SAM_FW_FEATURES[18]: '1.0.0',
+        SAM_FW_FEATURES[19]: '1.4.0',
+        SAM_FW_FEATURES[20]: '1.4.0',
+        SAM_FW_FEATURES[21]: '1.4.0',
     },
 
     0xC305: {
@@ -168,6 +186,8 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[12]: '1.1.0',
         SAM_FW_FEATURES[13]: '1.2.0',
         SAM_FW_FEATURES[19]: '1.4.0',
+        SAM_FW_FEATURES[20]: '1.7.0',
+        SAM_FW_FEATURES[21]: '1.7.0',
     },
     
     0xC340: {
@@ -182,6 +202,9 @@ SAM_FW_FEATURE_BY_DEVICE = {
         SAM_FW_FEATURES[8]: '0.1.0',
         SAM_FW_FEATURES[10]: '0.1.0',
         SAM_FW_FEATURES[12]: '0.1.0',
+        SAM_FW_FEATURES[19]: '1.3.0',
+        SAM_FW_FEATURES[20]: '1.3.0',
+        SAM_FW_FEATURES[21]: '1.3.0',
     }
 }
 
@@ -377,6 +400,7 @@ class NAEUSB_Backend:
         self._timeout = 500
         self.device = None
         self.handle = None
+        self._ctrl_buf_sz = NAEUSB_CTRL_IO_MAX
 
         try:
             self.usb_ctx = usb1.USBContext()
@@ -457,6 +481,9 @@ class NAEUSB_Backend:
         self.sn = self.handle.getSerialNumber()
         self.pid = self.device.getProductID()
         naeusb_logger.debug('Found %s, Serial Number = %s' % (self.handle.getProduct(), self.sn))
+        # if self.check_feature("DMA_SERIAL"):
+        #     pass
+
 
         # Husky has different endpoints for faster transfer
         if (self.device.getProductID() == 0xace5) or (self.device.getProductID() == 0xace6):
@@ -540,10 +567,10 @@ class NAEUSB_Backend:
         naeusb_logger.debug("WRITE_CTRL: bmRequestType: {:02X}, \
                     bRequest: {:02X}, wValue: {:04X}, wIndex: {:04X}, data: {}".format(0x41, cmd, \
                         value, 0, data))
-        if len(data) > NAEUSB_CTRL_IO_MAX:
-            naeusb_logger.error("The naeusb fw ctrl buffer is 128 bytes, but len(data) > 128. If you get a pipe error, this is why.")
+        if len(data) > self._ctrl_buf_sz:
+            naeusb_logger.error(f"The naeusb fw ctrl buffer is {self._ctrl_buf_sz} bytes, but {len(data)} > {self._ctrl_buf_sz}. \
+                                If you get a pipe error, this is why.")
         self.handle.controlWrite(0x41, cmd, value, 0, data, timeout=self._timeout)
-        #return self.usbdev().ctrl_transfer(0x41, cmd, value, 0, data, timeout=self._timeout)
 
     def readCtrl(self, cmd : int, value : int=0, dlen : int=0) -> bytearray:
         """
@@ -727,7 +754,7 @@ class NAEUSB:
 
     def get_cdc_settings(self) -> list:
         if self.check_feature("CDC"):
-            return self.usbtx.readCtrl(self.CMD_CDC_SETTINGS_EN, dlen=4)
+            return list(self.usbtx.readCtrl(self.CMD_CDC_SETTINGS_EN, dlen=4))
         else:
             return [0, 0, 0, 0]
 
@@ -791,7 +818,7 @@ class NAEUSB:
             for port in serial.tools.list_ports.comports():
                 if port.serial_number == self.usbtx._usbdev.getSerialNumber().upper():
                     devices.append({"port": port.device, "interface": int(port.location.split('.')[-1])})
-            return devices
+            return sorted(devices, key=lambda x: x['interface'])
         return None
 
     def con(self, idProduct : Tuple[int]=(0xACE2,), connect_to_first : bool=False, 
@@ -821,6 +848,8 @@ class NAEUSB:
             self.fw_up2date = False
             naeusb_logger.error('Your firmware ({}) is outdated - latest is {}'.format(fwver, fw_latest) +
                                 ' See https://chipwhisperer.readthedocs.io/en/latest/firmware.html for more information')
+
+        
 
         return self.usbtx.pid
 

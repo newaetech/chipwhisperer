@@ -76,20 +76,7 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
     _name = "Simple Serial"
 
     def __init__(self):
-        TargetTemplate.__init__(self)
-
-        self.ser = SimpleSerial_ChipWhispererLite()
-
-        self._protver = 'auto'
-        self.protformat = 'hex'
-        self.last_key = bytearray(16)
-        self._output_len = 16
-
-        self._proto_ver = "auto"
-        self._proto_timeoutms = 20
-        self._simpleserial_last_read = ""
-        self._simpleserial_last_sent = ""
-        self.disable_newattr()
+        pass
 
     def __repr__(self):
         ret = "SimpleSerial Settings ="
@@ -217,9 +204,25 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
         self.ser.selectionChanged()
 
     def _con(self, scope = None, **kwargs):
+        self.enable_newattr()
+        TargetTemplate.__init__(self)
+
+        self.ser = SimpleSerial_ChipWhispererLite()
+
+        self._protver = 'auto'
+        self.protformat = 'hex'
+        self.last_key = bytearray(16)
+        self._output_len = 16
+
+        self._proto_ver = "auto"
+        self._proto_timeoutms = 20
+        self._simpleserial_last_read = ""
+        self._simpleserial_last_sent = ""
+        self.disable_newattr()
         if not scope or not hasattr(scope, "qtadc"): Warning("You need a scope with OpenADC connected to use this Target")
 
-        self.ser.con(scope)
+        n = kwargs.get('usart_num', 0)
+        self.ser.con(scope, n)
 
         # Check to see if the caller wants to be responsible for flushing the
         # UART on connect. For real world targets, we may just want to quietly
@@ -646,3 +649,11 @@ class SimpleSerial(TargetTemplate, util.DisableNewAttr):
     @property
     def currently_xoff(self):
         return self.ser.currently_xoff
+
+    @property
+    def rx_buf_size(self):
+        return self.ser._buf_size
+
+    @property
+    def tx_buf_size(self):
+        return self.ser._tx_buf_size

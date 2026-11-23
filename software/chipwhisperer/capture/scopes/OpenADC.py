@@ -218,7 +218,9 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             self.io.cwe.setAVRISPMode(1)
             self.dis()
 
-    def _get_usart(self) -> USART:
+    def _get_usart(self, n=0) -> USART:
+        if n != 0:
+            raise ValueError("OpenADC devices only have one USART!")
         return self.scopetype.usart
     
     def finish_mpsse_setup(self, set_defaults=True):
@@ -352,7 +354,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             scope_dict_pre = self._dict_repr()
 
         self._default_setup()
-        self.io.cdc_settings = 0
+        self.io.cdc_enabled = 0
 
         if self._is_husky:
             if not self.try_wait_clkgen_locked(10):
@@ -684,6 +686,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
         .. versionchanged:: 5.5
             Added idProduct, bitstream, and force parameters.
         """
+        self.enable_newattr()
         self._read_only_attrs = []
         self._saved_sn = sn
 

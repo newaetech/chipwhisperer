@@ -488,9 +488,28 @@ class GPIOSettings(util.DisableNewAttr):
             state = None
 
         return state
-
     @property
     def cdc_settings(self):
+        """Check or set whether USART settings can be changed via the USB CDC connection
+
+        i.e. whether you can change USART settings (baud rate, 8n1) via a serial client like PuTTY
+
+        :getter: An array of length two for two possible CDC serial ports (though only one is used)
+
+        :setter: Can set either via an integer (which sets both ports) or an array of length 2 (which sets each port)
+
+        Returns None if using firmware before the CDC port was added
+        """
+        scope_logger.warning("This setting has been renamed to cdc_enabled to better reflect its new functionality")
+        return self.cdc_enabled
+
+    @cdc_settings.setter
+    def cdc_settings(self, port):
+        scope_logger.warning("This setting has been renamed to cdc_enabled to better reflect its new functionality")
+        self.cdc_enabled = port
+
+    @property
+    def cdc_enabled(self):
         """Check or set whether USART settings can be changed via the USB CDC connection
 
         i.e. whether you can change USART settings (baud rate, 8n1) via a serial client like PuTTY
@@ -507,12 +526,8 @@ class GPIOSettings(util.DisableNewAttr):
             return None
         return self.usb.get_cdc_settings()
 
-    @cdc_settings.setter
-    def cdc_settings(self, port):
-        rawver = self.usb.readFwVersion()
-        ver = '{}.{}'.format(rawver[0], rawver[1])
-        if ver < '0.30':
-            return None
+    @cdc_enabled.setter
+    def cdc_enabled(self, port):
         return self.usb.set_cdc_settings(port)
 
 class CWNano(util.DisableNewAttr, ChipWhispererCommonInterface):
@@ -584,7 +599,7 @@ class CWNano(util.DisableNewAttr, ChipWhispererCommonInterface):
         from ...hardware.firmware.open_fw import fwver
         return fwver("cwnano")
 
-    def default_setup(self):
+    def default_setup(self, verbose=True):
         """ Sets up sane capture defaults for this scope
 
         * 7.5MHz ADC clock
