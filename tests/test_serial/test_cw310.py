@@ -45,12 +45,12 @@ XOFF = 0x13
 @pytest.fixture(autouse=True)
 def reset_usart_settings():
     yield
-    cw310.cdc_settings = 0
+    cw310.cdc_enabled = 0
     targets[0].xonxoff = 0
     targets[1].xonxoff = 0
 
 def test_tx_break():
-    cw310.cdc_settings = 1
+    cw310.cdc_enabled = 1
 
     for i in range(2):
         port = cw310.get_serial_ports()[i]['port']
@@ -108,7 +108,7 @@ def test_cdc_rapid(lowbaud, highbaud, usart_num, baud, parity, stop_bits, msg_le
     if highbaud is False and baud > int(1.5E6):
         pytest.skip("use --highbaud to run")
 
-    cw310.cdc_settings = 1
+    cw310.cdc_enabled = 1
     scope_dev = cw310.get_serial_ports()[usart_num]['port']
 
     rng = np.random.default_rng()
@@ -136,7 +136,7 @@ def test_sam(lowbaud, highbaud, usart_num, baud, parity, stop_bits, msg_len):
 
     if highbaud is False and baud > int(5E6):
         pytest.skip("use --highbaud to run")
-    cw310.cdc_settings = 0
+    cw310.cdc_enabled = 0
     target = targets[usart_num]
     target.baud = baud
     target.parity = parity
@@ -167,7 +167,7 @@ def test_sam(lowbaud, highbaud, usart_num, baud, parity, stop_bits, msg_len):
 #     if highbaud is False and baud > int(1.5E6):
 #         pytest.skip("use --highbaud to run")
 
-#     cw310.cdc_settings = 1
+#     cw310.cdc_enabled = 1
 #     scope_dev = cw310.get_serial_ports()[usart_num]['port']
 
 #     rng = np.random.default_rng()

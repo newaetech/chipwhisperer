@@ -742,7 +742,7 @@ class GPIOSettings(util.DisableNewAttr):
 
         rtn['tio_states'] = self.tio_states
 
-        rtn['cdc_settings'] = self.cdc_settings
+        rtn['cdc_enabled'] = self.cdc_enabled
 
         if self._is_husky:
             rtn['aux_io_mcx'] = self.aux_io_mcx
@@ -1183,9 +1183,7 @@ class GPIOSettings(util.DisableNewAttr):
 
     @property
     def cdc_settings(self) -> Union[list, None]:
-        """Check or set whether USART settings can be changed via the USB CDC connection
-
-        i.e. whether you can change USART settings (baud rate, 8n1) via a serial client like PuTTY
+        """Check or set whether the USB CDC interface will be used instead of the Vendor (cw.target) interface
 
         :getter: A list of length four for four possible CDC serial ports (though only one is used)
 
@@ -1193,19 +1191,44 @@ class GPIOSettings(util.DisableNewAttr):
 
         Returns None if using firmware before the CDC port was added
         """
+        scope_logger.warning("This setting has been renamed to cdc_enabled to better reflect its new functionality")
+        return self.cdc_enabled
+
+    @cdc_settings.setter
+    def cdc_settings(self, port : Union[List[int], int]):
+        scope_logger.warning("This setting has been renamed to cdc_enabled to better reflect its new functionality")
+        self.cdc_enabled = port
+
+    @property
+    def cdc_enabled(self) -> Union[list, None]:
+        """Check or set whether the USB CDC interface will be used instead of the Vendor (cw.target) interface
+
+        :getter: A list of length four for four possible CDC serial ports (though only one is used)
+
+        :setter: Can set either via an integer (which sets both ports) or an array of length 4 (which sets each port)
+
+        Returns None if using firmware before the CDC port was added
+
+        .. versionchanged:: 7.0.0
+            Renamed cdc_settings to cdc_enabled
+        """
         rawver = self.cwe.oa.serial.readFwVersion()
         ver = '{}.{}'.format(rawver[0], rawver[1])
         if ver < '0.30':
             return None
         return list(self.cwe.oa.serial.get_cdc_settings())
 
-    @cdc_settings.setter
-    def cdc_settings(self, port : Union[List[int], int]):
-        rawver = self.cwe.oa.serial.readFwVersion()
-        ver = '{}.{}'.format(rawver[0], rawver[1])
-        if ver < '0.30':
-            return None
-        return self.cwe.oa.serial.set_cdc_settings(port)
+    @cdc_enabled.setter
+    def cdc_enabled(self, port : Union[List[int], int]):
+
+        self.cwe.oa.serial.set_cdc_settings(port)
+        enabled = 0
+        if isinstance(port, int):
+            enabled = port
+        else:
+            enabled = any(port)
+        if enabled and self.cwe.oa._is_husky and self.cwe.oa._stream_mode:
+            scope_logger.error("Use of CDC mode and stream mode together is not recommended. You may lose serial and ADC data!")
 
     @property
     def aux_io_mcx(self) -> str:

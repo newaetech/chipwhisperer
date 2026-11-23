@@ -16,11 +16,11 @@ if len(dev) < 1:
 @pytest.fixture(autouse=True)
 def reset_usart_settings():
     yield
-    scope.io.cdc_settings = 0
+    scope.io.cdc_enabled = 0
     target.xonxoff = 0
 
 def test_sw_flow_control(baud=230400, parity="none", stop_bits=1, msg_len=64):
-    scope.io.cdc_settings = 0
+    scope.io.cdc_enabled = 0
     target.baud = baud
     target.parity = parity
     target.stop_bits = stop_bits
@@ -93,7 +93,7 @@ def test_cdc_rx(lowbaud, highbaud, baud, parity, stop_bits, msg_len):
     if highbaud is False and baud > int(1.5E6):
         pytest.skip("use --highbaud to run")
 
-    scope.io.cdc_settings = 1
+    scope.io.cdc_enabled = 1
     scope_dev = scope.get_serial_ports()[0]['port']
 
     rng = np.random.default_rng()
@@ -128,7 +128,7 @@ def test_sam_rx(lowbaud, highbaud, baud, parity, stop_bits, msg_len):
 
     if highbaud is False and baud > int(4E6):
         pytest.skip("use --highbaud to run")
-    scope.io.cdc_settings = 0
+    scope.io.cdc_enabled = 0
     target.baud = baud
     target.parity = parity
     target.stop_bits = stop_bits
@@ -166,7 +166,7 @@ def test_cdc_tx(lowbaud, highbaud, baud, parity, stop_bits, msg_len):
 
     if highbaud is False and baud > int(1.5E6):
         pytest.skip("use --highbaud to run")
-    scope.io.cdc_settings = 1
+    scope.io.cdc_enabled = 1
     scope_dev = scope.get_serial_ports()[0]['port']
 
     rng = np.random.default_rng()
@@ -201,7 +201,7 @@ def test_sam_tx(lowbaud, highbaud, baud, parity, stop_bits, msg_len):
 
     if highbaud is False and baud > int(4E6):
         pytest.skip("use --highbaud to run")
-    scope.io.cdc_settings = 0
+    scope.io.cdc_enabled = 0
     target.baud = baud
     target.parity = parity
     target.stop_bits = stop_bits

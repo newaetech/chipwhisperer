@@ -43,7 +43,7 @@ def reset_target():
 
 def configure_target_loopback(baud, parity, stop_bits):
     """Reset the STM32F0 out of loopback mode, apply serial settings via SS2, and re-enter loopback."""
-    scope.io.cdc_settings = 0
+    scope.io.cdc_enabled = 0
     # reset_target()
 
     # Re-sync host UART to the STM32F0's boot SimpleSerial2 settings
@@ -76,7 +76,7 @@ def configure_target_loopback(baud, parity, stop_bits):
 @pytest.fixture(autouse=True)
 def reset_usart_settings():
     yield
-    scope.io.cdc_settings = 0
+    scope.io.cdc_enabled = 0
     if hasattr(target, "xonxoff"):
         target.xonxoff = 0
     target.parity = 'none'
@@ -136,7 +136,7 @@ def test_cdc_rapid(lowbaud, highbaud, baud, parity, stop_bits, msg_len):
     reset_target()
     configure_target_loopback(baud, parity, stop_bits)
 
-    scope.io.cdc_settings = 1
+    scope.io.cdc_enabled = 1
     scope_dev = scope.get_serial_ports()[0]['port']
 
     rng = np.random.default_rng()

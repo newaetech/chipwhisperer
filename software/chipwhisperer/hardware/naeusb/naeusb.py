@@ -754,7 +754,7 @@ class NAEUSB:
 
     def get_cdc_settings(self) -> list:
         if self.check_feature("CDC"):
-            return self.usbtx.readCtrl(self.CMD_CDC_SETTINGS_EN, dlen=4)
+            return list(self.usbtx.readCtrl(self.CMD_CDC_SETTINGS_EN, dlen=4))
         else:
             return [0, 0, 0, 0]
 

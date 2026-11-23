@@ -352,7 +352,7 @@ class OpenADC(util.DisableNewAttr, ChipWhispererCommonInterface):
             scope_dict_pre = self._dict_repr()
 
         self._default_setup()
-        self.io.cdc_settings = 0
+        self.io.cdc_enabled = 0
 
         if self._is_husky:
             if not self.try_wait_clkgen_locked(10):

@@ -30,7 +30,7 @@ except:
 def reset_usart_settings():
     yield
     # scope.default_setup(verbose=False)
-    scope.io.cdc_settings = 0
+    scope.io.cdc_enabled = 0
     target.xonxoff = 0
     target.baud = 230400
     target.stop_bits = 1
@@ -62,7 +62,7 @@ def test_sam_stream(lowbaud, highbaud, baud, parity, stop_bits, msg_len, clock=2
 
     if not (scope._is_husky or scope._is_husky_plus):
         pytest.skip("Stream test only valid on Husky/Plus")
-    scope.io.cdc_settings = 0
+    scope.io.cdc_enabled = 0
 
     target.baud = baud
     scope.adc.bits_per_sample = 8
@@ -103,7 +103,7 @@ def test_sam_stream(lowbaud, highbaud, baud, parity, stop_bits, msg_len, clock=2
 
 # @pytest.mark.parametrize(SERIAL_PARAMS, RX_CDC_TEST_DATA)
 # def test_cdc_stream(lowbaud, highbaud, baud, parity, stop_bits, msg_len, clock=20E6, samples=1E6):
-#     scope.io.cdc_settings = 1
+#     scope.io.cdc_enabled = 1
 #     scope.adc.bits_per_sample = 8
 #     scope_dev = scope.get_serial_ports()[0]['port']
 
@@ -143,7 +143,7 @@ def test_cdc_rapid(lowbaud, highbaud, baud, parity, stop_bits, msg_len):
     if highbaud is False and baud > int(1.5E6):
         pytest.skip("use --highbaud to run")
 
-    scope.io.cdc_settings = 1
+    scope.io.cdc_enabled = 1
     scope_dev = scope.get_serial_ports()[0]['port']
 
     rng = np.random.default_rng()
@@ -171,7 +171,7 @@ def test_sam(lowbaud, highbaud, baud, parity, stop_bits, msg_len):
 
     if highbaud is False and baud > int(8E6):
         pytest.skip("use --highbaud to run")
-    scope.io.cdc_settings = 0
+    scope.io.cdc_enabled = 0
     target.baud = baud
     target.parity = parity
     target.stop_bits = stop_bits
@@ -201,7 +201,7 @@ def test_sam(lowbaud, highbaud, baud, parity, stop_bits, msg_len):
 #     if highbaud is False and baud > int(1.5E6):
 #         pytest.skip("use --highbaud to run")
 
-#     scope.io.cdc_settings = 1
+#     scope.io.cdc_enabled = 1
 #     scope_dev = scope.get_serial_ports()[0]['port']
 
 #     rng = np.random.default_rng()

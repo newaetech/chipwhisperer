@@ -476,20 +476,31 @@ class CW310(CW305):
         Returns: 
             None if using firmware before the CDC port was added.
         """
-        rawver = self._naeusb.readFwVersion()
-        ver = '{}.{}'.format(rawver[0], rawver[1])
-        if ver < '0.30':
-            return None
-        self._naeusb.CMD_CDC_SETTINGS_EN = 0x41
-        return self._naeusb.get_cdc_settings()
+        target_logger.warning("This setting has been renamed to cdc_enabled to better reflect its new functionality")
+        return self.cdc_enabled
 
     @cdc_settings.setter
     def cdc_settings(self, port):
-        rawver = self._naeusb.readFwVersion()
-        ver = '{}.{}'.format(rawver[0], rawver[1])
-        if ver < '0.30':
-            return None
+        target_logger.warning("This setting has been renamed to cdc_enabled to better reflect its new functionality")
+        self.cdc_enabled = port
 
+    @property
+    def cdc_enabled(self):
+        """Check or set whether USART settings can be changed via the USB CDC connection,
+        i.e. whether you can change USART settings (baud rate, 8n1) via a serial client like PuTTY.
+
+        :getter: An array of length two for the two CDC ports.
+
+        :setter: Can set either via an integer (which sets both ports) or an array of length 2 (which sets each port).
+
+        Returns: 
+            None if using firmware before the CDC port was added.
+        """
+        self._naeusb.CMD_CDC_SETTINGS_EN = 0x41
+        return self._naeusb.get_cdc_settings()
+
+    @cdc_enabled.setter
+    def cdc_enabled(self, port):
         self._naeusb.CMD_CDC_SETTINGS_EN = 0x41
         return self._naeusb.set_cdc_settings(port)
 

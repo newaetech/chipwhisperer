@@ -3,10 +3,15 @@ import pytest
 from chipwhisperer.hardware.firmware.open_fw import fwver, fwdatetime
 import time
 
-from common import *
-
+scope = None
 try:
-    target = cw.target(None, cw.targets.CW310, bsfile="cw310_top_loopback160.bit", force=True)
+    scope = cw.scope()
+except:
+    pass
+
+target = None
+try:
+    target = cw.target(None, cw.targets.CW310, bsfile=None)
 except:
     pass
 
