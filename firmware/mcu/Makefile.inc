@@ -282,6 +282,7 @@ LDFLAGS += $(patsubst %,-L%,$(EXTRALIBDIRS))
 LDFLAGS += $(MATH_LIB)
 LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB)
 LDFLAGS += -Wl,--print-memory-usage
+LDFLAGS += -Wl,--no-warn-rwx-segments
 #LDFLAGS += -T linker_script.x
 
 
